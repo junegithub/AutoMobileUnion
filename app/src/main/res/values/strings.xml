@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">车启联</string>
+    <string name="tab_car">查车</string>
+    <string name="tab_training">培训</string>
+
+    <string name="search_hint">车牌/机构名搜索</string>
+    <string name="map_zoom_tip">缩放地图，使得当前地图中所有车辆全部显示在此区域内</string>
+
+    <!-- 流程选择 -->
+    <string name="select_flow">选择功能流程</string>
+    <string name="safety_training">安全培训流程</string>
+    <string name="car_check">查车流程</string>
+
+    <!-- 安全培训流程 -->
+    <string name="before_login">登录前</string>
+    <string name="after_login">登录后</string>
+    <string name="daily_training">所有日常培训</string>
+    <string name="study_entry">学习入口</string>
+    <string name="training_detail">培训详情</string>
+    <string name="safety_course">安全培训课件</string>
+    <string name="learn">开始学习</string>
+    <string name="switch_login_after">切换到登录后</string>
+    <string name="enter_daily_training">进入日常培训</string>
+    <string name="view_detail">查看详情</string>
+    <string name="download_attachment">下载附件</string>
+
+    <!-- 查车流程 -->
+    <string name="car_list">车辆列表</string>
+    <string name="car_detail">车辆详情</string>
+    <string name="history_track">历史轨迹</string>
+    <string name="alarm_detail">告警详情</string>
+    <string name="report_list">数据报表</string>
+    <string name="report_detail">报表详情</string>
+    <string name="search_car">输入车牌号/VIN码搜索</string>
+    <string name="filter">筛选</string>
+    <string name="send_command">下发指令</string>
+    <string name="export_report">导出报表</string>
+    <string name="view_track">查看轨迹</string>
+    <string name="view_alarm">查看告警</string>
+    <string name="view_report">查看报表</string>
+</resources>

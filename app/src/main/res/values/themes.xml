@@ -1,0 +1,17 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.AutoMobileUnion" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- 核心1：开启状态栏透明（API21+） -->
+        <item name="android:windowTranslucentStatus">true</item>
+        <!-- 核心2：关闭系统默认的状态栏背景绘制（避免透明后出现阴影/半透层） -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <!-- 可选：关闭底部导航栏透明（避免布局延伸到底部，核心保障底部导航栏不受影响） -->
+        <item name="android:windowTranslucentNavigation">false</item>
+        <!-- 核心：API23+ 状态栏文字/图标设为深色（true=深色，false=白色） -->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

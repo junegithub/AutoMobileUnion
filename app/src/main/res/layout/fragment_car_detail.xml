@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/car_detail"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <!-- 车辆信息 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="车牌号：京A12345"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VIN码：LVVDB12A3MC000001"
+            android:layout_marginTop="4dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="当前位置：北京市东城区"
+            android:layout_marginTop="4dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="在线状态：在线"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/green"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="告警数量：3条"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/red"/>
+    </LinearLayout>
+
+    <!-- 功能按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+        <Button
+            android:id="@+id/btn_view_track"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/view_track"/>
+        <Button
+            android:id="@+id/btn_view_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/view_alarm"
+            android:layout_marginStart="8dp"/>
+        <Button
+            android:id="@+id/btn_view_report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/view_report"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <!-- 下发指令 -->
+    <Button
+        android:id="@+id/btn_send_command"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/send_command"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>
