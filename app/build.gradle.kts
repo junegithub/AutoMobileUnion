@@ -76,6 +76,8 @@ dependencies {
     implementation(libs.location.v560)
 // 图表（MPAndroidChart）
     implementation(libs.mpandroidchart)
+    // 下拉刷新
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
