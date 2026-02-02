@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.amap.api.maps.MapsInitializer
 import com.yt.car.union.net.RetrofitClient
+import com.yt.car.union.net.bean.UserInfo
 
 class MyApp : Application() {
 
@@ -38,5 +39,6 @@ class MyApp : Application() {
         }
 
         var isLogin: Boolean? = null
+        var userInfo: UserInfo? = null
     }
 }

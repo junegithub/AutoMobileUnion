@@ -5,6 +5,8 @@ import com.yt.car.union.net.bean.LoginRequest
 import com.yt.car.union.net.bean.LoginResponse
 import com.yt.car.union.net.bean.LoginSafeRequest
 import com.yt.car.union.net.bean.LogoffRequest
+import com.yt.car.union.net.bean.UserInfo
+import com.yt.car.union.net.bean.UserInfoResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -21,7 +23,7 @@ interface ApiService {
     // ===================== 登录/注销 =====================
     // 登录（auth/app/login）
     @POST("auth/app/login")
-    suspend fun loginApi(@Body request: LoginRequest): BaseResponse<Any>
+    suspend fun loginApi(@Body request: LoginRequest): BaseResponse<LoginResponse>
 
     // 账号密码登录（api/user/login）
     @POST("api/user/login")
@@ -33,16 +35,13 @@ interface ApiService {
 
     // 退出登录（api/user/logout）
     @GET("api/user/logout")
-    suspend fun loginOut(@QueryMap data: Map<String, Any>): BaseResponse<Any>
+    suspend fun loginOut(): BaseResponse<Any>
 
     // ===================== 用户信息 =====================
-    // 获取用户详细信息（system/app/user/getInfo）
-    @GET("system/app/user/getInfo")
-    suspend fun getInfo(@QueryMap data: Map<String, Any>): BaseResponse<Any>
 
     // 获取用户信息（system/app/user）
     @GET("system/app/user")
-    suspend fun getUserInfo(@QueryMap data: Map<String, Any>): BaseResponse<Any>
+    suspend fun getUserInfo(): BaseResponse<UserInfoResponse>
 
     // 获取安全培训用户信息（api/user/info）
     @GET("api/user/info")

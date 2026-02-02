@@ -12,6 +12,7 @@ class TokenInterceptor() : Interceptor {
         // 构建新的请求，添加token头
         val newRequest = chain.request().newBuilder()
             .addHeader("token", SPUtils.getToken()) // 与前端请求头key一致
+            .addHeader("Authorization", SPUtils.getToken())
             .addHeader("Content-Type", "application/json;charset=UTF-8") // 默认JSON格式
             .build()
         return chain.proceed(newRequest)

@@ -23,12 +23,12 @@ class LoginViewModel : ViewModel() {
                 // 调用接口
                 val response = RetrofitClient.getApiService().loginApi(request)
 
-                Log.i("June", "loggin response::::" + response.data)
                 // 业务成功判断（对应原JS的code=200）
                 if (response.code == 1 && response.data != null) {
                     // 保存Token
-//                    SPUtils.saveToken(response.data.userinfo?.token)
+                    SPUtils.saveToken(response.data.userinfo?.token)
                     MyApp.isLogin = true
+                    getUserInfo()
                     callback(true, "登录成功")
                 } else {
                     callback(false, response.msg ?: "登录失败")
@@ -37,6 +37,20 @@ class LoginViewModel : ViewModel() {
                 // 异常处理（网络错误、解析错误等）
                 Log.e("LoginViewModel", "登录失败", e)
                 callback(false, "网络异常：${e.message}")
+            }
+        }
+    }
+
+    fun getUserInfo() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.getApiService().getUserInfo()
+                if (response.code == 1 && response.data != null) {
+                    MyApp.userInfo = response.data.info
+                }
+            } catch (e: Exception) {
+                // 异常处理（网络错误、解析错误等）
+                Log.e("LoginViewModel", "登录失败", e)
             }
         }
     }

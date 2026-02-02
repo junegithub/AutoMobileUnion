@@ -42,7 +42,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updatePageWithLoginState() {
-        if (MyApp.isLogin == true) {
+        if (MyApp.userInfo != null) {
+            binding.tvUsername.text = MyApp.userInfo?.username
+            binding.tvNickname.text = MyApp.userInfo?.nickname
             binding.userGroup.visibility = View.VISIBLE
             binding.loginGroup.visibility = View.GONE
         } else {
@@ -75,10 +77,7 @@ class LoginActivity : AppCompatActivity() {
             openDial()
         }
         binding.btnLogout.setOnClickListener {
-            MyApp.isLogin = false
-            SPUtils.saveToken("")
-            EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
-            updatePageWithLoginState()
+            doLogout()
         }
         binding.back.setOnClickListener {
             finish()
@@ -96,6 +95,19 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun doLogout() {
+        clearCache()
+    }
+
+    fun clearCache() {
+        MyApp.isLogin = false
+        MyApp.userInfo = null
+        SPUtils.saveToken("")
+        EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
+        updatePageWithLoginState()
+        finish()
     }
 
     private fun initAgreementText() {
