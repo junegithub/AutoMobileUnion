@@ -1,4 +1,4 @@
-package com.yt.car.union
+package com.yt.car.union.pages
 
 import android.content.Intent
 import android.net.Uri
@@ -12,14 +12,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.yt.car.union.MyApp
+import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityLoginBinding
 import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.SPUtils
 import com.yt.car.union.viewmodel.LoginViewModel
 import org.greenrobot.eventbus.EventBus
-import kotlin.getValue
-
 
 class LoginActivity : AppCompatActivity() {
 
@@ -42,9 +42,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updatePageWithLoginState() {
-        if (MyApp.userInfo != null) {
-            binding.tvUsername.text = MyApp.userInfo?.username
-            binding.tvNickname.text = MyApp.userInfo?.nickname
+        if (MyApp.Companion.userInfo != null) {
+            binding.tvUsername.text = MyApp.Companion.userInfo?.username
+            binding.tvNickname.text = MyApp.Companion.userInfo?.nickname
             binding.userGroup.visibility = View.VISIBLE
             binding.loginGroup.visibility = View.GONE
         } else {
@@ -102,11 +102,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun clearCache() {
-        MyApp.isLogin = false
-        MyApp.userInfo = null
+        MyApp.Companion.isLogin = false
+        MyApp.Companion.userInfo = null
         SPUtils.saveToken("")
         EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
-        updatePageWithLoginState()
         finish()
     }
 

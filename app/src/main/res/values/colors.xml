@@ -36,4 +36,13 @@
     <color name="transparent">#00000000</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="error">#FF0000</color>
+
+    <color name="blue_main">#2F80ED</color>       <!-- 标题栏/按钮主色 -->
+    <color name="yellow_plate">#F5C841</color>    <!-- 车牌号背景 -->
+    <color name="mask_gray">#80000000</color>     <!-- 弹窗遮罩 -->
+    <color name="date_selected">#2F80ED</color>   <!-- 日期选中背景 -->
+    <color name="date_unselected">#000000</color> <!-- 日期未选中文字 -->
+    <color name="btn_white">#FFFFFF</color>       <!-- 按钮文字 -->
+    <color name="divider_gray">#E0E0E0</color>    <!-- 分割线 -->
+    <color name="bg_white">#FFFFFF</color>        <!-- 页面背景 -->
 </resources>

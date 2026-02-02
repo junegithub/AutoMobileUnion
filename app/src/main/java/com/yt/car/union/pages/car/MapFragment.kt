@@ -12,10 +12,11 @@ import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.LatLngBounds
 import com.amap.api.maps.model.MarkerOptions
-import com.yt.car.union.LoginActivity
+import com.yt.car.union.pages.LoginActivity
 import com.yt.car.union.MyApp
 import com.yt.car.union.R
 import com.yt.car.union.databinding.FragmentMapBinding
+import com.yt.car.union.pages.DeviceAlarmActivity
 import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
 import org.greenrobot.eventbus.EventBus
@@ -83,6 +84,9 @@ class MapFragment : Fragment() {
         // 未登录按钮跳转登录页
         binding.tvUnlogin.setOnClickListener {
             startActivity(Intent(requireContext(), LoginActivity::class.java))
+        }
+        binding.alarm.setOnClickListener {
+            startActivity(Intent(requireContext(), DeviceAlarmActivity::class.java))
         }
     }
 

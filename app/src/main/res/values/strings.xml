@@ -34,4 +34,13 @@
     <string name="copyright">Copyright © 2023 车启联 版权所有</string>
     <string name="toast_agreement">请同意服务协议和隐私政策</string>
     <string name="toast_empty_account">账号/密码不能为空</string>
+
+    <string name="device_alarm">设备报警</string>
+    <string name="all_alarm">全部报警</string>
+    <string name="date_range">开始日期至结束日期</string>
+    <string name="speed_warning">超速预警</string>
+    <string name="select_date">选择日期</string>
+    <string name="confirm">确定</string>
+    <string name="start">开始</string>
+    <string name="end">结束</string>
 </resources>

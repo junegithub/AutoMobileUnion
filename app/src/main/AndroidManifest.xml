@@ -41,9 +41,8 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false"/>
+        <activity android:name=".pages.LoginActivity" />
+        <activity android:name=".pages.DeviceAlarmActivity" />
     </application>
 
 </manifest>

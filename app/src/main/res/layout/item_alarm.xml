@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/margin_15"
+    android:orientation="vertical">
+
+    <!-- 车牌号+公司 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <TextView
+            android:id="@+id/tv_plate_num"
+            android:layout_width="80dp"
+            android:layout_height="20dp"
+            android:background="@drawable/car_num_bg"
+            android:gravity="center"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/text_plate"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_company"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/ic_building"
+            android:paddingLeft="@dimen/padding_10"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/text_company" />
+    </FrameLayout>
+
+    <!-- 报警类型+联系人 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_8"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <TextView
+            android:id="@+id/tv_alarm_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="@string/speed_warning"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/text_alarm_type"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_contact"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textColor="@color/text_gray"
+            android:textSize="@dimen/text_contact" />
+    </LinearLayout>
+
+    <!-- 时间 -->
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/text_gray"
+        android:textSize="@dimen/text_time_address" />
+
+    <!-- 地址 -->
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginTop="5dp"
+        android:drawableLeft="@drawable/ic_location"
+        android:drawablePadding="5dp"
+        android:textColor="@color/text_gray"
+        android:textSize="@dimen/text_time_address" />
+
+    <!-- 分割线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/margin_10"
+        android:background="@color/divider_gray" />
+
+</LinearLayout>
