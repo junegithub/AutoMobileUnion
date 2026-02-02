@@ -17,6 +17,8 @@ import com.yt.car.union.MyApp
 import com.yt.car.union.R
 import com.yt.car.union.databinding.FragmentMapBinding
 import com.yt.car.union.pages.DeviceAlarmActivity
+import com.yt.car.union.pages.DeviceStatusActivity
+import com.yt.car.union.pages.OperationAnalysisActivity
 import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
 import org.greenrobot.eventbus.EventBus
@@ -87,6 +89,12 @@ class MapFragment : Fragment() {
         }
         binding.alarm.setOnClickListener {
             startActivity(Intent(requireContext(), DeviceAlarmActivity::class.java))
+        }
+        binding.status.setOnClickListener {
+            startActivity(Intent(requireContext(), DeviceStatusActivity::class.java))
+        }
+        binding.analysis.setOnClickListener {
+            startActivity(Intent(requireContext(), OperationAnalysisActivity::class.java))
         }
     }
 

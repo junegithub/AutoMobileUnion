@@ -43,6 +43,8 @@
 
         <activity android:name=".pages.LoginActivity" />
         <activity android:name=".pages.DeviceAlarmActivity" />
+        <activity android:name=".pages.DeviceStatusActivity" />
+        <activity android:name=".pages.OperationAnalysisActivity" />
     </application>
 
 </manifest>

@@ -43,4 +43,28 @@
     <string name="confirm">确定</string>
     <string name="start">开始</string>
     <string name="end">结束</string>
+
+    <string name="device_status">设备状态</string>
+    <string name="driving">行驶中</string>
+    <string name="str_static">静止</string>
+    <string name="offline">离线</string>
+    <string name="overspeed">超速</string>
+    <string name="fatigue">疲劳</string>
+    <string name="expired">到期</string>
+
+    <string name="operation_analysis">运营分析</string>
+    <string name="vehicle_operation">当前车辆运营情况</string>
+    <string name="alarm_distribution">报警分布情况</string>
+
+    <!-- 车辆运营图例 -->
+    <string name="arrears">欠费</string>
+    <string name="normal">正常</string>
+    <string name="maintenance">维修</string>
+    <string name="stop">停用</string>
+
+    <!-- 报警分布图例 -->
+    <string name="overspeed_alarm">超速报警</string>
+    <string name="fatigue_driving">疲劳驾驶</string>
+    <string name="camera_fault">摄像头故障</string>
+    <string name="other_alarm">其他报警</string>
 </resources>

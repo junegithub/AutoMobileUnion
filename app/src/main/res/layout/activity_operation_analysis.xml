@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <!-- 标题栏 -->
+    <FrameLayout
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/title_bar_height"
+        android:layout_marginTop="@dimen/dp_32"
+        android:padding="@dimen/padding_10">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:scaleType="centerInside"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/arrow_back"
+            app:tint="@color/black" /> <!-- 自行添加返回箭头图标 -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="30dp"
+            android:text="@string/operation_analysis"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- 分割线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_gray"/>
+
+    <!-- 第一个模块：当前车辆运营情况 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_horizontal"
+        android:paddingTop="@dimen/margin_vertical">
+
+        <!-- 模块标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vehicle_operation"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/module_title_size"/>
+
+        <!-- 饼图（实心圆） -->
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pie_chart_vehicle"
+            android:layout_width="@dimen/pie_chart_size"
+            android:layout_height="@dimen/pie_chart_size"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin_vertical"/>
+
+        <!-- 运营情况图例（水平排列） -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/legend_margin_top"
+            android:orientation="horizontal"
+            android:spacing="15dp">
+
+            <!-- 欠费 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:spacing="5dp">
+                <View
+                    android:layout_width="@dimen/legend_color_size"
+                    android:layout_height="@dimen/legend_color_size"
+                    android:background="@color/color_arrears"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/arrears"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/legend_text_size"/>
+            </LinearLayout>
+
+            <!-- 正常 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:spacing="5dp">
+                <View
+                    android:layout_width="@dimen/legend_color_size"
+                    android:layout_height="@dimen/legend_color_size"
+                    android:background="@color/color_normal"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/normal"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/legend_text_size"/>
+            </LinearLayout>
+
+            <!-- 维修 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:spacing="5dp">
+                <View
+                    android:layout_width="@dimen/legend_color_size"
+                    android:layout_height="@dimen/legend_color_size"
+                    android:background="@color/color_maintenance"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/maintenance"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/legend_text_size"/>
+            </LinearLayout>
+
+            <!-- 停用 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:spacing="5dp">
+                <View
+                    android:layout_width="@dimen/legend_color_size"
+                    android:layout_height="@dimen/legend_color_size"
+                    android:background="@color/color_stop"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stop"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/legend_text_size"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 第二个模块：报警分布情况 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_horizontal"
+        android:paddingTop="@dimen/margin_vertical">
+
+        <!-- 模块标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alarm_distribution"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/module_title_size"/>
+
+        <!-- 饼图（实心圆） -->
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pie_chart_alarm"
+            android:layout_width="@dimen/pie_chart_size"
+            android:layout_height="@dimen/pie_chart_size"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin_vertical"/>
+
+        <!-- 报警分布图例（水平排列） -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/legend_margin_top"
+            android:orientation="horizontal"
+            android:spacing="15dp">
+
+            <!-- 超速报警 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:spacing="5dp">
+                <View
+                    android:layout_width="@dimen/legend_color_size"
+                    android:layout_height="@dimen/legend_color_size"
+                    android:background="@color/color_overspeed"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/overspeed_alarm"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/legend_text_size"/>
+            </LinearLayout>
+
+            <!-- 疲劳驾驶 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:spacing="5dp">
+                <View
+                    android:layout_width="@dimen/legend_color_size"
+                    android:layout_height="@dimen/legend_color_size"
+                    android:background="@color/color_fatigue"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fatigue_driving"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/legend_text_size"/>
+            </LinearLayout>
+
+            <!-- 摄像头故障 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:spacing="5dp">
+                <View
+                    android:layout_width="@dimen/legend_color_size"
+                    android:layout_height="@dimen/legend_color_size"
+                    android:background="@color/color_camera_fault"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/camera_fault"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/legend_text_size"/>
+            </LinearLayout>
+
+            <!-- 其他报警 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:spacing="5dp">
+                <View
+                    android:layout_width="@dimen/legend_color_size"
+                    android:layout_height="@dimen/legend_color_size"
+                    android:background="@color/color_other_alarm"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/other_alarm"
+                    android:textColor="@color/text_gray"
+                    android:textSize="@dimen/legend_text_size"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

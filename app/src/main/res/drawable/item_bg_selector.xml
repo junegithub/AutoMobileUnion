@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 按下状态：浅灰色背景 -->
+    <item android:drawable="@color/click_pressed" android:state_pressed="true"/>
+    <!-- 选中状态：浅蓝色背景（可选，如列表项选中时） -->
+    <item android:drawable="@color/click_selected" android:state_selected="true"/>
+    <!-- 禁用状态：浅灰偏白 -->
+    <item android:drawable="@color/click_disabled" android:state_enabled="false"/>
+    <!-- 默认状态：透明背景 -->
+    <item android:drawable="@android:color/transparent"/>
+</selector>

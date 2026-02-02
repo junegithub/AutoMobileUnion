@@ -45,4 +45,25 @@
     <color name="btn_white">#FFFFFF</color>       <!-- 按钮文字 -->
     <color name="divider_gray">#E0E0E0</color>    <!-- 分割线 -->
     <color name="bg_white">#FFFFFF</color>        <!-- 页面背景 -->
+
+    <color name="title_bar_bg">#FFFFFF</color>    <!-- 标题栏背景 -->
+    <color name="arrow_gray">#999999</color>     <!-- 箭头图标色 -->
+
+    <!-- 点击效果颜色 -->
+    <color name="click_pressed">#E0E0E0</color>    <!-- 按下时浅灰色 -->
+    <color name="click_selected">#E3F2FD</color>   <!-- 选中时浅蓝色 -->
+    <color name="click_disabled">#F5F5F5</color>   <!-- 禁用时浅灰 -->
+
+    <!-- 第一个饼图（车辆运营） -->
+    <color name="color_normal">#8BC34A</color>    <!-- 正常-绿色 -->
+    <color name="color_arrears">#2196F3</color>   <!-- 欠费-蓝色 -->
+    <color name="color_maintenance">#FFC107</color><!-- 维修-黄色 -->
+    <color name="color_stop">#F44336</color>      <!-- 停用-红色 -->
+    <!-- 第二个饼图（报警分布） -->
+    <color name="color_other_alarm">#9C27B0</color>    <!-- 其他报警-紫色 -->
+    <color name="color_overspeed">#B71C1C</color>      <!-- 超速报警-深红 -->
+    <color name="color_fatigue">#EF5350</color>        <!-- 疲劳驾驶-浅红 -->
+    <color name="color_camera_fault">#E53935</color>   <!-- 摄像头故障-红 -->
+    <color name="marker_bg">#000000</color>          <!-- 点击提示框背景 -->
+    <color name="marker_text">#FFFFFF</color>        <!-- 提示框文字色 -->
 </resources>
