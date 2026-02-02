@@ -21,4 +21,19 @@
     <color name="green_4caf50">#4CAF50</color>
     <color name="red_ff4444">#FF4444</color>
     <color name="orange_ff9800">#FF9800</color>
+
+    <color name="primary_blue">#1E88E5</color>
+    <color name="primary_purple">#9C27B0</color>
+    <color name="primary_purple_light">#BA68C8</color>
+    <color name="gray_light">#F5F5F5</color>
+    <color name="gray_placeholder">#EEEEEE</color>
+    <color name="text_black">#333333</color>
+    <color name="text_gray">#999999</color>
+    <color name="text_gray_light">#CCCCCC</color>
+    <color name="red_dot">#FF4444</color>
+    <color name="green_dot">#00C853</color>
+    <color name="login_bg">#F8F9FA</color>
+    <color name="transparent">#00000000</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="error">#FF0000</color>
 </resources>

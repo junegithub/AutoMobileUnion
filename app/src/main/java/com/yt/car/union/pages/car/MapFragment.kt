@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.amap.api.maps.AMap
 import com.amap.api.maps.CameraUpdateFactory
-import com.amap.api.maps.MapView
 import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.LatLngBounds
 import com.amap.api.maps.model.MarkerOptions
-import com.yt.car.union.R
+import com.yt.car.union.databinding.FragmentMapBinding
 import com.yt.car.union.util.StatusBarHeightUtil
 
 /**
@@ -20,7 +19,10 @@ import com.yt.car.union.util.StatusBarHeightUtil
  * 功能：定位蓝点、车辆标记、自动缩放显示所有车辆、车牌关联
  */
 class MapFragment : Fragment() {
-    private lateinit var mMapView: MapView // 地图View，必须与生命周期绑定
+    // 声明ViewBinding对象
+    private var _binding: FragmentMapBinding? = null
+    // 安全访问Binding（避免内存泄漏）
+    private val binding get() = _binding!!
     private lateinit var aMap: AMap // 高德地图核心对象
 
     // 车辆模拟数据（车牌+经纬度，实际从接口获取）
@@ -35,21 +37,20 @@ class MapFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_map, container, false)
-        view.findViewById<View>(R.id.fun_btns_layout).setPaddingRelative(0, StatusBarHeightUtil.getStatusBarHeight(requireContext()),0,0)
-        mMapView = view.findViewById(R.id.mapView)
+        _binding = FragmentMapBinding.inflate(inflater, container, false)
+        binding.funBtnsLayout.setPaddingRelative(0, StatusBarHeightUtil.getStatusBarHeight(requireContext()),0,0)
         // 地图View初始化，传入savedInstanceState保存状态
-        mMapView.onCreate(savedInstanceState)
+        binding.mapView.onCreate(savedInstanceState)
         // 初始化地图核心逻辑
         initAmap()
-        return view
+        return binding.root
     }
 
     /**
      * 初始化高德地图
      */
     private fun initAmap() {
-        aMap = mMapView.map // 获取地图核心对象
+        aMap = binding.mapView.map // 获取地图核心对象
         // 1. 开启定位蓝点（显示当前位置）
         aMap.isMyLocationEnabled = true
         // 2. 地图加载完成监听（确保地图初始化完成后再添加标记）
@@ -96,22 +97,23 @@ class MapFragment : Fragment() {
      */
     override fun onResume() {
         super.onResume()
-        mMapView.onResume()
+        binding.mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mMapView.onPause()
+        binding.mapView.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mMapView.onSaveInstanceState(outState)
+        binding.mapView.onSaveInstanceState(outState)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mMapView.onDestroy()
+        binding.mapView.onDestroy()
+        _binding = null
     }
 
     /**

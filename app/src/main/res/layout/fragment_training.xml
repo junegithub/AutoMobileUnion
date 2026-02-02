@@ -1,377 +1,417 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_light">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
-        <ScrollView
+        <LinearLayout
+            android:id="@+id/ll_top_icon"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dp_16"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:gravity="end"
+            android:orientation="horizontal">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <ImageView
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:src="@drawable/ic_bell"/>
+
+            <ImageView
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_marginStart="@dimen/dp_16"
+                android:src="@drawable/ic_avatar"/>
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_safe_training"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_8"
+            app:cardCornerRadius="@dimen/radius_16"
+            app:layout_constraintTop_toBottomOf="@id/ll_top_icon">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_purple_gradient"
+                android:orientation="vertical"
+                android:padding="@dimen/dp_20">
 
-                <!-- 顶部导航栏 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/safe_training"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_20"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_8"
+                    android:background="@color/white"
+                    android:paddingHorizontal="@dimen/dp_8"
+                    android:paddingVertical="@dimen/dp_4"
+                    android:text="@string/month_2"
+                    android:textColor="@color/primary_purple"
+                    android:textSize="@dimen/sp_12"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:background="@drawable/btn_white_radius"
+                    android:text="@string/btn_start_learn"
+                    android:textColor="@color/primary_purple"
+                    android:textSize="@dimen/sp_14"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <GridLayout
+            android:id="@+id/grid_exam"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_16"
+            android:columnCount="2"
+            android:rowCount="2"
+            app:layout_constraintTop_toBottomOf="@id/cv_safe_training">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_8"
+                android:layout_weight="1"
+                app:cardCornerRadius="@dimen/radius_8">
+
                 <LinearLayout
-                    android:id="@+id/top_nav"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="12dp"
-                    android:gravity="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:background="?attr/colorSurface">
+                    android:padding="@dimen/dp_16">
 
-                    <!-- 头像+姓名 -->
+                    <ImageView
+                        android:layout_width="@dimen/dp_32"
+                        android:layout_height="@dimen/dp_32"
+                        android:src="@drawable/ic_exam1"/>
+
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_8"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/ic_avatar"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="郭祥磊"
-                            android:textSize="12sp"
-                            android:layout_marginTop="4dp"
-                            android:textColor="?attr/colorOnSurface"/>
-                    </LinearLayout>
+                        android:orientation="vertical">
 
-                    <!-- 行车日志 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_driving_log"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="行车日志"
-                            android:textSize="12sp"
-                            android:layout_marginTop="4dp"
-                            android:textColor="?attr/colorOnSurface"/>
-                    </LinearLayout>
+                            android:text="@string/exam1"
+                            android:textColor="@color/text_black"
+                            android:textSize="@dimen/sp_16"/>
 
-                    <!-- 车辆安全检查 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_vehicle_check"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="车辆安全检查"
-                            android:textSize="12sp"
-                            android:layout_marginTop="4dp"
-                            android:textColor="?attr/colorOnSurface"/>
-                    </LinearLayout>
-
-                    <!-- 隐患排查 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_hazard_check"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="隐患排查"
-                            android:textSize="12sp"
-                            android:layout_marginTop="4dp"
-                            android:textColor="?attr/colorOnSurface"/>
+                            android:layout_marginTop="@dimen/dp_4"
+                            android:text="@string/btn_start_learn"
+                            android:textColor="@color/red_dot"
+                            android:textSize="@dimen/sp_12"/>
                     </LinearLayout>
                 </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <!-- 日常安全培训卡片 -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/training_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_margin="12dp"
-                    android:background="@drawable/bg_training_card"
-                    app:layout_constraintTop_toBottomOf="@id/top_nav">
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_8"
+                android:layout_weight="1"
+                app:cardCornerRadius="@dimen/radius_8">
 
-                    <!-- 左侧文字 -->
-                    <TextView
-                        android:id="@+id/training_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="日常安全培训"
-                        android:textSize="16sp"
-                        android:textColor="#333333"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_margin="12dp"/>
-
-                    <TextView
-                        android:id="@+id/training_info"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="江西6月\n九江市\n道路普通货物运输"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
-                        app:layout_constraintStart_toStartOf="@id/training_title"
-                        app:layout_constraintTop_toBottomOf="@id/training_title"/>
-
-                    <!-- 开始学习按钮 -->
-                    <Button
-                        android:id="@+id/btn_start_learn"
-                        android:layout_width="80dp"
-                        android:layout_height="30dp"
-                        android:text="开始学习"
-                        android:textSize="14sp"
-                        android:textColor="#FFFFFF"
-                        android:background="@drawable/bg_start_learn"
-                        android:padding="0dp"
-                        app:layout_constraintStart_toStartOf="@id/training_info"
-                        app:layout_constraintTop_toBottomOf="@id/training_info"/>
-
-                    <!-- 未完成标签 -->
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="60dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_unfinished"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_margin="12dp">
-
-                        <TextView
-                            android:id="@+id/tvUnfinishedCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="3个"
-                            android:textSize="14sp"
-                            android:textColor="#FF6666"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:layout_marginStart="8dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="未完成"
-                            android:textSize="12sp"
-                            android:textColor="#666666"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/tvUnfinishedCount"/>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- 5件待办标题 -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/todo_title_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/training_card">
-
-                    <TextView
-                        android:id="@+id/todo_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="5件待办："
-                        android:textSize="18sp"
-                        android:textColor="?attr/colorOnBackground"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-
-                    <TextView
-                        android:id="@+id/todo_learn_record"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="学习记录>"
-                        android:textSize="14sp"
-                        android:textColor="#666666"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- 待办列表容器 -->
                 <LinearLayout
-                    android:id="@+id/todoContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/todo_title_bar"/>
-
-                <!-- 安全会议模块 -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/meetingCard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/todoContainer"
-                    android:background="?attr/colorSurface"
-                    android:padding="8dp"
-                    android:elevation="2dp">
-
-                    <TextView
-                        android:id="@+id/meeting_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="安全会议"
-                        android:textSize="16sp"
-                        android:textColor="?attr/colorOnSurface"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-
-                    <TextView
-                        android:id="@+id/meeting_countdown"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3天2小时23分钟后开始"
-                        android:textSize="14sp"
-                        android:textColor="#FF6666"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/meeting_title"/>
-
-                    <TextView
-                        android:id="@+id/meeting_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="嘉祥全顺运输有限公司 嘉祥全顺运输有限公司晨会 2023-06-11 00:00:00到嘉祥全顺运输有限公司参会。2023-06-11 00:00:00签签到，2023-06-11 00:00:00签退。"
-                        android:textSize="12sp"
-                        android:textColor="?attr/colorOnSurface"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/meeting_title"
-                        android:layout_marginTop="4dp"/>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- 功能按钮区 -->
-                <LinearLayout
-                    android:id="@+id/function_buttons"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_margin="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/meetingCard">
+                    android:padding="@dimen/dp_16">
 
-                    <!-- 从业资格考试真题 -->
+                    <ImageView
+                        android:layout_width="@dimen/dp_32"
+                        android:layout_height="@dimen/dp_32"
+                        android:src="@drawable/ic_exam2"/>
+
                     <LinearLayout
-                        android:id="@+id/btnExamTrue"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_8"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:src="@drawable/ic_exam_true"/>
+                        android:orientation="vertical">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="从业资格\n考试真题"
-                            android:textSize="12sp"
-                            android:textColor="?attr/colorOnBackground"
-                            android:gravity="center"
-                            android:layout_marginTop="4dp"/>
-                    </LinearLayout>
+                            android:text="@string/exam2"
+                            android:textColor="@color/text_black"
+                            android:textSize="@dimen/sp_16"/>
 
-                    <!-- 两类人员真题 -->
-                    <LinearLayout
-                        android:id="@+id/btnTwoPerson"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:src="@drawable/ic_two_person"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="两类人员\n真题"
-                            android:textSize="12sp"
-                            android:textColor="?attr/colorOnBackground"
-                            android:gravity="center"
-                            android:layout_marginTop="4dp"/>
-                    </LinearLayout>
-
-                    <!-- 继续教育 -->
-                    <LinearLayout
-                        android:id="@+id/btnContinueEdu"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:src="@drawable/ic_continue_edu"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="继续教育"
-                            android:textSize="12sp"
-                            android:textColor="?attr/colorOnBackground"
-                            android:gravity="center"
-                            android:layout_marginTop="4dp"/>
+                            android:layout_marginTop="@dimen/dp_4"
+                            android:text="@string/btn_start_learn"
+                            android:textColor="@color/green_dot"
+                            android:textSize="@dimen/sp_12"/>
                     </LinearLayout>
                 </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <!-- 底部信息 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_8"
+                android:layout_weight="1"
+                app:cardCornerRadius="@dimen/radius_8">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_marginBottom="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/function_buttons"
-                    android:layout_marginTop="12dp">
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_16">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="©山东易车联电子科技有限公司"
-                        android:textSize="12sp"
-                        android:textColor="#999999"/>
+                    <ImageView
+                        android:layout_width="@dimen/dp_32"
+                        android:layout_height="@dimen/dp_32"
+                        android:src="@drawable/ic_exam3"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="客服电话：0535-4971763"
-                        android:textSize="12sp"
-                        android:textColor="#999999"
-                        android:layout_marginTop="4dp"/>
+                        android:layout_marginStart="@dimen/dp_8"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/exam3"
+                            android:textColor="@color/text_black"
+                            android:textSize="@dimen/sp_16"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_4"
+                            android:text="@string/btn_start_learn"
+                            android:textColor="@color/red_dot"
+                            android:textSize="@dimen/sp_12"/>
+                    </LinearLayout>
                 </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_8"
+                android:layout_weight="1"
+                app:cardCornerRadius="@dimen/radius_8">
 
-        </ScrollView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_16">
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    <ImageView
+                        android:layout_width="@dimen/dp_32"
+                        android:layout_height="@dimen/dp_32"
+                        android:src="@drawable/ic_exam4"/>
 
-</layout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_8"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/exam4"
+                            android:textColor="@color/text_black"
+                            android:textSize="@dimen/sp_16"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_4"
+                            android:text="@string/btn_start_exam"
+                            android:textColor="@color/red_dot"
+                            android:textSize="@dimen/sp_12"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </GridLayout>
+
+        <TextView
+            android:id="@+id/tv_safe_manage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_16"
+            android:text="@string/safe_manage"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/sp_18"
+            app:layout_constraintTop_toBottomOf="@id/grid_exam"/>
+
+        <GridLayout
+            android:id="@+id/grid_safe_manage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_8"
+            android:columnCount="3"
+            android:rowCount="2"
+            app:layout_constraintTop_toBottomOf="@id/tv_safe_manage">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_8"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:src="@drawable/ic_log"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_4"
+                    android:text="@string/driving_log"
+                    android:textSize="@dimen/sp_12"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_8"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:src="@drawable/ic_car_check"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_4"
+                    android:text="@string/car_check"
+                    android:textSize="@dimen/sp_12"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_8"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:src="@drawable/ic_hazard"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_4"
+                    android:text="@string/hazard_check"
+                    android:textSize="@dimen/sp_12"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_8"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:src="@drawable/ic_driver_duty"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_4"
+                    android:text="@string/driver_duty"
+                    android:textSize="@dimen/sp_12"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_8"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:src="@drawable/ic_driver_promise"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_4"
+                    android:text="@string/driver_promise"
+                    android:textSize="@dimen/sp_12"/>
+            </LinearLayout>
+        </GridLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_64"
+            android:layout_marginHorizontal="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_16"
+            android:layout_marginBottom="@dimen/dp_16"
+            android:background="@drawable/btn_blue_radius"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/dp_16"
+            app:layout_constraintTop_toBottomOf="@id/grid_safe_manage">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/recruitment"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_18"/>
+
+            <ImageView
+                android:layout_width="@dimen/dp_20"
+                android:layout_height="@dimen/dp_20"
+                android:src="@drawable/ic_arrow_right"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

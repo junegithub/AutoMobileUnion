@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_car"
-        android:title="查车"
+        android:title="@string/tab_car_check"
         android:icon="@drawable/tab_car" />
     <item
         android:id="@+id/nav_training"
-        android:title="培训"
+        android:title="@string/tab_training"
         android:icon="@drawable/tab_training" />
 </menu>

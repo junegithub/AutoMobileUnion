@@ -45,8 +45,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
-        // 如果需要DataBinding，添加这行：
-         dataBinding = true
+        dataBinding = true
     }
 
 }
