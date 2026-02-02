@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import android.util.Log
+import com.yt.car.union.MyApp
 import com.yt.car.union.net.RetrofitClient
 import com.yt.car.union.net.bean.LoginRequest
 import com.yt.car.union.util.SPUtils
@@ -26,7 +27,8 @@ class LoginViewModel : ViewModel() {
                 // 业务成功判断（对应原JS的code=200）
                 if (response.code == 1 && response.data != null) {
                     // 保存Token
-                    SPUtils.saveToken(response.data.userinfo?.token)
+//                    SPUtils.saveToken(response.data.userinfo?.token)
+                    MyApp.isLogin = true
                     callback(true, "登录成功")
                 } else {
                     callback(false, response.msg ?: "登录失败")

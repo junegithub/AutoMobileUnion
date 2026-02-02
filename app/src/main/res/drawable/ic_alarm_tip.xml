@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:width="@dimen/dp_24" android:height="@dimen/dp_24" android:drawable="@drawable/ic_status_png" />
+    <item android:width="@dimen/dp_24" android:height="@dimen/dp_24" android:drawable="@drawable/ic_alarm_tip_png" />
 </layer-list>

@@ -28,6 +28,8 @@
     <string name="hint_account">请输入登录账号</string>
     <string name="hint_pwd">请输入登录密码</string>
     <string name="agreement">我已阅读并同意《服务协议》及《隐私政策》</string>
+    <string name="agreement_service">《服务协议》</string>
+    <string name="agreement_privacy">《隐私政策》</string>
     <string name="contact_service">联系客服</string>
     <string name="copyright">Copyright © 2023 车启联 版权所有</string>
     <string name="toast_agreement">请同意服务协议和隐私政策</string>

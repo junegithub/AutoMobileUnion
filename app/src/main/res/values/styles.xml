@@ -8,4 +8,14 @@
         <!-- 底部Tab选中颜色 -->
         <item name="bottomNavigationStyle">@style/Widget.MaterialComponents.BottomNavigationView.Colored</item>
     </style>
+
+    <style name="homeText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">@dimen/dp_8</item>
+        <item name="android:text">@string/status</item>
+        <item name="android:textSize">@dimen/sp_12</item>
+        <item name="android:drawablePadding">@dimen/dp_4</item>
+    </style>
 </resources>

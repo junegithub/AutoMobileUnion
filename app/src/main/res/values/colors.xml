@@ -32,7 +32,7 @@
     <color name="text_gray_light">#CCCCCC</color>
     <color name="red_dot">#FF4444</color>
     <color name="green_dot">#00C853</color>
-    <color name="login_bg">#F8F9FA</color>
+    <color name="login_bg">@color/white</color>
     <color name="transparent">#00000000</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="error">#FF0000</color>

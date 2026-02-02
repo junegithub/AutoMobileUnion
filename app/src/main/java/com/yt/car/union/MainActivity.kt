@@ -14,7 +14,6 @@ import com.yt.car.union.viewmodel.LoginViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val viewModel by viewModels<LoginViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,22 +55,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-
-        doLogin()
     }
 
-    fun doLogin() {
-        val account = "admin"
-        val password = "32kVDyQXzPnfMJ"
-        val type = 1
-
-        viewModel.login(account, password, type) { isSuccess, msg ->
-            runOnUiThread {
-                Log.w("June", "login reponse:$isSuccess, $msg")
-                if (isSuccess) {
-
-                }
-            }
-        }
-    }
 }

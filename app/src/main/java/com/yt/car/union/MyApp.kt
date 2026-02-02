@@ -36,5 +36,7 @@ class MyApp : Application() {
         fun getAppContext(): Context {
             return getInstance().applicationContext
         }
+
+        var isLogin: Boolean? = null
     }
 }

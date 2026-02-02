@@ -1,6 +1,7 @@
 [versions]
 agp = "8.13.2"
 constraintlayout = "2.1.4"
+eventbus = "3.3.1"
 kotlin = "2.3.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -16,6 +17,7 @@ mpandroidchart = "v3.1.0"
 navigationFragmentKtx = "2.7.6"
 navigationUiKtx = "2.7.6"
 retrofit = "3.0.0"
+swiperefreshlayout = "1.2.0"
 viewpager2 = "1.1.0"
 xdmap = "10.0.600"
 xdmapVersion = "9.2.0"
@@ -25,8 +27,10 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

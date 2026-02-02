@@ -1,5 +1,6 @@
 package com.yt.car.union.pages.car
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,15 @@ import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.LatLngBounds
 import com.amap.api.maps.model.MarkerOptions
+import com.yt.car.union.LoginActivity
+import com.yt.car.union.MyApp
+import com.yt.car.union.R
 import com.yt.car.union.databinding.FragmentMapBinding
-import com.yt.car.union.util.StatusBarHeightUtil
+import com.yt.car.union.util.EventData
+import com.yt.car.union.util.PressEffectUtils
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 /**
  * 查车页面：高德地图核心实现
@@ -38,11 +46,10 @@ class MapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
-        binding.funBtnsLayout.setPaddingRelative(0, StatusBarHeightUtil.getStatusBarHeight(requireContext()),0,0)
         // 地图View初始化，传入savedInstanceState保存状态
         binding.mapView.onCreate(savedInstanceState)
-        // 初始化地图核心逻辑
-        initAmap()
+        EventBus.getDefault().register(this)
+        initView()
         return binding.root
     }
 
@@ -62,6 +69,35 @@ class MapFragment : Fragment() {
         aMap.setOnMarkerClickListener { marker ->
             marker.showInfoWindow() // 显示车牌信息窗口
             true
+        }
+    }
+
+    private fun initListener() {
+        PressEffectUtils.setCommonPressEffect(binding.tvUnlogin)
+        PressEffectUtils.setCommonPressEffect(binding.alarm)
+        PressEffectUtils.setCommonPressEffect(binding.report)
+        PressEffectUtils.setCommonPressEffect(binding.analysis)
+        PressEffectUtils.setCommonPressEffect(binding.status)
+        PressEffectUtils.setCommonPressEffect(binding.btnAllCars)
+
+        // 未登录按钮跳转登录页
+        binding.tvUnlogin.setOnClickListener {
+            startActivity(Intent(requireContext(), LoginActivity::class.java))
+        }
+    }
+
+    private fun initView() {
+        // 初始化地图核心逻辑
+        initAmap()
+        initListener()
+        updateViewLoginState()
+    }
+
+    private fun updateViewLoginState() {
+        if (MyApp.isLogin == true) {
+            binding.tvUnlogin.setImageResource(R.drawable.user_avatar)
+        } else {
+            binding.tvUnlogin.setImageResource(R.drawable.login_avatar)
         }
     }
 
@@ -112,8 +148,18 @@ class MapFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        EventBus.getDefault().unregister(this)
         binding.mapView.onDestroy()
         _binding = null
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: EventData) {
+        when (event.eventType) {
+            EventData.EVENT_LOGIN -> {
+                updateViewLoginState()
+            }
+        }
     }
 
     /**

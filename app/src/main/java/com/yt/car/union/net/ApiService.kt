@@ -21,7 +21,7 @@ interface ApiService {
     // ===================== 登录/注销 =====================
     // 登录（auth/app/login）
     @POST("auth/app/login")
-    suspend fun loginApi(@Body request: LoginRequest): BaseResponse<LoginResponse>
+    suspend fun loginApi(@Body request: LoginRequest): BaseResponse<Any>
 
     // 账号密码登录（api/user/login）
     @POST("api/user/login")
