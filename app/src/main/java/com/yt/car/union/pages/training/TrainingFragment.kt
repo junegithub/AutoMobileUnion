@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.yt.car.union.R
 import com.yt.car.union.bean.TodoItem
@@ -16,7 +17,7 @@ import com.yt.car.union.util.StatusBarHeightUtil
 import com.yt.car.union.viewmodel.SafetyViewModel
 import java.util.concurrent.TimeUnit
 
-class TrainingFragment : Fragment() {
+class TrainingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private var _binding: FragmentSafetyMainBinding? = null
     private val binding get() = _binding!!
@@ -30,8 +31,8 @@ class TrainingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSafetyMainBinding.inflate(inflater, container, false)
-        view.content_root.setPaddingRelative(0, StatusBarHeightUtil.getStatusBarHeight(requireContext()), 0,0)
-        return _binding.root
+        _binding?.swipeRefreshLayout?.setPaddingRelative(0, StatusBarHeightUtil.getStatusBarHeight(requireContext()), 0,0)
+        return _binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,7 +42,6 @@ class TrainingFragment : Fragment() {
 
         // 初始化下拉刷新
         binding.swipeRefreshLayout.setOnRefreshListener(this)
-        binding.swipeRefreshLayout.setColorSchemeResources(R.color.green_500)
 
         // 观察数据变化
         observeData()
@@ -129,31 +129,31 @@ class TrainingFragment : Fragment() {
     private fun initClickEvents() {
         // 开始学习按钮
         binding.btnStartLearn.setOnClickListener {
-            navigateToFragment(LearnDetailFragment())
+//            navigateToFragment(LearnDetailFragment())
             Toast.makeText(context, "进入日常安全培训详情", Toast.LENGTH_SHORT).show()
         }
 
         // 学习记录
         binding.todoLearnRecord.setOnClickListener {
-            navigateToFragment(LearnRecordFragment())
+//            navigateToFragment(LearnRecordFragment())
             Toast.makeText(context, "进入学习记录页面", Toast.LENGTH_SHORT).show()
         }
 
         // 从业资格考试真题
         binding.btnExamTrue.setOnClickListener {
-            navigateToFragment(ExamTrueFragment())
+//            navigateToFragment(ExamTrueFragment())
             Toast.makeText(context, "进入从业资格考试真题", Toast.LENGTH_SHORT).show()
         }
 
         // 两类人员真题
         binding.btnTwoPerson.setOnClickListener {
-            navigateToFragment(TwoPersonFragment())
+//            navigateToFragment(TwoPersonFragment())
             Toast.makeText(context, "进入两类人员真题", Toast.LENGTH_SHORT).show()
         }
 
         // 继续教育
         binding.btnContinueEdu.setOnClickListener {
-            navigateToFragment(ContinueEduFragment())
+//            navigateToFragment(ContinueEduFragment())
             Toast.makeText(context, "进入继续教育页面", Toast.LENGTH_SHORT).show()
         }
 
@@ -161,7 +161,7 @@ class TrainingFragment : Fragment() {
         binding.meetingCard.setOnClickListener {
             val meeting = viewModel.meetingItem.value
             meeting?.let {
-                navigateToFragment(MeetingDetailFragment.newInstance(meeting))
+//                navigateToFragment(MeetingDetailFragment.newInstance(meeting))
                 Toast.makeText(context, "进入安全会议详情", Toast.LENGTH_SHORT).show()
             }
         }
@@ -171,18 +171,18 @@ class TrainingFragment : Fragment() {
      * 跳转到待办详情页
      */
     private fun navigateToTodoDetail(todo: TodoItem) {
-        val fragment = TodoDetailFragment.newInstance(todo)
-        navigateToFragment(fragment)
+//        val fragment = TodoDetailFragment.newInstance(todo)
+//        navigateToFragment(fragment)
     }
 
     /**
      * 通用Fragment跳转方法
      */
     private fun navigateToFragment(fragment: Fragment) {
-        parentFragmentManager.commit {
-            replace(R.id.fragment_container, fragment)
-            addToBackStack(null) // 添加到返回栈，支持返回
-        }
+//        parentFragmentManager.commit {
+//            replace(R.id.fragment_container, fragment)
+//            addToBackStack(null) // 添加到返回栈，支持返回
+//        }
     }
 
     /**
@@ -198,6 +198,6 @@ class TrainingFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() = SafetyMainFragment()
+        fun newInstance() = TrainingFragment()
     }
 }

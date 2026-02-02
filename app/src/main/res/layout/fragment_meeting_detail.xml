@@ -4,11 +4,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/colorBackground">
+        android:layout_height="match_parent">
 
         <!-- 顶部返回栏 -->
         <LinearLayout
+            android:id="@+id/btnBackLayout"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="?attr/colorSurface"
@@ -38,15 +38,14 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/btnBack"
+            app:layout_constraintTop_toBottomOf="@id/btnBackLayout"
             app:layout_constraintBottom_toBottomOf="parent"
             android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gap="16dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvMeetingTitle"
