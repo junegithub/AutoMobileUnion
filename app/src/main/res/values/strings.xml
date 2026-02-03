@@ -67,4 +67,7 @@
     <string name="fatigue_driving">疲劳驾驶</string>
     <string name="camera_fault">摄像头故障</string>
     <string name="other_alarm">其他报警</string>
+
+    <string name="cancel">取消</string>
+    <string name="no_date_selected">未选择日期</string>
 </resources>

@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/calendar_text_gray"
+        android:pathData="M18.41,11.59L13.82,16.17L12.41,14.76L15.24,11.93L6,11.93L6,10.07L15.24,10.07L12.41,7.24L13.82,5.83L18.41,10.41L18.41,11.59ZM10.41,11.59L5.82,16.17L4.41,14.76L7.24,11.93L2,11.93L2,10.07L7.24,10.07L4.41,7.24L5.82,5.83L10.41,10.41L10.41,11.59Z"/>
+</vector>

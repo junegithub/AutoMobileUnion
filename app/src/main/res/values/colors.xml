@@ -72,4 +72,20 @@
     <color name="time_selected">#1890FF</color>
     <color name="time_unselected">#4E5969</color>
     <color name="bg_gray">#F5F7FA</color>
+
+    <color name="gray_600">#666666</color>
+    <!-- 按钮色 -->
+    <color name="btn_gray">#F2F2F2</color>
+    <!-- 日历选中色 -->
+    <color name="calendar_selected_blue">#007AFF</color>
+    <!-- 日历范围中间色 -->
+    <color name="calendar_range_blue">#CCE0FF</color>
+    <!-- 核心配色：截图同款蓝色 -->
+    <color name="calendar_primary">#0066FF</color>
+    <color name="calendar_primary_light">#E6F0FF</color>
+    <color name="calendar_text_black">#333333</color>
+    <color name="calendar_text_gray">#999999</color>
+    <color name="calendar_bg_white">#FFFFFF</color>
+    <color name="calendar_divider">#F5F5F5</color>
+    <color name="icon_gray">#666666</color>
 </resources>

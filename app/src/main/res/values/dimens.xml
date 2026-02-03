@@ -73,4 +73,39 @@
     <!-- 点击提示框 -->
     <dimen name="marker_padding">8dp</dimen>
     <dimen name="marker_text_size">12sp</dimen>
+
+    <dimen name="text_12">12sp</dimen>
+    <dimen name="text_14">14sp</dimen>
+    <dimen name="text_16">16sp</dimen>
+    <dimen name="text_18">18sp</dimen>
+
+    <!-- 弹窗相关 -->
+    <dimen name="bottom_sheet_radius">20dp</dimen>
+    <dimen name="dialog_padding">16dp</dimen>
+    <dimen name="dialog_title_margin_bottom">12dp</dimen>
+
+    <!-- 月份栏 -->
+    <dimen name="month_bar_height">48dp</dimen>
+    <dimen name="arrow_size">24dp</dimen>
+    <dimen name="month_text_size">18sp</dimen>
+
+    <!-- 星期栏 -->
+    <dimen name="week_bar_height">36dp</dimen>
+    <dimen name="week_text_size">14sp</dimen>
+
+    <!-- 日历单元格 -->
+    <dimen name="calendar_cell_size">48dp</dimen>
+    <dimen name="calendar_cell_margin">2dp</dimen>
+    <dimen name="date_text_size">16sp</dimen>
+    <dimen name="date_label_size">10sp</dimen>
+
+    <!-- 按钮栏 -->
+    <dimen name="btn_radius">22dp</dimen>
+    <dimen name="btn_text_size">16sp</dimen>
+    <dimen name="btn_margin_left">12dp</dimen>
+
+    <dimen name="close_icon_size">24dp</dimen>
+    <dimen name="close_icon_margin">8dp</dimen>
+
+    <dimen name="year_arrow_size">20dp</dimen>
 </resources>

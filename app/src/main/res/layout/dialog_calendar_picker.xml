@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/shape_bottom_sheet_top"
+    android:padding="@dimen/dialog_padding">
+
+    <!-- 标题栏（含右上角关闭Icon） -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dialog_title_margin_bottom">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_date"
+            android:textSize="@dimen/month_text_size"
+            android:textColor="@color/calendar_text_black"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"/>
+
+        <!-- 右上角取消Icon -->
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="@dimen/close_icon_size"
+            android:layout_height="@dimen/close_icon_size"
+            android:src="@drawable/ic_close"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/close_icon_margin"
+            android:contentDescription="@null"/>
+    </RelativeLayout>
+
+    <!-- 年月切换栏（新增上一年/下一年） -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/month_bar_height"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp">
+
+        <!-- 上一年 -->
+        <ImageView
+            android:id="@+id/iv_prev_year"
+            android:layout_width="@dimen/year_arrow_size"
+            android:layout_height="@dimen/year_arrow_size"
+            android:src="@drawable/ic_arrow_left_double"
+            android:padding="2dp"
+            android:contentDescription="@null"/>
+
+        <!-- 上月 -->
+        <ImageView
+            android:id="@+id/iv_prev_month"
+            android:layout_width="@dimen/arrow_size"
+            android:layout_height="@dimen/arrow_size"
+            android:src="@drawable/ic_arrow_left_gray"
+            android:padding="4dp"
+            android:layout_marginLeft="8dp"
+            android:contentDescription="@null"/>
+
+        <TextView
+            android:id="@+id/tv_month"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="2026年2月"
+            android:textSize="@dimen/month_text_size"
+            android:textColor="@color/calendar_text_black"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <!-- 下月 -->
+        <ImageView
+            android:id="@+id/iv_next_month"
+            android:layout_width="@dimen/arrow_size"
+            android:layout_height="@dimen/arrow_size"
+            android:src="@drawable/ic_arrow_right_gray"
+            android:padding="4dp"
+            android:layout_marginRight="8dp"
+            android:contentDescription="@null"/>
+
+        <!-- 下一年 -->
+        <ImageView
+            android:id="@+id/iv_next_year"
+            android:layout_width="@dimen/year_arrow_size"
+            android:layout_height="@dimen/year_arrow_size"
+            android:src="@drawable/ic_arrow_right_double"
+            android:padding="2dp"
+            android:contentDescription="@null"/>
+    </LinearLayout>
+
+    <!-- 星期栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/week_bar_height"
+        android:gravity="center">
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="日" android:textSize="@dimen/week_text_size" android:textColor="@color/calendar_text_gray" android:gravity="center"/>
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="一" android:textSize="@dimen/week_text_size" android:textColor="@color/calendar_text_gray" android:gravity="center"/>
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="二" android:textSize="@dimen/week_text_size" android:textColor="@color/calendar_text_gray" android:gravity="center"/>
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="三" android:textSize="@dimen/week_text_size" android:textColor="@color/calendar_text_gray" android:gravity="center"/>
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="四" android:textSize="@dimen/week_text_size" android:textColor="@color/calendar_text_gray" android:gravity="center"/>
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="五" android:textSize="@dimen/week_text_size" android:textColor="@color/calendar_text_gray" android:gravity="center"/>
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="六" android:textSize="@dimen/week_text_size" android:textColor="@color/calendar_text_gray" android:gravity="center"/>
+    </LinearLayout>
+
+    <!-- 日历网格 -->
+    <GridView
+        android:id="@+id/gv_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="7"
+        android:verticalSpacing="@dimen/calendar_cell_margin"
+        android:horizontalSpacing="@dimen/calendar_cell_margin"
+        android:stretchMode="columnWidth"/>
+
+    <!-- 底部蓝色长条确认按钮 -->
+    <Button
+        android:id="@+id/btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:text="@string/confirm"
+        android:textSize="@dimen/btn_text_size"
+        android:textColor="@color/calendar_bg_white"
+        android:background="@color/calendar_primary"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/calendar_primary"
+        android:shape="rectangle"
+        android:radius="@dimen/btn_radius"/>
+
+</LinearLayout>
