@@ -66,4 +66,10 @@
     <color name="color_camera_fault">#E53935</color>   <!-- 摄像头故障-红 -->
     <color name="marker_bg">#80000000</color>          <!-- 点击提示框背景 -->
     <color name="marker_text">#FFFFFF</color>        <!-- 提示框文字色 -->
+
+    <color name="tab_selected">#1890FF</color>
+    <color name="tab_unselected">#4E5969</color>
+    <color name="time_selected">#1890FF</color>
+    <color name="time_unselected">#4E5969</color>
+    <color name="bg_gray">#F5F7FA</color>
 </resources>

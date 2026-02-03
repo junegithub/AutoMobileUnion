@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 android {
@@ -78,6 +79,10 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
 
     implementation(libs.eventbus)
+
+    // Glide（加载图片）
+    implementation(libs.glide)
+    kapt(libs.compiler.v4160)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

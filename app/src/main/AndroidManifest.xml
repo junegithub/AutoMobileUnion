@@ -45,6 +45,7 @@
         <activity android:name=".pages.DeviceAlarmActivity" />
         <activity android:name=".pages.DeviceStatusActivity" />
         <activity android:name=".pages.OperationAnalysisActivity" />
+        <activity android:name=".pages.ReportActivity" />
     </application>
 
 </manifest>
