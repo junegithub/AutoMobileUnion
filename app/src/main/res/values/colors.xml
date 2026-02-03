@@ -64,6 +64,6 @@
     <color name="color_overspeed">#B71C1C</color>      <!-- 超速报警-深红 -->
     <color name="color_fatigue">#EF5350</color>        <!-- 疲劳驾驶-浅红 -->
     <color name="color_camera_fault">#E53935</color>   <!-- 摄像头故障-红 -->
-    <color name="marker_bg">#000000</color>          <!-- 点击提示框背景 -->
+    <color name="marker_bg">#80000000</color>          <!-- 点击提示框背景 -->
     <color name="marker_text">#FFFFFF</color>        <!-- 提示框文字色 -->
 </resources>

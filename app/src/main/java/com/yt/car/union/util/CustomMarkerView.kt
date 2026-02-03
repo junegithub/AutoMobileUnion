@@ -17,10 +17,7 @@ class CustomMarkerView(context: Context) : MarkerView(context, R.layout.layout_m
     // 绑定提示文本（根据饼图条目动态显示）
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
         e?.let { entry ->
-            val label = when (entry.data as String) {
-                else -> "" // 其他条目暂不显示
-            }
-            tvContent.text = label
+            tvContent.text = entry.data.toString() + ":" + entry.y
         }
         super.refreshContent(e, highlight)
     }

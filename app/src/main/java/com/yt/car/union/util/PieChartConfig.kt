@@ -7,7 +7,6 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
-import com.github.mikephil.charting.utils.MPPointF
 import com.yt.car.union.R
 
 /**
@@ -21,9 +20,10 @@ object PieChartConfig {
     fun initPieChart(pieChart: PieChart) {
         // 1. 基础配置（实心圆）
         pieChart.isDrawHoleEnabled = false // 禁用空心，实现实心圆
-        pieChart.setHoleColor(Color.TRANSPARENT)
-        pieChart.setTransparentCircleColor(Color.TRANSPARENT)
-        pieChart.setTransparentCircleAlpha(0)
+        pieChart.setDrawEntryLabels(false)
+        //设置图表偏移量
+        pieChart.setExtraOffsets(5f, 5f, 5f, 5f)
+        pieChart.animateXY(1000, 1000);
 
         // 2. 禁用旋转/拖拽（但保留点击）
         pieChart.isRotationEnabled = false
@@ -38,17 +38,33 @@ object PieChartConfig {
         // 4. 百分比配置（外侧显示+引线）
         pieChart.setUsePercentValues(true)
         pieChart.setDrawEntryLabels(false)
-//        pieChart.valueTextSize = pieChart.resources.getDimension(R.dimen.pie_percent_size)
-//        pieChart.valueTextColor = Color.BLACK
-//        pieChart.valueFormatter = PercentFormatter() // 百分比格式
 
-        // 5. 隐藏库自带图例（手动布局）
+
+        // 5. 自带图例
         val legend = pieChart.legend
-        legend.isEnabled = false
+        legend.isEnabled = true
+        //设置图例的实际对齐方式
+        legend.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+        //设置图例水平对齐方式
+        legend.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+        //设置图例方向
+        legend.orientation = Legend.LegendOrientation.HORIZONTAL
+        //设置图例是否在图表内绘制
+        legend.setDrawInside(false)
+        //设置水平图例之间的空间
+        legend.xEntrySpace = 5f
+        //设置垂直轴上图例条目间的空间
+        legend.yEntrySpace = 0f
+        //设置x轴偏移量
+        legend.xOffset = 0f
+        //设置此轴上的标签使用的y轴偏移量。对于图例，*高偏移量意味着整个图例将被放置在离顶部*更远的地方。
+        legend.yOffset = 5f
+        //设置字体大小
+        legend.setTextSize(12f)
+        legend.form = Legend.LegendForm.CIRCLE
 
         // 6. 开启点击高亮
         pieChart.isHighlightPerTapEnabled = true
-//        pieChart.highlightDistance = 10f
     }
 
     /**
@@ -64,11 +80,18 @@ object PieChartConfig {
         // 1. 颜色配置
         dataSet.colors = colors
 
+        dataSet.valueTextSize = 12f//pieChart.resources.getDimension(R.dimen.pie_percent_size)
+        dataSet.valueTextColor = Color.BLACK
+        dataSet.valueFormatter = PercentFormatter() // 百分比格式
+
         // 2. 引线样式（匹配截图）
-        dataSet.valueLinePart1Length = 0.2f // 引线第一段长度
-        dataSet.valueLinePart2Length = 0.3f // 引线第二段长度
+        //当valuePosition在外部时，表示行前半部分的长度(即折线靠近圆的那端长度)
+        dataSet.valueLinePart1Length = 0.8f // 引线第一段长度
+        /**当valuePosition位于外部时，表示行后半部分的长度*(即折线靠近百分比那端的长度) */
+        dataSet.valueLinePart2Length = 0.1f // 引线第二段长度
         dataSet.valueLineWidth = 1f         // 引线宽度
         dataSet.valueLineColor = pieChart.resources.getColor(R.color.text_gray) // 引线灰色
+        //设置Y值的位置在圆外
         dataSet.yValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE // 数值外侧
         dataSet.xValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
 //        dataSet.valueLineVariableLength = true

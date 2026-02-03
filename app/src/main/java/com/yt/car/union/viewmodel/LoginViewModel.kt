@@ -50,7 +50,20 @@ class LoginViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 // 异常处理（网络错误、解析错误等）
-                Log.e("LoginViewModel", "登录失败", e)
+                Log.e("LoginViewModel", "获取信息失败", e)
+            }
+        }
+    }
+
+    fun logout(callback: (Boolean) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.getApiService().loginOut()
+                callback(response.code == 1)
+            } catch (e: Exception) {
+                // 异常处理（网络错误、解析错误等）
+                Log.e("LoginViewModel", "登出失败", e)
+                callback(false)
             }
         }
     }

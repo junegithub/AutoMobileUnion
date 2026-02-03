@@ -24,6 +24,8 @@ interface ApiService {
     // 登录（auth/app/login）
     @POST("auth/app/login")
     suspend fun loginApi(@Body request: LoginRequest): BaseResponse<LoginResponse>
+    @DELETE("auth/app/logout")
+    suspend fun loginOut(): BaseResponse<Any>
 
     // 账号密码登录（api/user/login）
     @POST("api/user/login")
@@ -35,7 +37,7 @@ interface ApiService {
 
     // 退出登录（api/user/logout）
     @GET("api/user/logout")
-    suspend fun loginOut(): BaseResponse<Any>
+    suspend fun loginOutTraining(): BaseResponse<Any>
 
     // ===================== 用户信息 =====================
 
