@@ -18,4 +18,24 @@
         <item name="android:textSize">@dimen/sp_12</item>
         <item name="android:drawablePadding">@dimen/dp_4</item>
     </style>
+
+    <!-- 自定义BottomSheetDialogFragment的主题 -->
+    <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <!-- 核心：重写BottomSheet的基础样式 -->
+        <item name="bottomSheetStyle">@style/CustomBottomSheet</item>
+        <!-- 可选：去除背景蒙层（默认半透明黑），如需保留则删除此属性 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 可选：设置蒙层透明度（0~1，0完全透明，1完全不透明） -->
+        <item name="android:backgroundDimAmount">0.5</item>
+    </style>
+
+    <!-- 自定义BottomSheet的具体样式 -->
+    <style name="CustomBottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <!-- 关键：设置自定义背景Drawable -->
+        <item name="android:background">@drawable/bg_bottom_sheet</item>
+        <!-- 可选：去除默认背景着色（避免Material库默认的颜色覆盖） -->
+        <item name="android:backgroundTint">@null</item>
+        <!-- 可选：设置BottomSheet的最小高度/最大高度 -->
+        <item name="android:minHeight">200dp</item>
+    </style>
 </resources>

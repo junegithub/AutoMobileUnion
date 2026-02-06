@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/shape_bottom_sheet_top"
     android:padding="@dimen/dialog_padding">
 
     <!-- 标题栏（含右上角关闭Icon） -->
@@ -36,14 +35,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/month_bar_height"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:paddingHorizontal="8dp">
 
         <!-- 上一年 -->
         <ImageView
             android:id="@+id/iv_prev_year"
-            android:layout_width="@dimen/year_arrow_size"
-            android:layout_height="@dimen/year_arrow_size"
+            android:layout_width="@dimen/arrow_size"
+            android:layout_height="@dimen/arrow_size"
             android:src="@drawable/ic_arrow_left_double"
             android:padding="2dp"
             android:contentDescription="@null"/>
@@ -53,16 +52,17 @@
             android:id="@+id/iv_prev_month"
             android:layout_width="@dimen/arrow_size"
             android:layout_height="@dimen/arrow_size"
-            android:src="@drawable/ic_arrow_left_gray"
+            android:src="@drawable/ic_arrow_left"
             android:padding="4dp"
             android:layout_marginLeft="8dp"
             android:contentDescription="@null"/>
 
         <TextView
             android:id="@+id/tv_month"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginEnd="@dimen/dp_16"
             android:text="2026年2月"
             android:textSize="@dimen/month_text_size"
             android:textColor="@color/calendar_text_black"
@@ -74,7 +74,7 @@
             android:id="@+id/iv_next_month"
             android:layout_width="@dimen/arrow_size"
             android:layout_height="@dimen/arrow_size"
-            android:src="@drawable/ic_arrow_right_gray"
+            android:src="@drawable/ic_arrow_right"
             android:padding="4dp"
             android:layout_marginRight="8dp"
             android:contentDescription="@null"/>
@@ -82,8 +82,8 @@
         <!-- 下一年 -->
         <ImageView
             android:id="@+id/iv_next_year"
-            android:layout_width="@dimen/year_arrow_size"
-            android:layout_height="@dimen/year_arrow_size"
+            android:layout_width="@dimen/arrow_size"
+            android:layout_height="@dimen/arrow_size"
             android:src="@drawable/ic_arrow_right_double"
             android:padding="2dp"
             android:contentDescription="@null"/>
@@ -121,17 +121,15 @@
         android:stretchMode="columnWidth"/>
 
     <!-- 底部蓝色长条确认按钮 -->
-    <Button
+    <TextView
         android:id="@+id/btn_confirm"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/btn_height"
+        android:layout_height="50dp"
+        android:gravity="center"
         android:text="@string/confirm"
         android:textSize="@dimen/btn_text_size"
         android:textColor="@color/calendar_bg_white"
-        android:background="@color/calendar_primary"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/calendar_primary"
-        android:shape="rectangle"
-        android:radius="@dimen/btn_radius"/>
+        android:background="@drawable/btn_bg_blue"/>
 
 </LinearLayout>

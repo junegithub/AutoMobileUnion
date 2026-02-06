@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.yt.car.union.R
 import com.yt.car.union.util.DateUtil
+import com.yt.car.union.util.PressEffectUtils
 import java.util.Calendar
 
 class CalendarDialog : BottomSheetDialogFragment() {
@@ -27,6 +28,8 @@ class CalendarDialog : BottomSheetDialogFragment() {
     fun setOnDateSelectedListener(listener: OnDateSelectedListener) {
         this.listener = listener
     }
+
+    override fun getTheme(): Int = R.style.CustomBottomSheetDialogTheme
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +51,9 @@ class CalendarDialog : BottomSheetDialogFragment() {
         val tvMonth = view.findViewById<TextView>(R.id.tv_month)
         val gvCalendar = view.findViewById<GridView>(R.id.gv_calendar)
         val btnConfirm = view.findViewById<View>(R.id.btn_confirm)
+
+        PressEffectUtils.setCommonPressEffect(ivClose)
+        PressEffectUtils.setCommonPressEffect(btnConfirm)
 
         // 更新年月显示
         fun updateMonthText() {
@@ -121,16 +127,17 @@ class CalendarDialog : BottomSheetDialogFragment() {
         }
 
         // 日历单元格点击
-        gvCalendar.onItemClickListener = { _, _, position, _ ->
+        gvCalendar.onItemClickListener = onItemClickListener@{ _, _, position, _ ->
             val adapter = gvCalendar.adapter as CalendarAdapter
             val item = adapter.getItem(position) as CalendarItem
-//            if (item.isEmpty) return@onItemClickListener
+            if (item.isEmpty) return@onItemClickListener
 
             when {
                 startDate == null -> {
                     startDate = item.date
                     endDate = null
                 }
+
                 endDate == null -> {
                     if (item.date.timeInMillis >= startDate!!.timeInMillis) {
                         endDate = item.date
@@ -139,6 +146,7 @@ class CalendarDialog : BottomSheetDialogFragment() {
                         endDate = null
                     }
                 }
+
                 else -> {
                     startDate = item.date
                     endDate = null
@@ -149,15 +157,17 @@ class CalendarDialog : BottomSheetDialogFragment() {
 
         // 底部蓝色长条确认按钮
         btnConfirm.setOnClickListener {
-            val startStr = startDate?.let { DateUtil.formatDate(it) } ?: ""
-            val endStr = endDate?.let { DateUtil.formatDate(it) } ?: ""
-            listener?.onSelected(startStr, endStr)
+            listener?.onSelected(startDate?.time.toString(), endDate?.time.toString())
             dismiss()
         }
 
         // 初始化
         updateMonthText()
         initCalendar()
+    }
+
+    fun isFutureTime(time: CalendarItem): Boolean {
+        return time.date.timeInMillis > System.currentTimeMillis()
     }
 
     data class CalendarItem(
@@ -215,11 +225,19 @@ class CalendarDialog : BottomSheetDialogFragment() {
             } else {
                 vSelectedBg.visibility = View.GONE
                 vRangeBg.visibility = View.GONE
-                tvDate.setTextColor(resources.getColor(R.color.calendar_text_black))
+                if (isFutureTime(item)) {
+                    tvDate.setTextColor(resources.getColor(R.color.calendar_text_gray))
+                } else {
+                    tvDate.setTextColor(resources.getColor(R.color.calendar_text_black))
+                }
                 tvLabel.visibility = View.GONE
             }
 
             return view
+        }
+
+        override fun isEnabled(position: Int): Boolean {
+            return !isFutureTime(dataList[position])
         }
     }
 

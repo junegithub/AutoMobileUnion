@@ -115,7 +115,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
 
         // 日期选择弹窗（MaterialDatePicker实现范围选择）
         binding.tvDateRange.setOnClickListener {
-            // 1. 配置日历约束（可选：限制选择范围）
+            /*// 1. 配置日历约束（可选：限制选择范围）
             val constraintsBuilder = CalendarConstraints.Builder()
                 .setValidator(DateValidatorPointForward.now()) // 只能选今天及以后
 
@@ -140,7 +140,16 @@ class DeviceAlarmActivity : AppCompatActivity() {
             })
 
             // 4. 显示弹窗
-            dateRangePicker.show(supportFragmentManager, "DATE_PICKER")
+            dateRangePicker.show(supportFragmentManager, "DATE_PICKER")*/
+            val calendarDlg = CalendarDialog.newInstance()
+            calendarDlg.setOnDateSelectedListener(object : CalendarDialog.OnDateSelectedListener {
+                override fun onSelected(start: String, end: String) {
+                    val startDate = dateFormat.format(Date(start))
+                    val endDate = dateFormat.format(Date(end))
+                    binding.tvDateRange.text = "$startDate 至 $endDate"
+                }
+            })
+            calendarDlg.show(supportFragmentManager, "DATE_PICKER")
         }
 
         // Spinner选择事件（可选扩展）
