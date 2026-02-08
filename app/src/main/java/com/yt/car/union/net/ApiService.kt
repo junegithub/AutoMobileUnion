@@ -1,6 +1,7 @@
 package com.yt.car.union.net
 
 import com.yt.car.union.net.bean.BaseResponse
+import com.yt.car.union.net.bean.CarStatisticsResponse
 import com.yt.car.union.net.bean.LoginRequest
 import com.yt.car.union.net.bean.LoginResponse
 import com.yt.car.union.net.bean.LoginSafeRequest
@@ -103,11 +104,11 @@ interface ApiService {
     // ===================== 全图监控 =====================
     // 地图-车辆坐标（aggregation/app/dashboard/maorealtime）
     @GET("aggregation/app/dashboard/maorealtime")
-    suspend fun getMapPunctuationData(@QueryMap data: Map<String, Any>): BaseResponse<Any>
+    suspend fun getMapPunctuationData(@QueryMap data: Map<String, String>): BaseResponse<Any>
 
     // 地图-车辆坐标（api/user/realtime）
     @GET("api/user/realtime")
-    suspend fun getMapPunctuationDataApi(@QueryMap data: Map<String, Any>): BaseResponse<Any>
+    suspend fun getMapPunctuationDataApi(@QueryMap data: Map<String, String>): BaseResponse<Any>
 
     // 车辆详细信息（aggregation/app/position/realtimeaddress）
     @GET("aggregation/app/position/realtimeaddress")
@@ -242,7 +243,7 @@ interface ApiService {
 
     // 搜索车辆列表（aggregation/app/select/searchcarlist）
     @GET("aggregation/app/select/searchcarlist")
-    suspend fun searchcarlist(@QueryMap data: Map<String, Any>): BaseResponse<Any>
+    suspend fun searchcarlist(@QueryMap data: Map<String, String>): BaseResponse<Any>
 
     // 车辆列表（api/user/carlist）
     @GET("api/user/carlist")
@@ -262,7 +263,7 @@ interface ApiService {
 
     // 获取查车数据（aggregation/app/dashboard/carStatusList）
     @GET("aggregation/app/dashboard/carStatusList")
-    suspend fun carstatuslist(@QueryMap data: Map<String, Any>): BaseResponse<Any>
+    suspend fun carstatuslist(@QueryMap data: Map<String, String>): BaseResponse<CarStatisticsResponse>
 
     // 获取用户车牌信息（api/user/userotherinfo）
     @GET("api/user/userotherinfo")

@@ -1,16 +1,11 @@
 package com.yt.car.union
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.view.WindowManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.yt.car.union.databinding.ActivityMainBinding
-import com.yt.car.union.pages.car.MapFragment
+import com.yt.car.union.pages.car.CarFragment
 import com.yt.car.union.pages.training.TrainingFragment
-import com.yt.car.union.viewmodel.LoginViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -27,9 +22,9 @@ class MainActivity : AppCompatActivity() {
 
             // 根据位置创建对应Fragment
             override fun createFragment(position: Int) = when (position) {
-                0 -> MapFragment() // 第一个Tab：查车（地图）
+                0 -> CarFragment() // 第一个Tab：查车（地图）
                 1 -> TrainingFragment() // 第二个Tab：培训
-                else -> MapFragment()
+                else -> CarFragment()
             }
         }
 

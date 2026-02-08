@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.amap.api.maps.AMap
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.model.BitmapDescriptorFactory
@@ -16,21 +18,27 @@ import com.yt.car.union.pages.LoginActivity
 import com.yt.car.union.MyApp
 import com.yt.car.union.R
 import com.yt.car.union.databinding.FragmentMapBinding
+import com.yt.car.union.net.bean.CarStatusItem
 import com.yt.car.union.pages.DeviceAlarmActivity
 import com.yt.car.union.pages.DeviceStatusActivity
 import com.yt.car.union.pages.OperationAnalysisActivity
 import com.yt.car.union.pages.ReportActivity
 import com.yt.car.union.util.EventData
+import com.yt.car.union.util.MarkerViewUtil
 import com.yt.car.union.util.PressEffectUtils
+import com.yt.car.union.viewmodel.CarStatusUiState
+import com.yt.car.union.viewmodel.CarStatusViewModel
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import kotlin.getValue
 
 /**
  * 查车页面：高德地图核心实现
  * 功能：定位蓝点、车辆标记、自动缩放显示所有车辆、车牌关联
  */
-class MapFragment : Fragment() {
+class CarFragment : Fragment() {
     // 声明ViewBinding对象
     private var _binding: FragmentMapBinding? = null
     // 安全访问Binding（避免内存泄漏）
@@ -38,11 +46,9 @@ class MapFragment : Fragment() {
     private lateinit var aMap: AMap // 高德地图核心对象
 
     // 车辆模拟数据（车牌+经纬度，实际从接口获取）
-    private val carList = listOf(
-        Car("鲁FD96888", 36.6808, 117.134), // 济南经纬度示例
-        Car("鲁AD96823", 36.6818, 117.135),
-        Car("鲁H303G7", 36.6828, 117.136)
-    )
+    private var carList : List<CarStatusItem> = emptyList()
+
+    private val viewModel by viewModels<CarStatusViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,6 +80,7 @@ class MapFragment : Fragment() {
             marker.showInfoWindow() // 显示车牌信息窗口
             true
         }
+
     }
 
     private fun initListener() {
@@ -107,6 +114,33 @@ class MapFragment : Fragment() {
         initAmap()
         initListener()
         updateViewLoginState()
+
+        // 5. 观察UI状态变化，刷新UI（lifecycleScope自动绑定Activity生命周期）
+        lifecycleScope.launch {
+            viewModel.uiState.collect { uiState ->
+                when (uiState) {
+                    is CarStatusUiState.Loading -> {
+                        // 加载中：显示进度条，隐藏其他视图
+                    }
+                    is CarStatusUiState.Success -> {
+                        // 成功：隐藏进度条，显示数据
+
+                        // 更新统计数据
+                        val statistics = uiState.data
+                        binding.btnAllCars.text="全部${statistics.total}辆车"
+                        carList = statistics.list
+                        // 更新车辆列表
+                        addCarMarkers()
+                    }
+                    is CarStatusUiState.Error -> {
+                        // 失败：显示错误信息，隐藏其他视图
+                    }
+                }
+            }
+        }
+    }
+    fun loadCarStatus() {
+        viewModel.getCarStatusList()
     }
 
     private fun updateViewLoginState() {
@@ -122,11 +156,11 @@ class MapFragment : Fragment() {
      */
     private fun addCarMarkers() {
         carList.forEach { car ->
-            val latLng = LatLng(car.lat, car.lng)
+            val latLng = LatLng(car.lat, car.lon)
             val marker = MarkerOptions()
                 .position(latLng) // 标记位置
-                .title(car.plate) // 标记标题（车牌）
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // 蓝色标记
+                .title(car.carnum) // 标记标题（车牌）
+                .icon(MarkerViewUtil.createCarMarker(requireContext(), car.carnum, R.drawable.ic_huoche_lixian))
                 .draggable(false) // 禁止拖动
             aMap.addMarker(marker) // 添加到地图
         }
@@ -138,7 +172,7 @@ class MapFragment : Fragment() {
     private fun zoomToAllCars() {
         val boundsBuilder = LatLngBounds.builder()
         // 构建所有车辆的经纬度边界
-        carList.forEach { boundsBuilder.include(LatLng(it.lat, it.lng)) }
+        carList.forEach { boundsBuilder.include(LatLng(it.lat, it.lon)) }
         val bounds = boundsBuilder.build()
         // 动画缩放：100为地图四周留白（像素），避免标记贴边
         aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100), 1000, null)
@@ -174,6 +208,7 @@ class MapFragment : Fragment() {
         when (event.eventType) {
             EventData.EVENT_LOGIN -> {
                 updateViewLoginState()
+                loadCarStatus()
             }
         }
     }
