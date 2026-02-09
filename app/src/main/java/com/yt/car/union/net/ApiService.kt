@@ -7,6 +7,7 @@ import com.yt.car.union.net.bean.LoginRequest
 import com.yt.car.union.net.bean.LoginResponse
 import com.yt.car.union.net.bean.LoginSafeRequest
 import com.yt.car.union.net.bean.LogoffRequest
+import com.yt.car.union.net.bean.RegionData
 import com.yt.car.union.net.bean.UserInfo
 import com.yt.car.union.net.bean.UserInfoResponse
 import retrofit2.http.Body
@@ -240,7 +241,7 @@ interface ApiService {
 
     // 机构树（car/app/tree/ybcompanytree）
     @GET("car/app/tree/ybcompanytree")
-    suspend fun getCarTreeData(@QueryMap data: Map<String, Any>): BaseResponse<Any>
+    suspend fun getCarTreeData(@QueryMap data: Map<String, String>?): BaseResponse<List<RegionData>>
 
     // 搜索车辆列表（aggregation/app/select/searchcarlist）
     @GET("aggregation/app/select/searchcarlist")
