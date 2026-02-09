@@ -156,7 +156,7 @@ class CarFragment : Fragment() {
      */
     private fun addCarMarkers() {
         carList.forEach { car ->
-            val latLng = LatLng(car.lat, car.lon)
+            val latLng = LatLng(car.latitude, car.longitude)
             val marker = MarkerOptions()
                 .position(latLng) // 标记位置
                 .title(car.carnum) // 标记标题（车牌）
@@ -172,7 +172,7 @@ class CarFragment : Fragment() {
     private fun zoomToAllCars() {
         val boundsBuilder = LatLngBounds.builder()
         // 构建所有车辆的经纬度边界
-        carList.forEach { boundsBuilder.include(LatLng(it.lat, it.lon)) }
+        carList.forEach { boundsBuilder.include(LatLng(it.latitude, it.longitude)) }
         val bounds = boundsBuilder.build()
         // 动画缩放：100为地图四周留白（像素），避免标记贴边
         aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100), 1000, null)

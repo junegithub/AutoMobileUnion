@@ -1,39 +1,43 @@
 package com.yt.car.union.net.bean
 
 /**
- * 车辆统计数据的顶层响应类
- * 对应JSON的根节点结构
+ * 响应主体数据类
+ * @param mapnum 地图数量
+ * @param total 总数
+ * @param latitude 纬度
+ * @param longitude 经度
+ * @param list 车辆信息列表
  */
 data class CarStatisticsResponse(
-    // 以下字段名与JSON完全一致，无需SerializedName注解（如需驼峰命名可添加）
-    val gonum: Int,               // 对应JSON中的gonum（数值类型）
-    val total: Int,               // 对应JSON中的total
-    val staticnum: Int,           // 对应JSON中的staticnum
-    val fatiguenum: Int,          // 对应JSON中的fatiguenum
-    val othernum: Int,            // 对应JSON中的othernum
-    val expirednum: Int,          // 对应JSON中的expirednum
-    val outnum: Int,              // 对应JSON中的outnum
-    val list: List<CarStatusItem>       // 车辆列表数据
+    val mapnum: Double,
+    val total: Double,
+    val latitude: Double,
+    val longitude: Double,
+    val list: List<CarStatusItem>
 )
 
 /**
- * 车辆列表项的实体类
- * 对应JSON中list数组的每个元素
+ * 车辆信息数据类
+ * @param dlcartype 车辆类型
+ * @param deptName 部门名称
+ * @param altitude 海拔
+ * @param latitude 纬度
+ * @param rotation 旋转角度
+ * @param id 车辆ID
+ * @param carnum 车牌号
+ * @param longitude 经度
+ * @param status 车辆状态
+ * @param direction 行驶方向
  */
 data class CarStatusItem(
-    val ts: String,               // 时间戳 "2025-01-01 01:00:00"
-    val id: String,               // ID "41"（JSON中是字符串类型，需用String接收）
-    val carId: String,            // 车辆ID "41"
-    val carnum: String,           // 车牌号 "鲁FF02188"
-    val driverId: String,         // 司机ID "0"
-    val driver: String,           // 司机名称 "未知司机"
-    val oriSpeed: Double,         // 原始速度 660.0（浮点型）
-    val speed: String,            // 速度描述 "离线"
-    val lon: Double,              // 经度 119.501171
-    val lat: Double,              // 纬度 36.9702
-    val address: String,          // 地址 "山东省,潍坊市,昌邑市,S320(4米)"
-    val status: String,          // 状态 "0"
-    val alarmFlag: String,        // 报警标识 "0"
-    val statusFlag: String,       // 状态标识 "4980739"
-    val videoRelateAlarm: String  // 视频关联报警 "0"
+    val dlcartype: Int,
+    val deptName: String?,
+    val altitude: Double?,
+    val latitude: Double,
+    val rotation: Int,
+    val id: Int,
+    val carnum: String,
+    val longitude: Double,
+    val status: Double,
+    val direction: Int
 )
