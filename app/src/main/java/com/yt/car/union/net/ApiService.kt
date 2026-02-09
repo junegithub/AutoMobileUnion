@@ -2,6 +2,7 @@ package com.yt.car.union.net
 
 import com.yt.car.union.net.bean.BaseResponse
 import com.yt.car.union.net.bean.CarStatisticsResponse
+import com.yt.car.union.net.bean.CarTypeItem
 import com.yt.car.union.net.bean.LoginRequest
 import com.yt.car.union.net.bean.LoginResponse
 import com.yt.car.union.net.bean.LoginSafeRequest
@@ -247,7 +248,7 @@ interface ApiService {
 
     // 车辆列表（api/user/carlist）
     @GET("api/user/carlist")
-    suspend fun carlist(@QueryMap data: Map<String, Any>): BaseResponse<Any>
+    suspend fun carlist(): BaseResponse<Any>
 
     // 获取车辆参数（car/app/factory/list）
     @GET("car/app/factory/list")
@@ -259,7 +260,7 @@ interface ApiService {
 
     // 获取车辆类型（system/dict/data/type/dlcartype）
     @GET("system/dict/data/type/dlcartype")
-    suspend fun carTypeList(@QueryMap data: Map<String, Any>): BaseResponse<Any>
+    suspend fun carTypeList(): BaseResponse<CarTypeItem>
 
     // 获取查车数据（aggregation/app/dashboard/carStatusList）
     @GET("aggregation/app/dashboard/carStatusList")
