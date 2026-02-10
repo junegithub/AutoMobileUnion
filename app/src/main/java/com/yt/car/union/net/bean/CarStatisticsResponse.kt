@@ -10,7 +10,7 @@ package com.yt.car.union.net.bean
  */
 data class CarStatisticsResponse(
     val mapnum: Double,
-    val total: Double,
+    val total: Int,
     val latitude: Double,
     val longitude: Double,
     val list: List<CarStatusItem>
@@ -38,6 +38,6 @@ data class CarStatusItem(
     val id: Int,
     val carnum: String,
     val longitude: Double,
-    val status: Double,
+    val status: Int,
     val direction: Int
 )

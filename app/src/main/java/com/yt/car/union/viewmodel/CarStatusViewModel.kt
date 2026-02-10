@@ -36,11 +36,6 @@ class CarStatusViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val params = mapOf(
-                    "search" to "",
-                    "type" to "all",
-                    "page" to "1"
-                )
                 val response = RetrofitClient.getApiService().getAllcars()
                 if (response.code == 1 && response.data != null) {
                     // 业务码成功 + 数据非空 → 发送成功状态
@@ -62,9 +57,16 @@ class CarStatusViewModel : ViewModel() {
         }
     }
 
-    fun getCarTreeData() {
+    fun getMapCatInfo(cardId: Int, carNum: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            var response = RetrofitClient.getApiService().getCarTreeData(emptyMap())
+            val params = mutableMapOf(
+                "car_id" to cardId.toString(),
+                "carnum" to carNum,
+            )
+            var response = RetrofitClient.getApiService().getMapCatInfo(params)
+            if (response.code == 1 && response.data != null) {
+
+            }
         }
     }
 }

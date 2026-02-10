@@ -77,10 +77,13 @@ class CarFragment : Fragment() {
         }
         // 3. 地图点击监听（可选：点击标记显示车辆详情）
         aMap.setOnMarkerClickListener { marker ->
-            marker.showInfoWindow() // 显示车牌信息窗口
+//            marker.showInfoWindow() // 显示车牌信息窗口
+            val carStatusItem = marker.`object` as CarStatusItem
+            viewModel.getMapCatInfo(carStatusItem.id, carStatusItem.carnum)
             true
         }
 
+        aMap.uiSettings.isZoomControlsEnabled = false
     }
 
     private fun initListener() {
@@ -157,12 +160,13 @@ class CarFragment : Fragment() {
     private fun addCarMarkers() {
         carList.forEach { car ->
             val latLng = LatLng(car.latitude, car.longitude)
-            val marker = MarkerOptions()
+            val markerOptions = MarkerOptions()
                 .position(latLng) // 标记位置
                 .title(car.carnum) // 标记标题（车牌）
-                .icon(MarkerViewUtil.createCarMarker(requireContext(), car.carnum, R.drawable.ic_huoche_lixian))
+                .icon(MarkerViewUtil.createCarMarker(requireContext(), car))
                 .draggable(false) // 禁止拖动
-            aMap.addMarker(marker) // 添加到地图
+            val maker = aMap.addMarker(markerOptions) // 添加到地图
+            maker.`object` = car
         }
     }
 
@@ -212,12 +216,4 @@ class CarFragment : Fragment() {
             }
         }
     }
-
-    /**
-     * 车辆数据类
-     * @param plate 车牌
-     * @param lat 纬度
-     * @param lng 经度
-     */
-    data class Car(val plate: String, val lat: Double, val lng: Double)
 }

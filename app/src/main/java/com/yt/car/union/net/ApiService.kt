@@ -5,6 +5,7 @@ import com.yt.car.union.net.bean.CarStatisticsResponse
 import com.yt.car.union.net.bean.LoginRequest
 import com.yt.car.union.net.bean.LoginResponse
 import com.yt.car.union.net.bean.LogoffRequest
+import com.yt.car.union.net.bean.MapCarInfoResponse
 import com.yt.car.union.net.bean.RegionData
 import com.yt.car.union.net.bean.UserInfoResponse
 import retrofit2.http.Body
@@ -118,7 +119,7 @@ interface ApiService {
 
     /** 地图-获取车辆详细信息 */
     @GET("aggregation/app/position/realtimeaddress")
-    suspend fun getMapCatInfo(@QueryMap params: Map<String, Any>? = null): BaseResponse<Any>
+    suspend fun getMapCatInfo(@QueryMap params: Map<String, String>? = null): BaseResponse<MapCarInfoResponse>
 
     /** 车辆拍照 */
     @GET("jt808/app/jt808/photos")
