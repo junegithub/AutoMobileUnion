@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit
  */
 object RetrofitClient {
     private lateinit var apiService: ApiService
+    private lateinit var carApiService: CarApiService
 
     /**
      * 初始化Retrofit（建议在Application中调用）
@@ -45,6 +46,13 @@ object RetrofitClient {
             throw UninitializedPropertyAccessException("RetrofitClient未初始化，请在Application中调用init()")
         }
         return apiService
+    }
+
+    fun getCarApiService(): CarApiService {
+        if (!::carApiService.isInitialized) {
+            throw UninitializedPropertyAccessException("RetrofitClient未初始化，请在Application中调用init()")
+        }
+        return carApiService
     }
 
     /**
