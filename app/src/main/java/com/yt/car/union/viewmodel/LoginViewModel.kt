@@ -6,8 +6,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import android.util.Log
 import com.yt.car.union.MyApp
+import com.yt.car.union.net.LoginRequest
 import com.yt.car.union.net.RetrofitClient
-import com.yt.car.union.net.bean.LoginRequest
 import com.yt.car.union.util.SPUtils
 
 /**
@@ -15,23 +15,23 @@ import com.yt.car.union.util.SPUtils
  */
 class LoginViewModel : ViewModel() {
     // 登录接口调用
-    fun login(account: String, password: String, type: Int, callback: (Boolean, String) -> Unit) {
+    fun login(account: String, password: String, callback: (Boolean, String) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // 构建请求参数
-                val request = LoginRequest(account, password, type)
+                val request = LoginRequest(account, password)
                 // 调用接口
-                val response = RetrofitClient.getApiService().loginApi(request)
+                val response = RetrofitClient.getCarApiService().login(request)
 
                 // 业务成功判断（对应原JS的code=200）
-                if (response.code == 1 && response.data != null) {
+                if (response.code() == 1 && response.body() != null) {
                     // 保存Token
-                    SPUtils.saveToken(response.data.userinfo?.token)
+                    SPUtils.saveToken(response.body()?.data?.userinfo?.token)
                     MyApp.isLogin = true
                     getUserInfo()
                     callback(true, "登录成功")
                 } else {
-                    callback(false, response.msg ?: "登录失败")
+                    callback(false, response.message() ?: "登录失败")
                 }
             } catch (e: Exception) {
                 // 异常处理（网络错误、解析错误等）
@@ -46,7 +46,7 @@ class LoginViewModel : ViewModel() {
             try {
                 val response = RetrofitClient.getApiService().getUserInfo()
                 if (response.code == 1 && response.data != null) {
-                    MyApp.userInfo = response.data.info
+//                    MyApp.userInfo = response.data.info
                 }
             } catch (e: Exception) {
                 // 异常处理（网络错误、解析错误等）

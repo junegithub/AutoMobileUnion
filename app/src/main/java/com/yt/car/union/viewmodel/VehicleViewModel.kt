@@ -3,6 +3,7 @@ package com.yt.car.union.viewmodel
 // ViewModel Layer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yt.car.union.MyApp
 import com.yt.car.union.net.AnswerRequest
 import com.yt.car.union.net.CarCheckPostRequest
 import com.yt.car.union.net.DangerPostRequest
@@ -16,13 +17,16 @@ import com.yt.car.union.net.SubmitExamRequest
 import com.yt.car.union.net.TravelPostRequest
 import com.yt.car.union.net.UpdateTwoQuestionRequest
 import com.yt.car.union.net.UserLoginRequest
-import com.yt.car.union.net.VehicleRepository
+import com.yt.car.union.net.CarRepository
+import com.yt.car.union.util.SPUtils
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 class VehicleViewModel() : ViewModel() {
-    private val repository: VehicleRepository = VehicleRepository(RetrofitClient.getCarApiService())
+    private val repository: CarRepository by lazy {
+        CarRepository(RetrofitClient.getCarApiService())
+    }
 
     fun getCarInfo(carId: Int) {
         viewModelScope.launch {
@@ -381,6 +385,10 @@ class VehicleViewModel() : ViewModel() {
                 val response = repository.login(request)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
+                    // 保存Token
+                    SPUtils.saveToken(response.body()?.data?.userinfo?.token)
+                    MyApp.isLogin = true
+                    getUserInfo()
                 }
             } catch (e: Exception) {
                 // Handle error
@@ -431,9 +439,9 @@ class VehicleViewModel() : ViewModel() {
     fun getUserInfo() {
         viewModelScope.launch {
             try {
-                val response = repository.getUserInfo()
+                val response = repository.getCarUserInfo()
                 if (response.isSuccessful && response.body()?.code == 1) {
-                    // Handle successful response
+                    MyApp.userInfo = response.body()?.data?.info
                 }
             } catch (e: Exception) {
                 // Handle error

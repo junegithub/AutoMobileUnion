@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
     private lateinit var apiService: ApiService
     private lateinit var carApiService: CarApiService
+    private lateinit var trainingApiService: TrainingApiService
 
     /**
      * 初始化Retrofit（建议在Application中调用）
@@ -28,7 +29,7 @@ object RetrofitClient {
             .build()
 
         // 2. 构建Retrofit
-        val retrofit = Retrofit.Builder()
+        var retrofit = Retrofit.Builder()
             .baseUrl(ApiConfig.BASE_URL) // 根路径
             .client(okHttpClient)     // 绑定OkHttp
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create())) // Gson解析
@@ -36,6 +37,14 @@ object RetrofitClient {
 
         // 3. 创建ApiService实例
         apiService = retrofit.create(ApiService::class.java)
+        carApiService = retrofit.create(CarApiService::class.java)
+
+        retrofit = Retrofit.Builder()
+            .baseUrl(ApiConfig.BASE_URL_TRAINING) // 根路径
+            .client(okHttpClient)     // 绑定OkHttp
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create())) // Gson解析
+            .build()
+        trainingApiService = retrofit.create(TrainingApiService::class.java)
     }
 
     /**
@@ -53,6 +62,13 @@ object RetrofitClient {
             throw UninitializedPropertyAccessException("RetrofitClient未初始化，请在Application中调用init()")
         }
         return carApiService
+    }
+
+    fun getTrainingApiService(): TrainingApiService {
+        if (!::trainingApiService.isInitialized) {
+            throw UninitializedPropertyAccessException("RetrofitClient未初始化，请在Application中调用init()")
+        }
+        return trainingApiService
     }
 
     /**

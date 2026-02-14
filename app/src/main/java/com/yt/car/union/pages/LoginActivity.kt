@@ -15,10 +15,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.yt.car.union.MyApp
 import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityLoginBinding
+import com.yt.car.union.net.LoginRequest
 import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.SPUtils
 import com.yt.car.union.viewmodel.LoginViewModel
+import com.yt.car.union.viewmodel.VehicleViewModel
 import org.greenrobot.eventbus.EventBus
 
 class LoginActivity : AppCompatActivity() {
@@ -29,6 +31,7 @@ class LoginActivity : AppCompatActivity() {
     // 声明ViewBinding对象
     private lateinit var binding: ActivityLoginBinding
     private val viewModel by viewModels<LoginViewModel>()
+    private val vehicleViewModel by viewModels<VehicleViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,16 +88,15 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun doLogin(account: String, password: String) {
-        val type = 1
-
-        viewModel.login(account, password, type) { isSuccess, msg ->
-            runOnUiThread {
-                if (isSuccess) {
-                    EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
-                    finish()
-                }
-            }
-        }
+        vehicleViewModel.login(LoginRequest(account, password))
+//        viewModel.login(account, password) { isSuccess, msg ->
+//            runOnUiThread {
+//                if (isSuccess) {
+//                    EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
+//                    finish()
+//                }
+//            }
+//        }
     }
 
     fun doLogout() {

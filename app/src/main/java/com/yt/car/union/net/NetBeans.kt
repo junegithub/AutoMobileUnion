@@ -2494,3 +2494,21 @@ data class LogoffResponse(
     val time: String,
     val data: Any?
 )
+
+data class CarUserInfoResponse(
+    val code: Int,
+    val msg: String,
+    val time: String,
+    val data: CarUserInfo?
+)
+
+data class CarUserInfo(
+    val info: CarUser?
+)
+
+data class CarUser(
+    val createtime: Long = 0,
+    val group_id: Int = 0,
+    val nickname: String = "",
+    val username: String = ""
+)

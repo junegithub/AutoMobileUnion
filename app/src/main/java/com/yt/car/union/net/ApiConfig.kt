@@ -3,6 +3,7 @@ package com.yt.car.union.net
 object ApiConfig {
     // 基础域名（与你提供的接口一致）
     const val BASE_URL = "http://www.ezbeidou.com/prod-api/"
+    const val BASE_URL_TRAINING = "http://safe.ezbeidou.com"
 
     // 超时时间（单位：秒）
     const val CONNECT_TIMEOUT = 15L
