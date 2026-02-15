@@ -1,6 +1,9 @@
 package com.yt.car.union.viewmodel
 
+import com.yt.car.union.net.TravelLogData
 import com.yt.car.union.net.TravelPostRequest
+import com.yt.car.union.net.TravelPostResponse
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * 行程相关ViewModel（行程上报、删除、日志等）
@@ -8,38 +11,27 @@ import com.yt.car.union.net.TravelPostRequest
 class TravelViewModel : TrainingBaseViewModel() {
 
     // 行程上报
-    fun travelPost(request: TravelPostRequest) {
+    fun travelPost(request: TravelPostRequest,
+                   stateFlow: MutableStateFlow<ApiState<TravelPostResponse>>) {
         launchRequest(
             block = { vehicleRepository.travelPost(request) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.car_id != null) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 行程删除
-    fun travelDel(id: String) {
+    fun travelDel(id: String, stateFlow: MutableStateFlow<ApiState<Int>>) {
         launchRequest(
             block = { vehicleRepository.travelDel(id) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 获取行程日志
-    fun getTravelLog() {
+    fun getTravelLog(stateFlow: MutableStateFlow<ApiState<TravelLogData>>) {
         launchRequest(
             block = { vehicleRepository.getTravelLog() },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 }

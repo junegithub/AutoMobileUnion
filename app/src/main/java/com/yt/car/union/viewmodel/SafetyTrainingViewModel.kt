@@ -1,9 +1,21 @@
 package com.yt.car.union.viewmodel
 
+import com.yt.car.union.net.CarNumSearchData
+import com.yt.car.union.net.CompanyListData
+import com.yt.car.union.net.CoursewareListData
+import com.yt.car.union.net.DailySafetyOrderData
+import com.yt.car.union.net.EpidemicViewData
+import com.yt.car.union.net.FaceData
+import com.yt.car.union.net.OtherUserInfo
+import com.yt.car.union.net.SafeStudyData
+import com.yt.car.union.net.SafetyListData
+import com.yt.car.union.net.SignViewData
+import com.yt.car.union.net.UploadFileData
+import com.yt.car.union.net.UserLoginData
 import com.yt.car.union.net.UserLoginRequest
+import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import kotlin.code
 
 /**
  * 安全培训相关ViewModel（课程、签到、人脸验证、培训计划等）
@@ -11,169 +23,121 @@ import kotlin.code
 class SafetyTrainingViewModel : TrainingBaseViewModel() {
 
     // 签到
-    fun signView() {
+    fun signView(stateFlow: MutableStateFlow<ApiState<SignViewData>>) {
         launchRequest(
             block = { vehicleRepository.signView() },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code != null) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 疫情相关
-    fun epidemicView() {
+    fun epidemicView(stateFlow: MutableStateFlow<ApiState<EpidemicViewData>>) {
         launchRequest(
             block = { vehicleRepository.epidemicView() },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 获取公司列表
-    fun getCompanyList(page: String?, type: String?) {
+    fun getCompanyList(page: String?, type: String?,
+                       stateFlow: MutableStateFlow<ApiState<CompanyListData>>) {
         launchRequest(
             block = { vehicleRepository.getCompanyList(page, type) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 获取安全培训列表
-    fun getSafetyList(page: String?, type: String?) {
+    fun getSafetyList(page: String?, type: String?,
+                      stateFlow: MutableStateFlow<ApiState<SafetyListData>>) {
         launchRequest(
             block = { vehicleRepository.getSafetyList(page, type) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 日常安全订单支付
-    fun dailySafetyOrderPay(trainingPublicPlanId: String?) {
+    fun dailySafetyOrderPay(trainingPublicPlanId: String?,
+                            stateFlow: MutableStateFlow<ApiState<DailySafetyOrderData>>) {
         launchRequest(
             block = { vehicleRepository.dailySafetyOrderPay(trainingPublicPlanId) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code != null) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 课程学习
-    fun safeStudy(subjectId: String, trainingPublicPlanId: String, longtime: String) {
+    fun safeStudy(subjectId: String, trainingPublicPlanId: String, longtime: String,
+                  stateFlow: MutableStateFlow<ApiState<SafeStudyData>>) {
         launchRequest(
             block = { vehicleRepository.safeStudy(subjectId, trainingPublicPlanId, longtime) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 人脸验证（安全培训）
-    fun safeFace(imgurl: String, trainingPublicPlanId: Int, type: String) {
+    fun safeFace(imgurl: String, trainingPublicPlanId: Int, type: String,
+                 stateFlow: MutableStateFlow<ApiState<FaceData>>) {
         launchRequest(
             block = { vehicleRepository.safeFace(imgurl, trainingPublicPlanId, type) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code != null) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 签到提交
-    fun singPost(request: RequestBody) {
+    fun singPost(request: RequestBody, stateFlow: MutableStateFlow<ApiState<String>>) {
         launchRequest(
             block = { vehicleRepository.singPost(request) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code != null) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 其他安全培训相关方法...（按相同逻辑迁移）
-    fun getCoursewareList(page: String, trainingPublicPlanId: String) {
+    fun getCoursewareList(page: String, trainingPublicPlanId: String,
+                          stateFlow: MutableStateFlow<ApiState<CoursewareListData>>) {
         launchRequest(
             block = { vehicleRepository.getCoursewareList(page, trainingPublicPlanId) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 按车牌号搜索
-    fun carnumSearch(carnum: String, page: String) {
+    fun carnumSearch(carnum: String, page: String,
+                     stateFlow: MutableStateFlow<ApiState<CarNumSearchData>>) {
         launchRequest(
             block = { vehicleRepository.carnumSearch(carnum, page) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
-    fun uploadFile(filePath: MultipartBody.Part) {
+    fun uploadFile(filePath: MultipartBody.Part, stateFlow: MutableStateFlow<ApiState<UploadFileData>>) {
         launchRequest(
             block = { vehicleRepository.uploadFile(filePath) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 安全培训专属登录
-    fun userLogin(request: UserLoginRequest) {
+    fun userLogin(request: UserLoginRequest, stateFlow: MutableStateFlow<ApiState<UserLoginData>>) {
         launchRequest(
             block = { vehicleRepository.userLogin(request) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 获取用户其他信息
-    fun getUserOtherInfo() {
+    fun getUserOtherInfo(stateFlow: MutableStateFlow<ApiState<OtherUserInfo>>) {
         launchRequest(
             block = { vehicleRepository.getUserOtherInfo() },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 重置密码
-    fun resetPwd(newpassword: String, oldpassword: String) {
+    fun resetPwd(newpassword: String, oldpassword: String,
+                 stateFlow: MutableStateFlow<ApiState<Any>>) {
         launchRequest(
             block = { vehicleRepository.resetPwd(newpassword, oldpassword) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code != null) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 }

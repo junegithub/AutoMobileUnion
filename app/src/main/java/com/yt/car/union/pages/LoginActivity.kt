@@ -1,5 +1,6 @@
 package com.yt.car.union.pages
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,15 +13,22 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.yt.car.union.MyApp
 import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityLoginBinding
+import com.yt.car.union.net.CarInfo
+import com.yt.car.union.net.CarUserInfo
+import com.yt.car.union.net.LoginData
 import com.yt.car.union.net.LoginRequest
 import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.SPUtils
-import com.yt.car.union.viewmodel.LoginViewModel
+import com.yt.car.union.viewmodel.ApiState
+import com.yt.car.union.viewmodel.UserViewModel
 import com.yt.car.union.viewmodel.VehicleViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 
 class LoginActivity : AppCompatActivity() {
@@ -30,8 +38,11 @@ class LoginActivity : AppCompatActivity() {
 
     // 声明ViewBinding对象
     private lateinit var binding: ActivityLoginBinding
-    private val viewModel by viewModels<LoginViewModel>()
-    private val vehicleViewModel by viewModels<VehicleViewModel>()
+    private val userViewModel by viewModels<UserViewModel>()
+
+    private var loginStateFlow = MutableStateFlow<ApiState<LoginData>>(ApiState.Loading)
+    private var logoutStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Loading)
+    private var userInfoStateFlow = MutableStateFlow<ApiState<CarUserInfo>>(ApiState.Loading)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         binding.contact.setOnClickListener {
-            openDial()
+            openDial(targetPhone)
         }
         binding.btnLogout.setOnClickListener {
             doLogout()
@@ -85,26 +96,81 @@ class LoginActivity : AppCompatActivity() {
         binding.back.setOnClickListener {
             finish()
         }
+        collectData()
+    }
+
+    private fun collectData() {
+        lifecycleScope.launch {
+            loginStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                        // 加载中：显示进度条，隐藏其他视图
+                    }
+
+                    is ApiState.Success -> {
+                        // 成功：隐藏进度条，显示数据
+                        // 更新统计数据
+                        val statistics = uiState.data
+                        // 保存Token
+                        SPUtils.saveToken(statistics.userinfo?.token)
+                        MyApp.isLogin = true
+                        getUserInfo()
+                        EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
+                        finish()
+                    }
+
+                    is ApiState.Error -> {
+                        // 失败：显示错误信息，隐藏其他视图
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            logoutStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                        // 加载中：显示进度条，隐藏其他视图
+                    }
+
+                    is ApiState.Success -> {
+                        clearCache()
+                    }
+
+                    is ApiState.Error -> {
+                        // 失败：显示错误信息，隐藏其他视图
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            userInfoStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                        // 加载中：显示进度条，隐藏其他视图
+                    }
+
+                    is ApiState.Success -> {
+                        MyApp.userInfo = uiState.data.info
+                    }
+
+                    is ApiState.Error -> {
+                        // 失败：显示错误信息，隐藏其他视图
+                    }
+                }
+            }
+        }
     }
 
     fun doLogin(account: String, password: String) {
-        vehicleViewModel.login(LoginRequest(account, password))
-//        viewModel.login(account, password) { isSuccess, msg ->
-//            runOnUiThread {
-//                if (isSuccess) {
-//                    EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
-//                    finish()
-//                }
-//            }
-//        }
+        userViewModel.login(LoginRequest(account, password), loginStateFlow)
     }
 
     fun doLogout() {
-        viewModel.logout { isSuccess ->
-            if (isSuccess) {
-                clearCache()
-            }
-        }
+        userViewModel.logout(logoutStateFlow)
+    }
+
+    fun getUserInfo() {
+        userViewModel.getUserInfo(userInfoStateFlow)
     }
 
     fun clearCache() {
@@ -163,18 +229,17 @@ class LoginActivity : AppCompatActivity() {
         binding.tvAgreementText.highlightColor = getResources().getColor(android.R.color.transparent)
     }
 
-    private fun openDial() {
-        try {
-            val intent = Intent(Intent.ACTION_DIAL).apply {
-                data = Uri.parse("tel:$targetPhone")
-            }
-            startActivity(intent)
-        } catch (e: Exception) {
-            Toast.makeText(this,
-                "请检查系统拨号应用是否被禁用/冻结", Toast.LENGTH_LONG
-            ).show()
-            e.printStackTrace()
+}
+fun Context.openDial(targetPhone: String) {
+    try {
+        val intent = Intent(Intent.ACTION_DIAL).apply {
+            data = Uri.parse("tel:$targetPhone")
         }
+        startActivity(intent)
+    } catch (e: Exception) {
+        Toast.makeText(this,
+            "请检查系统拨号应用是否被禁用/冻结", Toast.LENGTH_LONG
+        ).show()
+        e.printStackTrace()
     }
-
 }

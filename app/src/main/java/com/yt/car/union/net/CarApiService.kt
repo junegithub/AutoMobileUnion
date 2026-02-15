@@ -10,27 +10,27 @@ import retrofit2.http.Query
 interface CarApiService {
     // 查车相关API（/car/app 前缀）
     @GET("car/app/car/carinfo")
-    suspend fun getCarInfo(@Query("car_id") carId: Int): Response<CarInfoResponse>
+    suspend fun getCarInfo(@Query("car_id") carId: Int): Response<BaseResponse<CarInfo>>
 
     @GET("car/app/car/isLYBH")
-    suspend fun isLYBH(): Response<IsLYBHResponse>
+    suspend fun isLYBH(): Response<BaseResponse<Boolean>>
 
     @POST("car/app/history")
-    suspend fun addSearchHistory(@Body request: SearchHistoryRequest): Response<SearchHistoryResponse>
+    suspend fun addSearchHistory(@Body request: SearchHistoryRequest): Response<BaseResponse<Int>>
 
     @GET("car/app/tree/getTree")
     suspend fun getTree(
         @Query("ancestors") ancestors: String?,
         @Query("pos") pos: Boolean?,
         @Query("tree") tree: Boolean?
-    ): Response<TreeNodeResponse>
+    ): Response<BaseResponse<List<TreeNode>>>
 
     @GET("car/app/tree/getTreeBlurry")
     suspend fun getTreeBlurry(
         @Query("blurry") blurry: String,
         @Query("pos") pos: Boolean?,
         @Query("tree") tree: Boolean?
-    ): Response<TreeNodeResponse>
+    ): Response<BaseResponse<List<TreeNode>>>
 
     // /aggregation/app 前缀
     @GET("aggregation/app/oil/day")
@@ -39,7 +39,7 @@ interface CarApiService {
         @Query("pageSize") pageSize: Int?,
         @Query("search") search: String?,
         @Query("timetype") timetype: Int
-    ): Response<OilDayReportResponse>
+    ): Response<BaseResponse<OilDayReportData>>
 
     @GET("aggregation/app/oil/leak")
     suspend fun getLeakReport(
@@ -47,26 +47,26 @@ interface CarApiService {
         @Query("pageSize") pageSize: Int?,
         @Query("search") search: String?,
         @Query("timetype") timetype: Int
-    ): Response<LeakReportResponse>
+    ): Response<BaseResponse<LeakReportData>>
 
     @GET("aggregation/app/position/getTop")
-    suspend fun getMapPositions(@Query("size") size: Int?): Response<MapPositionResponse>
+    suspend fun getMapPositions(@Query("size") size: Int?): Response<BaseResponse<MapPositionData>>
 
     @GET("aggregation/app/position/realtimeaddress")
     suspend fun getRealTimeAddress(
         @Query("car_id") carId: Int?,
         @Query("carnum") carnum: String?
-    ): Response<RealTimeAddressResponse>
+    ): Response<BaseResponse<RealTimeAddressData>>
 
     @GET("aggregation/app/carStatus/listByType")
     suspend fun getCarStatusByType(
         @Query("carType") carType: String,
         @Query("pageNum") pageNum: Int,
         @Query("pageSize") pageSize: Int
-    ): Response<CarStatusDetailResponse>
+    ): Response<BaseResponse<List<CarStatusDetailItem>>>
 
     @GET("aggregation/app/carStatus/statusList")
-    suspend fun getCarStatusList(): Response<CarStatusListResponse>
+    suspend fun getCarStatusList(): Response<BaseResponse<CarStatusListData?>>
 
     @GET("aggregation/app/dashboard/appSearchCarType")
     suspend fun searchCarByType(
@@ -75,10 +75,10 @@ interface CarApiService {
         @Query("type") type: String,
         @Query("pageSize") pageSize: String,
         @Query("pageNum") pageNum: String
-    ): Response<SearchCarTypeResponse>
+    ): Response<BaseResponse<SearchCarTypeData>>
 
     @GET("aggregation/app/dashboard/getInfo")
-    suspend fun getDashboardInfo(): Response<DashboardInfoResponse>
+    suspend fun getDashboardInfo(): Response<BaseResponse<DashboardInfoData>>
 
     @GET("aggregation/app/oil/add")
     suspend fun getOilAddReport(
@@ -86,10 +86,10 @@ interface CarApiService {
         @Query("pageSize") pageSize: Int?,
         @Query("search") search: String?,
         @Query("timetype") timetype: Int
-    ): Response<OilAddReportResponse>
+    ): Response<BaseResponse<OilAddReportData>>
 
     @POST("aggregation/app/position/shareLastPosition")
-    suspend fun shareLastPosition(@Body carId: Long): Response<ShareLastPositionResponse>
+    suspend fun shareLastPosition(@Body carId: Long): Response<BaseResponse<String>>
 
     @GET("aggregation/app/position/track")
     suspend fun getTrackInfo(
@@ -98,24 +98,24 @@ interface CarApiService {
         @Query("is704") is704: Boolean?,
         @Query("isFilter") isFilter: Boolean?,
         @Query("starttime") starttime: String
-    ): Response<TrackResponse>
+    ): Response<BaseResponse<TrackData>>
 
     @GET("aggregation/app/video/videonew")
-    suspend fun getVideoInfo(@Query("car_id") carId: Int): Response<VideoInfoResponse>
+    suspend fun getVideoInfo(@Query("car_id") carId: Int): Response<BaseResponse<VideoInfoData>>
 
     @GET("aggregation/app/work/activeWarning")
     suspend fun getActiveWarning(
         @Query("search") search: String?,
         @Query("timetype") timetype: Int,
         @Query("page") page: String
-    ): Response<ActiveWarningResponse>
+    ): Response<BaseResponse<ActiveWarningData>>
 
     @GET("aggregation/app/work/caroverlist")
     suspend fun getExpiredCars(
         @Query("page") page: Int,
         @Query("pageSize") pageSize: Int?,
         @Query("search") search: String?
-    ): Response<ExpiredCarResponse>
+    ): Response<BaseResponse<ExpiredCarData>>
 
     @GET("aggregation/app/work/mileage")
     suspend fun getMileageReport(
@@ -123,7 +123,7 @@ interface CarApiService {
         @Query("pageSize") pageSize: Int?,
         @Query("search") search: String?,
         @Query("timetype") timetype: Int
-    ): Response<MileageResponse>
+    ): Response<BaseResponse<MileageData>>
 
     @GET("aggregation/app/work/offline")
     suspend fun getOfflineReport(
@@ -132,7 +132,7 @@ interface CarApiService {
         @Query("pageSize") pageSize: Int?,
         @Query("search") search: String?,
         @Query("start") start: String
-    ): Response<OfflineReportResponse>
+    ): Response<BaseResponse<OfflineReportData>>
 
     @GET("aggregation/app/work/photos")
     suspend fun getPhotoReport(
@@ -140,7 +140,7 @@ interface CarApiService {
         @Query("pageSize") pageSize: Int?,
         @Query("search") search: String?,
         @Query("timetype") timetype: Int
-    ): Response<PhotoReportResponse>
+    ): Response<BaseResponse<PhotoReportData>>
 
     @GET("aggregation/app/work/stopDetail")
     suspend fun getStopDetailReport(
@@ -148,14 +148,14 @@ interface CarApiService {
         @Query("pageSize") pageSize: Int?,
         @Query("search") search: String,
         @Query("timetype") timetype: Int
-    ): Response<StopDetailResponse>
+    ): Response<BaseResponse<StopDetailData>>
 
     @GET("aggregation/app/work/warning")
     suspend fun getWarningReport(
         @Query("search") search: String?,
         @Query("timetype") timetype: Int,
         @Query("page") page: String
-    ): Response<WarningReportResponse>
+    ): Response<BaseResponse<WarningReportData>>
 
     @GET("aggregation/app/work/warningDetail")
     suspend fun getWarningDetail(
@@ -163,23 +163,23 @@ interface CarApiService {
         @Query("pageSize") pageSize: Int?,
         @Query("timetype") timetype: Int,
         @Query("type") type: Int
-    ): Response<WarningDetailResponse>
+    ): Response<BaseResponse<WarningDetailData>>
 
     // /jt808/app 前缀
     @POST("jt808/app/jt808/sendcontent")
-    suspend fun sendContent(@Body request: SendContentRequest): Response<SendContentResponse>
+    suspend fun sendContent(@Body request: SendContentRequest): Response<BaseResponse<Any>>
 
     @POST("jt808/app/jt808/photos")
-    suspend fun takePhoto(@Query("car_id") carId: String): Response<TakePhotoResponse>
+    suspend fun takePhoto(@Query("car_id") carId: String): Response<BaseResponse<Any>>
 
     // /auth/app 前缀
     @POST("auth/app/login")
-    suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
+    suspend fun login(@Body request: LoginRequest): Response<BaseResponse<LoginData>>
 
     @DELETE("auth/app/logout")
-    suspend fun logout(): Response<LogoutResponse>
+    suspend fun logout(): Response<BaseResponse<Any>>
 
     /** 获取用户信息 */
     @GET("system/app/user")
-    suspend fun getCarUserInfo(): Response<CarUserInfoResponse>
+    suspend fun getCarUserInfo(): Response<BaseResponse<CarUserInfo>>
 }

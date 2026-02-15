@@ -18,6 +18,7 @@ import com.yt.car.union.net.TravelPostRequest
 import com.yt.car.union.net.UpdateTwoQuestionRequest
 import com.yt.car.union.net.UserLoginRequest
 import com.yt.car.union.net.CarRepository
+import com.yt.car.union.net.TrainingRepository
 import com.yt.car.union.util.SPUtils
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -26,6 +27,9 @@ import okhttp3.RequestBody
 class VehicleViewModel() : ViewModel() {
     private val repository: CarRepository by lazy {
         CarRepository(RetrofitClient.getCarApiService())
+    }
+    private val trainingRepository: TrainingRepository by lazy {
+        TrainingRepository(RetrofitClient.getTrainingApiService())
     }
 
     fun getCarInfo(carId: Int) {
@@ -413,7 +417,7 @@ class VehicleViewModel() : ViewModel() {
     fun userLogin(request: UserLoginRequest) {
         viewModelScope.launch {
             try {
-                val response = repository.userLogin(request)
+                val response = trainingRepository.userLogin(request)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -426,7 +430,7 @@ class VehicleViewModel() : ViewModel() {
     fun signView() {
         viewModelScope.launch {
             try {
-                val response = repository.signView()
+                val response = trainingRepository.signView()
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -452,7 +456,7 @@ class VehicleViewModel() : ViewModel() {
     fun getUserOtherInfo() {
         viewModelScope.launch {
             try {
-                val response = repository.getUserOtherInfo()
+                val response = trainingRepository.getUserOtherInfo()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -465,7 +469,7 @@ class VehicleViewModel() : ViewModel() {
     fun epidemicView() {
         viewModelScope.launch {
             try {
-                val response = repository.epidemicView()
+                val response = trainingRepository.epidemicView()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -478,7 +482,7 @@ class VehicleViewModel() : ViewModel() {
     fun getTravelLog() {
         viewModelScope.launch {
             try {
-                val response = repository.getTravelLog()
+                val response = trainingRepository.getTravelLog()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -491,7 +495,7 @@ class VehicleViewModel() : ViewModel() {
     fun getCompanyList(page: String?, type: String?) {
         viewModelScope.launch {
             try {
-                val response = repository.getCompanyList(page, type)
+                val response = trainingRepository.getCompanyList(page, type)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -504,7 +508,7 @@ class VehicleViewModel() : ViewModel() {
     fun getSafetyList(page: String?, type: String?) {
         viewModelScope.launch {
             try {
-                val response = repository.getSafetyList(page, type)
+                val response = trainingRepository.getSafetyList(page, type)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -517,7 +521,7 @@ class VehicleViewModel() : ViewModel() {
     fun dailySafetyOrderPay(trainingPublicPlanId: String?) {
         viewModelScope.launch {
             try {
-                val response = repository.dailySafetyOrderPay(trainingPublicPlanId)
+                val response = trainingRepository.dailySafetyOrderPay(trainingPublicPlanId)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -530,7 +534,7 @@ class VehicleViewModel() : ViewModel() {
     fun getOldSafetyList(page: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getOldSafetyList(page)
+                val response = trainingRepository.getOldSafetyList(page)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -543,7 +547,7 @@ class VehicleViewModel() : ViewModel() {
     fun getCoursewareList(page: String, trainingPublicPlanId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getCoursewareList(page, trainingPublicPlanId)
+                val response = trainingRepository.getCoursewareList(page, trainingPublicPlanId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -556,7 +560,7 @@ class VehicleViewModel() : ViewModel() {
     fun getCoursewareView(subjectId: String, trainingPublicPlanId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getCoursewareView(subjectId, trainingPublicPlanId)
+                val response = trainingRepository.getCoursewareView(subjectId, trainingPublicPlanId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -569,7 +573,7 @@ class VehicleViewModel() : ViewModel() {
     fun getConfigTime() {
         viewModelScope.launch {
             try {
-                val response = repository.getConfigTime()
+                val response = trainingRepository.getConfigTime()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -582,7 +586,7 @@ class VehicleViewModel() : ViewModel() {
     fun safeStudy(subjectId: String, trainingPublicPlanId: String, longtime: String) {
         viewModelScope.launch {
             try {
-                val response = repository.safeStudy(subjectId, trainingPublicPlanId, longtime)
+                val response = trainingRepository.safeStudy(subjectId, trainingPublicPlanId, longtime)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -595,7 +599,7 @@ class VehicleViewModel() : ViewModel() {
     fun getExamView(examId: String, trainingPublicPlanId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getExamView(examId, trainingPublicPlanId)
+                val response = trainingRepository.getExamView(examId, trainingPublicPlanId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -608,7 +612,7 @@ class VehicleViewModel() : ViewModel() {
     fun uploadFile(filePath: MultipartBody.Part) {
         viewModelScope.launch {
             try {
-                val response = repository.uploadFile(filePath)
+                val response = trainingRepository.uploadFile(filePath)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -621,7 +625,7 @@ class VehicleViewModel() : ViewModel() {
     fun submitExam(request: SubmitExamRequest) {
         viewModelScope.launch {
             try {
-                val response = repository.submitExam(request)
+                val response = trainingRepository.submitExam(request)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -634,7 +638,7 @@ class VehicleViewModel() : ViewModel() {
     fun getExamResult(examId: String, trainingPublicPlanId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getExamResult(examId, trainingPublicPlanId)
+                val response = trainingRepository.getExamResult(examId, trainingPublicPlanId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -647,7 +651,7 @@ class VehicleViewModel() : ViewModel() {
     fun getQuestionView(examId: String, questionId: String, uanswer: String, trainingPublicPlanId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getQuestionView(examId, questionId, uanswer, trainingPublicPlanId)
+                val response = trainingRepository.getQuestionView(examId, questionId, uanswer, trainingPublicPlanId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -660,7 +664,7 @@ class VehicleViewModel() : ViewModel() {
     fun createOrder(money: String, trainingPublicPlanId: Int, type: String, method: String) {
         viewModelScope.launch {
             try {
-                val response = repository.createOrder(money, trainingPublicPlanId, type, method)
+                val response = trainingRepository.createOrder(money, trainingPublicPlanId, type, method)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -673,7 +677,7 @@ class VehicleViewModel() : ViewModel() {
     fun yearPay(code: Int, type: String, method: String, yearId: Int) {
         viewModelScope.launch {
             try {
-                val response = repository.yearPay(code, type, method, yearId)
+                val response = trainingRepository.yearPay(code, type, method, yearId)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -686,7 +690,7 @@ class VehicleViewModel() : ViewModel() {
     fun getOrderList(page: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getOrderList(page)
+                val response = trainingRepository.getOrderList(page)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -699,7 +703,7 @@ class VehicleViewModel() : ViewModel() {
     fun safeFace(imgurl: String, trainingPublicPlanId: Int, type: String) {
         viewModelScope.launch {
             try {
-                val response = repository.safeFace(imgurl, trainingPublicPlanId, type)
+                val response = trainingRepository.safeFace(imgurl, trainingPublicPlanId, type)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -712,7 +716,7 @@ class VehicleViewModel() : ViewModel() {
     fun safetyAdd(subjectId: String, trainingSafetyPlanId: Int, longtime: Int, imgurl: String) {
         viewModelScope.launch {
             try {
-                val response = repository.safetyAdd(subjectId, trainingSafetyPlanId, longtime, imgurl)
+                val response = trainingRepository.safetyAdd(subjectId, trainingSafetyPlanId, longtime, imgurl)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -725,7 +729,7 @@ class VehicleViewModel() : ViewModel() {
     fun beforeSubjectFace(imgurl: String, trainingPublicPlanId: Int, type: String) {
         viewModelScope.launch {
             try {
-                val response = repository.beforeSubjectFace(imgurl, trainingPublicPlanId, type)
+                val response = trainingRepository.beforeSubjectFace(imgurl, trainingPublicPlanId, type)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -738,7 +742,7 @@ class VehicleViewModel() : ViewModel() {
     fun subjectFace(signfile: String, id: String) {
         viewModelScope.launch {
             try {
-                val response = repository.subjectFace(signfile, id)
+                val response = trainingRepository.subjectFace(signfile, id)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -751,7 +755,7 @@ class VehicleViewModel() : ViewModel() {
     fun singPost(request: RequestBody) {
         viewModelScope.launch {
             try {
-                val response = repository.singPost(request)
+                val response = trainingRepository.singPost(request)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -764,7 +768,7 @@ class VehicleViewModel() : ViewModel() {
     fun getTwoList(userCategoryId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getTwoList(userCategoryId)
+                val response = trainingRepository.getTwoList(userCategoryId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -777,7 +781,7 @@ class VehicleViewModel() : ViewModel() {
     fun twoOrderPay(questionCategoryId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.twoOrderPay(questionCategoryId)
+                val response = trainingRepository.twoOrderPay(questionCategoryId)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -790,7 +794,7 @@ class VehicleViewModel() : ViewModel() {
     fun selectTwoQuestionList(userExamId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.selectTwoQuestionList(userExamId)
+                val response = trainingRepository.selectTwoQuestionList(userExamId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -803,7 +807,7 @@ class VehicleViewModel() : ViewModel() {
     fun startTwoAnswer(request: StartTwoAnswerRequest) {
         viewModelScope.launch {
             try {
-                val response = repository.startTwoAnswer(request)
+                val response = trainingRepository.startTwoAnswer(request)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -816,7 +820,7 @@ class VehicleViewModel() : ViewModel() {
     fun updateTwoQuestion(request: UpdateTwoQuestionRequest) {
         viewModelScope.launch {
             try {
-                val response = repository.updateTwoQuestion(request)
+                val response = trainingRepository.updateTwoQuestion(request)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -829,7 +833,7 @@ class VehicleViewModel() : ViewModel() {
     fun createTwoOrder(type: String, method: String, questionCategoryId: Int) {
         viewModelScope.launch {
             try {
-                val response = repository.createTwoOrder(type, method, questionCategoryId)
+                val response = trainingRepository.createTwoOrder(type, method, questionCategoryId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -842,7 +846,7 @@ class VehicleViewModel() : ViewModel() {
     fun getMeetingList(page: String, status: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getMeetingList(page, status)
+                val response = trainingRepository.getMeetingList(page, status)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -855,7 +859,7 @@ class VehicleViewModel() : ViewModel() {
     fun getMeetingView(id: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getMeetingView(id)
+                val response = trainingRepository.getMeetingView(id)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -868,7 +872,7 @@ class VehicleViewModel() : ViewModel() {
     fun getSubjectList(page: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getSubjectList(page)
+                val response = trainingRepository.getSubjectList(page)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -881,7 +885,7 @@ class VehicleViewModel() : ViewModel() {
     fun subjectOrder(trainingSafetyPlanId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.subjectOrder(trainingSafetyPlanId)
+                val response = trainingRepository.subjectOrder(trainingSafetyPlanId)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -894,7 +898,7 @@ class VehicleViewModel() : ViewModel() {
     fun getSubCoursewareList(page: String, trainingSafetyPlanId: String, number: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getSubCoursewareList(page, trainingSafetyPlanId, number)
+                val response = trainingRepository.getSubCoursewareList(page, trainingSafetyPlanId, number)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -907,7 +911,7 @@ class VehicleViewModel() : ViewModel() {
     fun subjectStudy(subjectId: String, trainingSafetyPlanId: String, longtime: String) {
         viewModelScope.launch {
             try {
-                val response = repository.subjectStudy(subjectId, trainingSafetyPlanId, longtime)
+                val response = trainingRepository.subjectStudy(subjectId, trainingSafetyPlanId, longtime)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -920,7 +924,7 @@ class VehicleViewModel() : ViewModel() {
     fun beforeOrderPay() {
         viewModelScope.launch {
             try {
-                val response = repository.beforeOrderPay()
+                val response = trainingRepository.beforeOrderPay()
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -933,7 +937,7 @@ class VehicleViewModel() : ViewModel() {
     fun getBeforeSubjectList() {
         viewModelScope.launch {
             try {
-                val response = repository.getBeforeSubjectList()
+                val response = trainingRepository.getBeforeSubjectList()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -946,7 +950,7 @@ class VehicleViewModel() : ViewModel() {
     fun getBeforeSubCoursewareList(page: String, trainingSafetyPlanId: String, number: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getBeforeSubCoursewareList(page, trainingSafetyPlanId, number)
+                val response = trainingRepository.getBeforeSubCoursewareList(page, trainingSafetyPlanId, number)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -959,7 +963,7 @@ class VehicleViewModel() : ViewModel() {
     fun getBeforeCoursewareView(trainingSafetyPlanId: String, subjectId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getBeforeCoursewareView(trainingSafetyPlanId, subjectId)
+                val response = trainingRepository.getBeforeCoursewareView(trainingSafetyPlanId, subjectId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -972,7 +976,7 @@ class VehicleViewModel() : ViewModel() {
     fun beforeSubjectStudy(subjectId: String, trainingSafetyPlanId: String, longtime: String, number: String, pageScoll: String?) {
         viewModelScope.launch {
             try {
-                val response = repository.beforeSubjectStudy(subjectId, trainingSafetyPlanId, longtime, number, pageScoll)
+                val response = trainingRepository.beforeSubjectStudy(subjectId, trainingSafetyPlanId, longtime, number, pageScoll)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -985,7 +989,7 @@ class VehicleViewModel() : ViewModel() {
     fun beforeExamInfo() {
         viewModelScope.launch {
             try {
-                val response = repository.beforeExamInfo()
+                val response = trainingRepository.beforeExamInfo()
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -998,7 +1002,7 @@ class VehicleViewModel() : ViewModel() {
     fun getQuestionList() {
         viewModelScope.launch {
             try {
-                val response = repository.getQuestionList()
+                val response = trainingRepository.getQuestionList()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1011,7 +1015,7 @@ class VehicleViewModel() : ViewModel() {
     fun questionOrderPay(questionCategoryId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.questionOrderPay(questionCategoryId)
+                val response = trainingRepository.questionOrderPay(questionCategoryId)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -1024,8 +1028,8 @@ class VehicleViewModel() : ViewModel() {
     fun travelPost(request: TravelPostRequest) {
         viewModelScope.launch {
             try {
-                val response = repository.travelPost(request)
-                if (response.isSuccessful && response.body()?.car_id != null) {
+                val response = trainingRepository.travelPost(request)
+                if (response.isSuccessful && response.body() != null) {
                     // Handle successful response
                 }
             } catch (e: Exception) {
@@ -1037,7 +1041,7 @@ class VehicleViewModel() : ViewModel() {
     fun travelDel(id: String) {
         viewModelScope.launch {
             try {
-                val response = repository.travelDel(id)
+                val response = trainingRepository.travelDel(id)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1050,7 +1054,7 @@ class VehicleViewModel() : ViewModel() {
     fun startAnswer(request: StartAnswerRequest) {
         viewModelScope.launch {
             try {
-                val response = repository.startAnswer(request)
+                val response = trainingRepository.startAnswer(request)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1063,7 +1067,7 @@ class VehicleViewModel() : ViewModel() {
     fun selectQuestionList(userExamId: String) {
         viewModelScope.launch {
             try {
-                val response = repository.selectQuestionList(userExamId)
+                val response = trainingRepository.selectQuestionList(userExamId)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1076,7 +1080,7 @@ class VehicleViewModel() : ViewModel() {
     fun answer(request: AnswerRequest) {
         viewModelScope.launch {
             try {
-                val response = repository.answer(request)
+                val response = trainingRepository.answer(request)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1089,7 +1093,7 @@ class VehicleViewModel() : ViewModel() {
     fun carnumSearch(carnum: String, page: String) {
         viewModelScope.launch {
             try {
-                val response = repository.carnumSearch(carnum, page)
+                val response = trainingRepository.carnumSearch(carnum, page)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1102,7 +1106,7 @@ class VehicleViewModel() : ViewModel() {
     fun resetPwd(newpassword: String, oldpassword: String) {
         viewModelScope.launch {
             try {
-                val response = repository.resetPwd(newpassword, oldpassword)
+                val response = trainingRepository.resetPwd(newpassword, oldpassword)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -1115,7 +1119,7 @@ class VehicleViewModel() : ViewModel() {
     fun getUserStudyProveList(month: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getUserStudyProveList(month)
+                val response = trainingRepository.getUserStudyProveList(month)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1128,7 +1132,7 @@ class VehicleViewModel() : ViewModel() {
     fun getEducationCertificate() {
         viewModelScope.launch {
             try {
-                val response = repository.getEducationCertificate()
+                val response = trainingRepository.getEducationCertificate()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1141,7 +1145,7 @@ class VehicleViewModel() : ViewModel() {
     fun getBeforeEducationCertificate() {
         viewModelScope.launch {
             try {
-                val response = repository.getBeforeEducationCertificate()
+                val response = trainingRepository.getBeforeEducationCertificate()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1154,7 +1158,7 @@ class VehicleViewModel() : ViewModel() {
     fun getStudySafetyList(month: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getStudySafetyList(month)
+                val response = trainingRepository.getStudySafetyList(month)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1167,7 +1171,7 @@ class VehicleViewModel() : ViewModel() {
     fun getCarCheck() {
         viewModelScope.launch {
             try {
-                val response = repository.getCarCheck()
+                val response = trainingRepository.getCarCheck()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1180,7 +1184,7 @@ class VehicleViewModel() : ViewModel() {
     fun carCheckPost(request: CarCheckPostRequest) {
         viewModelScope.launch {
             try {
-                val response = repository.carCheckPost(request)
+                val response = trainingRepository.carCheckPost(request)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -1193,7 +1197,7 @@ class VehicleViewModel() : ViewModel() {
     fun getDanger() {
         viewModelScope.launch {
             try {
-                val response = repository.getDanger()
+                val response = trainingRepository.getDanger()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1206,7 +1210,7 @@ class VehicleViewModel() : ViewModel() {
     fun dangerPost(request: DangerPostRequest) {
         viewModelScope.launch {
             try {
-                val response = repository.dangerPost(request)
+                val response = trainingRepository.dangerPost(request)
                 if (response.isSuccessful && response.body()?.code != null) {
                     // Handle successful response
                 }
@@ -1219,7 +1223,7 @@ class VehicleViewModel() : ViewModel() {
     fun getMyJobList(page: String, type: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getMyJobList(page, type)
+                val response = trainingRepository.getMyJobList(page, type)
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }
@@ -1232,7 +1236,7 @@ class VehicleViewModel() : ViewModel() {
     fun logoff() {
         viewModelScope.launch {
             try {
-                val response = repository.logoff()
+                val response = trainingRepository.logoff()
                 if (response.isSuccessful && response.body()?.code == 1) {
                     // Handle successful response
                 }

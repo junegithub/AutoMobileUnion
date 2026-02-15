@@ -38,4 +38,34 @@
         <!-- 可选：设置BottomSheet的最小高度/最大高度 -->
         <item name="android:minHeight">200dp</item>
     </style>
+
+    <!-- 通用信息项样式：提取公共属性，减少重复代码 -->
+    <style name="InfoItemLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#666666</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="InfoItemValue" parent="InfoItemLabel">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">end</item>
+        <item name="android:textColor">#333333</item>
+    </style>
+
+    <!-- 功能按钮公共样式 -->
+    <style name="FunctionBtnStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:drawablePadding">@dimen/dp_8</item> <!-- 图标文字间距 -->
+        <item name="android:textColor">#333333</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
 </resources>

@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Data Binding 根节点必须是 layout -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 定义Data Binding变量，用于绑定整个车辆信息对象 -->
+    <data>
+        <variable
+            name="realTimeCarInfo"
+            type="com.yt.car.union.net.RealTimeCarInfo" />
+
+        <!-- 定义格式化日期的工具方法（可选，简化代码） -->
+        <import type="com.yt.car.union.net.RealTimeCarInfo"/>
+
+        <variable
+            name="carInfo"
+            type="com.yt.car.union.net.CarInfo" />
+
+        <!-- 定义格式化日期的工具方法（可选，简化代码） -->
+        <import type="com.yt.car.union.net.CarInfo"/>
+    </data>
+
+    <!-- 外层ScrollView保证内容可滚动 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:fillViewport="true">
+
+        <!-- 信息列表容器 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:spacing="4dp">
+
+            <!-- 第一组信息 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="机构名称" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{realTimeCarInfo.categoryname}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="驾驶员" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{realTimeCarInfo.drivercard_name}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="位置" />
+                <TextView
+                    android:id="@+id/address"
+                    style="@style/InfoItemValue"
+                    android:text="" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="设备类型" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.getSimTypeName()}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="状态" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{realTimeCarInfo.gpsstatus}" />
+            </LinearLayout>
+
+            <!-- 第二组信息 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="报警" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{realTimeCarInfo.alarmmsg}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="温度" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{realTimeCarInfo.temperaturestr}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="油量" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{realTimeCarInfo.oil1}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="终端ID" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.num}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="SIM" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.sim}" />
+            </LinearLayout>
+
+            <!-- 第三组信息 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="真实SIM" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.realsim}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="终端厂家名称" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.makerName}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="终端型号" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.kindName}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="入网时间" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.intime}" />
+            </LinearLayout>
+
+            <!-- 第四组信息 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="服务缴费时间" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.paytime}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="服务合同到期时间" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.validtime}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="所属地区" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.getFullAddress()}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="发动机号" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.dlenginenum ?? `-`}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="车辆品牌" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.bcategoryName ?? `-`}" />
+            </LinearLayout>
+
+            <!-- 第五组信息 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="车辆识别代码/车架号" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.frameno}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="车身颜色" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="-" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="联系人" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.contacts}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="手机号" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.phone}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="商业险有效期" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.icbusivaliddate}" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="车辆保险到期时间" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.insurancedate}" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="检验有效期至" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.checkvalidtime}" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="行驶证发证日期" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.dlusedate}" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="道路运输证号" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.tcertificateno}" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/InfoItemLabel"
+                    android:text="准牵引总质量（KG）" />
+                <TextView
+                    style="@style/InfoItemValue"
+                    android:text="@{carInfo.getTotalMass()}" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</layout>

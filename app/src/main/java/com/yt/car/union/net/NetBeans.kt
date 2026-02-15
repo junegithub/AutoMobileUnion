@@ -1,15 +1,34 @@
 package com.yt.car.union.net
 
+import java.text.SimpleDateFormat
+import java.util.Locale
+
+interface IBaseResponse<T> {
+    val code: Int
+    val msg: String
+    val data: T?
+
+    // 可以添加通用方法
+    fun isSuccess(): Boolean = code == 1
+}
+
+data class BaseResponse<T>(
+    override val code: Int,
+    override val msg: String,
+    override val data: T?
+) : IBaseResponse<T>
+
+data class TrainingBaseResponse<T>(
+    override val code: Int,
+    override val msg: String,
+    val time: String,
+    override val data: T?
+) : IBaseResponse<T>
+
 // Data Classes
 data class LoginRequest(
     val account: String,
     val password: String
-)
-
-data class LoginResponse(
-    val msg: String?,
-    val code: Int,
-    val data: LoginData?
 )
 
 data class LoginData(
@@ -25,12 +44,6 @@ data class OtherInfo(
 
 data class UserInfo(
     val token: String?
-)
-
-data class CarInfoResponse(
-    val msg: String?,
-    val code: Int,
-    val data: CarInfo?
 )
 
 data class CarInfo(
@@ -139,7 +152,36 @@ data class CarInfo(
     val isVideoCar: Boolean,
     val category: CategoryInfo?,
     val audiocode: String
-)
+){
+    // 格式化日期（去除时分秒，只保留年月日）
+    fun formatDate(dateStr: String?): String {
+        if (dateStr.isNullOrEmpty()) return "-"
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+            val date = inputFormat.parse(dateStr)
+            outputFormat.format(date ?: return "-")
+        } catch (e: Exception) {
+            "-"
+        }
+    }
+
+    // 获取完整地址
+    fun getFullAddress(): String {
+        return "${provice ?: ""} ${city ?: ""} ${area ?: ""}".trim()
+    }
+
+    fun getSimTypeName(): String {
+        if (simtype == "0") {
+            return "2G"
+        }
+        return "4G"
+    }
+
+    fun getTotalMass() : String {
+        return ttotalmass.toString()
+    }
+}
 
 data class BrandInfo(
     val name: String,
@@ -160,18 +202,6 @@ data class CategoryInfo(
     val type: String
 )
 
-data class IsLYBHResponse(
-    val msg: String?,
-    val code: Int,
-    val data: Boolean?
-)
-
-data class OilDayReportResponse(
-    val msg: String?,
-    val code: Int,
-    val data: OilDayReportData?
-)
-
 data class OilDayReportData(
     val total: Int,
     val list: List<OilDayReportItem>
@@ -188,12 +218,6 @@ data class OilDayReportItem(
     val percent: Double
 )
 
-data class LeakReportResponse(
-    val msg: String?,
-    val code: Int,
-    val data: LeakReportData?
-)
-
 data class LeakReportData(
     val total: Int,
     val list: List<LeakReportItem>
@@ -208,12 +232,6 @@ data class LeakReportItem(
     val sim: String,
     val num: Int,
     val oil: Double
-)
-
-data class MapPositionResponse(
-    val msg: String?,
-    val code: Int,
-    val data: MapPositionData?
 )
 
 data class MapPositionData(
@@ -235,12 +253,6 @@ data class MapPositionItem(
     val longitude: Double,
     val status: Int,
     val direction: String
-)
-
-data class RealTimeAddressResponse(
-    val msg: String?,
-    val code: Int,
-    val data: RealTimeAddressData?
 )
 
 data class RealTimeAddressData(
@@ -274,22 +286,20 @@ data class RealTimeCarInfo(
     val categoryname: String,
     val contacts: String,
     val status: String
-)
+) {
+    // 获取今日里程（默认0）
+    fun getTodayMileage(): String {
+        return "${todayMileage ?: 0.0}km"
+    }
+
+    // 获取总里程（默认0）
+    fun getTotalMileage(): String {
+        return "${milege ?: 0}km"
+    }
+}
 
 data class SearchHistoryRequest(
     val content: String
-)
-
-data class SearchHistoryResponse(
-    val msg: String?,
-    val code: Int,
-    val data: Int
-)
-
-data class TreeNodeResponse(
-    val msg: String?,
-    val code: Int,
-    val data: List<TreeNode>
 )
 
 data class TreeNode(
@@ -304,12 +314,6 @@ data class TreeNode(
     val children: List<TreeNode>?
 )
 
-data class CarStatusListResponse(
-    val msg: String?,
-    val code: Int,
-    val data: CarStatusListData?
-)
-
 data class CarStatusListData(
     val all: Int,
     val drive: Int,
@@ -319,12 +323,6 @@ data class CarStatusListData(
     val tired: Int,
     val other: Int,
     val expired: Int
-)
-
-data class CarStatusDetailResponse(
-    val msg: String?,
-    val code: Int,
-    val data: List<CarStatusDetailItem>
 )
 
 data class CarStatusDetailItem(
@@ -350,12 +348,6 @@ data class CarStatusDetailItem(
     val direction: Int
 )
 
-data class SearchCarTypeResponse(
-    val msg: String?,
-    val code: Int,
-    val data: SearchCarTypeData?
-)
-
 data class SearchCarTypeData(
     val count: SearchCarCount,
     val list: List<SearchCarItem>
@@ -372,12 +364,6 @@ data class SearchCarCount(
 data class SearchCarItem(
     val carId: String,
     val carNum: String
-)
-
-data class DashboardInfoResponse(
-    val msg: String?,
-    val code: Int,
-    val data: DashboardInfoData?
 )
 
 data class DashboardInfoData(
@@ -397,12 +383,6 @@ data class WarningTypeInfo(
     val name: String
 )
 
-data class OilAddReportResponse(
-    val msg: String?,
-    val code: Int,
-    val data: OilAddReportData?
-)
-
 data class OilAddReportData(
     val total: Int,
     val list: List<OilAddReportItem>
@@ -419,12 +399,6 @@ data class OilAddReportItem(
     val oil: Double
 )
 
-data class ActiveWarningResponse(
-    val msg: String?,
-    val code: Int,
-    val data: ActiveWarningData?
-)
-
 data class ActiveWarningData(
     val total: Int,
     val list: List<ActiveWarningItem>
@@ -436,12 +410,6 @@ data class ActiveWarningItem(
     val warningType: Int
 )
 
-data class ExpiredCarResponse(
-    val msg: String?,
-    val code: Int,
-    val data: ExpiredCarData?
-)
-
 data class ExpiredCarData(
     val total: Int,
     val list: List<ExpiredCarItem>
@@ -451,12 +419,6 @@ data class ExpiredCarItem(
     val carId: String,
     val carNum: String,
     val expiredDate: String
-)
-
-data class MileageResponse(
-    val msg: String?,
-    val code: Int,
-    val data: MileageData?
 )
 
 data class MileageData(
@@ -472,12 +434,6 @@ data class MileageItem(
     val mileage: Double
 )
 
-data class OfflineReportResponse(
-    val msg: String?,
-    val code: Int,
-    val data: OfflineReportData?
-)
-
 data class OfflineReportData(
     val total: Int,
     val list: List<OfflineReportItem>
@@ -490,12 +446,6 @@ data class OfflineReportItem(
     val deptName: String,
     val offline: Int,
     val online: Int
-)
-
-data class PhotoReportResponse(
-    val msg: String?,
-    val code: Int,
-    val data: PhotoReportData?
 )
 
 data class PhotoReportData(
@@ -516,12 +466,6 @@ data class PhotoReportItem(
     val objectName: String
 )
 
-data class StopDetailResponse(
-    val msg: String?,
-    val code: Int,
-    val data: StopDetailData?
-)
-
 data class StopDetailData(
     val total: Int,
     val list: List<StopDetailItem>
@@ -540,12 +484,6 @@ data class StopDetailItem(
     val position: String
 )
 
-data class WarningReportResponse(
-    val msg: String?,
-    val code: Int,
-    val data: WarningReportData?
-)
-
 data class WarningReportData(
     val total: Int,
     val list: List<WarningReportItem>
@@ -555,12 +493,6 @@ data class WarningReportItem(
     val num: Int,
     val name: String,
     val warningType: Int
-)
-
-data class WarningDetailResponse(
-    val msg: String?,
-    val code: Int,
-    val data: WarningDetailData?
 )
 
 data class WarningDetailData(
@@ -579,22 +511,6 @@ data class WarningDetailItem(
     val lon: Double,
     val lat: Double,
     val position: String
-)
-
-data class ShareLastPositionRequest(
-    val carId: Long
-)
-
-data class ShareLastPositionResponse(
-    val msg: String?,
-    val code: Int,
-    val data: String?
-)
-
-data class TrackResponse(
-    val msg: String?,
-    val code: Int,
-    val data: TrackData?
 )
 
 data class TrackData(
@@ -636,12 +552,6 @@ data class TrackPosition(
     val direction: Int
 )
 
-data class VideoInfoResponse(
-    val msg: String?,
-    val code: Int,
-    val data: VideoInfoData?
-)
-
 data class VideoInfoData(
     val waynums: List<VideoChannel>,
     val category_id: String,
@@ -664,31 +574,9 @@ data class SendContentRequest(
     val content: String
 )
 
-data class SendContentResponse(
-    val msg: String?,
-    val code: Int
-)
-
-data class TakePhotoResponse(
-    val msg: String?,
-    val code: Int
-)
-
-data class LogoutResponse(
-    val msg: String?,
-    val code: Int
-)
-
 data class UserLoginRequest(
     val account: String,
     val password: String
-)
-
-data class UserLoginResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: UserLoginData?
 )
 
 data class UserLoginData(
@@ -770,13 +658,6 @@ data class OtherUserInfo(
     val check_name: String?
 )
 
-data class SignViewResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: SignViewData?
-)
-
 data class SignViewData(
     val id: Int,
     val group_id: Int,
@@ -846,13 +727,6 @@ data class SignViewData(
     val check_name: String?,
     val ischange: Int,
     val areacode: String
-)
-
-data class UserInfoResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: UserInfoData?
 )
 
 data class UserInfoData(
@@ -974,20 +848,6 @@ data class YearMoney(
     val createtime: Long
 )
 
-data class UserOtherInfoResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: OtherUserInfo?
-)
-
-data class EpidemicViewResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: EpidemicViewData?
-)
-
 data class EpidemicViewData(
     val epidemictype: String,
     val epidemictime: String,
@@ -995,13 +855,6 @@ data class EpidemicViewData(
     val category: String,
     val category_id: Int,
     val areacode: String
-)
-
-data class TravelLogResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: TravelLogData?
 )
 
 data class TravelLogData(
@@ -1041,13 +894,6 @@ data class TravelLogItem(
     val ysingimg: String
 )
 
-data class CompanyListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: CompanyListData?
-)
-
 data class CompanyListData(
     val total: Int,
     val rows: CompanyListRow,
@@ -1067,13 +913,6 @@ data class CompanyListRow(
     val endtime: String,
     val weigh: String,
     val istuijian: String
-)
-
-data class SafetyListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: SafetyListData?
 )
 
 data class SafetyListData(
@@ -1115,13 +954,6 @@ data class SafetyPlan(
     val joinexams: Int
 )
 
-data class DailySafetyOrderResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: DailySafetyOrderData?
-)
-
 data class DailySafetyOrderData(
     val training_publicplan: TrainingPublicPlan,
     val money: String,
@@ -1152,13 +984,6 @@ data class TrainingPublicPlan(
     val type: String,
     val package_id: Int,
     val courtype: String
-)
-
-data class OldSafetyListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: OldSafetyListData?
 )
 
 data class OldSafetyListData(
@@ -1196,13 +1021,6 @@ data class OldSafetyPlan(
     val joinexams: Int
 )
 
-data class CoursewareListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: CoursewareListData?
-)
-
 data class CoursewareListData(
     val total: Int,
     val list: List<CoursewareItem>,
@@ -1235,43 +1053,15 @@ data class CoursewareItem(
     val type_text: String
 )
 
-data class CoursewareViewResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: CoursewareViewData?
-)
-
 data class CoursewareViewData(
     val row: TrainingPublicPlan,
     val longtime: Int,
     val courrow: CoursewareItem
 )
 
-data class ConfigTimeResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: Int
-)
-
-data class SafeStudyResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: SafeStudyData?
-)
-
 data class SafeStudyData(
     val nextsubject_id: Int,
     val isend: Int
-)
-
-data class ExamViewResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: ExamViewData?
 )
 
 data class ExamViewData(
@@ -1299,13 +1089,6 @@ data class TypeList(
     val `3`: String
 )
 
-data class UploadFileResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: UploadFileData?
-)
-
 data class UploadFileData(
     val url: String
 )
@@ -1315,20 +1098,6 @@ data class SubmitExamRequest(
     val exams_id: String,
     val training_publicplan_id: String,
     val imgurl: String
-)
-
-data class SubmitExamResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: String
-)
-
-data class ExamResultResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: ExamResultData?
 )
 
 data class ExamResultData(
@@ -1416,33 +1185,12 @@ data class ExamRow(
     val type_text: String
 )
 
-data class QuestionViewResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: List<QuestionViewItem>
-)
-
 data class QuestionViewItem(
     val questionID: Int,
     val fldName: String,
     val fldAnswer: String,
     val questionType: Int,
     val QuestionOptionList: List<QuestionOption>
-)
-
-data class CreateOrderResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: String?
-)
-
-data class OrderListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: OrderListData?
 )
 
 data class OrderListData(
@@ -1474,13 +1222,6 @@ data class OrderItem(
     val paystatus: String
 )
 
-data class FaceResponse(
-    val data: FaceData?,
-    val code: String,
-    val msg: String,
-    val time: String
-)
-
 data class FaceData(
     val isjump: Int,
     val issing: String,
@@ -1491,13 +1232,6 @@ data class FaceData(
 
 data class FaceList(
     val face_token: String
-)
-
-data class TwoListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: TwoListData?
 )
 
 data class TwoListData(
@@ -1522,13 +1256,6 @@ data class CategoryListItem(
     val money: Int
 )
 
-data class TwoOrderPayResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: TwoOrderPayData?
-)
-
 data class TwoOrderPayData(
     val question_category: QuestionCategory,
     val money: Int
@@ -1541,13 +1268,6 @@ data class QuestionCategory(
     val createtime: Long,
     val money: Int,
     val provice_id: Int
-)
-
-data class SelectTwoQuestionListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: SelectTwoQuestionListData?
 )
 
 data class SelectTwoQuestionListData(
@@ -1572,13 +1292,6 @@ data class StartTwoAnswerRequest(
     val user_category_id: Int,
     val question_category_id: Int,
     val question_id: Int
-)
-
-data class StartTwoAnswerResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: StartTwoAnswerData?
 )
 
 data class StartTwoAnswerData(
@@ -1614,20 +1327,6 @@ data class UpdateTwoQuestionRequest(
     val user_category_id: Int,
     val question_category_id: Int,
     val question_id: Int
-)
-
-data class CreateTwoOrderResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: String
-)
-
-data class MeetingListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: MeetingListData?
 )
 
 data class MeetingListData(
@@ -1667,13 +1366,6 @@ data class MeetingItem(
     val studytype: Int
 )
 
-data class MeetingViewResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: MeetingViewData?
-)
-
 data class MeetingViewData(
     val id: Int,
     val name: String,
@@ -1706,13 +1398,6 @@ data class MeetingViewData(
     val signfile: List<Any>
 )
 
-data class SubjectListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: SubjectListData?
-)
-
 data class SubjectListData(
     val total: Int,
     val rows: List<SubjectItem>,
@@ -1739,13 +1424,6 @@ data class SubjectItem(
     val paystatus: Int
 )
 
-data class SubjectOrderResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: SubjectOrderData?
-)
-
 data class SubjectOrderData(
     val training_subjectplan: SubjectPlan,
     val money: Int
@@ -1760,13 +1438,6 @@ data class SubjectPlan(
     val updatetime: Long,
     val deletetime: String?,
     val training_exams_id: Int
-)
-
-data class SubCoursewareListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: SubCoursewareListData?
 )
 
 data class SubCoursewareListData(
@@ -1807,35 +1478,14 @@ data class SubjectPlanDetail(
     val ksnum: Double
 )
 
-data class SubjectStudyResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: SubjectStudyData?
-)
-
 data class SubjectStudyData(
     val nextsubject_id: Int,
     val isend: Int,
     val training_exams_id: Int
 )
 
-data class BeforeOrderPayResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: BeforeOrderPayData?
-)
-
 data class BeforeOrderPayData(
     val money: String
-)
-
-data class BeforeSubjectListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: BeforeSubjectListData?
 )
 
 data class BeforeSubjectListData(
@@ -1861,13 +1511,6 @@ data class BeforeSubjectItem(
     val slongtime: Int,
     val progress: Double,
     val joinexams: Int
-)
-
-data class BeforeSubCoursewareListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: BeforeSubCoursewareListData?
 )
 
 data class BeforeSubCoursewareListData(
@@ -1919,13 +1562,6 @@ data class BeforePlanDetail(
     val ksnum: Int
 )
 
-data class BeforeCoursewareViewResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: BeforeCoursewareViewData?
-)
-
 data class BeforeCoursewareViewData(
     val row: BeforeSimplePlan,
     val longtime: Int,
@@ -1947,36 +1583,15 @@ data class BeforeSimplePlan(
     val issign: String
 )
 
-data class BeforeSubjectStudyResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: BeforeSubjectStudyData?
-)
-
 data class BeforeSubjectStudyData(
     val nextsubject_id: Int,
     val isend: Int,
     val training_exams_id: Int
 )
 
-data class BeforeExamInfoResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: BeforeExamInfoData?
-)
-
 data class BeforeExamInfoData(
     val exams_id: Int,
     val training_before_id: Int
-)
-
-data class QuestionListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: QuestionListData?
 )
 
 data class QuestionListData(
@@ -1999,13 +1614,6 @@ data class QuestionCategoryDetail(
     val answer_count: Int,
     val user_exam_id: Int,
     val money: Int
-)
-
-data class QuestionOrderPayResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: QuestionOrderPayData?
 )
 
 data class QuestionOrderPayData(
@@ -2074,24 +1682,10 @@ data class TravelPostResponse(
     val updatetime: String
 )
 
-data class TravelDelResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: Int
-)
-
 data class StartAnswerRequest(
     val question_category_id: String,
     val user_exam_id: String,
     val user_category_id: String
-)
-
-data class StartAnswerResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: StartAnswerData?
 )
 
 data class StartAnswerData(
@@ -2122,13 +1716,6 @@ data class StartAnswerQuestion(
     val stype: Int
 )
 
-data class SelectQuestionListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: SelectQuestionListData?
-)
-
 data class SelectQuestionListData(
     val question_count: Int,
     val answer_count: Int,
@@ -2152,23 +1739,9 @@ data class AnswerRequest(
     val answer: String
 )
 
-data class AnswerResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: AnswerData?
-)
-
 data class AnswerData(
     val is_right: Boolean,
     val has_next: Boolean
-)
-
-data class CarNumSearchResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: CarNumSearchData?
 )
 
 data class CarNumSearchData(
@@ -2180,20 +1753,6 @@ data class CarNumSearchData(
 data class CarNumSearchItem(
     val id: Int,
     val carnum: String
-)
-
-data class ResetPwdResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: Any?
-)
-
-data class UserStudyProveListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: UserStudyProveListData?
 )
 
 data class UserStudyProveListData(
@@ -2226,13 +1785,6 @@ data class Certificate(
     val pic: String
 )
 
-data class EducationCertificateResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: List<EducationCertificate>
-)
-
 data class EducationCertificate(
     val name: String,
     val cardnum: String,
@@ -2246,13 +1798,6 @@ data class EducationCertificate(
     val imgurl: List<String>,
     val city_id: Int,
     val category_id: Int
-)
-
-data class BeforeEducationCertificateResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: BeforeEducationCertificateData?
 )
 
 data class BeforeEducationCertificateData(
@@ -2269,20 +1814,6 @@ data class BeforeEducationCertificateData(
     val addtime: String,
     val typename: String,
     val category: CategoryDetail
-)
-
-data class StudySafetyListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: List<SafetyPlan>
-)
-
-data class CarCheckResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: CarCheckData?
 )
 
 data class CarCheckData(
@@ -2352,13 +1883,6 @@ data class CarCheckPostRequest(
     val idea: String,
     val checksign_img: String,
     val dirversign_img: String
-)
-
-data class DangerResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: DangerData?
 )
 
 data class DangerData(
@@ -2460,13 +1984,6 @@ data class DangerPostRequest(
     val check_admin: String?
 )
 
-data class MyJobListResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: MyJobListData?
-)
-
 data class MyJobListData(
     val total: Int,
     val rows: MyJobItem,
@@ -2486,20 +2003,6 @@ data class MyJobItem(
     val qualification: String,
     val frontcard: String,
     val backcard: String
-)
-
-data class LogoffResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: Any?
-)
-
-data class CarUserInfoResponse(
-    val code: Int,
-    val msg: String,
-    val time: String,
-    val data: CarUserInfo?
 )
 
 data class CarUserInfo(

@@ -1,7 +1,16 @@
 package com.yt.car.union.viewmodel
 
-import com.yt.car.union.net.SearchHistoryRequest
-import okhttp3.MultipartBody
+import com.yt.car.union.net.CarInfo
+import com.yt.car.union.net.CarStatusDetailItem
+import com.yt.car.union.net.DashboardInfoData
+import com.yt.car.union.net.ExpiredCarData
+import com.yt.car.union.net.LeakReportData
+import com.yt.car.union.net.MapPositionData
+import com.yt.car.union.net.OilAddReportData
+import com.yt.car.union.net.OilDayReportData
+import com.yt.car.union.net.RealTimeAddressData
+import com.yt.car.union.net.TrackData
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * 车辆信息相关ViewModel（车辆信息、位置、报表、状态等）
@@ -9,147 +18,104 @@ import okhttp3.MultipartBody
 class CarInfoViewModel : CarBaseViewModel() {
 
     // 获取车辆基础信息
-    fun getCarInfo(carId: Int) {
+    fun getCarInfo(carId: Int, stateFlow: MutableStateFlow<ApiState<CarInfo>>) {
         launchRequest(
             block = { vehicleRepository.getCarInfo(carId) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 检查是否是LYBH（业务逻辑保留）
-    fun isLYBH() {
+    fun isLYBH(stateFlow: MutableStateFlow<ApiState<Boolean>>) {
         launchRequest(
             block = { vehicleRepository.isLYBH() },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code != null) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 油费日报
-    fun getOilDayReport(page: Int, pageSize: Int?, search: String?, timetype: Int) {
+    fun getOilDayReport(page: Int, pageSize: Int?, search: String?, timetype: Int,
+                        stateFlow: MutableStateFlow<ApiState<OilDayReportData>>) {
         launchRequest(
             block = { vehicleRepository.getOilDayReport(page, pageSize, search, timetype) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 泄漏报表
-    fun getLeakReport(page: Int, pageSize: Int?, search: String?, timetype: Int) {
+    fun getLeakReport(page: Int, pageSize: Int?, search: String?, timetype: Int,
+                      stateFlow: MutableStateFlow<ApiState<LeakReportData>>) {
         launchRequest(
             block = { vehicleRepository.getLeakReport(page, pageSize, search, timetype) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 地图位置
-    fun getMapPositions(size: Int?) {
+    fun getMapPositions(size: Int?, stateFlow: MutableStateFlow<ApiState<MapPositionData>>) {
         launchRequest(
             block = { vehicleRepository.getMapPositions(size) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 实时地址
-    fun getRealTimeAddress(carId: Int?, carnum: String?) {
+    fun getRealTimeAddress(carId: Int?, carnum: String?,
+                           stateFlow: MutableStateFlow<ApiState<RealTimeAddressData>>) {
         launchRequest(
             block = { vehicleRepository.getRealTimeAddress(carId, carnum) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 车辆状态（按类型）
-    fun getCarStatusByType(carType: String, pageNum: Int, pageSize: Int) {
+    fun getCarStatusByType(carType: String, pageNum: Int, pageSize: Int,
+                           stateFlow: MutableStateFlow<ApiState<List<CarStatusDetailItem>>>) {
         launchRequest(
             block = { vehicleRepository.getCarStatusByType(carType, pageNum, pageSize) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 仪表盘信息
-    fun getDashboardInfo() {
+    fun getDashboardInfo(stateFlow: MutableStateFlow<ApiState<DashboardInfoData>>) {
         launchRequest(
             block = { vehicleRepository.getDashboardInfo() },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 轨迹信息
-    fun getTrackInfo(carId: Int, endtime: String, is704: Boolean?, isFilter: Boolean?, starttime: String) {
+    fun getTrackInfo(carId: Int, endtime: String, is704: Boolean?, isFilter: Boolean?,
+                     starttime: String, stateFlow: MutableStateFlow<ApiState<TrackData>>) {
         launchRequest(
             block = { vehicleRepository.getTrackInfo(carId, endtime, is704, isFilter, starttime) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 拍照指令
-    fun takePhoto(carId: String) {
+    fun takePhoto(carId: String, stateFlow: MutableStateFlow<ApiState<Any>>) {
         launchRequest(
             block = { vehicleRepository.takePhoto(carId) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
     // 其他车辆报表/状态相关方法...（按相同逻辑迁移）
-    fun getOilAddReport(page: Int, pageSize: Int?, search: String?, timetype: Int) {
+    fun getOilAddReport(page: Int, pageSize: Int?, search: String?, timetype: Int,
+                        stateFlow: MutableStateFlow<ApiState<OilAddReportData>>) {
         launchRequest(
             block = { vehicleRepository.getOilAddReport(page, pageSize, search, timetype) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
 
-    fun getExpiredCars(page: Int, pageSize: Int?, search: String?) {
+    fun getExpiredCars(page: Int, pageSize: Int?, search: String?,
+                       stateFlow: MutableStateFlow<ApiState<ExpiredCarData>>) {
         launchRequest(
             block = { vehicleRepository.getExpiredCars(page, pageSize, search) },
-            onSuccess = { response ->
-                if (response.isSuccessful && response.body()?.code == 1) {
-                    // 业务成功逻辑
-                }
-            }
+            stateFlow
         )
     }
-
-
 }

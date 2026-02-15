@@ -123,7 +123,7 @@
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/user_avatar"
+            android:src="@drawable/user_avatar_png"
             android:layout_marginEnd="15dp"/>
 
         <!-- 用户名/昵称 -->

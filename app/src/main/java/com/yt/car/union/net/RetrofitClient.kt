@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit
  * Retrofit单例客户端：全局唯一，统一配置网络请求
  */
 object RetrofitClient {
-    private lateinit var apiService: ApiService
     private lateinit var carApiService: CarApiService
     private lateinit var trainingApiService: TrainingApiService
 
@@ -36,7 +35,6 @@ object RetrofitClient {
             .build()
 
         // 3. 创建ApiService实例
-        apiService = retrofit.create(ApiService::class.java)
         carApiService = retrofit.create(CarApiService::class.java)
 
         retrofit = Retrofit.Builder()
@@ -50,13 +48,6 @@ object RetrofitClient {
     /**
      * 获取ApiService实例（全局调用）
      */
-    fun getApiService(): ApiService {
-        if (!::apiService.isInitialized) {
-            throw UninitializedPropertyAccessException("RetrofitClient未初始化，请在Application中调用init()")
-        }
-        return apiService
-    }
-
     fun getCarApiService(): CarApiService {
         if (!::carApiService.isInitialized) {
             throw UninitializedPropertyAccessException("RetrofitClient未初始化，请在Application中调用init()")

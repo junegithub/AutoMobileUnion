@@ -99,6 +99,8 @@
             app:drawableTopCompat="@drawable/ic_report" />
     </LinearLayout>
 
-
+    <include
+        layout="@layout/activity_car_detail"
+        android:id="@+id/root_car_detail"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

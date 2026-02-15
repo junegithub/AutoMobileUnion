@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.amap.api.maps.model.BitmapDescriptor
 import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.yt.car.union.R
+import com.yt.car.union.net.MapPositionItem
 import com.yt.car.union.net.bean.CarStatusItem
 
 object MarkerViewUtil {
@@ -19,7 +20,7 @@ object MarkerViewUtil {
      */
     fun createCarMarker(
         context: Context,
-        carStatus: CarStatusItem
+        carStatus: MapPositionItem
     ): BitmapDescriptor {
         // 加载布局
         val view = LayoutInflater.from(context).inflate(R.layout.view_car_marker, null)
@@ -27,7 +28,7 @@ object MarkerViewUtil {
         val tvNum = view.findViewById<TextView>(R.id.tv_car_num)
 
         ivCar.setImageResource(VehicleImageProvider.getVehicleImageResId(carStatus.dlcartype.toString(), carStatus.status))
-        ivCar.rotation = 90f - carStatus.rotation
+        ivCar.rotation = 90f - carStatus.rotation.toFloat()
         tvNum.text = carStatus.carnum
 
         // 测量 + 绘制View到Bitmap
