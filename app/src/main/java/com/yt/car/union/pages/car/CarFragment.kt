@@ -1,18 +1,34 @@
 package com.yt.car.union.pages.car
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.amap.api.location.AMapLocation
+import com.amap.api.location.AMapLocationClient
+import com.amap.api.location.AMapLocationClientOption
+import com.amap.api.location.AMapLocationListener
 import com.amap.api.maps.AMap
 import com.amap.api.maps.CameraUpdateFactory
+import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.LatLngBounds
+import com.amap.api.maps.model.Marker
 import com.amap.api.maps.model.MarkerOptions
+import com.amap.api.maps.model.MyLocationStyle
 import com.google.android.material.tabs.TabLayout
 import com.yt.car.union.pages.LoginActivity
 import com.yt.car.union.MyApp
@@ -27,6 +43,7 @@ import com.yt.car.union.pages.DeviceStatusActivity
 import com.yt.car.union.pages.OperationAnalysisActivity
 import com.yt.car.union.pages.ReportActivity
 import com.yt.car.union.pages.openDial
+import com.yt.car.union.util.DialogUtils
 import com.yt.car.union.util.EventData
 import com.yt.car.union.util.MarkerViewUtil
 import com.yt.car.union.util.PressEffectUtils
@@ -43,7 +60,7 @@ import kotlin.getValue
  * 查车页面：高德地图核心实现
  * 功能：定位蓝点、车辆标记、自动缩放显示所有车辆、车牌关联
  */
-class CarFragment : Fragment() {
+class CarFragment : Fragment(), AMapLocationListener {
     val dlCarTypes = setOf("10", "12", "13", "14", "K13", "K23", "K26", "K31")
 
     // 声明ViewBinding对象
@@ -53,14 +70,29 @@ class CarFragment : Fragment() {
     private lateinit var aMap: AMap // 高德地图核心对象
 
     // 车辆模拟数据（车牌+经纬度，实际从接口获取）
-    private var carList : List<MapPositionItem> = emptyList()
-    private var carsStateFlow = MutableStateFlow<ApiState<MapPositionData>>(ApiState.Loading)
-    private var addressStateFlow = MutableStateFlow<ApiState<RealTimeAddressData>>(ApiState.Loading)
-    private var carInfoStateFlow = MutableStateFlow<ApiState<CarInfo>>(ApiState.Loading)
+    private var carList : List<MapPositionItem>? = emptyList()
+    private var carsStateFlow = MutableStateFlow<ApiState<MapPositionData>>(ApiState.Idle)
+    private var addressStateFlow = MutableStateFlow<ApiState<RealTimeAddressData>>(ApiState.Idle)
+    private var carInfoStateFlow = MutableStateFlow<ApiState<CarInfo>>(ApiState.Idle)
+    private val sendStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
+    private val takePhotoStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
 
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
 
     private var phone: String? = null
+
+    // 全局持有 Dialog 实例，用于防止重复弹出
+    private var inputDialog: AlertDialog? = null
+    private var loadingDialog: AlertDialog? = null // 进度提示框
+    private var currentCar: MapPositionItem? = null
+
+    private var isAnimating = false // 防止相机动画循环触发
+    private val markerList = mutableListOf<Marker>()
+    private var locationClient: AMapLocationClient? = null
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,15 +121,45 @@ class CarFragment : Fragment() {
         }
         // 3. 地图点击监听（可选：点击标记显示车辆详情）
         aMap.setOnMarkerClickListener { marker ->
-            val mapItem = marker.`object` as MapPositionItem
-            carInfoViewModel.getRealTimeAddress(mapItem.id.toInt(), mapItem.carnum,
+            currentCar = marker.`object` as MapPositionItem
+            val id = currentCar?.id?.toInt()
+            carInfoViewModel.getRealTimeAddress(id, currentCar?.carnum,
                 addressStateFlow)
-            carInfoViewModel.getCarInfo(mapItem.id.toInt(),
+            carInfoViewModel.getCarInfo(id!!,
                 carInfoStateFlow)
+            showSingleMarker(marker)
             true
         }
 
         aMap.uiSettings.isZoomControlsEnabled = false
+        setCustomLocationStyle()
+    }
+
+    // 核心：使用 MyLocationStyle 设置模式和样式
+    private fun setCustomLocationStyle() {
+        val locationStyle = MyLocationStyle()
+
+        // 1. 设置小蓝点行为模式（替代废弃的 aMap.setMyLocationType）
+        // 模式说明：
+        // - LOCATION_TYPE_SHOW: 只显示，不自动移动地图
+        // - LOCATION_TYPE_LOCATE: 定位一次并移动地图
+        // - LOCATION_TYPE_FOLLOW: 持续跟随
+        locationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_SHOW)
+
+        // 2. (可选) 自定义小蓝点图标
+        locationStyle.myLocationIcon(
+            BitmapDescriptorFactory.fromResource(R.drawable.my_location)
+        )
+
+        // 3. (可选) 设置精度圈样式
+        locationStyle.radiusFillColor(Color.TRANSPARENT) // 透明填充
+        locationStyle.strokeColor(Color.TRANSPARENT) // 隐藏边框
+
+        // 4. (可选) 设置图标锚点
+        locationStyle.anchor(0.5f, 0.5f)
+
+        // 5. 应用样式到地图
+        aMap.myLocationStyle = locationStyle
     }
 
     private fun initListener() {
@@ -107,6 +169,8 @@ class CarFragment : Fragment() {
         PressEffectUtils.setCommonPressEffect(binding.analysis)
         PressEffectUtils.setCommonPressEffect(binding.status)
         PressEffectUtils.setCommonPressEffect(binding.btnAllCars)
+        PressEffectUtils.setCommonPressEffect(binding.locationAllCars)
+        PressEffectUtils.setCommonPressEffect(binding.currentLocation)
         PressEffectUtils.setCommonPressEffect(binding.rootCarDetail.tvClose)
         PressEffectUtils.setCommonPressEffect(binding.rootCarDetail.rootMore.tvWechat)
         PressEffectUtils.setCommonPressEffect(binding.rootCarDetail.rootMore.tvCall)
@@ -128,8 +192,27 @@ class CarFragment : Fragment() {
             startActivity(Intent(requireContext(), OperationAnalysisActivity::class.java))
         }
         binding.report.setOnClickListener {
-            startActivity(Intent(requireContext(), ReportActivity::class.java))
+            if (MyApp.isLogin == true) {
+                startActivity(Intent(requireContext(), ReportActivity::class.java))
+            } else {
+                DialogUtils.showLoginPromptDialog(requireContext())
+            }
         }
+        binding.btnAllCars.setOnClickListener {
+            if (MyApp.isLogin == true) {
+
+            } else {
+                DialogUtils.showLoginPromptDialog(requireContext())
+            }
+        }
+
+        binding.locationAllCars.setOnClickListener {
+            zoomToAllCars()
+        }
+        binding.currentLocation.setOnClickListener {
+            checkAndRequestLocationPermission()
+        }
+
         binding.rootCarDetail.tvClose.setOnClickListener {
             binding.rootCarDetail.root.visibility = View.GONE
         }
@@ -146,10 +229,10 @@ class CarFragment : Fragment() {
 
         }
         binding.rootCarDetail.rootMore.tvSendtext.setOnClickListener {
-
+            showInputDialog()
         }
         binding.rootCarDetail.rootMore.tvTakePhoto.setOnClickListener {
-
+            carInfoViewModel.takePhoto(currentCar?.id!!, takePhotoStateFlow)
         }
 
         val tabLayout = binding.rootCarDetail.tabLayout
@@ -174,7 +257,6 @@ class CarFragment : Fragment() {
                 } else if (tab.position == 2) {
 
                 } else if (tab.position == 3) {
-
                 } else if (tab.position == 4) {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
                     binding.rootCarDetail.rootMore.root.visibility = View.VISIBLE
@@ -200,18 +282,19 @@ class CarFragment : Fragment() {
                     }
 
                     is ApiState.Success -> {
-                        // 成功：隐藏进度条，显示数据
-
                         // 更新统计数据
                         val statistics = uiState.data
-                        binding.btnAllCars.text = "全部${statistics.total}辆车"
-                        carList = statistics.list
-                        // 更新车辆列表
+                        binding.btnAllCars.text = "全部${statistics?.total}辆车"
+                        carList = statistics?.list
                         addCarMarkers()
+                        zoomToAllCars()
                     }
 
                     is ApiState.Error -> {
                         // 失败：显示错误信息，隐藏其他视图
+                    }
+                    is ApiState.Idle -> {
+                        // 初始状态，无需处理
                     }
                 }
             }
@@ -220,14 +303,13 @@ class CarFragment : Fragment() {
             addressStateFlow.collect {
                 when (it) {
                     is ApiState.Loading -> {
-                        // 加载中：显示进度条，隐藏其他视图
                     }
                     is ApiState.Success -> {
-                        // 成功：隐藏进度条，显示数据
-                        refreshRealAddressCarDetails(it.data)
+                        refreshRealAddressCarDetails(it?.data)
                     }
                     is ApiState.Error -> {
-                        // 失败：显示错误信息，隐藏其他视图
+                    }
+                    is ApiState.Idle -> {
                     }
                 }
             }
@@ -241,10 +323,69 @@ class CarFragment : Fragment() {
                     }
                     is ApiState.Success -> {
                         // 成功：隐藏进度条，显示数据
-                        refreshCarDetails(it.data)
+                        refreshCarDetails(it?.data)
                     }
                     is ApiState.Error -> {
                         // 失败：显示错误信息，隐藏其他视图
+                    }
+                    is ApiState.Idle -> {
+                        // 初始状态，无需处理
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            sendStateFlow.collect { state ->
+                when (state) {
+                    is ApiState.Loading -> {
+                        // 显示进度框
+                        showLoadingDialog("下发中...")
+                    }
+                    is ApiState.Success -> {
+                        // 隐藏进度框，关闭输入框，提示成功
+                        hideLoadingDialog()
+                        inputDialog?.dismiss()
+                        Toast.makeText(requireContext(), "下发成功", Toast.LENGTH_SHORT).show()
+                        // 重置状态
+                        sendStateFlow.value = ApiState.Idle
+                    }
+                    is ApiState.Error -> {
+                        // 隐藏进度框，提示错误
+                        hideLoadingDialog()
+                        Toast.makeText(requireContext(), "下发失败：${state.msg}", Toast.LENGTH_SHORT).show()
+                        // 重置状态
+                        sendStateFlow.value = ApiState.Idle
+                    }
+                    is ApiState.Idle -> {
+                        // 初始状态，无需处理
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            takePhotoStateFlow.collect { state ->
+                when (state) {
+                    is ApiState.Loading -> {
+                        // 显示进度框
+                        showLoadingDialog("拍照中...")
+                    }
+                    is ApiState.Success -> {
+                        // 隐藏进度框，关闭输入框，提示成功
+                        hideLoadingDialog()
+                        Toast.makeText(requireContext(), "拍照成功", Toast.LENGTH_SHORT).show()
+                        // 重置状态
+                        sendStateFlow.value = ApiState.Idle
+                    }
+                    is ApiState.Error -> {
+                        // 隐藏进度框，提示错误
+                        hideLoadingDialog()
+                        Toast.makeText(requireContext(), "拍照失败：${state.msg}", Toast.LENGTH_SHORT).show()
+                        // 重置状态
+                        sendStateFlow.value = ApiState.Idle
+                    }
+                    is ApiState.Idle -> {
+                        // 初始状态，无需处理
                     }
                 }
             }
@@ -261,14 +402,42 @@ class CarFragment : Fragment() {
         } else {
             binding.tvUnlogin.setImageResource(R.drawable.login_avatar)
             binding.alarm.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_alarm_tip, 0, 0)
+            binding.btnAllCars.text = "全部1辆车"
+            carList = emptyList()
+            clearAllOverlays(aMap)
         }
+    }
+
+    /**
+     * 精准清空所有Marker（仅移除Marker，保留其他覆盖物）
+     * 核心方法：遍历移除+清空集合，避免内存泄漏
+     */
+    fun clearAllMarkers() {
+        // 遍历移除地图上的Marker
+        markerList.forEach { marker ->
+            if (!marker.isRemoved) { // 避免重复移除导致异常
+                marker.remove()
+            }
+        }
+        // 清空集合，释放引用
+        markerList.clear()
+    }
+
+    /**
+     * 清空地图所有覆盖物（慎用！会清空Marker、Polyline、Circle等所有图层）
+     * @param aMap 高德地图实例
+     */
+    fun clearAllOverlays(aMap: AMap) {
+        aMap.clear()
+        clearAllMarkers()
     }
 
     /**
      * 添加车辆标记到地图
      */
     private fun addCarMarkers() {
-        carList.forEach { car ->
+        carList?.forEach { car ->
+            markerList.clear()
             val latLng = LatLng(car.latitude, car.longitude)
             val markerOptions = MarkerOptions()
                 .position(latLng) // 标记位置
@@ -277,38 +446,93 @@ class CarFragment : Fragment() {
                 .draggable(false) // 禁止拖动
             val maker = aMap.addMarker(markerOptions) // 添加到地图
             maker.`object` = car
+            markerList.add(maker)
         }
     }
 
-    private fun refreshRealAddressCarDetails(realTimeAddress: RealTimeAddressData) {
-        val realTimeCarInfo = realTimeAddress.carinfo
+    private fun refreshRealAddressCarDetails(realTimeAddress: RealTimeAddressData?) {
+        binding.rootCarDetail.tabLayout.getTabAt(0)?.select()
+        val realTimeCarInfo = realTimeAddress?.carinfo
         binding.rootCarDetail.root.visibility = View.VISIBLE
         binding.rootCarDetail.rootCarLocation.root.visibility = View.VISIBLE
         // 车牌号
-        val imageSource = if (realTimeCarInfo.dlcartype in dlCarTypes) {
+        val imageSource = if (realTimeCarInfo?.dlcartype in dlCarTypes) {
             R.drawable.jiaoche
         } else {
             R.drawable.huoche
         }
         binding.rootCarDetail.ivCarIcon.setImageResource(imageSource)
-        binding.rootCarDetail.tvCarNum.text = realTimeCarInfo.carnum ?: ""
-        binding.rootCarDetail.tvLocateTime.text = "定位时间：${realTimeCarInfo.gpsloctime_text}"
+        binding.rootCarDetail.tvCarNum.text = realTimeCarInfo?.carnum ?: ""
+        binding.rootCarDetail.tvLocateTime.text = "定位时间：${realTimeCarInfo?.gpsloctime_text}"
 
-        binding.rootCarDetail.tvTodayMileage.text = realTimeCarInfo.getTodayMileage()
-        binding.rootCarDetail.tvTotalMileage.text = realTimeCarInfo.getTotalMileage()
-        binding.rootCarDetail.tvStopTime.text = realTimeCarInfo.stopTime
-        binding.rootCarDetail.speed.text = "${realTimeCarInfo.speed}km/h"
+        binding.rootCarDetail.tvTodayMileage.text = realTimeCarInfo?.getTodayMileage()
+        binding.rootCarDetail.tvTotalMileage.text = realTimeCarInfo?.getTotalMileage()
+        binding.rootCarDetail.tvStopTime.text = realTimeCarInfo?.stopTime
+        binding.rootCarDetail.speed.text = "${realTimeCarInfo?.speed}km/h"
 
-        binding.rootCarDetail.rootCarLocation.address.text = realTimeAddress.address
+        binding.rootCarDetail.rootCarLocation.address.text = realTimeAddress?.address
         binding.rootCarDetail.rootCarLocation.realTimeCarInfo = realTimeCarInfo
         // 立即执行绑定，避免数据延迟
         binding.rootCarDetail.rootCarLocation.executePendingBindings()
     }
 
-    private fun refreshCarDetails(carInfo: CarInfo) {
-        phone = carInfo.phone
+    private fun refreshCarDetails(carInfo: CarInfo?) {
+        phone = carInfo?.phone
         binding.rootCarDetail.rootCarLocation.carInfo = carInfo
         binding.rootCarDetail.rootCarLocation.executePendingBindings()
+    }
+
+    private fun showInputDialog() {
+        // 关键逻辑 1：如果 Dialog 已存在且正在显示，直接返回，避免重复弹出
+        if (inputDialog != null && inputDialog!!.isShowing) {
+            return
+        }
+
+        // 加载输入框布局
+        val dialogView = layoutInflater.inflate(R.layout.dialog_input, null)
+        val editText = dialogView.findViewById<EditText>(R.id.et_input)
+
+        // 创建 Dialog 并赋值给全局变量
+        inputDialog = AlertDialog.Builder(requireContext())
+            .setTitle("下发文字")
+            .setView(dialogView)
+            .setPositiveButton("确定") { _, _ ->
+                val content = editText.text.toString().trim()
+                // 1. 输入判空逻辑
+                if (content.isEmpty()) {
+                    Toast.makeText(requireContext(), "请输入下发内容", Toast.LENGTH_SHORT).show()
+                }
+                carInfoViewModel.sendContent(currentCar?.id!!, content, sendStateFlow)
+            }
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            // 关键逻辑 2：Dialog 消失时，将实例置为 null，释放资源
+            .setOnDismissListener {
+                inputDialog = null
+            }
+            .create()
+
+        // 显示 Dialog
+        inputDialog!!.show()
+    }
+
+    // 显示进度提示框
+    private fun showLoadingDialog(tip: String) {
+        if (loadingDialog != null && loadingDialog!!.isShowing) return
+        loadingDialog = AlertDialog.Builder(requireContext())
+            .setMessage(tip)
+            .setCancelable(false) // 禁止点击外部取消
+            .create()
+        loadingDialog!!.show()
+    }
+
+    // 隐藏进度提示框
+    private fun hideLoadingDialog() {
+        loadingDialog?.let {
+            if (it.isShowing) it.dismiss()
+            loadingDialog = null
+        }
     }
 
     /**
@@ -317,10 +541,129 @@ class CarFragment : Fragment() {
     private fun zoomToAllCars() {
         val boundsBuilder = LatLngBounds.builder()
         // 构建所有车辆的经纬度边界
-        carList.forEach { boundsBuilder.include(LatLng(it.latitude, it.longitude)) }
+        carList?.forEach { boundsBuilder.include(LatLng(it.latitude, it.longitude)) }
         val bounds = boundsBuilder.build()
         // 动画缩放：100为地图四周留白（像素），避免标记贴边
-        aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100), 1000, null)
+        aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100), 100, null)
+    }
+
+    // 核心逻辑：只显示目标 Marker，并移动地图到中心
+    private fun showSingleMarker(marker: Marker) {
+        if (isAnimating) return // 防止动画循环触发
+
+        isAnimating = true
+        // 1. 隐藏所有其他 Marker
+        markerList.forEach { m ->
+            m.isVisible = m == marker
+        }
+
+        // 2. 移动地图到目标 Marker（缩放级别 15 可根据需求调整）
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(marker.position, 15f)
+        aMap.animateCamera(cameraUpdate, object : AMap.CancelableCallback {
+            override fun onFinish() {
+                isAnimating = false
+            }
+
+            override fun onCancel() {
+                isAnimating = false
+            }
+        })
+    }
+
+    // 检查并申请定位权限
+    private fun checkAndRequestLocationPermission() {
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+
+        val missingPermissions = permissions.filter {
+            ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (missingPermissions.isEmpty()) {
+            // 权限已授予，开始定位
+            startLocation()
+        } else {
+            // 申请权限
+            ActivityCompat.requestPermissions(
+                requireContext() as Activity,
+                missingPermissions.toTypedArray(),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    // 初始化并启动定位
+    private fun startLocation() {
+        try {
+            // 初始化定位客户端
+            locationClient = AMapLocationClient(requireContext().applicationContext)
+            // 设置定位监听
+            locationClient?.setLocationListener(this)
+
+            // 配置定位参数
+            val locationOption = AMapLocationClientOption().apply {
+                // 高精度定位模式（同时使用GPS和网络）
+                locationMode = AMapLocationClientOption.AMapLocationMode.Hight_Accuracy
+                // 单次定位（获取一次位置后停止，适合仅需聚焦一次的场景）
+                isOnceLocation = true
+                // 获取最近3秒内的最优定位结果（可选，提高定位精度）
+                isOnceLocationLatest = true
+                // 设置定位超时时间
+                httpTimeOut = 30000
+            }
+
+            locationClient?.setLocationOption(locationOption)
+            // 启动定位
+            locationClient?.startLocation()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "定位初始化失败：${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // 定位结果回调
+    override fun onLocationChanged(location: AMapLocation?) {
+        location?.let {
+            if (it.errorCode == 0) {
+                // 定位成功
+                val latLng = LatLng(it.latitude, it.longitude)
+                moveMapToLocation(latLng)
+                Toast.makeText(requireContext(), "定位成功：${it.address}", Toast.LENGTH_SHORT).show()
+            } else {
+                // 定位失败
+                Toast.makeText(
+                    requireContext(),
+                    "定位失败：${it.errorInfo} (错误码：${it.errorCode})",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    // 移动地图相机到指定位置
+    private fun moveMapToLocation(latLng: LatLng) {
+        // 移动地图到当前位置，缩放级别设为 15（可根据需求调整）
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+        aMap.animateCamera(cameraUpdate, 500, null) // 500ms 平滑动画
+    }
+
+    // 权限申请结果回调
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+            if (allGranted) {
+                startLocation()
+            } else {
+                Toast.makeText(requireContext(), "缺少定位权限，无法获取当前位置", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     /**
@@ -346,6 +689,13 @@ class CarFragment : Fragment() {
         EventBus.getDefault().unregister(this)
         binding.mapView.onDestroy()
         _binding = null
+        inputDialog?.let {
+            if (it.isShowing) {
+                it.dismiss()
+            }
+            inputDialog = null
+        }
+        locationClient?.onDestroy()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -166,10 +166,10 @@ interface CarApiService {
     ): Response<BaseResponse<WarningDetailData>>
 
     // /jt808/app 前缀
-    @POST("jt808/app/jt808/sendcontent")
-    suspend fun sendContent(@Body request: SendContentRequest): Response<BaseResponse<Any>>
+    @GET("jt808/app/jt808/sendcontent")
+    suspend fun sendContent(@Query("car_id") search: String?,@Query("content") carId: String): Response<BaseResponse<Any>>
 
-    @POST("jt808/app/jt808/photos")
+    @GET("jt808/app/jt808/photos")
     suspend fun takePhoto(@Query("car_id") carId: String): Response<BaseResponse<Any>>
 
     // /auth/app 前缀

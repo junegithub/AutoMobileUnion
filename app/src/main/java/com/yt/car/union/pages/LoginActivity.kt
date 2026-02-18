@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import com.yt.car.union.MyApp
 import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityLoginBinding
-import com.yt.car.union.net.CarInfo
 import com.yt.car.union.net.CarUserInfo
 import com.yt.car.union.net.LoginData
 import com.yt.car.union.net.LoginRequest
@@ -26,7 +25,6 @@ import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.SPUtils
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.viewmodel.UserViewModel
-import com.yt.car.union.viewmodel.VehicleViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -40,9 +38,10 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val userViewModel by viewModels<UserViewModel>()
 
-    private var loginStateFlow = MutableStateFlow<ApiState<LoginData>>(ApiState.Loading)
-    private var logoutStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Loading)
-    private var userInfoStateFlow = MutableStateFlow<ApiState<CarUserInfo>>(ApiState.Loading)
+    private var loginStateFlow = MutableStateFlow<ApiState<LoginData>>(ApiState.Idle)
+    private var logoutStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
+    private var userInfoStateFlow = MutableStateFlow<ApiState<CarUserInfo>>(ApiState.Idle)
+    private var lybhStateFlow = MutableStateFlow<ApiState<Boolean>>(ApiState.Idle)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,15 +111,19 @@ class LoginActivity : AppCompatActivity() {
                         // 更新统计数据
                         val statistics = uiState.data
                         // 保存Token
-                        SPUtils.saveToken(statistics.userinfo?.token)
+                        SPUtils.saveToken(statistics?.userinfo?.token)
                         MyApp.isLogin = true
                         getUserInfo()
+                        isLYBH()
                         EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
                         finish()
                     }
 
                     is ApiState.Error -> {
                         // 失败：显示错误信息，隐藏其他视图
+                    }
+                    is ApiState.Idle -> {
+
                     }
                 }
             }
@@ -139,6 +142,8 @@ class LoginActivity : AppCompatActivity() {
                     is ApiState.Error -> {
                         // 失败：显示错误信息，隐藏其他视图
                     }
+                    is ApiState.Idle -> {
+                    }
                 }
             }
         }
@@ -146,15 +151,33 @@ class LoginActivity : AppCompatActivity() {
             userInfoStateFlow.collect { uiState ->
                 when (uiState) {
                     is ApiState.Loading -> {
-                        // 加载中：显示进度条，隐藏其他视图
                     }
 
                     is ApiState.Success -> {
-                        MyApp.userInfo = uiState.data.info
+                        MyApp.userInfo = uiState.data?.info
                     }
 
                     is ApiState.Error -> {
-                        // 失败：显示错误信息，隐藏其他视图
+                    }
+                    is ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            lybhStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                    }
+
+                    is ApiState.Success -> {
+                        MyApp.isLYBH = uiState.data
+                    }
+
+                    is ApiState.Error -> {
+                    }
+                    is ApiState.Idle -> {
                     }
                 }
             }
@@ -171,6 +194,9 @@ class LoginActivity : AppCompatActivity() {
 
     fun getUserInfo() {
         userViewModel.getUserInfo(userInfoStateFlow)
+    }
+    fun isLYBH() {
+        userViewModel.isLYBH(lybhStateFlow)
     }
 
     fun clearCache() {

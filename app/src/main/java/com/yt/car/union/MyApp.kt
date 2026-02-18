@@ -40,5 +40,6 @@ class MyApp : Application() {
 
         var isLogin: Boolean? = null
         var userInfo: CarUser? = null
+        var isLYBH: Boolean? = null
     }
 }

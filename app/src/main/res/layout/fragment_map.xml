@@ -98,6 +98,28 @@
             android:text="@string/report"
             app:drawableTopCompat="@drawable/ic_report" />
     </LinearLayout>
+    <ImageView
+        android:id="@+id/current_location"
+        android:layout_width="@dimen/dp_48"
+        android:layout_height="@dimen/dp_48"
+        android:layout_marginBottom="@dimen/dp_8"
+        android:layout_marginEnd="@dimen/dp_16"
+        app:layout_constraintBottom_toTopOf="@id/ll_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_locate_current"
+        android:background="@drawable/btn_bg_round_rectangle"/>
+    <ImageView
+        android:id="@+id/location_all_cars"
+        android:layout_width="@dimen/dp_48"
+        android:layout_height="@dimen/dp_48"
+        android:layout_marginBottom="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
+        app:layout_constraintBottom_toTopOf="@id/current_location"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_locate_all_cars"
+        android:background="@drawable/btn_bg_round_rectangle"/>
 
     <include
         layout="@layout/activity_car_detail"

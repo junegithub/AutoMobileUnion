@@ -33,4 +33,12 @@ class UserViewModel : CarBaseViewModel() {
             stateFlow
         )
     }
+
+    // 检查是否是LYBH（业务逻辑保留）
+    fun isLYBH(stateFlow: MutableStateFlow<ApiState<Boolean>>) {
+        launchRequest(
+            block = { vehicleRepository.isLYBH() },
+            stateFlow
+        )
+    }
 }

@@ -9,6 +9,7 @@ import com.yt.car.union.net.MapPositionData
 import com.yt.car.union.net.OilAddReportData
 import com.yt.car.union.net.OilDayReportData
 import com.yt.car.union.net.RealTimeAddressData
+import com.yt.car.union.net.SendContentRequest
 import com.yt.car.union.net.TrackData
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -21,14 +22,6 @@ class CarInfoViewModel : CarBaseViewModel() {
     fun getCarInfo(carId: Int, stateFlow: MutableStateFlow<ApiState<CarInfo>>) {
         launchRequest(
             block = { vehicleRepository.getCarInfo(carId) },
-            stateFlow
-        )
-    }
-
-    // 检查是否是LYBH（业务逻辑保留）
-    fun isLYBH(stateFlow: MutableStateFlow<ApiState<Boolean>>) {
-        launchRequest(
-            block = { vehicleRepository.isLYBH() },
             stateFlow
         )
     }
@@ -90,6 +83,13 @@ class CarInfoViewModel : CarBaseViewModel() {
                      starttime: String, stateFlow: MutableStateFlow<ApiState<TrackData>>) {
         launchRequest(
             block = { vehicleRepository.getTrackInfo(carId, endtime, is704, isFilter, starttime) },
+            stateFlow
+        )
+    }
+
+    fun sendContent(carId: String, content: String, stateFlow: MutableStateFlow<ApiState<Any>>) {
+        launchRequest(
+            block = { vehicleRepository.sendContent(SendContentRequest(carId, content)) },
             stateFlow
         )
     }

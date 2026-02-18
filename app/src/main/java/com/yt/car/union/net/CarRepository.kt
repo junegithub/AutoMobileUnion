@@ -72,7 +72,7 @@ class CarRepository(private val apiService: CarApiService) {
     suspend fun getWarningDetail(page: Int, pageSize: Int?, timetype: Int, type: Int) =
         apiService.getWarningDetail(page, pageSize, timetype, type)
 
-    suspend fun sendContent(request: SendContentRequest) = apiService.sendContent(request)
+    suspend fun sendContent(request: SendContentRequest) = apiService.sendContent(request.car_id, request.content)
 
     suspend fun takePhoto(carId: String) = apiService.takePhoto(carId)
 

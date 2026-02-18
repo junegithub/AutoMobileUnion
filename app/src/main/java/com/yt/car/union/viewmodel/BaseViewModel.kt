@@ -29,16 +29,16 @@ open class BaseViewModel : ViewModel() {
      */
     protected fun <T, R:IBaseResponse<T>> launchRequest(
         block: suspend () -> Response<R>,
-        stateFlow: MutableStateFlow<ApiState<T>>
+        stateFlow: MutableStateFlow<ApiState<T>>?
     ) {
         viewModelScope.launch(exceptionHandler) {
-            stateFlow.value = ApiState.Loading
+            stateFlow?.value = ApiState.Loading
             runCatching {
                 block()
             }.onSuccess { response ->
                 handleResponse(response, stateFlow)
             }.onFailure { exception ->
-                stateFlow.value = ApiState.Error(
+                stateFlow?.value = ApiState.Error(
                     msg = "请求异常：${exception.message ?: "未知错误"}",
                     throwable = exception
                 )
@@ -48,22 +48,22 @@ open class BaseViewModel : ViewModel() {
 
     private fun <T, R : IBaseResponse<T>> handleResponse(
         response: Response<R>,
-        stateFlow: MutableStateFlow<ApiState<T>>
+        stateFlow: MutableStateFlow<ApiState<T>>?
     ) {
         when {
             !response.isSuccessful -> {
-                stateFlow.value = ApiState.Error("网络请求失败：${response.code()} ${response.message()}")
+                stateFlow?.value = ApiState.Error("网络请求失败：${response.code()} ${response.message()}")
             }
             response.body() == null -> {
-                stateFlow.value = ApiState.Error("响应体为空")
+                stateFlow?.value = ApiState.Error("响应体为空")
             }
             response.body()?.isSuccess() == true -> {
-                stateFlow.value = ApiState.Success(response.body()!!.data!!)
+                stateFlow?.value = ApiState.Success(response.body()!!.data)
             }
             else -> {
                 val errorBody = response.errorBody()?.string()?.takeIf { it.isNotBlank() }
                 val errorMsg = response.body()?.msg ?: errorBody ?: "请求失败"
-                stateFlow.value = ApiState.Error("接口返回错误：$errorMsg")
+                stateFlow?.value = ApiState.Error("接口返回错误：$errorMsg")
             }
         }
     }
