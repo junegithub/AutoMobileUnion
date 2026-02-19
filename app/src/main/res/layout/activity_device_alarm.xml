@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_15"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:weightSum="3">
 
         <!-- 全部报警下拉Spinner -->
         <Spinner
@@ -60,10 +60,9 @@
             android:id="@+id/tv_date_range"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:background="@drawable/bg_date_text"
             android:gravity="center"
-            android:text="@string/date_range"
             android:textColor="@color/text_gray"
             android:textSize="@dimen/text_company" />
     </LinearLayout>

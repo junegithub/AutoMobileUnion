@@ -8,13 +8,18 @@ interface IBaseResponse<T> {
     val msg: String
     val data: T?
 
+    val total: Int
+    val rows: List<T>
+
     // 可以添加通用方法
-    fun isSuccess(): Boolean = code == 1
+    fun isSuccess(): Boolean = (code == 1 || code == 200)
 }
 
 data class BaseResponse<T>(
     override val code: Int,
     override val msg: String,
+    override val total: Int,
+    override val rows: List<T>,
     override val data: T?
 ) : IBaseResponse<T>
 
@@ -22,6 +27,8 @@ data class TrainingBaseResponse<T>(
     override val code: Int,
     override val msg: String,
     val time: String,
+    override val total: Int,
+    override val rows: List<T>,
     override val data: T?
 ) : IBaseResponse<T>
 

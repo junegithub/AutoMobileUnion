@@ -2,6 +2,7 @@ package com.yt.car.union.util;
 
 public class EventData {
     public static final int EVENT_LOGIN = 1;
+    public static final int EVENT_CAR_DETAIL = 2;
 
     public int eventType;
     public Object data;

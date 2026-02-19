@@ -82,4 +82,5 @@ class CarRepository(private val apiService: CarApiService) {
     suspend fun getCarUserInfo() = apiService.getCarUserInfo()
 
     suspend fun getAlarmDetailsList(start: String, end: String, pageNum: Int, pageSize: Int, warningType: String) = apiService.alarmDetailsList(start, end, pageNum, pageSize,warningType)
+    suspend fun getWarningType(warningType: String) = apiService.getWarningType(warningType)
 }

@@ -2,6 +2,8 @@ package com.yt.car.union.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yt.car.union.net.DictItem
+import com.yt.car.union.net.DictMapManager
 import com.yt.car.union.net.IBaseResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +61,9 @@ open class BaseViewModel : ViewModel() {
             }
             response.body()?.isSuccess() == true -> {
                 stateFlow?.value = ApiState.Success(response.body()!!.data)
+                if (response.body()!!.rows != null) {
+                    DictMapManager.initDictMap(response.body()!!.rows as List<DictItem>)
+                }
             }
             else -> {
                 val errorBody = response.errorBody()?.string()?.takeIf { it.isNotBlank() }

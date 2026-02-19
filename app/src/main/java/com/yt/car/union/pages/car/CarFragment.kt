@@ -121,18 +121,22 @@ class CarFragment : Fragment(), AMapLocationListener {
         }
         // 3. 地图点击监听（可选：点击标记显示车辆详情）
         aMap.setOnMarkerClickListener { marker ->
-            currentCar = marker.`object` as MapPositionItem
-            val id = currentCar?.id?.toInt()
-            carInfoViewModel.getRealTimeAddress(id, currentCar?.carnum,
-                addressStateFlow)
-            carInfoViewModel.getCarInfo(id!!,
-                carInfoStateFlow)
-            showSingleMarker(marker)
+            openCarDetails(marker)
             true
         }
 
         aMap.uiSettings.isZoomControlsEnabled = false
         setCustomLocationStyle()
+    }
+
+    private fun openCarDetails(marker: Marker) {
+        currentCar = marker.`object` as MapPositionItem
+        val id = currentCar?.id?.toInt()
+        carInfoViewModel.getRealTimeAddress(id, currentCar?.carnum,
+            addressStateFlow)
+        carInfoViewModel.getCarInfo(id!!,
+            carInfoStateFlow)
+        showSingleMarker(marker)
     }
 
     // 核心：使用 MyLocationStyle 设置模式和样式
@@ -704,6 +708,10 @@ class CarFragment : Fragment(), AMapLocationListener {
             EventData.EVENT_LOGIN -> {
                 updateViewLoginState()
                 loadCarStatus()
+            }
+            EventData.EVENT_CAR_DETAIL -> {
+                val carNum = event.data
+                markerList.find { it.title == carNum}?.let { openCarDetails(it) }
             }
         }
     }

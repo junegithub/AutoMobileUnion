@@ -10,13 +10,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityDeviceAlarmBinding
 import com.yt.car.union.net.AlarmListData
+import com.yt.car.union.net.DictMapManager
 import com.yt.car.union.net.VehicleInfo
 import com.yt.car.union.pages.adapter.AlarmAdapter
+import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.AlarmViewModel
 import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.getValue
 
@@ -27,6 +31,12 @@ class DeviceAlarmActivity : AppCompatActivity() {
     private val alarmList = mutableListOf<VehicleInfo>()
     private val alarmViewModel by viewModels<AlarmViewModel>()
     private val alarmListStateFlow = MutableStateFlow<ApiState<AlarmListData>>(ApiState.Idle)
+    private var pageNum: Int = 1
+    private val pageSize = 50
+    private var warningType = "all"
+    private var startDate: String = ""
+    private var endDate: String = ""
+    private lateinit var alarmTypes: Array<String>
 
     // 日期格式化器
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
@@ -37,14 +47,24 @@ class DeviceAlarmActivity : AppCompatActivity() {
         binding = ActivityDeviceAlarmBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initView()
         initData()
+        initView()
+        updateDateRange()
+        loadData()
         initListener()
+    }
+
+    private fun initData() {
+        val dateStrStandard = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        startDate = "$dateStrStandard"
+        endDate = "$dateStrStandard"
+        alarmTypes = resources.getStringArray(R.array.alarm_types)
     }
 
     private fun initView() {
         // 初始化RecyclerView
         alarmAdapter = AlarmAdapter(this)
+        alarmAdapter.submitList(alarmList)
         binding.rvAlarmList.apply {
             adapter = alarmAdapter
             layoutManager = LinearLayoutManager(this@DeviceAlarmActivity)
@@ -84,52 +104,33 @@ class DeviceAlarmActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 模拟截图中的报警数据
-     */
-    private fun initData() {
-        alarmAdapter.submitList(alarmList)
-        alarmViewModel.getAlarmDetailsList("2026-1-1 00:00:00", "2026-2-19 00:00:00",1,50, "all",  alarmListStateFlow)
+    private fun loadData() {
+        alarmViewModel.getAlarmDetailsList("$startDate 00:00:00", "$endDate 23:59:59", pageNum, pageSize, warningType, alarmListStateFlow)
+    }
+
+    private fun updateDateRange() {
+        binding.tvDateRange.text = "$startDate 至 $endDate"
     }
 
     private fun initListener() {
+        PressEffectUtils.setCommonPressEffect(binding.ivBack)
+        PressEffectUtils.setCommonPressEffect(binding.tvDateRange)
+        PressEffectUtils.setCommonPressEffect(binding.spinnerAlarmType)
         // 返回按钮点击
         binding.ivBack.setOnClickListener { finish() }
 
         // 日期选择弹窗（MaterialDatePicker实现范围选择）
         binding.tvDateRange.setOnClickListener {
-            /*// 1. 配置日历约束（可选：限制选择范围）
-            val constraintsBuilder = CalendarConstraints.Builder()
-                .setValidator(DateValidatorPointForward.now()) // 只能选今天及以后
-
-            // 2. 构建日期范围选择器
-            val dateRangePicker = MaterialDatePicker.Builder.dateRangePicker()
-                .setTitleText("选择日期")
-                .setCalendarConstraints(constraintsBuilder.build())
-                // 默认选中2026-02-01至2026-02-02
-                .setSelection(
-                    androidx.core.util.Pair(
-                        getTimestamp(2026, 2, 1),
-                        getTimestamp(2026, 2, 2)
-                    )
-                )
-                .build()
-
-            // 3. 监听确认选择
-            dateRangePicker.addOnPositiveButtonClickListener(MaterialPickerOnPositiveButtonClickListener { selection ->
-                val startDate = dateFormat.format(Date(selection.first))
-                val endDate = dateFormat.format(Date(selection.second))
-                binding.tvDateRange.text = "$startDate 至 $endDate"
-            })
-
-            // 4. 显示弹窗
-            dateRangePicker.show(supportFragmentManager, "DATE_PICKER")*/
             val calendarDlg = CalendarDialog.newInstance()
+            calendarDlg.updateStartAndEndData(startDate, endDate)
             calendarDlg.setOnDateSelectedListener(object : CalendarDialog.OnDateSelectedListener {
                 override fun onSelected(start: String, end: String) {
-                    val startDate = dateFormat.format(Date(start))
-                    val endDate = dateFormat.format(Date(end))
-                    binding.tvDateRange.text = "$startDate 至 $endDate"
+                    startDate = dateFormat.format(Date(start))
+                    endDate = dateFormat.format(Date(end))
+                    updateDateRange()
+                    pageNum = 1
+                    alarmList.clear()
+                    loadData()
                 }
             })
             calendarDlg.show(supportFragmentManager, "DATE_PICKER")
@@ -144,26 +145,25 @@ class DeviceAlarmActivity : AppCompatActivity() {
                     position: Int,
                     id: Long
                 ) {
-                    // 可根据选择的报警类型过滤列表
-                    val selectedType = resources.getStringArray(R.array.alarm_types)[position]
-                    if (selectedType == "全部报警") {
-                        alarmAdapter.submitList(alarmList)
-                    } else {
-                        val filteredList = alarmList.filter { WarningConstants.WARNING_TYPE_MAP.get(it.type?.toInt()) == selectedType }
-                        alarmAdapter.submitList(filteredList)
-                    }
+                    updateListWithSpinnerSelection(position)
                 }
 
                 override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
             }
     }
 
-    /**
-     * 辅助方法：获取指定日期的时间戳（适配MaterialDatePicker）
-     */
-    private fun getTimestamp(year: Int, month: Int, day: Int): Long {
-        val calendar = Calendar.getInstance()
-        calendar.set(year, month - 1, day) // Calendar月份从0开始
-        return calendar.timeInMillis
+    private fun updateListWithSpinnerSelection(position: Int) {
+        // 可根据选择的报警类型过滤列表
+        if (position == 0) {
+            alarmAdapter.submitList(alarmList)
+        } else if (position == 3) {
+            val filteredList = alarmList.filter { DictMapManager.getDictLabelByValue(it.type?.toInt().toString()) != alarmTypes[1]
+                    &&  DictMapManager.getDictLabelByValue(it.type?.toInt().toString()) != alarmTypes[2]}
+            alarmAdapter.submitList(filteredList)
+        } else {
+            val selectedType = alarmTypes.get(position)
+            val filteredList = alarmList.filter { DictMapManager.getDictLabelByValue(it.type?.toInt().toString()) == selectedType }
+            alarmAdapter.submitList(filteredList)
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.yt.car.union.viewmodel
 
 import com.yt.car.union.net.CarUserInfo
+import com.yt.car.union.net.DictItem
 import com.yt.car.union.net.LoginData
 import com.yt.car.union.net.LoginRequest
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +39,13 @@ class UserViewModel : CarBaseViewModel() {
     fun isLYBH(stateFlow: MutableStateFlow<ApiState<Boolean>>) {
         launchRequest(
             block = { vehicleRepository.isLYBH() },
+            stateFlow
+        )
+    }
+
+    fun getAlarmWarningTypes(stateFlow: MutableStateFlow<ApiState<DictItem>>) {
+        launchRequest(
+            block = { vehicleRepository.getWarningType("waring_type") },
             stateFlow
         )
     }

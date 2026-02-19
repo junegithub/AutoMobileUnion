@@ -12,7 +12,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.yt.car.union.R
 import com.yt.car.union.util.DateUtil
 import com.yt.car.union.util.PressEffectUtils
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.TimeZone
 
 class CalendarDialog : BottomSheetDialogFragment() {
     private var startDate: Calendar? = null
@@ -86,6 +89,12 @@ class CalendarDialog : BottomSheetDialogFragment() {
             }
             gvCalendar.adapter = CalendarAdapter(dataList)
         }
+        PressEffectUtils.setCommonPressEffect(ivClose)
+        PressEffectUtils.setCommonPressEffect(ivPrevYear)
+        PressEffectUtils.setCommonPressEffect(ivPrevMonth)
+        PressEffectUtils.setCommonPressEffect(ivNextYear)
+        PressEffectUtils.setCommonPressEffect(ivNextMonth)
+        PressEffectUtils.setCommonPressEffect(btnConfirm)
 
         // 点击事件：关闭弹窗（取消）
         ivClose.setOnClickListener { dismiss() }
@@ -238,6 +247,31 @@ class CalendarDialog : BottomSheetDialogFragment() {
 
         override fun isEnabled(position: Int): Boolean {
             return !isFutureTime(dataList[position])
+        }
+    }
+
+    fun updateStartAndEndData(startDateStr: String, endDateStr: String) {
+        startDate = convertWithSimpleDateFormat(startDateStr)
+        endDate = convertWithSimpleDateFormat(endDateStr)
+    }
+
+    fun convertWithSimpleDateFormat(dateStr: String): Calendar? {
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        sdf.timeZone = TimeZone.getDefault()
+
+        return try {
+            val date = sdf.parse(dateStr)
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            // 清空时分秒
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            calendar
+        } catch (e: ParseException) {
+            println("解析失败：${e.message}")
+            null
         }
     }
 

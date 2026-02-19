@@ -174,6 +174,11 @@ interface CarApiService {
         @Query("warningType") warningType: String
     ): Response<BaseResponse<AlarmListData>>
 
+    @GET("system/app/dict/data/list")
+    suspend fun getWarningType(
+        @Query("dictType") warningType: String
+    ): Response<BaseResponse<DictItem>>
+
     // /jt808/app 前缀
     @GET("jt808/app/jt808/sendcontent")
     suspend fun sendContent(@Query("car_id") search: String?,@Query("content") carId: String): Response<BaseResponse<Any>>

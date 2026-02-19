@@ -1,5 +1,6 @@
 package com.yt.car.union.pages.adapter
 
+import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,8 +8,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yt.car.union.databinding.ItemAlarmBinding
+import com.yt.car.union.net.DictMapManager
 import com.yt.car.union.net.VehicleInfo
-import com.yt.car.union.pages.WarningConstants
+import com.yt.car.union.util.EventData
+import org.greenrobot.eventbus.EventBus
 
 /**
  * 基于ListAdapter（自带DiffUtil，优化列表刷新）
@@ -22,7 +25,7 @@ class AlarmAdapter(private val context: Context) :
         fun bind(bean: VehicleInfo) {
             binding.tvPlateNum.text = bean.carNum
             binding.tvCompany.text = bean.deptName
-            binding.tvAlarmType.text = WarningConstants.WARNING_TYPE_MAP.get(bean.type?.toInt())
+            binding.tvAlarmType.text = DictMapManager.getDictLabelByValue(bean.type?.toInt().toString())
             binding.tvTime.text = bean.starttimeTime + "~" + bean.endtimeTime
             binding.tvAddress.text = bean.position
             binding.tvContact.text = bean.contacts
@@ -38,6 +41,10 @@ class AlarmAdapter(private val context: Context) :
 
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
         holder.bind(getItem(position))
+        holder.itemView.setOnClickListener {
+            EventBus.getDefault().post(EventData(EventData.EVENT_CAR_DETAIL, getItem(position).carNum))
+            (context as Activity).finish()
+        }
     }
 
     /**

@@ -84,6 +84,8 @@ dependencies {
     implementation(libs.glide)
     kapt(libs.compiler.v4160)
 
+    implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.3.3")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

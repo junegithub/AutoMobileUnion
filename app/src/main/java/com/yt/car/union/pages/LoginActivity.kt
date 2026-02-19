@@ -18,6 +18,7 @@ import com.yt.car.union.MyApp
 import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityLoginBinding
 import com.yt.car.union.net.CarUserInfo
+import com.yt.car.union.net.DictItem
 import com.yt.car.union.net.LoginData
 import com.yt.car.union.net.LoginRequest
 import com.yt.car.union.util.EventData
@@ -42,6 +43,7 @@ class LoginActivity : AppCompatActivity() {
     private var logoutStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
     private var userInfoStateFlow = MutableStateFlow<ApiState<CarUserInfo>>(ApiState.Idle)
     private var lybhStateFlow = MutableStateFlow<ApiState<Boolean>>(ApiState.Idle)
+    private val alarmTypesStateFlow = MutableStateFlow<ApiState<DictItem>>(ApiState.Idle)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,6 +117,7 @@ class LoginActivity : AppCompatActivity() {
                         MyApp.isLogin = true
                         getUserInfo()
                         isLYBH()
+                        userViewModel.getAlarmWarningTypes(alarmTypesStateFlow)
                         EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
                         finish()
                     }
