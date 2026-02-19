@@ -80,4 +80,6 @@ class CarRepository(private val apiService: CarApiService) {
 
     suspend fun logout() = apiService.logout()
     suspend fun getCarUserInfo() = apiService.getCarUserInfo()
+
+    suspend fun getAlarmDetailsList(start: String, end: String,warningType: String) = apiService.alarmDetailsList(start, end, warningType)
 }

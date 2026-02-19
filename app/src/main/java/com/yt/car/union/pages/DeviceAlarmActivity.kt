@@ -2,19 +2,29 @@ package com.yt.car.union.pages
 
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityDeviceAlarmBinding
 import com.yt.car.union.net.bean.AlarmBean
 import com.yt.car.union.pages.adapter.AlarmAdapter
+import com.yt.car.union.viewmodel.AlarmViewModel
+import com.yt.car.union.viewmodel.ApiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.getValue
 
 class DeviceAlarmActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDeviceAlarmBinding
     private lateinit var alarmAdapter: AlarmAdapter
     private val alarmList = mutableListOf<AlarmBean>()
+    private val alarmViewModel by viewModels<AlarmViewModel>()
+    private val alarmListStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
 
     // 日期格式化器
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
@@ -47,6 +57,25 @@ class DeviceAlarmActivity : AppCompatActivity() {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
         binding.spinnerAlarmType.adapter = spinnerAdapter
+
+        lifecycleScope.launch {
+            alarmListStateFlow.collect { state ->
+                when (state) {
+                    is ApiState.Loading -> {
+                        // 显示进度框
+                    }
+                    is ApiState.Success -> {
+                        // 隐藏进度框，关闭输入框，提示成功
+                    }
+                    is ApiState.Error -> {
+                        // 隐藏进度框，提示错误
+                    }
+                    is ApiState.Idle -> {
+                        // 初始状态，无需处理
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -103,6 +132,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
             )
         }
         alarmAdapter.submitList(alarmList)
+        alarmViewModel.getAlarmDetailsList("1970-1-1", "2026-2-19", "all",  alarmListStateFlow)
     }
 
     private fun initListener() {
