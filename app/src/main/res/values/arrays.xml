@@ -4,6 +4,6 @@
         <item>全部报警</item>
         <item>超速预警</item>
         <item>疲劳驾驶</item>
-        <item>离线报警</item>
+        <item>其他</item>
     </string-array>
 </resources>

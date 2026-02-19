@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yt.car.union.databinding.ItemAlarmBinding
 import com.yt.car.union.net.VehicleInfo
+import com.yt.car.union.pages.WarningConstants
 
 /**
  * 基于ListAdapter（自带DiffUtil，优化列表刷新）
@@ -21,7 +22,7 @@ class AlarmAdapter(private val context: Context) :
         fun bind(bean: VehicleInfo) {
             binding.tvPlateNum.text = bean.carNum
             binding.tvCompany.text = bean.deptName
-            binding.tvAlarmType.text = bean.type.toString()
+            binding.tvAlarmType.text = WarningConstants.WARNING_TYPE_MAP.get(bean.type?.toInt())
             binding.tvTime.text = bean.starttimeTime + "~" + bean.endtimeTime
             binding.tvAddress.text = bean.position
             binding.tvContact.text = bean.contacts

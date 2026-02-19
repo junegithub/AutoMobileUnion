@@ -2054,7 +2054,7 @@ data class VehicleInfo(
     val endlatitude: Double = 37.31047,
 
     // 驾驶员相关
-    val drivercardId: Int = 0,
+    val drivercardId: Long = 0,
     val driverCardName: String = "-",
 
     // 状态/信息ID相关

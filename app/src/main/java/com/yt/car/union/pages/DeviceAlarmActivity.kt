@@ -21,6 +21,7 @@ import java.util.*
 import kotlin.getValue
 
 class DeviceAlarmActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityDeviceAlarmBinding
     private lateinit var alarmAdapter: AlarmAdapter
     private val alarmList = mutableListOf<VehicleInfo>()
@@ -144,13 +145,13 @@ class DeviceAlarmActivity : AppCompatActivity() {
                     id: Long
                 ) {
                     // 可根据选择的报警类型过滤列表
-                    /*val selectedType = resources.getStringArray(R.array.alarm_types)[position]
+                    val selectedType = resources.getStringArray(R.array.alarm_types)[position]
                     if (selectedType == "全部报警") {
                         alarmAdapter.submitList(alarmList)
                     } else {
-                        val filteredList = alarmList.filter { it.alarmType == selectedType }
+                        val filteredList = alarmList.filter { WarningConstants.WARNING_TYPE_MAP.get(it.type?.toInt()) == selectedType }
                         alarmAdapter.submitList(filteredList)
-                    }*/
+                    }
                 }
 
                 override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
