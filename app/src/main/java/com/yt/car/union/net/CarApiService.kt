@@ -165,12 +165,14 @@ interface CarApiService {
         @Query("type") type: Int
     ): Response<BaseResponse<WarningDetailData>>
 
-    @GET("/aggregation/app/work/warningList")
+    @GET("aggregation/app/work/warningList")
     suspend fun alarmDetailsList(
         @Query("start") start: String,
         @Query("end") end: String,
+        @Query("pageNum") pageNum: Int,
+        @Query("pageSize") pageSize: Int,
         @Query("warningType") warningType: String
-    ): Response<BaseResponse<Any>>
+    ): Response<BaseResponse<AlarmListData>>
 
     // /jt808/app 前缀
     @GET("jt808/app/jt808/sendcontent")

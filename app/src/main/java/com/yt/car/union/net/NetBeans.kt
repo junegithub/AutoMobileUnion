@@ -2015,3 +2015,79 @@ data class CarUser(
     val nickname: String = "",
     val username: String = ""
 )
+
+data class AlarmListData (
+    val total: Double,
+    val list: List<VehicleInfo>
+)
+
+data class VehicleInfo(
+    // 通用查询/基础字段
+    val searchValue: String? = null,
+    val createBy: String? = null,
+    val createTime: String? = null,
+    val updateBy: String? = null,
+    val updateTime: String? = null,
+    val remark: String? = null,
+    // 扩展参数（空Map默认值）
+    val params: Map<String, Any> = emptyMap(),
+
+    // 时间戳/类型/等级相关
+    val ts: String? = "2026-02-18 23:59:57.496",
+    val type: Double? = 38.0,
+    val level: String? = null,
+    val origin: String? = null,
+
+    // 时间范围（毫秒级时间戳）
+    val starttime: Long = 1771430396000,
+    val endtime: Long = 1771430551000,
+
+    // 里程/速度相关
+    val mileage: Double = 0.0,
+    val maxspeed: Double = 0.0,
+    val endmileage: Double = 0.0,
+
+    // 经纬度相关
+    val longitude: Double = 120.829849,
+    val latitude: Double = 37.31047,
+    val endlongitude: Double = 120.829849,
+    val endlatitude: Double = 37.31047,
+
+    // 驾驶员相关
+    val drivercardId: Int = 0,
+    val driverCardName: String = "-",
+
+    // 状态/信息ID相关
+    val infoid: String? = null,
+    val status: String? = null,
+    val dutyOfficer: String? = null,
+    val content: String? = null,
+    val cltime: String? = null,
+    val clstatus: String? = null,
+
+    // 分类/车辆ID相关
+    val catid: Int = 14823,
+    val carId: Long = 834044835387240448, // 数值过大，使用Long而非Int
+    val mytype: String? = null,
+    val id: Int = 0,
+
+    // 企业/车辆编号相关
+    val deptName: String = "烟台鑫启点汽车服务有限公司",
+    val carNum: String = "鲁FA75369",
+    val contacts: String? = null,
+
+    // 格式化时间
+    val starttimeTime: String = "2026-02-18 23:59:56",
+    val endtimeTime: String = "2026-02-19 00:02:31",
+
+    // 时长/位置相关
+    val duration: String? = null,
+    val location: String? = null,
+    val cltimeTime: String? = null,
+    val baiDu: String? = null,
+    val endBaiDu: String? = null,
+
+    // 布尔值/详细位置
+    val lift: Boolean = false,
+    val position: String = "山东省, 烟台市, 栖霞市, 金岭路(南28米), 惠安大药房(东29米)"
+)

@@ -9,7 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityDeviceAlarmBinding
-import com.yt.car.union.net.bean.AlarmBean
+import com.yt.car.union.net.AlarmListData
+import com.yt.car.union.net.VehicleInfo
 import com.yt.car.union.pages.adapter.AlarmAdapter
 import com.yt.car.union.viewmodel.AlarmViewModel
 import com.yt.car.union.viewmodel.ApiState
@@ -22,9 +23,9 @@ import kotlin.getValue
 class DeviceAlarmActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDeviceAlarmBinding
     private lateinit var alarmAdapter: AlarmAdapter
-    private val alarmList = mutableListOf<AlarmBean>()
+    private val alarmList = mutableListOf<VehicleInfo>()
     private val alarmViewModel by viewModels<AlarmViewModel>()
-    private val alarmListStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
+    private val alarmListStateFlow = MutableStateFlow<ApiState<AlarmListData>>(ApiState.Idle)
 
     // 日期格式化器
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
@@ -66,9 +67,13 @@ class DeviceAlarmActivity : AppCompatActivity() {
                     }
                     is ApiState.Success -> {
                         // 隐藏进度框，关闭输入框，提示成功
+                        state.data?.let { it?.list?.let { elements -> alarmList.addAll(elements) } }
+                        alarmAdapter.notifyDataSetChanged()
                     }
                     is ApiState.Error -> {
-                        // 隐藏进度框，提示错误
+                        Toast.makeText(this@DeviceAlarmActivity, "获取数据失败：${state.msg}", Toast.LENGTH_SHORT).show()
+                        // 重置状态
+                        alarmListStateFlow.value = ApiState.Idle
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -82,57 +87,8 @@ class DeviceAlarmActivity : AppCompatActivity() {
      * 模拟截图中的报警数据
      */
     private fun initData() {
-        alarmList.apply {
-            add(
-                AlarmBean(
-                    plateNum = "鲁NH6022",
-                    company = "宁津同兴运输有限公司",
-                    alarmType = "超速预警",
-                    timeRange = "2026-02-02 21:35:29~2026-02-02 21:36:29",
-                    address = "山东省,德州市,夏津县,S315(南560米),魏店村(东668米)"
-                )
-            )
-            add(
-                AlarmBean(
-                    plateNum = "鲁H37G96",
-                    company = "济宁腾捷运输有限公司",
-                    alarmType = "超速预警",
-                    timeRange = "2026-02-02 21:35:27~2026-02-02 21:35:39",
-                    address = "河北省,邢台市,邢台县,S323(北499米),羊尔庄村(西北610米)"
-                )
-            )
-            add(
-                AlarmBean(
-                    plateNum = "鲁H109F6",
-                    company = "济宁宇泽运输有限公司",
-                    alarmType = "超速预警",
-                    timeRange = "2026-02-02 21:35:28~2026-02-02 21:35:34",
-                    address = "贵州省,黔南布依族苗族,瓮安县,梨树坳(东386米)",
-                    contact = "田凯文"
-                )
-            )
-            add(
-                AlarmBean(
-                    plateNum = "鲁NH7387",
-                    company = "德州领象运输有限公司",
-                    alarmType = "超速预警",
-                    timeRange = "2026-02-02 21:35:28~2026-02-02 21:35:40",
-                    address = "江西省,抚州市,资溪县,南堡(南187米)",
-                    contact = "穆举明"
-                )
-            )
-            add(
-                AlarmBean(
-                    plateNum = "鲁H667D5",
-                    company = "济宁市众弛运输有限公司",
-                    alarmType = "超速预警",
-                    timeRange = "2026-02-02 21:35:00~2026-02-02 21:35:00",
-                    address = ""
-                )
-            )
-        }
         alarmAdapter.submitList(alarmList)
-        alarmViewModel.getAlarmDetailsList("1970-1-1", "2026-2-19", "all",  alarmListStateFlow)
+        alarmViewModel.getAlarmDetailsList("2026-1-1 00:00:00", "2026-2-19 00:00:00",1,50, "all",  alarmListStateFlow)
     }
 
     private fun initListener() {
@@ -188,13 +144,13 @@ class DeviceAlarmActivity : AppCompatActivity() {
                     id: Long
                 ) {
                     // 可根据选择的报警类型过滤列表
-                    val selectedType = resources.getStringArray(R.array.alarm_types)[position]
+                    /*val selectedType = resources.getStringArray(R.array.alarm_types)[position]
                     if (selectedType == "全部报警") {
                         alarmAdapter.submitList(alarmList)
                     } else {
                         val filteredList = alarmList.filter { it.alarmType == selectedType }
                         alarmAdapter.submitList(filteredList)
-                    }
+                    }*/
                 }
 
                 override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
