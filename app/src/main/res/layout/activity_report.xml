@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="#F5F7FA">
+    android:orientation="vertical">
 
     <!-- 顶部导航栏 -->
     <LinearLayout
@@ -41,6 +40,7 @@
             android:layout_marginLeft="@dimen/dp_24"
             android:layout_marginRight="@dimen/dp_16"
             android:background="@drawable/bg_search"
+            android:drawableStart="@drawable/ic_search"
             android:hint="搜索车辆"
             android:paddingHorizontal="16dp"
             android:textColor="#1D2129"
@@ -48,65 +48,86 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <!-- Tab标签栏 -->
+    <!-- 水平可滑动容器（复用Style） -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_16"
+        android:scrollbars="none"
+        android:overScrollMode="never">
+
+        <!-- ChipGroup（复用Style，核心单选逻辑） -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:chipSpacing="8dp"
+            android:paddingHorizontal="4dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMileage"
+                style="@style/Widget.App.TabChip"
+                android:text="里程查询"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAlarm"
+                style="@style/Widget.App.TabChip"
+                android:text="报警查询"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSafty"
+                style="@style/Widget.App.TabChip"
+                android:text="安全查询"/>
+            <!-- 照片查询-->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPhoto"
+                style="@style/Widget.App.TabChip"
+                android:text="照片查询"/>
+
+            <!-- 过期查询（默认选中） -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipExpire"
+                style="@style/Widget.App.TabChip"
+                android:text="过期查询"
+                android:checked="true"/>
+
+            <!-- 停车统计 -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipParking"
+                style="@style/Widget.App.TabChip"
+                android:text="停车统计"/>
+
+            <!-- 加油报表 -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipRefuel"
+                style="@style/Widget.App.TabChip"
+                android:text="加油报表"/>
+
+            <!-- 油耗日报表 -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipOilDaily"
+                style="@style/Widget.App.TabChip"
+                android:text="油耗日报表"/>
+
+            <!-- 漏油报表 -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipOilLeak"
+                style="@style/Widget.App.TabChip"
+                android:text="漏油报表"/>
+
+            <!-- 离线提醒 -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipOffline"
+                style="@style/Widget.App.TabChip"
+                android:text="离线提醒"/>
+
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <!-- 时间筛选（昨天/今天/近三天/近一周） -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:horizontalSpacing="8dp"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
-
-        <TextView
-            android:id="@+id/tv_mileage"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_tab_selected"
-            android:gravity="center"
-            android:text="里程查询"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tv_alarm"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_tab_unselected"
-            android:gravity="center"
-            android:text="报警查询"
-            android:textColor="#4E5969"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tv_safety"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_tab_unselected"
-            android:gravity="center"
-            android:text="安全查询"
-            android:textColor="#4E5969"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tv_photo"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_tab_unselected"
-            android:gravity="center"
-            android:text="照片查询"
-            android:textColor="#4E5969"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <!-- 时间筛选栏 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:gravity="end"
+        android:layout_height="@dimen/dp_48"
+        android:gravity="end|center_vertical"
         android:paddingEnd="@dimen/dp_24">
 
         <TextView
@@ -115,7 +136,7 @@
             android:layout_height="wrap_content"
             android:text="昨天"
             android:textColor="#1890FF"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -125,7 +146,7 @@
             android:layout_marginStart="@dimen/dp_16"
             android:text="今天"
             android:textColor="#4E5969"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_3days"
@@ -134,7 +155,7 @@
             android:layout_marginStart="@dimen/dp_16"
             android:text="近三天"
             android:textColor="#4E5969"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_7days"
@@ -143,15 +164,85 @@
             android:layout_marginStart="@dimen/dp_16"
             android:text="近一周"
             android:textColor="#4E5969"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- 内容容器（ViewPager2） -->
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <!-- 离线提醒的时间选择（仅离线标签显示） -->
+    <LinearLayout
+        android:id="@+id/llDateRange"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvStartDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2026-02-03"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:text="-"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvEndDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2026-02-20"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/ivClearDate"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_clear" />
+    </LinearLayout>
+
+    <!-- 内容容器 -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- 加载中/空数据/错误提示 -->
+    <LinearLayout
+        android:id="@+id/llEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvEmptyTip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="暂无数据"
+            android:textSize="16sp"
+            android:textColor="@color/gray" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 </LinearLayout>

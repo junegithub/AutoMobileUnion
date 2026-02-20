@@ -31,7 +31,7 @@ class PhotoAdapter(private val mData: List<PhotoBean>) :
             .into(holder.binding.ivPhoto)
 
         holder.binding.tvTime.text = bean.time
-        holder.binding.tvCarNumPhoto.text = bean.carNum
+//        holder.binding.tvCarNumPhoto.text = bean.carNum
         holder.binding.tvAddress.text = bean.address
     }
 

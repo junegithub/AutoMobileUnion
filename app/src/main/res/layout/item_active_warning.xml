@@ -8,22 +8,14 @@
     android:layout_marginBottom="1dp">
 
     <TextView
-        android:id="@+id/tvCarNum"
+        android:id="@+id/tvSafeType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/tvMileage"
+        android:id="@+id/tvCount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

@@ -416,10 +416,10 @@ data class OilAddReportItem(
 
 data class ActiveWarningData(
     val total: Int,
-    val list: List<ActiveWarningItem>
+    val list: List<ActiveWarningDataItem>
 )
 
-data class ActiveWarningItem(
+data class ActiveWarningDataItem(
     val num: Int,
     val name: String,
     val warningType: Int
@@ -438,10 +438,10 @@ data class ExpiredCarItem(
 
 data class MileageData(
     val total: Int,
-    val list: List<MileageItem>
+    val list: List<MileageDataItem>
 )
 
-data class MileageItem(
+data class MileageDataItem(
     val carId: String,
     val ts: String,
     val time: String,

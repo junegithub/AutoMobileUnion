@@ -33,6 +33,7 @@ import com.google.android.material.tabs.TabLayout
 import com.yt.car.union.pages.LoginActivity
 import com.yt.car.union.MyApp
 import com.yt.car.union.R
+import com.yt.car.union.pages.ReportActivity
 import com.yt.car.union.databinding.FragmentMapBinding
 import com.yt.car.union.net.BaseCarInfo
 import com.yt.car.union.net.CarInfo
@@ -42,7 +43,6 @@ import com.yt.car.union.net.RealTimeAddressData
 import com.yt.car.union.pages.DeviceAlarmActivity
 import com.yt.car.union.pages.status.DeviceStatusActivity
 import com.yt.car.union.pages.OperationAnalysisActivity
-import com.yt.car.union.pages.ReportActivity
 import com.yt.car.union.pages.openDial
 import com.yt.car.union.util.DialogUtils
 import com.yt.car.union.util.EventData

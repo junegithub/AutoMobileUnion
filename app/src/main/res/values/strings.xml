@@ -70,4 +70,17 @@
 
     <string name="cancel">取消</string>
     <string name="no_date_selected">未选择日期</string>
+
+    <string name="hint_search_car">搜索车辆</string>
+    <string name="text_no_data">暂无数据</string>
+    <string name="text_loading">加载中...</string>
+    <string name="text_mileage">里程</string>
+    <string name="text_date">日期</string>
+    <string name="text_warning_type">报警类型</string>
+    <string name="text_warning_count">报警次数</string>
+    <string name="text_safe_event">安全事件</string>
+    <string name="text_safe_count">安全次数</string>
+    <string name="text_expired_time">到期时间</string>
+    <string name="text_offline_days">离线天数</string>
+    <string name="text_belong_company">所属公司</string>
 </resources>

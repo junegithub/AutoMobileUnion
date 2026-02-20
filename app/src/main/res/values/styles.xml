@@ -115,4 +115,26 @@
         <item name="android:textStyle">normal</item> <!-- 常规字体 -->
         <item name="android:fontFamily">sans-serif</item>
     </style>
+
+    <!-- 核心：提取Tab Chip的统一样式 -->
+    <style name="Widget.App.TabChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <!-- 尺寸相关 -->
+        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <!-- 圆角（匹配设计） -->
+        <item name="chipCornerRadius">8dp</item>
+        <!-- 内边距（左右24dp，上下0） -->
+        <item name="chipStartPadding">@dimen/dp_8</item>
+        <item name="chipEndPadding">@dimen/dp_8</item>
+        <!-- 取消边框 -->
+        <item name="chipStrokeWidth">0dp</item>
+        <!-- 隐藏选中对勾图标 -->
+        <item name="checkedIconEnabled">false</item>
+        <item name="android:textColor">@color/selector_chip_text</item>
+        <!-- 背景和文字颜色（关联选择器） -->
+        <item name="chipBackgroundColor">@color/selector_chip_bg</item>
+        <!-- 点击反馈（可选，提升交互） -->
+        <item name="rippleColor">@android:color/transparent</item>
+    </style>
 </resources>
