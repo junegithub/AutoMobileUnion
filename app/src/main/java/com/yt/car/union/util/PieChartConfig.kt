@@ -7,13 +7,22 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.yt.car.union.R
+import java.text.DecimalFormat
 
 /**
- * MPAndroidChart v3.1.0 饼图配置工具（1:1还原截图）
+ * MPAndroidChart v3.1.0 饼图配置工具
  */
 object PieChartConfig {
 
+    // 百分比格式化器（保留2位小数）
+    private val percentFormatter = object : ValueFormatter() {
+        private val decimalFormat = DecimalFormat("#.##%")
+        override fun getFormattedValue(value: Float): String {
+            return decimalFormat.format(value / 100f)
+        }
+    }
     /**
      * 初始化饼图基础样式（实心、静态、百分比外侧）
      */
@@ -51,6 +60,7 @@ object PieChartConfig {
         legend.orientation = Legend.LegendOrientation.HORIZONTAL
         //设置图例是否在图表内绘制
         legend.setDrawInside(false)
+        legend.isWordWrapEnabled = true
         //设置水平图例之间的空间
         legend.xEntrySpace = 5f
         //设置垂直轴上图例条目间的空间
@@ -80,9 +90,9 @@ object PieChartConfig {
         // 1. 颜色配置
         dataSet.colors = colors
 
-        dataSet.valueTextSize = 12f//pieChart.resources.getDimension(R.dimen.pie_percent_size)
+        dataSet.valueTextSize = 8f
         dataSet.valueTextColor = Color.BLACK
-        dataSet.valueFormatter = PercentFormatter() // 百分比格式
+        dataSet.valueFormatter = percentFormatter // 百分比格式
 
         // 2. 引线样式（匹配截图）
         //当valuePosition在外部时，表示行前半部分的长度(即折线靠近圆的那端长度)
