@@ -1,7 +1,9 @@
 package com.yt.car.union.viewmodel
 
+import com.yt.car.union.net.CarExpireResponse
 import com.yt.car.union.net.CarInfo
 import com.yt.car.union.net.CarStatusDetailItem
+import com.yt.car.union.net.CarStatusListData
 import com.yt.car.union.net.DashboardInfoData
 import com.yt.car.union.net.ExpiredCarData
 import com.yt.car.union.net.LeakReportData
@@ -70,6 +72,14 @@ class CarInfoViewModel : CarBaseViewModel() {
         )
     }
 
+    fun getOutdate(expired: Boolean, pageNum: Int, pageSize: Int,
+                           stateFlow: MutableStateFlow<ApiState<CarExpireResponse>>) {
+        launchRequest(
+            block = { vehicleRepository.getOutdate(expired, pageNum, pageSize) },
+            stateFlow
+        )
+    }
+
     // 仪表盘信息
     fun getDashboardInfo(stateFlow: MutableStateFlow<ApiState<DashboardInfoData>>) {
         launchRequest(
@@ -115,6 +125,13 @@ class CarInfoViewModel : CarBaseViewModel() {
                        stateFlow: MutableStateFlow<ApiState<ExpiredCarData>>) {
         launchRequest(
             block = { vehicleRepository.getExpiredCars(page, pageSize, search) },
+            stateFlow
+        )
+    }
+
+    fun getCarStatusList(stateFlow: MutableStateFlow<ApiState<CarStatusListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getCarStatusList() },
             stateFlow
         )
     }

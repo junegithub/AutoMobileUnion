@@ -34,13 +34,13 @@ import com.yt.car.union.pages.LoginActivity
 import com.yt.car.union.MyApp
 import com.yt.car.union.R
 import com.yt.car.union.databinding.FragmentMapBinding
+import com.yt.car.union.net.BaseCarInfo
 import com.yt.car.union.net.CarInfo
 import com.yt.car.union.net.MapPositionData
 import com.yt.car.union.net.MapPositionItem
 import com.yt.car.union.net.RealTimeAddressData
-import com.yt.car.union.net.VehicleInfo
 import com.yt.car.union.pages.DeviceAlarmActivity
-import com.yt.car.union.pages.DeviceStatusActivity
+import com.yt.car.union.pages.status.DeviceStatusActivity
 import com.yt.car.union.pages.OperationAnalysisActivity
 import com.yt.car.union.pages.ReportActivity
 import com.yt.car.union.pages.openDial
@@ -327,7 +327,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                                     carInfo.latitude, carInfo.direction.toString(), carInfo.id, carInfo.carnum,
                                     carInfo.longitude, carInfo.status.toInt(), carInfo.direction.toString())
 
-                                addCarMarker(mapPositionItem)
+                                showSingleMarker(addCarMarker(mapPositionItem))
                             }
                         }
                         refreshRealAddressCarDetails(uiState?.data)
@@ -739,15 +739,15 @@ class CarFragment : Fragment(), AMapLocationListener {
                 loadCarStatus()
             }
             EventData.EVENT_CAR_DETAIL -> {
-                val vehicleInfo = event.data as VehicleInfo
+                val vehicleInfo = event.data as BaseCarInfo
                 val marker = markerList.find { it.title == vehicleInfo.carNum}
                 if (marker != null) {
                     openCarDetails(marker)
                 } else {
                     requestFromOtherPage = true
                     val mapPositionItem = MapPositionItem("", "", "",
-                        vehicleInfo.latitude, "", vehicleInfo.carId.toString(), vehicleInfo.carNum,
-                        vehicleInfo.longitude, vehicleInfo.status?.toInt() ?: 0, "")
+                        vehicleInfo.latitude, "", vehicleInfo.carId, vehicleInfo.carNum,
+                        vehicleInfo.longitude, vehicleInfo.status, "")
                     showSingleMarker(addCarMarker(mapPositionItem, true))
                     carInfoViewModel.getRealTimeAddress(id, vehicleInfo.carNum,
                         addressStateFlow)

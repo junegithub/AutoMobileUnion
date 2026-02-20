@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/margin_15"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/dp_16">
+
+        <!-- 车牌号（黄色边框+浅黄底色） -->
+        <TextView
+            android:id="@+id/tv_plate_num"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:background="@drawable/car_num_bg"
+            android:gravity="center"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/text_plate"
+            android:textStyle="bold" />
+
+        <!-- 名称+到期时间 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <!-- 所属名称（公司/个人） -->
+            <TextView
+                android:id="@+id/tv_company"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingLeft="@dimen/padding_10"
+                android:textColor="@color/text_black"
+                android:textSize="@dimen/text_company" />
+
+            <!-- 到期时间 -->
+            <TextView
+                android:id="@+id/tv_expire_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+    <!-- 分割线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_gray" />
+
+</LinearLayout>

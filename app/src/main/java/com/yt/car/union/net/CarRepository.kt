@@ -31,6 +31,8 @@ class CarRepository(private val apiService: CarApiService) {
     suspend fun getCarStatusByType(carType: String, pageNum: Int, pageSize: Int) =
         apiService.getCarStatusByType(carType, pageNum, pageSize)
 
+    suspend fun getOutdate(expired: Boolean, pageNum: Int, pageSize: Int,) = apiService.getOutdate(expired, pageNum, pageSize)
+
     suspend fun getCarStatusList() = apiService.getCarStatusList()
 
     suspend fun searchCarByType(search: String, tree: Boolean?, type: String, pageSize: String, pageNum: String) =

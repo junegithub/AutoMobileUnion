@@ -65,8 +65,15 @@ interface CarApiService {
         @Query("pageSize") pageSize: Int
     ): Response<BaseResponse<List<CarStatusDetailItem>>>
 
+    @GET("aggregation/app/carStatus/listByExpired")
+    suspend fun getOutdate(
+        @Query("expired") expired: Boolean,
+        @Query("pageNum") pageNum: Int,
+        @Query("pageSize") pageSize: Int
+    ): Response<BaseResponse<CarExpireResponse>>
+
     @GET("aggregation/app/carStatus/statusList")
-    suspend fun getCarStatusList(): Response<BaseResponse<CarStatusListData?>>
+    suspend fun getCarStatusList(): Response<BaseResponse<CarStatusListData>>
 
     @GET("aggregation/app/dashboard/appSearchCarType")
     suspend fun searchCarByType(

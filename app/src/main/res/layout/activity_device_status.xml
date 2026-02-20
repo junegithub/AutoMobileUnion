@@ -40,9 +40,112 @@
         android:background="@color/divider_gray"/>
 
     <!-- 设备状态列表 -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_device_status"
+    <!-- 1. 行驶中（仅保留核心ID和样式引用） -->
+    <LinearLayout
+        android:id="@+id/item_drive"
+        style="@style/CarStatusItem">
+
+        <TextView
+            style="@style/CarStatusTitle"
+            android:text="行驶中" />
+
+        <TextView
+            android:id="@+id/tv_drive_count"
+            style="@style/CarStatusCount" />
+    </LinearLayout>
+    <View
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="1dp"
+        android:background="@color/divider_gray"/>
+
+    <!-- 2. 静止 -->
+    <LinearLayout
+        android:id="@+id/item_stop"
+        style="@style/CarStatusItem">
+
+        <TextView
+            style="@style/CarStatusTitle"
+            android:text="静止" />
+
+        <TextView
+            android:id="@+id/tv_stop_count"
+            style="@style/CarStatusCount" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_gray"/>
+
+    <!-- 3. 离线 -->
+    <LinearLayout
+        android:id="@+id/item_offline"
+        style="@style/CarStatusItem">
+
+        <TextView
+            style="@style/CarStatusTitle"
+            android:text="离线" />
+
+        <TextView
+            android:id="@+id/tv_offline_count"
+            style="@style/CarStatusCount" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_gray"/>
+
+    <!-- 4. 超速 -->
+    <LinearLayout
+        android:id="@+id/item_over_speed"
+        style="@style/CarStatusItem">
+
+        <TextView
+            style="@style/CarStatusTitle"
+            android:text="超速" />
+
+        <TextView
+            android:id="@+id/tv_over_speed_count"
+            style="@style/CarStatusCount" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_gray"/>
+
+    <!-- 5. 疲劳 -->
+    <LinearLayout
+        android:id="@+id/item_tired"
+        style="@style/CarStatusItem">
+
+        <TextView
+            style="@style/CarStatusTitle"
+            android:text="疲劳" />
+
+        <TextView
+            android:id="@+id/tv_tired_count"
+            style="@style/CarStatusCount" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_gray"/>
+
+    <!-- 6. 到期 -->
+    <LinearLayout
+        android:id="@+id/item_expired"
+        style="@style/CarStatusItem">
+
+        <TextView
+            style="@style/CarStatusTitle"
+            android:text="到期" />
+
+        <TextView
+            android:id="@+id/tv_expired_count"
+            style="@style/CarStatusCount" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_gray"/>
 
 </LinearLayout>

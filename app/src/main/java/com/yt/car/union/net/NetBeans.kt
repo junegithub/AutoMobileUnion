@@ -375,19 +375,27 @@ data class SearchCarItem(
 
 data class DashboardInfoData(
     val caroperate: CarOperateInfo,
-    val carwarning: List<WarningTypeInfo>
+    val carwarning: List<WarningTypeInfo>,
+    val carmileage: CarMileage,
+    val warningtrendlist: WarningTrendList
 )
-
 data class CarOperateInfo(
     val arrearsnum: Int,
     val caroperatenum: Int,
     val carrepairnum: Int,
     val carstopnum: Int
 )
-
 data class WarningTypeInfo(
     val data: Int,
     val name: String
+)
+data class CarMileage(
+    val namelist: List<String>,
+    val valuelist: List<Double>
+)
+data class WarningTrendList(
+    val timelist: List<String>,
+    val valuelist: List<Int>
 )
 
 data class OilAddReportData(
@@ -2097,4 +2105,40 @@ data class VehicleInfo(
     // 布尔值/详细位置
     val lift: Boolean = false,
     val position: String = "山东省, 烟台市, 栖霞市, 金岭路(南28米), 惠安大药房(东29米)"
+)
+
+data class BaseCarInfo (
+    val carId: String,
+    val carNum: String,
+    val longitude: Double,
+    val latitude: Double,
+    val status: Int = 0
+)
+
+/**
+ * 车辆到期列表整体响应数据类
+ * 对应JSON外层的total和list字段
+ */
+data class CarExpireResponse(
+    // 总数量（JSON字段：total）
+    val total: Int,
+    // 到期车辆列表（JSON字段：list）
+    val list: List<CarExpireItem>
+)
+
+/**
+ * 单条车辆到期信息数据类
+ * 对应JSON中list数组里的每个对象
+ */
+data class CarExpireItem(
+    // 车辆ID（JSON字段：carId）
+    val carId: String,
+    // 车牌号（JSON字段：carNum）
+    val carNum: String,
+    // 有效期/到期时间（JSON字段：validTime）
+    val validTime: String,
+    // 部门ID（JSON字段：deptId）
+    val deptId: String,
+    // 部门/所属名称（JSON字段：deptName）
+    val deptName: String
 )

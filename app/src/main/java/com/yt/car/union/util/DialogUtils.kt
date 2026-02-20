@@ -3,7 +3,6 @@ package com.yt.car.union.util
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import com.yt.car.union.MyApp
 import com.yt.car.union.pages.LoginActivity
 
 /**

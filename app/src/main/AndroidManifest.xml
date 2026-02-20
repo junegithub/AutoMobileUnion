@@ -33,6 +33,7 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.AutoMobileUnion"
+            android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -42,9 +43,11 @@
 
         <activity android:name=".pages.LoginActivity" />
         <activity android:name=".pages.DeviceAlarmActivity" />
-        <activity android:name=".pages.DeviceStatusActivity" />
+        <activity android:name=".pages.status.DeviceStatusActivity" />
         <activity android:name=".pages.OperationAnalysisActivity" />
         <activity android:name=".pages.ReportActivity" />
+        <activity android:name=".pages.status.DeviceStatusListActivity" />
+        <activity android:name=".pages.status.ExpireCarActivity" />
     </application>
 
 </manifest>

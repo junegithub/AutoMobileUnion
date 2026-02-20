@@ -1,5 +1,6 @@
 package com.yt.car.union.pages
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -11,9 +12,11 @@ import com.chad.library.adapter4.QuickAdapterHelper
 import com.chad.library.adapter4.loadState.LoadState
 import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
 import com.chad.library.adapter4.util.setOnDebouncedItemClick
+import com.yt.car.union.MainActivity
 import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityDeviceAlarmBinding
 import com.yt.car.union.net.AlarmListData
+import com.yt.car.union.net.BaseCarInfo
 import com.yt.car.union.net.DictMapManager
 import com.yt.car.union.net.VehicleInfo
 import com.yt.car.union.pages.adapter.AlarmAdapter
@@ -74,9 +77,13 @@ class DeviceAlarmActivity : AppCompatActivity() {
         alarmAdapter = AlarmAdapter()
         alarmAdapter.submitList(alarmList)
         alarmAdapter.setOnDebouncedItemClick { adapter, view, position ->
+            val item = alarmList[position]
             EventBus.getDefault().post(EventData(EventData.EVENT_CAR_DETAIL,
-                alarmList[position]
+                BaseCarInfo(item.carId.toString(), item.carNum,
+                    item.longitude, item.latitude, item.status?.toInt() ?: 0
+                )
             ))
+            startActivity(Intent(this@DeviceAlarmActivity, MainActivity::class.java))
             finish()
         }
         adapterHelper = QuickAdapterHelper.Builder(alarmAdapter)

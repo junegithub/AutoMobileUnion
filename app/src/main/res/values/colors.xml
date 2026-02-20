@@ -88,4 +88,6 @@
     <color name="calendar_bg_white">#FFFFFF</color>
     <color name="calendar_divider">#F5F5F5</color>
     <color name="icon_gray">#666666</color>
+
+    <color name="gray_99">#999999</color>
 </resources>
