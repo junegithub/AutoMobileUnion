@@ -141,6 +141,13 @@ interface CarApiService {
         @Query("start") start: String
     ): Response<BaseResponse<OfflineReportData>>
 
+    @GET("aggregation/app/work/offlineDetail")
+    suspend fun getOfflineDetailReport(
+        @Query("carId") carId: Int,
+        @Query("end") end: String,
+        @Query("start") start: String
+    ): Response<BaseResponse<List<String>>>
+
     @GET("aggregation/app/work/photos")
     suspend fun getPhotoReport(
         @Query("page") page: Int,

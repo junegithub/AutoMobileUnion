@@ -121,14 +121,6 @@ class CarInfoViewModel : CarBaseViewModel() {
         )
     }
 
-    fun getExpiredCars(page: Int, pageSize: Int?, search: String?,
-                       stateFlow: MutableStateFlow<ApiState<ExpiredCarData>>) {
-        launchRequest(
-            block = { vehicleRepository.getExpiredCars(page, pageSize, search) },
-            stateFlow
-        )
-    }
-
     fun getCarStatusList(stateFlow: MutableStateFlow<ApiState<CarStatusListData>>) {
         launchRequest(
             block = { vehicleRepository.getCarStatusList() },

@@ -62,6 +62,9 @@ class CarRepository(private val apiService: CarApiService) {
     suspend fun getOfflineReport(end: String, page: Int, pageSize: Int?, search: String?, start: String) =
         apiService.getOfflineReport(end, page, pageSize, search, start)
 
+    suspend fun getOfflineDetailReport(carId: Int, end: String, start: String) =
+        apiService.getOfflineDetailReport(carId, end, start)
+
     suspend fun getPhotoReport(page: Int, pageSize: Int?, search: String?, timetype: Int) =
         apiService.getPhotoReport(page, pageSize, search, timetype)
 
