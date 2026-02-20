@@ -7,17 +7,23 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.chad.library.adapter4.QuickAdapterHelper
+import com.chad.library.adapter4.loadState.LoadState
+import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
+import com.chad.library.adapter4.util.setOnDebouncedItemClick
 import com.yt.car.union.R
 import com.yt.car.union.databinding.ActivityDeviceAlarmBinding
 import com.yt.car.union.net.AlarmListData
 import com.yt.car.union.net.DictMapManager
 import com.yt.car.union.net.VehicleInfo
 import com.yt.car.union.pages.adapter.AlarmAdapter
+import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.AlarmViewModel
 import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -37,6 +43,8 @@ class DeviceAlarmActivity : AppCompatActivity() {
     private var startDate: String = ""
     private var endDate: String = ""
     private lateinit var alarmTypes: Array<String>
+    private lateinit var adapterHelper: QuickAdapterHelper
+    private var loadFromMore: Boolean = false
 
     // 日期格式化器
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
@@ -63,10 +71,30 @@ class DeviceAlarmActivity : AppCompatActivity() {
 
     private fun initView() {
         // 初始化RecyclerView
-        alarmAdapter = AlarmAdapter(this)
+        alarmAdapter = AlarmAdapter()
         alarmAdapter.submitList(alarmList)
+        alarmAdapter.setOnDebouncedItemClick { adapter, view, position ->
+            EventBus.getDefault().post(EventData(EventData.EVENT_CAR_DETAIL,
+                alarmList[position]
+            ))
+            finish()
+        }
+        adapterHelper = QuickAdapterHelper.Builder(alarmAdapter)
+            .setTrailingLoadStateAdapter(object : TrailingLoadStateAdapter.OnTrailingListener {
+                override fun onLoad() {
+                    pageNum++
+                    loadFromMore = true
+                    loadData()
+                }
+
+                override fun onFailRetry() {
+                }
+
+            })
+            .setTrailPreloadSize(1)
+            .attachTo(binding.rvAlarmList)
+        updateLoadState()
         binding.rvAlarmList.apply {
-            adapter = alarmAdapter
             layoutManager = LinearLayoutManager(this@DeviceAlarmActivity)
         }
 
@@ -89,12 +117,21 @@ class DeviceAlarmActivity : AppCompatActivity() {
                     is ApiState.Success -> {
                         // 隐藏进度框，关闭输入框，提示成功
                         state.data?.let { it?.list?.let { elements -> alarmList.addAll(elements) } }
+                        updateListWithSpinnerSelection(binding.spinnerAlarmType.selectedItemPosition)
                         alarmAdapter.notifyDataSetChanged()
+                        if (loadFromMore) {
+                            updateLoadState()
+                            loadFromMore = false
+                        }
                     }
                     is ApiState.Error -> {
                         Toast.makeText(this@DeviceAlarmActivity, "获取数据失败：${state.msg}", Toast.LENGTH_SHORT).show()
                         // 重置状态
                         alarmListStateFlow.value = ApiState.Idle
+                        if (loadFromMore) {
+                            updateLoadState()
+                            loadFromMore = false
+                        }
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -102,6 +139,10 @@ class DeviceAlarmActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun updateLoadState() {
+        adapterHelper.trailingLoadState = LoadState.NotLoading(false)
     }
 
     private fun loadData() {

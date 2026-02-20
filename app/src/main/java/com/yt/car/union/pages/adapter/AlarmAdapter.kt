@@ -5,46 +5,40 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.chad.library.adapter4.BaseQuickAdapter
 import com.yt.car.union.databinding.ItemAlarmBinding
 import com.yt.car.union.net.DictMapManager
 import com.yt.car.union.net.VehicleInfo
-import com.yt.car.union.util.EventData
-import org.greenrobot.eventbus.EventBus
 
 /**
  * 基于ListAdapter（自带DiffUtil，优化列表刷新）
  */
-class AlarmAdapter(private val context: Context) :
-    ListAdapter<VehicleInfo, AlarmAdapter.AlarmViewHolder>(AlarmDiffCallback()) {
+class AlarmAdapter:
+    BaseQuickAdapter<VehicleInfo, AlarmAdapter.AlarmViewHolder>(AlarmDiffCallback()) {
 
-    inner class AlarmViewHolder(private val binding: ItemAlarmBinding) :
+    class AlarmViewHolder(private val binding: ItemAlarmBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(bean: VehicleInfo) {
-            binding.tvPlateNum.text = bean.carNum
-            binding.tvCompany.text = bean.deptName
-            binding.tvAlarmType.text = DictMapManager.getDictLabelByValue(bean.type?.toInt().toString())
-            binding.tvTime.text = bean.starttimeTime + "~" + bean.endtimeTime
-            binding.tvAddress.text = bean.position
-            binding.tvContact.text = bean.contacts
+        fun bind(bean: VehicleInfo?) {
+            binding.tvPlateNum.text = bean?.carNum
+            binding.tvCompany.text = bean?.deptName
+            binding.tvAlarmType.text = DictMapManager.getDictLabelByValue(bean?.type?.toInt().toString())
+            binding.tvTime.text = bean?.starttimeTime + "~" + bean?.endtimeTime
+            binding.tvAddress.text = bean?.position
+            binding.tvContact.text = bean?.contacts
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlarmViewHolder {
+    override fun onCreateViewHolder(context: Context, parent: ViewGroup, viewType: Int): AlarmViewHolder {
         val binding = ItemAlarmBinding.inflate(
             LayoutInflater.from(context), parent, false
         )
         return AlarmViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
-        holder.bind(getItem(position))
-        holder.itemView.setOnClickListener {
-            EventBus.getDefault().post(EventData(EventData.EVENT_CAR_DETAIL, getItem(position)))
-            (context as Activity).finish()
-        }
+    override fun onBindViewHolder(holder: AlarmViewHolder, position: Int, item: VehicleInfo?) {
+        holder.bind(item)
     }
 
     /**

@@ -20,16 +20,16 @@ object MarkerViewUtil {
      */
     fun createCarMarker(
         context: Context,
-        carStatus: MapPositionItem
+        dlcartype: String, status: Int, rotation: Float, carnum: String
     ): BitmapDescriptor {
         // 加载布局
         val view = LayoutInflater.from(context).inflate(R.layout.view_car_marker, null)
         val ivCar = view.findViewById<ImageView>(R.id.iv_car_icon)
         val tvNum = view.findViewById<TextView>(R.id.tv_car_num)
 
-        ivCar.setImageResource(VehicleImageProvider.getVehicleImageResId(carStatus.dlcartype.toString(), carStatus.status))
-        ivCar.rotation = 90f - carStatus.rotation.toFloat()
-        tvNum.text = carStatus.carnum
+        ivCar.setImageResource(VehicleImageProvider.getVehicleImageResId(dlcartype, status))
+        ivCar.rotation = 90f - rotation
+        tvNum.text = carnum
 
         // 测量 + 绘制View到Bitmap
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)

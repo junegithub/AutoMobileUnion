@@ -91,6 +91,8 @@ class CarFragment : Fragment(), AMapLocationListener {
     private val markerList = mutableListOf<Marker>()
     private var locationClient: AMapLocationClient? = null
 
+    private var requestFromOtherPage: Boolean = false
+
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
@@ -305,12 +307,30 @@ class CarFragment : Fragment(), AMapLocationListener {
             }
         }
         lifecycleScope.launch {
-            addressStateFlow.collect {
-                when (it) {
+            addressStateFlow.collect {uiState ->
+                when (uiState) {
                     is ApiState.Loading -> {
                     }
                     is ApiState.Success -> {
-                        refreshRealAddressCarDetails(it?.data)
+                        if (requestFromOtherPage) {
+                            requestFromOtherPage = false
+                            val  carInfo = uiState?.data?.carinfo
+                            carInfo?.let {
+                                val marker =
+                                    markerList.find { it.title == carInfo.carnum }
+                                marker?.let {
+                                    markerList.remove(marker)
+                                    marker.remove()
+                                }
+
+                                val mapPositionItem = MapPositionItem(carInfo.dlcartype, "", "",
+                                    carInfo.latitude, carInfo.direction.toString(), carInfo.id, carInfo.carnum,
+                                    carInfo.longitude, carInfo.status.toInt(), carInfo.direction.toString())
+
+                                addCarMarker(mapPositionItem)
+                            }
+                        }
+                        refreshRealAddressCarDetails(uiState?.data)
                     }
                     is ApiState.Error -> {
                     }
@@ -447,13 +467,16 @@ class CarFragment : Fragment(), AMapLocationListener {
         }
     }
 
-    private fun addCarMarker(car: MapPositionItem): Marker {
+    private fun addCarMarker(car: MapPositionItem, skipIcon: Boolean = false): Marker {
         val latLng = LatLng(car.latitude, car.longitude)
         val markerOptions = MarkerOptions()
             .position(latLng) // 标记位置
             .title(car.carnum) // 标记标题（车牌）
-            .icon(MarkerViewUtil.createCarMarker(requireContext(), car))
             .draggable(false) // 禁止拖动
+        if (!skipIcon) {
+            markerOptions.icon(MarkerViewUtil.createCarMarker(requireContext(),
+                car.dlcartype, car.status, car.rotation.toFloat(), car.carnum))
+        }
         val maker = aMap.addMarker(markerOptions) // 添加到地图
         maker.`object` = car
         markerList.add(maker)
@@ -721,7 +744,15 @@ class CarFragment : Fragment(), AMapLocationListener {
                 if (marker != null) {
                     openCarDetails(marker)
                 } else {
-
+                    requestFromOtherPage = true
+                    val mapPositionItem = MapPositionItem("", "", "",
+                        vehicleInfo.latitude, "", vehicleInfo.carId.toString(), vehicleInfo.carNum,
+                        vehicleInfo.longitude, vehicleInfo.status?.toInt() ?: 0, "")
+                    showSingleMarker(addCarMarker(mapPositionItem, true))
+                    carInfoViewModel.getRealTimeAddress(id, vehicleInfo.carNum,
+                        addressStateFlow)
+                    carInfoViewModel.getCarInfo(id,
+                        carInfoStateFlow)
                 }
             }
         }
