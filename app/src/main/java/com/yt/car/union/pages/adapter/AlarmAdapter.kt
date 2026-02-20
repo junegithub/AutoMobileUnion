@@ -42,7 +42,7 @@ class AlarmAdapter(private val context: Context) :
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
         holder.bind(getItem(position))
         holder.itemView.setOnClickListener {
-            EventBus.getDefault().post(EventData(EventData.EVENT_CAR_DETAIL, getItem(position).carNum))
+            EventBus.getDefault().post(EventData(EventData.EVENT_CAR_DETAIL, getItem(position)))
             (context as Activity).finish()
         }
     }

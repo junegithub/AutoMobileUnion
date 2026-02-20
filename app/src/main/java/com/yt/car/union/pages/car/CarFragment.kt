@@ -38,6 +38,7 @@ import com.yt.car.union.net.CarInfo
 import com.yt.car.union.net.MapPositionData
 import com.yt.car.union.net.MapPositionItem
 import com.yt.car.union.net.RealTimeAddressData
+import com.yt.car.union.net.VehicleInfo
 import com.yt.car.union.pages.DeviceAlarmActivity
 import com.yt.car.union.pages.DeviceStatusActivity
 import com.yt.car.union.pages.OperationAnalysisActivity
@@ -442,16 +443,21 @@ class CarFragment : Fragment(), AMapLocationListener {
     private fun addCarMarkers() {
         carList?.forEach { car ->
             markerList.clear()
-            val latLng = LatLng(car.latitude, car.longitude)
-            val markerOptions = MarkerOptions()
-                .position(latLng) // 标记位置
-                .title(car.carnum) // 标记标题（车牌）
-                .icon(MarkerViewUtil.createCarMarker(requireContext(), car))
-                .draggable(false) // 禁止拖动
-            val maker = aMap.addMarker(markerOptions) // 添加到地图
-            maker.`object` = car
-            markerList.add(maker)
+            addCarMarker(car)
         }
+    }
+
+    private fun addCarMarker(car: MapPositionItem): Marker {
+        val latLng = LatLng(car.latitude, car.longitude)
+        val markerOptions = MarkerOptions()
+            .position(latLng) // 标记位置
+            .title(car.carnum) // 标记标题（车牌）
+            .icon(MarkerViewUtil.createCarMarker(requireContext(), car))
+            .draggable(false) // 禁止拖动
+        val maker = aMap.addMarker(markerOptions) // 添加到地图
+        maker.`object` = car
+        markerList.add(maker)
+        return maker
     }
 
     private fun refreshRealAddressCarDetails(realTimeAddress: RealTimeAddressData?) {
@@ -710,8 +716,13 @@ class CarFragment : Fragment(), AMapLocationListener {
                 loadCarStatus()
             }
             EventData.EVENT_CAR_DETAIL -> {
-                val carNum = event.data
-                markerList.find { it.title == carNum}?.let { openCarDetails(it) }
+                val vehicleInfo = event.data as VehicleInfo
+                val marker = markerList.find { it.title == vehicleInfo.carNum}
+                if (marker != null) {
+                    openCarDetails(marker)
+                } else {
+
+                }
             }
         }
     }
