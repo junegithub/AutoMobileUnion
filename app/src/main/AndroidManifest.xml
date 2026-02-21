@@ -50,6 +50,7 @@
         <activity android:name=".pages.status.ExpireCarActivity" />
         <activity android:name=".pages.ReportAlarmDetailActivity" />
         <activity android:name=".pages.CarInfoActivity" />
+        <activity android:name=".pages.OfflineDetailActivity" />
     </application>
 
 </manifest>

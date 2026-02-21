@@ -113,7 +113,13 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 intent.putExtra(ReportAlarmDetailActivity.KEY_WARN_REPORT_TYPE, warningItem.warningType)
                 startActivity(intent)
             } else if (reportAdapter.type == ReportAdapter.ReportType.OFFLINE) {
-
+                val offlineItem = (reportAdapter.getItem(position) as ReportItem.OfflineItem).data
+                val intent = Intent(this, OfflineDetailActivity::class.java)
+                intent.putExtra(OfflineDetailActivity.KEY_CAR_ID, offlineItem.carId.toInt())
+                intent.putExtra(OfflineDetailActivity.KEY_CAR_NUM, offlineItem.offline)
+                intent.putExtra(OfflineDetailActivity.KEY_START, binding.tvStartDate.text.toString())
+                intent.putExtra(OfflineDetailActivity.KEY_END, binding.tvEndDate.text.toString())
+                startActivity(intent)
             } else if (reportAdapter.type == ReportAdapter.ReportType.EXPIRED) {
                 val expireItem = (reportAdapter.getItem(position) as ReportItem.ExpiredItem).data
                 val intent = Intent(this, CarInfoActivity::class.java)

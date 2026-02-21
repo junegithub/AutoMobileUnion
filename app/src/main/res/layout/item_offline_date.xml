@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- 日期文字 -->
+    <TextView
+        android:id="@+id/tv_offline_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="#212121"
+        android:textSize="16sp" />
+
+    <!-- 条目分隔线（匹配截图的浅灰色分隔线） -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#E0E0E0" />
+
+</LinearLayout>
