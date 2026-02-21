@@ -10,8 +10,6 @@ import android.widget.TextView
 import com.amap.api.maps.model.BitmapDescriptor
 import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.yt.car.union.R
-import com.yt.car.union.net.MapPositionItem
-import com.yt.car.union.net.bean.CarStatusItem
 
 object MarkerViewUtil {
 
