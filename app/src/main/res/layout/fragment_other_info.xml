@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <!-- 入网时间 -->
+    <include
+        android:id="@+id/row_online_time"
+        layout="@layout/item_car_info_row" />
+    <!-- 服务缴费日期 -->
+    <include
+        android:id="@+id/row_pay_date"
+        layout="@layout/item_car_info_row" />
+    <!-- 服务合同到期时间 -->
+    <include
+        android:id="@+id/row_contract_valid"
+        layout="@layout/item_car_info_row" />
+    <!-- 备注 -->
+    <include
+        android:id="@+id/row_remark"
+        layout="@layout/item_car_info_row">
+        <merge android:layout_width="match_parent" android:layout_height="wrap_content">
+            <View android:id="@+id/v_divider" android:visibility="gone"/>
+        </merge>
+    </include>
+
+</LinearLayout>

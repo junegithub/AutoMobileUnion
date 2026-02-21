@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     // ViewPager2（底部Tab联动）
     implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.cardview)
 
     // Retrofit + OkHttp（网络请求）
     implementation(libs.retrofit)

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:tag="car_info_row">
+
+    <!-- 内容行 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:id="@+id/tv_label"
+            style="@style/CarInfoLabelText"/>
+
+        <TextView
+            android:id="@+id/tv_value"
+            style="@style/CarInfoValueText"/>
+
+    </LinearLayout>
+
+    <!-- 分割线 -->
+    <View
+        android:id="@+id/v_divider"
+        style="@style/CarInfoDivider"
+        android:layout_marginHorizontal="16dp"/>
+
+</LinearLayout>

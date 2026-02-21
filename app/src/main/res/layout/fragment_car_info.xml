@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 基本信息模块 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="基本信息"
+                android:textSize="16sp"
+                android:textColor="@color/text_black"
+                android:textStyle="bold"
+                android:layout_margin="16dp"/>
+
+            <!-- 所属地区 -->
+            <include
+                android:id="@+id/row_dept_area"
+                layout="@layout/item_car_info_row" />
+            <!-- 车辆识别代码/车架号 -->
+            <include
+                android:id="@+id/row_frame_no"
+                layout="@layout/item_car_info_row" />
+            <!-- 车牌号 -->
+            <include
+                android:id="@+id/row_car_num"
+                layout="@layout/item_car_info_row" />
+            <!-- 车身颜色 -->
+            <include
+                android:id="@+id/row_car_color"
+                layout="@layout/item_car_info_row" />
+            <!-- 联系人 -->
+            <include
+                android:id="@+id/row_contact"
+                layout="@layout/item_car_info_row" />
+            <!-- 手机号 -->
+            <include
+                android:id="@+id/row_phone"
+                layout="@layout/item_car_info_row" />
+
+        </LinearLayout>
+
+        <!-- 相关图片模块 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="相关图片"
+                android:textSize="16sp"
+                android:textColor="@color/text_black"
+                android:textStyle="bold"
+                android:layout_margin="@dimen/dp_16"/>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:rowCount="1"
+                android:background="@color/white"
+                android:alignmentMode="alignMargins"
+                android:columnOrderPreserved="false"
+                android:padding="@dimen/dp_16">
+
+                <!-- 车辆注册登记证 -->
+                <include
+                    android:id="@+id/image_reg"
+                    layout="@layout/item_car_image" />
+                <!-- 行驶证 -->
+                <include
+                    android:id="@+id/image_license"
+                    layout="@layout/item_car_image" />
+                <!-- 车身 -->
+                <include
+                    android:id="@+id/image_body"
+                    layout="@layout/item_car_image" />
+
+            </GridLayout>
+
+        </LinearLayout>
+
+        <!-- 扩展信息模块 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="扩展信息"
+                android:textSize="16sp"
+                android:textColor="@color/text_black"
+                android:textStyle="bold"
+                android:layout_margin="16dp"/>
+
+            <!-- 所属机构 -->
+            <include
+                android:id="@+id/row_org"
+                layout="@layout/item_car_info_row" />
+            <!-- 轴数 -->
+            <include
+                android:id="@+id/row_axis_num"
+                layout="@layout/item_car_info_row" />
+            <!-- 轮胎数 -->
+            <include
+                android:id="@+id/row_tire_num"
+                layout="@layout/item_car_info_row" />
+            <!-- 经营范围 -->
+            <include
+                android:id="@+id/row_biz_area"
+                layout="@layout/item_car_info_row" />
+            <!-- 运输行业类别 -->
+            <include
+                android:id="@+id/row_industry_type"
+                layout="@layout/item_car_info_row" />
+            <!-- 车辆类型 -->
+            <include
+                android:id="@+id/row_car_type"
+                layout="@layout/item_car_info_row" />
+            <!-- 车身颜色 -->
+            <include
+                android:id="@+id/row_car_color2"
+                layout="@layout/item_car_info_row" />
+            <!-- 品牌类型 -->
+            <include
+                android:id="@+id/row_brand_type"
+                layout="@layout/item_car_info_row" />
+            <!-- 车辆型号 -->
+            <include
+                android:id="@+id/row_car_model"
+                layout="@layout/item_car_info_row" />
+            <!-- 总质量(kg) -->
+            <include
+                android:id="@+id/row_total_weight"
+                layout="@layout/item_car_info_row" />
+            <!-- 核定载质量(kg) -->
+            <include
+                android:id="@+id/row_check_weight"
+                layout="@layout/item_car_info_row" />
+            <!-- 外廓尺寸-长*宽*高(mm) -->
+            <include
+                android:id="@+id/row_outer_size"
+                layout="@layout/item_car_info_row" />
+            <!-- 货箱内部尺寸-长*宽*高(mm) -->
+            <include
+                android:id="@+id/row_box_size"
+                layout="@layout/item_car_info_row" />
+            <!-- 商业险有效期 -->
+            <include
+                android:id="@+id/row_biz_insure"
+                layout="@layout/item_car_info_row" />
+            <!-- 道路运输许可证号 -->
+            <include
+                android:id="@+id/row_transport_no"
+                layout="@layout/item_car_info_row" />
+            <!-- 车辆所有人类别 -->
+            <include
+                android:id="@+id/row_owner_type"
+                layout="@layout/item_car_info_row" />
+            <!-- 道路运输证号 -->
+            <include
+                android:id="@+id/row_transport_id"
+                layout="@layout/item_car_info_row" />
+            <!-- 燃料种类 -->
+            <include
+                android:id="@+id/row_fuel_type"
+                layout="@layout/item_car_info_row" />
+            <!-- 准牵引总质量(kg) -->
+            <include
+                android:id="@+id/row_tow_weight"
+                layout="@layout/item_car_info_row" />
+            <!-- 轮胎规格 -->
+            <include
+                android:id="@+id/row_tire_spec"
+                layout="@layout/item_car_info_row" />
+            <!-- 车辆出厂日期 -->
+            <include
+                android:id="@+id/row_produce_date"
+                layout="@layout/item_car_info_row" />
+            <!-- 车辆购置方式 -->
+            <include
+                android:id="@+id/row_buy_type"
+                layout="@layout/item_car_info_row" />
+            <!-- 车辆保险到期时间 -->
+            <include
+                android:id="@+id/row_insure_date"
+                layout="@layout/item_car_info_row" />
+            <!-- 统一社会信用代码 -->
+            <include
+                android:id="@+id/row_credit_code"
+                layout="@layout/item_car_info_row" />
+            <!-- 挂靠企业联系人 -->
+            <include
+                android:id="@+id/row_aff_contact"
+                layout="@layout/item_car_info_row" />
+            <!-- 挂靠企业联系电话 -->
+            <include
+                android:id="@+id/row_aff_phone"
+                layout="@layout/item_car_info_row" />
+            <!-- 检验有效期至 -->
+            <include
+                android:id="@+id/row_check_valid"
+                layout="@layout/item_car_info_row" />
+            <!-- 行驶证发证日期 -->
+            <include
+                android:id="@+id/row_license_date"
+                layout="@layout/item_car_info_row" />
+            <!-- 发动机号 -->
+            <include
+                android:id="@+id/row_engine_no"
+                layout="@layout/item_car_info_row" />
+            <!-- 发动机型号 -->
+            <include
+                android:id="@+id/row_engine_model"
+                layout="@layout/item_car_info_row" />
+            <!-- 百公里参考油耗(升/百公里) -->
+            <include
+                android:id="@+id/row_oil_consume"
+                layout="@layout/item_car_info_row" />
+            <!-- 漏油标定值/升 -->
+            <include
+                android:id="@+id/row_oil_leak"
+                layout="@layout/item_car_info_row" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

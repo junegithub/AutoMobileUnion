@@ -1,5 +1,6 @@
 package com.yt.car.union.pages
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -11,37 +12,78 @@ import com.yt.car.union.viewmodel.ReportViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
+import com.chad.library.adapter4.QuickAdapterHelper
+import com.chad.library.adapter4.loadState.LoadState
+import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
+import com.chad.library.adapter4.util.setOnDebouncedItemClick
 import com.google.android.material.chip.Chip
 import com.yt.car.union.R
+import com.yt.car.union.net.ActiveWarningData
+import com.yt.car.union.net.ExpiredCarData
+import com.yt.car.union.net.LeakReportData
+import com.yt.car.union.net.MileageData
 import com.yt.car.union.net.OfflineReportData
+import com.yt.car.union.net.OilAddReportData
+import com.yt.car.union.net.OilDayReportData
+import com.yt.car.union.net.PhotoReportData
+import com.yt.car.union.net.WarningReportData
 import com.yt.car.union.pages.adapter.ReportAdapter
 import com.yt.car.union.pages.adapter.ReportItem
+import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
 
 class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityReportBinding
+
     private val reportViewModel by viewModels<ReportViewModel>()
-    private var currentTimeType = 0 // 0:昨天 1:今天 2:近三天 3:近一周
+    private val mileageStateFlow = MutableStateFlow<ApiState<MileageData>>(ApiState.Loading)
+    private val warningStateFlow = MutableStateFlow<ApiState<WarningReportData>>(ApiState.Loading)
+    private val activeWarningStateFlow = MutableStateFlow<ApiState<ActiveWarningData>>(ApiState.Loading)
+    private val photoStateFlow = MutableStateFlow<ApiState<PhotoReportData>>(ApiState.Loading)
+    private val expiredDataStateFlow = MutableStateFlow<ApiState<ExpiredCarData>>(ApiState.Loading)
+    private val oilAddStateFlow = MutableStateFlow<ApiState<OilAddReportData>>(ApiState.Loading)
+    private val oilDailyStateFlow = MutableStateFlow<ApiState<OilDayReportData>>(ApiState.Loading)
+    private val leakStateFlow = MutableStateFlow<ApiState<LeakReportData>>(ApiState.Loading)
+    private val offlineStateFlow = MutableStateFlow<ApiState<OfflineReportData>>(ApiState.Loading)
+
+    private var currentTimeType = 1 // 1:昨天 2:今天 3:近三天 4:近一周
     private var currentTabIndex = 0 // 当前一级Tab索引
     private lateinit var reportAdapter: ReportAdapter
+    private lateinit var adapterHelper: QuickAdapterHelper
+    private var pageNum: Int = 1
+    private val pageSize = 20
+    private var loadFromMore: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReportBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 初始化Tab
+        addListener()
         initTabLayout()
         initRecyclerView()
-        initRefresh()
+        initStateFlow()
         initSearch()
         initOfflineDate()
         loadData()
     }
 
-    /**
-     * 初始化一级Tab和时间Tab
-     */
+    private fun addListener() {
+        PressEffectUtils.setCommonPressEffect(binding.ivBack)
+        PressEffectUtils.setCommonPressEffect(binding.tvYesterday)
+        PressEffectUtils.setCommonPressEffect(binding.tvToday)
+        PressEffectUtils.setCommonPressEffect(binding.tv3days)
+        PressEffectUtils.setCommonPressEffect(binding.tv7days)
+
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+        binding.tvYesterday.setOnClickListener(this)
+        binding.tvToday.setOnClickListener(this)
+        binding.tv3days.setOnClickListener(this)
+        binding.tv7days.setOnClickListener(this)
+    }
+
     private fun initTabLayout() {
         // ChipGroup选中监听（单选回调）
         binding.chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
@@ -50,12 +92,52 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             handleChipSelect(selectedChip)
         }
         binding.chipGroup.check(R.id.chipMileage)
+    }
 
-        // 时间筛选点击事件
-        binding.tvYesterday.setOnClickListener(this)
-        binding.tvToday.setOnClickListener(this)
-        binding.tv3days.setOnClickListener(this)
-        binding.tv7days.setOnClickListener(this)
+    /**
+     * 初始化RecyclerView
+     */
+    private fun initRecyclerView() {
+        reportAdapter = ReportAdapter(ReportAdapter.ReportType.MILEAGE)
+        refreshAdapter()
+        binding.rvContent.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun refreshAdapter() {
+        reportAdapter.setOnDebouncedItemClick { adapter, view, position ->
+            if (reportAdapter.type == ReportAdapter.ReportType.WARNING) {
+                val warningItem = (reportAdapter.getItem(position) as ReportItem.WarningItem).data
+                val intent = Intent(this, ReportAlarmDetailActivity::class.java)
+                intent.putExtra(ReportAlarmDetailActivity.KEY_WARN_REPORT_NUM, warningItem.num)
+                intent.putExtra(ReportAlarmDetailActivity.KEY_WARN_REPORT_NAME, warningItem.name)
+                intent.putExtra(ReportAlarmDetailActivity.KEY_WARN_REPORT_TYPE, warningItem.warningType)
+                startActivity(intent)
+            } else if (reportAdapter.type == ReportAdapter.ReportType.OFFLINE) {
+
+            } else if (reportAdapter.type == ReportAdapter.ReportType.EXPIRED) {
+                val expireItem = (reportAdapter.getItem(position) as ReportItem.ExpiredItem).data
+                val intent = Intent(this, CarInfoActivity::class.java)
+                intent.putExtra(CarInfoActivity.KEY_CAR_ID, expireItem.carId.toInt())
+                startActivity(intent)
+            }
+        }
+        adapterHelper = QuickAdapterHelper.Builder(reportAdapter)
+            .setTrailingLoadStateAdapter(object : TrailingLoadStateAdapter.OnTrailingListener {
+                override fun onLoad() {
+                    println("June onLoad $this")
+//                    pageNum++
+//                    loadFromMore = true
+//                    loadData()
+                }
+
+                override fun onFailRetry() {
+                }
+
+            })
+            .setTrailPreloadSize(1)
+            .attachTo(binding.rvContent)
+
+        updateAdapterLoadState()
     }
 
     override fun onClick(v: View) {
@@ -73,28 +155,28 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         resetTime()
         when (tv) {
             binding.tvYesterday -> {
-                currentTimeType = 0
+                currentTimeType = 1
                 binding.tvYesterday.setTextColor(resources.getColor(R.color.time_selected, theme))
                 binding.tvYesterday.typeface = binding.tvYesterday.typeface?.let {
                     android.graphics.Typeface.create(it, android.graphics.Typeface.BOLD)
                 }
             }
             binding.tvToday -> {
-                currentTimeType = 1
+                currentTimeType = 2
                 binding.tvToday.setTextColor(resources.getColor(R.color.time_selected, theme))
                 binding.tvToday.typeface = binding.tvToday.typeface?.let {
                     android.graphics.Typeface.create(it, android.graphics.Typeface.BOLD)
                 }
             }
             binding.tv3days -> {
-                currentTimeType = 2
+                currentTimeType = 3
                 binding.tv3days.setTextColor(resources.getColor(R.color.time_selected, theme))
                 binding.tv3days.typeface = binding.tv3days.typeface?.let {
                     android.graphics.Typeface.create(it, android.graphics.Typeface.BOLD)
                 }
             }
             binding.tv7days -> {
-                currentTimeType = 3
+                currentTimeType = 4
                 binding.tv7days.setTextColor(resources.getColor(R.color.time_selected, theme))
                 binding.tv7days.typeface = binding.tv7days.typeface?.let {
                     android.graphics.Typeface.create(it, android.graphics.Typeface.BOLD)
@@ -116,17 +198,50 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
      * 处理Chip选中逻辑
      */
     private fun handleChipSelect(chip: Chip) {
+        binding.ivHeader.visibility = View.GONE
         when (chip.id) {
-            R.id.chipMileage -> {currentTabIndex = 0} // 里程查询
-            R.id.chipAlarm -> {currentTabIndex = 1} // 报警查询
-            R.id.chipSafty -> {currentTabIndex = 2} // 安全查询
+            R.id.chipMileage -> { // 里程查询
+                currentTabIndex = 0
+                binding.ivHeaderT1.text = "车牌号"
+                binding.ivHeaderT2.text = "日期"
+                binding.ivHeaderT3.text = "里程"
+                binding.ivHeaderT3.visibility = View.VISIBLE
+                binding.ivHeader.visibility = View.VISIBLE
+            }
+            R.id.chipAlarm -> { // 报警查询
+                currentTabIndex = 1
+                binding.ivHeaderT1.text = "报警类型"
+                binding.ivHeaderT2.text = "报警次数"
+                binding.ivHeaderT3.visibility = View.GONE
+                binding.ivHeader.visibility = View.VISIBLE
+            }
+            R.id.chipSafty -> { // 安全查询
+                currentTabIndex = 2
+                binding.ivHeaderT1.text = "安全事件"
+                binding.ivHeaderT2.text = "安全次数"
+                binding.ivHeaderT3.visibility = View.GONE
+                binding.ivHeader.visibility = View.VISIBLE
+            }
             R.id.chipPhoto -> {currentTabIndex = 3} // 照片查询
-            R.id.chipExpire -> {currentTabIndex = 4} // 过期查询
+            R.id.chipExpire -> { // 过期查询
+                currentTabIndex = 4
+                binding.ivHeaderT1.text = "车牌号"
+                binding.ivHeaderT2.text = "到期时间"
+                binding.ivHeaderT3.visibility = View.GONE
+                binding.ivHeader.visibility = View.VISIBLE
+            }
             R.id.chipParking -> {currentTabIndex = 5} // 停车统计
             R.id.chipRefuel -> {currentTabIndex = 6} // 加油报表
             R.id.chipOilDaily -> {currentTabIndex = 7} // 油耗日报表
             R.id.chipOilLeak -> {currentTabIndex = 8} // 漏油报表
-            R.id.chipOffline -> {currentTabIndex = 9} // 离线提醒
+            R.id.chipOffline -> { // 离线提醒
+                currentTabIndex = 9
+                binding.ivHeaderT1.text = "车牌号"
+                binding.ivHeaderT2.text = "所属公司"
+                binding.ivHeaderT3.text = "离线天数"
+                binding.ivHeaderT3.visibility = View.VISIBLE
+                binding.ivHeader.visibility = View.VISIBLE
+            }
         }
         binding.llDateRange.visibility = if (currentTabIndex == 9) View.VISIBLE else View.GONE
         refreshAdapterType()
@@ -134,18 +249,14 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     /**
-     * 初始化RecyclerView
-     */
-    private fun initRecyclerView() {
-        reportAdapter = ReportAdapter(ReportAdapter.ReportType.MILEAGE)
-        binding.rvContent.layoutManager = LinearLayoutManager(this)
-        binding.rvContent.adapter = reportAdapter
-    }
-
-    /**
      * 刷新适配器类型
      */
     private fun refreshAdapterType() {
+        if (::adapterHelper.isInitialized) {
+            adapterHelper.removeAdapter(reportAdapter)
+            adapterHelper.trailingLoadStateAdapter?.setOnLoadMoreListener(null)
+            adapterHelper.trailingLoadState = LoadState.None
+        }
         val adapterType = when (currentTabIndex) {
             0 -> ReportAdapter.ReportType.MILEAGE
             1 -> ReportAdapter.ReportType.WARNING
@@ -159,16 +270,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             else -> ReportAdapter.ReportType.MILEAGE
         }
         reportAdapter = ReportAdapter(adapterType)
-        binding.rvContent.adapter = reportAdapter
-    }
-
-    /**
-     * 初始化下拉刷新
-     */
-    private fun initRefresh() {
-        binding.refreshLayout.setOnRefreshListener {
-            loadData()
-        }
+        refreshAdapter()
     }
 
     /**
@@ -203,6 +305,274 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun initStateFlow() {
+        lifecycleScope.launch {
+            mileageStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.MileageItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无里程数据"
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            warningStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.WarningItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无报警数据"
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            activeWarningStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.ActiveWarningItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无安全报警数据"
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            photoStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.PhotoItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无照片数据"
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            expiredDataStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.ExpiredItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无过期数据"
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            oilAddStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.OilAddItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无加油数据"
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            oilDailyStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.OilDayItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无油耗数据"
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            leakStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.LeakItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无漏油数据"
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            offlineStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.OfflineItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无离线数据"
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateLoadState(apiState : ApiState<Any>) {
+        binding.progressBar.visibility = View.GONE
+        if (apiState is ApiState.Success || apiState is ApiState.Error) {
+            if (loadFromMore) {
+                updateAdapterLoadState()
+                loadFromMore = false
+            }
+        }
+    }
+
+    private fun updateAdapterLoadState() {
+        adapterHelper.trailingLoadState = LoadState.NotLoading(false)
+    }
+
     /**
      * 加载数据
      */
@@ -233,297 +603,56 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
      * 加载里程数据
      */
     private fun loadMileageData(search: String) {
-        val stateFlow = MutableStateFlow<ApiState<com.yt.car.union.net.MileageData>>(ApiState.Loading)
-        reportViewModel.getMileageReport(1, 20, search, currentTimeType, stateFlow)
-
-        lifecycleScope.launch {
-            stateFlow.collect { state ->
-                binding.progressBar.visibility = View.GONE
-                binding.refreshLayout.isRefreshing = false
-                when (state) {
-                    is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.MileageItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无里程数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
-                    }
-                    is ApiState.Error -> {
-                        binding.llEmpty.visibility = View.VISIBLE
-                        binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
-                    }
-                    ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    ApiState.Idle -> {
-                    }
-                }
-            }
-        }
+        reportViewModel.getMileageReport(pageNum, 20, search, currentTimeType, mileageStateFlow)
     }
 
     /**
      * 加载报警数据
      */
     private fun loadWarningData(search: String) {
-        val stateFlow = MutableStateFlow<ApiState<com.yt.car.union.net.WarningReportData>>(ApiState.Loading)
-        reportViewModel.getWarningReport(search, currentTimeType, "1", stateFlow)
-
-        lifecycleScope.launch {
-            stateFlow.collect { state ->
-                binding.progressBar.visibility = View.GONE
-                binding.refreshLayout.isRefreshing = false
-                when (state) {
-                    is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.WarningItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无报警数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
-                    }
-                    is ApiState.Error -> {
-                        binding.llEmpty.visibility = View.VISIBLE
-                        binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
-                    }
-                    ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    ApiState.Idle -> {
-                    }
-                }
-            }
-        }
+        reportViewModel.getWarningReport(search, currentTimeType, pageNum.toString(), warningStateFlow)
     }
 
     /**
      * 加载安全报警数据
      */
     private fun loadActiveWarningData(search: String) {
-        val stateFlow = MutableStateFlow<ApiState<com.yt.car.union.net.ActiveWarningData>>(ApiState.Loading)
-        reportViewModel.getActiveWarning(search, currentTimeType, "1", stateFlow)
-
-        lifecycleScope.launch {
-            stateFlow.collect { state ->
-                binding.progressBar.visibility = View.GONE
-                binding.refreshLayout.isRefreshing = false
-                when (state) {
-                    is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.ActiveWarningItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无安全报警数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
-                    }
-                    is ApiState.Error -> {
-                        binding.llEmpty.visibility = View.VISIBLE
-                        binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
-                    }
-                    ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    ApiState.Idle -> {
-                    }
-                }
-            }
-        }
+        reportViewModel.getActiveWarning(search, currentTimeType, pageNum.toString(), activeWarningStateFlow)
     }
 
     /**
      * 加载照片数据
      */
     private fun loadPhotoData(search: String) {
-        val stateFlow = MutableStateFlow<ApiState<com.yt.car.union.net.PhotoReportData>>(ApiState.Loading)
-        // 注意：原ViewModel中getOfflineReport重载方法对应照片查询，需确认方法名
-        reportViewModel.getOfflineReport(1, 20, search, currentTimeType, stateFlow)
-
-        lifecycleScope.launch {
-            stateFlow.collect { state ->
-                binding.progressBar.visibility = View.GONE
-                binding.refreshLayout.isRefreshing = false
-                when (state) {
-                    is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.PhotoItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无照片数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
-                    }
-                    is ApiState.Error -> {
-                        binding.llEmpty.visibility = View.VISIBLE
-                        binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
-                    }
-                    ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    ApiState.Idle -> {
-                    }
-                }
-            }
-        }
+        reportViewModel.getPhotoReport(pageNum, pageSize, search, currentTimeType, photoStateFlow)
     }
 
     /**
      * 加载过期数据
      */
     private fun loadExpiredData(search: String) {
-        val stateFlow = MutableStateFlow<ApiState<com.yt.car.union.net.ExpiredCarData>>(ApiState.Loading)
-        reportViewModel.getExpiredCars(1, 20, search, stateFlow)
-
-        lifecycleScope.launch {
-            stateFlow.collect { state ->
-                binding.progressBar.visibility = View.GONE
-                binding.refreshLayout.isRefreshing = false
-                when (state) {
-                    is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.ExpiredItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无过期数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
-                    }
-                    is ApiState.Error -> {
-                        binding.llEmpty.visibility = View.VISIBLE
-                        binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
-                    }
-                    ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    ApiState.Idle -> {
-                    }
-                }
-            }
-        }
+        reportViewModel.getExpiredCars(pageNum, pageSize, search, expiredDataStateFlow)
     }
 
     /**
      * 加载加油报表数据
      */
     private fun loadOilAddData(search: String) {
-        val stateFlow = MutableStateFlow<ApiState<com.yt.car.union.net.OilAddReportData>>(ApiState.Loading)
-        reportViewModel.getOilAddReport(1, 20, search, currentTimeType, stateFlow)
-
-        lifecycleScope.launch {
-            stateFlow.collect { state ->
-                binding.progressBar.visibility = View.GONE
-                binding.refreshLayout.isRefreshing = false
-                when (state) {
-                    is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.OilAddItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无加油数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
-                    }
-                    is ApiState.Error -> {
-                        binding.llEmpty.visibility = View.VISIBLE
-                        binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
-                    }
-                    ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    ApiState.Idle -> {
-                    }
-                }
-            }
-        }
+        reportViewModel.getOilAddReport(pageNum, pageSize, search, currentTimeType, oilAddStateFlow)
     }
 
     /**
      * 加载油耗日报表数据
      */
     private fun loadOilDayData(search: String) {
-        val stateFlow = MutableStateFlow<ApiState<com.yt.car.union.net.OilDayReportData>>(ApiState.Loading)
-        reportViewModel.getOilDayReport(1, 20, search, currentTimeType, stateFlow)
-
-        lifecycleScope.launch {
-            stateFlow.collect { state ->
-                binding.progressBar.visibility = View.GONE
-                binding.refreshLayout.isRefreshing = false
-                when (state) {
-                    is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.OilDayItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无油耗数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
-                    }
-                    is ApiState.Error -> {
-                        binding.llEmpty.visibility = View.VISIBLE
-                        binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
-                    }
-                    ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    ApiState.Idle -> {
-                    }
-                }
-            }
-        }
+        reportViewModel.getOilDayReport(pageNum, pageSize, search, currentTimeType, oilDailyStateFlow)
     }
 
     /**
      * 加载漏油报表数据
      */
     private fun loadLeakData(search: String) {
-        val stateFlow = MutableStateFlow<ApiState<com.yt.car.union.net.LeakReportData>>(ApiState.Loading)
-        reportViewModel.getLeakReport(1, 20, search, currentTimeType, stateFlow)
-
-        lifecycleScope.launch {
-            stateFlow.collect { state ->
-                binding.progressBar.visibility = View.GONE
-                binding.refreshLayout.isRefreshing = false
-                when (state) {
-                    is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.LeakItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无漏油数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
-                    }
-                    is ApiState.Error -> {
-                        binding.llEmpty.visibility = View.VISIBLE
-                        binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
-                    }
-                    ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    ApiState.Idle -> {
-                    }
-                }
-            }
-        }
+        reportViewModel.getLeakReport(pageNum, pageSize, search, currentTimeType, leakStateFlow)
     }
 
     /**
@@ -532,43 +661,6 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private fun loadOfflineData(search: String) {
         val startDate = binding.tvStartDate.text.toString()
         val endDate = binding.tvEndDate.text.toString()
-        val stateFlow = MutableStateFlow<ApiState<OfflineReportData>>(ApiState.Loading)
-        reportViewModel.getOfflineReport(endDate, 1, 20, search, startDate, stateFlow)
-
-        lifecycleScope.launch {
-            stateFlow.collect { state ->
-                binding.progressBar.visibility = View.GONE
-                binding.refreshLayout.isRefreshing = false
-                when (state) {
-                    is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.OfflineItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无离线数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
-                    }
-                    is ApiState.Error -> {
-                        binding.llEmpty.visibility = View.VISIBLE
-                        binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
-                    }
-                    ApiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    ApiState.Idle -> {
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 返回按钮点击事件
-     */
-    fun onBackClick(view: View) {
-        finish()
+        reportViewModel.getOfflineReport(endDate, pageNum, pageSize, search, startDate, offlineStateFlow)
     }
 }

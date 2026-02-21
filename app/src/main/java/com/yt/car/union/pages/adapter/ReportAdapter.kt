@@ -1,12 +1,13 @@
 // ReportAdapter.kt
 package com.yt.car.union.pages.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.chad.library.adapter4.BaseQuickAdapter
 import com.yt.car.union.databinding.ItemMileageBinding
 import com.yt.car.union.databinding.ItemWarningBinding
 import com.yt.car.union.databinding.ItemActiveWarningBinding
@@ -31,13 +32,13 @@ sealed class ReportItem {
     data class OfflineItem(val data: OfflineReportItem) : ReportItem()
 }
 
-class ReportAdapter(private val type: ReportType) : ListAdapter<ReportItem, RecyclerView.ViewHolder>(DiffCallback()) {
+class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, RecyclerView.ViewHolder>(DiffCallback()) {
 
     enum class ReportType {
         MILEAGE, WARNING, ACTIVE_WARNING, PHOTO, EXPIRED, OIL_ADD, OIL_DAY, LEAK, OFFLINE
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(context: Context, parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (type) {
             ReportType.MILEAGE -> MileageViewHolder(ItemMileageBinding.inflate(inflater, parent, false))
@@ -52,8 +53,7 @@ class ReportAdapter(private val type: ReportType) : ListAdapter<ReportItem, Recy
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = getItem(position)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, item: ReportItem?) {
         when (holder) {
             is MileageViewHolder -> holder.bind((item as ReportItem.MileageItem).data)
             is WarningViewHolder -> holder.bind((item as ReportItem.WarningItem).data)

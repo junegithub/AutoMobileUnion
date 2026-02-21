@@ -137,4 +137,53 @@
         <!-- 点击反馈（可选，提升交互） -->
         <item name="rippleColor">@android:color/transparent</item>
     </style>
+
+    <style name="ReportItemBg">
+        <item name="android:padding">16dp</item>
+        <item name="android:background">@drawable/item_divider_bg</item>
+    </style>
+
+    <style name="ReportItemTV">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- 车辆信息行标签文字样式 -->
+    <style name="CarInfoLabelText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_gray</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <!-- 车辆信息行值文字样式 -->
+    <style name="CarInfoValueText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1.5</item>
+        <item name="android:gravity">end</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <!-- 分割线样式 -->
+    <style name="CarInfoDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/divider</item>
+    </style>
+
+    <!-- Tab文字样式 -->
+    <style name="TabTextStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 </resources>

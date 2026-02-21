@@ -48,6 +48,8 @@
         <activity android:name=".pages.ReportActivity" />
         <activity android:name=".pages.status.DeviceStatusListActivity" />
         <activity android:name=".pages.status.ExpireCarActivity" />
+        <activity android:name=".pages.ReportAlarmDetailActivity" />
+        <activity android:name=".pages.CarInfoActivity" />
     </application>
 
 </manifest>

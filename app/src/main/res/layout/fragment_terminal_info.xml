@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <!-- 终端ID -->
+    <include
+        android:id="@+id/row_terminal_id"
+        layout="@layout/item_car_info_row" />
+    <!-- SIM -->
+    <include
+        android:id="@+id/row_sim"
+        layout="@layout/item_car_info_row" />
+    <!-- 真实SIM -->
+    <include
+        android:id="@+id/row_real_sim"
+        layout="@layout/item_car_info_row" />
+    <!-- 设备类型 -->
+    <include
+        android:id="@+id/row_device_type"
+        layout="@layout/item_car_info_row" />
+    <!-- 终端厂家名称 -->
+    <include
+        android:id="@+id/row_maker_name"
+        layout="@layout/item_car_info_row" />
+    <!-- 终端型号 -->
+    <include
+        android:id="@+id/row_terminal_model"
+        layout="@layout/item_car_info_row">
+        <merge android:layout_width="match_parent" android:layout_height="wrap_content">
+            <View android:id="@+id/v_divider" android:visibility="gone"/>
+        </merge>
+    </include>
+
+</LinearLayout>

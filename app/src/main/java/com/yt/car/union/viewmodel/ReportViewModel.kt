@@ -98,7 +98,7 @@ class ReportViewModel : CarBaseViewModel() {
     }
 
     //照片查询
-    fun getOfflineReport(page: Int, pageSize: Int?, search: String?, timetype: Int,
+    fun getPhotoReport(page: Int, pageSize: Int?, search: String?, timetype: Int,
                          stateFlow: MutableStateFlow<ApiState<PhotoReportData>>) {
         launchRequest(
             block = { vehicleRepository.getPhotoReport(page, pageSize, search, timetype) },

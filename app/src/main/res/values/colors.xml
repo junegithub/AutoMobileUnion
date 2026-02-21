@@ -90,4 +90,8 @@
     <color name="icon_gray">#666666</color>
 
     <color name="gray_99">#999999</color>
+
+    <color name="background">#F5F7FA</color>
+    <color name="text_blue">#4A90E2</color>
+    <color name="divider">#EEEEEE</color>
 </resources>
