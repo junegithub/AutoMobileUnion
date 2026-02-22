@@ -91,7 +91,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
 
     // ==================== 点击事件回调实现 ====================
     override fun onItemClick(item: TreeItem) {
-        if (item.isLeaf()) {
+        if (item.isLeaf) {
             EventBus.getDefault().post(EventData(EventData.EVENT_CAR_DETAIL,
                 BaseCarInfo(item.id, item.name,
                     0.0, 0.0, 0

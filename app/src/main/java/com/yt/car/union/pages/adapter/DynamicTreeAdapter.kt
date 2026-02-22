@@ -46,7 +46,7 @@ class DynamicTreeAdapter(
             val indentPx = (item.level * indentWidth * context.resources.displayMetrics.density).toInt()
             binding.viewIndent.layoutParams.width = indentPx
 
-            if (hasChildren(item)) {
+            if (!item.isLeaf && hasChildren(item)) {
                 binding.ivArrow.visibility = View.VISIBLE
                 binding.ivArrow.rotation = if (item.isExpanded) 90f else 0f
             } else {
@@ -58,7 +58,7 @@ class DynamicTreeAdapter(
             binding.pbLoading.visibility = if (item.isLoading) View.VISIBLE else View.GONE
             binding.ivArrow.isEnabled = !item.isLoading
 
-            if (item.iconRes != null && item.iconRes != 0) {
+            if (item.isLeaf && item.iconRes != null && item.iconRes != 0) {
                 binding.ivIcon.visibility = View.VISIBLE
                 binding.ivIcon.setImageResource(item.iconRes)
             } else {
@@ -91,7 +91,14 @@ class DynamicTreeAdapter(
 
         private fun handleExpandCollapse(item: TreeItem) {
             if (!item.isExpanded) {
-                loadChildrenFromNetwork(item)
+                if (item.children.isEmpty() && item.hasMoreChildren) {
+                    // 加载子节点：调用真实网络请求
+                    loadChildrenFromNetwork(item)
+                } else {
+                    item.isExpanded = true
+                    refreshFlatList()
+                    listener.onExpandStateChange(item, true)
+                }
             } else {
                 item.isExpanded = false
                 refreshFlatList()

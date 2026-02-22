@@ -25,10 +25,8 @@ data class TreeItem(
     var isLoading: Boolean = false, // 加载状态标识
     var childrenLoaded: Boolean = false, // 子节点加载状态
     var hasMoreChildren: Boolean = true, // 是否还有更多子节点
+    var isLeaf: Boolean = false,//叶子节点
     var parentId: String? = null, // 父节点ID
     val ancestors: String? = null,
     val children: MutableList<TreeItem> = mutableListOf()
-) {
-    // 判断是否为叶子节点（无子女 + 无更多可加载）
-    fun isLeaf(): Boolean = children.isEmpty() && !hasMoreChildren
-}
+)

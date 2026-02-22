@@ -59,6 +59,7 @@ object TreeDataMapper {
             isLoading = false,
             // 叶子节点判断：leaf=true 或 children为空 → 无更多子节点
             hasMoreChildren = !treeNode.isLeafNode(),
+            isLeaf = treeNode.isLeafNode(),
             parentId = treeNode.pid,
             ancestors = treeNode.ancestors,
             // 子节点先不处理，按需加载（或直接映射，根据接口返回策略）
