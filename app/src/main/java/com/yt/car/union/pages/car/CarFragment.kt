@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
@@ -40,10 +41,12 @@ import com.yt.car.union.net.CarInfo
 import com.yt.car.union.net.MapPositionData
 import com.yt.car.union.net.MapPositionItem
 import com.yt.car.union.net.RealTimeAddressData
+import com.yt.car.union.net.SearchResult
 import com.yt.car.union.pages.DeviceAlarmActivity
 import com.yt.car.union.pages.status.DeviceStatusActivity
 import com.yt.car.union.pages.OperationAnalysisActivity
 import com.yt.car.union.pages.TreeListActivity
+import com.yt.car.union.pages.adapter.LabelAdapter
 import com.yt.car.union.pages.openDial
 import com.yt.car.union.util.DialogUtils
 import com.yt.car.union.util.EventData
@@ -78,6 +81,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     private var carInfoStateFlow = MutableStateFlow<ApiState<CarInfo>>(ApiState.Idle)
     private val sendStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
     private val takePhotoStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
+    private val searListStateFlow = MutableStateFlow<ApiState<List<SearchResult>>>(ApiState.Idle)
 
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
 
@@ -282,6 +286,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         // 初始化地图核心逻辑
         initAmap()
         initListener()
+        binding.plateRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         updateViewLoginState()
 
         // 5. 观察UI状态变化，刷新UI（lifecycleScope自动绑定Activity生命周期）
@@ -420,9 +425,31 @@ class CarFragment : Fragment(), AMapLocationListener {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            searListStateFlow.collect {
+                when (it) {
+                    is ApiState.Loading -> {
+                        // 加载中：显示进度条，隐藏其他视图
+                    }
+                    is ApiState.Success -> {
+                        // 成功：隐藏进度条，显示数据
+                        binding.plateRecycler.visibility = View.VISIBLE
+                        binding.plateRecycler.adapter = it.data?.let { vehicleList -> LabelAdapter(vehicleList) }
+                    }
+                    is ApiState.Error -> {
+                        // 失败：显示错误信息，隐藏其他视图
+                    }
+                    is ApiState.Idle -> {
+                        // 初始状态，无需处理
+                    }
+                }
+            }
+        }
     }
     fun loadCarStatus() {
         carInfoViewModel.getMapPositions(150, carsStateFlow)
+        carInfoViewModel.getSearchHistory(searListStateFlow)
     }
 
     private fun updateViewLoginState() {

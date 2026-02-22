@@ -19,6 +19,8 @@ class CarRepository(private val apiService: CarApiService) {
     suspend fun getRealTimeAddress(carId: Int?, carnum: String?) =
         apiService.getRealTimeAddress(carId, carnum)
 
+    suspend fun getSearchHistory() = apiService.getSearchHistory()
+
     suspend fun addSearchHistory(request: SearchHistoryRequest) =
         apiService.addSearchHistory(request)
 

@@ -11,6 +11,8 @@ import com.yt.car.union.net.MapPositionData
 import com.yt.car.union.net.OilAddReportData
 import com.yt.car.union.net.OilDayReportData
 import com.yt.car.union.net.RealTimeAddressData
+import com.yt.car.union.net.SearchHistoryRequest
+import com.yt.car.union.net.SearchResult
 import com.yt.car.union.net.SendContentRequest
 import com.yt.car.union.net.TrackData
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -124,6 +126,22 @@ class CarInfoViewModel : CarBaseViewModel() {
     fun getCarStatusList(stateFlow: MutableStateFlow<ApiState<CarStatusListData>>) {
         launchRequest(
             block = { vehicleRepository.getCarStatusList() },
+            stateFlow
+        )
+    }
+
+    // 添加搜索历史
+    fun addSearchHistory(request: SearchHistoryRequest,
+                         stateFlow: MutableStateFlow<ApiState<Int>>) {
+        launchRequest(
+            block = { vehicleRepository.addSearchHistory(request) },
+            stateFlow
+        )
+    }
+
+    fun getSearchHistory(stateFlow: MutableStateFlow<ApiState<List<SearchResult>>>) {
+        launchRequest(
+            block = { vehicleRepository.getSearchHistory() },
             stateFlow
         )
     }

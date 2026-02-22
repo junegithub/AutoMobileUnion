@@ -18,6 +18,9 @@ interface CarApiService {
     @POST("car/app/history")
     suspend fun addSearchHistory(@Body request: SearchHistoryRequest): Response<BaseResponse<Int>>
 
+    @GET("car/app/history")
+    suspend fun getSearchHistory(): Response<BaseResponse<List<SearchResult>>>
+
     @GET("car/app/tree/getTree")
     suspend fun getTree(
         @Query("ancestors") ancestors: String?,

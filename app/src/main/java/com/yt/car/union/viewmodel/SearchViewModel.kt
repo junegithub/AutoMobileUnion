@@ -10,17 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
  */
 class SearchViewModel : CarBaseViewModel() {
 
-    // 添加搜索历史
-    fun addSearchHistory(request: SearchHistoryRequest,
-                         stateFlow: MutableStateFlow<ApiState<Int>>) {
-        launchRequest(
-            block = { vehicleRepository.addSearchHistory(request) },
-            stateFlow
-        )
-    }
-
-
-
     // 树形结构搜索
     fun getTree(ancestors: String?, pos: Boolean?, tree: Boolean?,
                 stateFlow: MutableStateFlow<ApiState<List<TreeNode>>>) {

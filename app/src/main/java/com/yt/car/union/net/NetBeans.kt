@@ -309,6 +309,14 @@ data class SearchHistoryRequest(
     val content: String
 )
 
+data class SearchResult(
+    val userId: String,
+    val type: String,
+    val content: String,
+    val number: Int,
+    val deptIds: List<String>? = null // 设为可空List，默认值null适配JSON中的null
+)
+
 data class TreeNode(
     // 基础通用字段（所有节点都有）
     val id: String,
