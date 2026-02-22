@@ -43,6 +43,7 @@ import com.yt.car.union.net.RealTimeAddressData
 import com.yt.car.union.pages.DeviceAlarmActivity
 import com.yt.car.union.pages.status.DeviceStatusActivity
 import com.yt.car.union.pages.OperationAnalysisActivity
+import com.yt.car.union.pages.TreeListActivity
 import com.yt.car.union.pages.openDial
 import com.yt.car.union.util.DialogUtils
 import com.yt.car.union.util.EventData
@@ -81,6 +82,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
 
     private var phone: String? = null
+    private var totalCars = 1
 
     // 全局持有 Dialog 实例，用于防止重复弹出
     private var inputDialog: AlertDialog? = null
@@ -207,7 +209,9 @@ class CarFragment : Fragment(), AMapLocationListener {
         }
         binding.btnAllCars.setOnClickListener {
             if (MyApp.isLogin == true) {
-
+                val intent = Intent(requireContext(), TreeListActivity::class.java)
+                intent.putExtra(TreeListActivity.KEY_CAR_NUM, totalCars)
+                startActivity(intent)
             } else {
                 DialogUtils.showLoginPromptDialog(requireContext())
             }
@@ -291,7 +295,8 @@ class CarFragment : Fragment(), AMapLocationListener {
                     is ApiState.Success -> {
                         // 更新统计数据
                         val statistics = uiState.data
-                        binding.btnAllCars.text = "全部${statistics?.total}辆车"
+                        totalCars = statistics?.total!!
+                        updateCarNum()
                         carList = statistics?.list
                         addCarMarkers()
                         zoomToAllCars()
@@ -427,10 +432,15 @@ class CarFragment : Fragment(), AMapLocationListener {
         } else {
             binding.tvUnlogin.setImageResource(R.drawable.login_avatar)
             binding.alarm.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_alarm_tip, 0, 0)
-            binding.btnAllCars.text = "全部1辆车"
+            totalCars = 1
+            updateCarNum()
             carList = emptyList()
             clearAllOverlays(aMap)
         }
+    }
+
+    private fun updateCarNum() {
+        binding.btnAllCars.text = "全部${totalCars}辆车"
     }
 
     /**

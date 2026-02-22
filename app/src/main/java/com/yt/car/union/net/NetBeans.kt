@@ -310,16 +310,45 @@ data class SearchHistoryRequest(
 )
 
 data class TreeNode(
+    // 基础通用字段（所有节点都有）
     val id: String,
     val realId: String,
     val name: String,
-    val leaf: Boolean?,
-    val pid: String,
-    val totalNum: Int,
-    val onlineNum: Int,
-    val ancestors: String,
-    val children: List<TreeNode>?
-)
+
+    // 叶子节点标识：true=叶子节点，null/=false=非叶子节点
+    val leaf: Boolean? = null,
+
+    // 非叶子节点专属字段（部分节点有）
+    val pid: String? = null, // 父节点ID
+    val totalNum: Int? = 0, // 总数（默认0，避免空指针）
+    val onlineNum: Int? = 0, // 在线数（默认0）
+    val ancestors: String? = null, // 祖先节点链（如"0,21,418"）
+    val children: List<TreeNode>? = null, // 子节点列表
+
+    // 叶子节点（车辆）专属字段（仅部分节点有）
+    val ts: String? = null, // 时间戳
+    val carStatus: String? = null, // 车辆状态
+    val deptId: String? = null, // 部门ID
+    val online: Boolean? = null, // 车辆是否在线
+    val validTime: String? = null, // 有效时间
+    val contacts: String? = null, // 联系方式
+    val valid: Boolean? = null, // 是否有效
+    val statusFlagString: String? = null, // 状态描述
+    val haveWay: Boolean? = null, // 是否有路线
+    val position: Any? = null, // 位置信息（类型不确定时用Any）
+    val speed: Int? = 0 // 速度（默认0）
+) {
+    // 扩展方法：判断是否为叶子节点（简化业务逻辑）
+    fun isLeafNode(): Boolean {
+        // 规则：leaf=true 或 无children且是车辆类型节点（有carStatus等字段）
+        return leaf == true || (children.isNullOrEmpty() && carStatus != null)
+    }
+
+    // 扩展方法：获取计数文本（非叶子节点专用）
+    fun getCountText(): String {
+        return if (isLeafNode()) name else "(${onlineNum ?: 0}/${totalNum ?: 0})"
+    }
+}
 
 data class CarStatusListData(
     val all: Int,

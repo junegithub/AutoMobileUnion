@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 选中态（含分隔线） -->
+    <item android:state_selected="true">
+        <layer-list>
+            <!-- 选中态背景色 -->
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#EEEEEE" />
+                </shape>
+            </item>
+            <!-- 底部分隔线（最后一个Item会通过代码隐藏） -->
+            <item android:bottom="1dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#E8F4FF" />
+                </shape>
+            </item>
+            <!-- 内边距（避免内容贴边） -->
+            <item android:bottom="1dp" android:left="16dp" android:right="16dp" android:top="16dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- 按压态（含分隔线） -->
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#EEEEEE" />
+                </shape>
+            </item>
+            <item android:bottom="1dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#F5F7FA" />
+                </shape>
+            </item>
+            <item android:bottom="1dp" android:left="16dp" android:right="16dp" android:top="16dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- 默认态（含分隔线） -->
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#EEEEEE" />
+                </shape>
+            </item>
+            <item android:bottom="1dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/white" />
+                </shape>
+            </item>
+            <item android:bottom="1dp" android:left="16dp" android:right="16dp" android:top="16dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

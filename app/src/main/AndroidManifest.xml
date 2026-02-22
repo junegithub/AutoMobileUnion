@@ -51,6 +51,7 @@
         <activity android:name=".pages.ReportAlarmDetailActivity" />
         <activity android:name=".pages.CarInfoActivity" />
         <activity android:name=".pages.OfflineDetailActivity" />
+        <activity android:name=".pages.TreeListActivity" />
     </application>
 
 </manifest>

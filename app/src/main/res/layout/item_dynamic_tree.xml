@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_item_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/bg_tree_item_selector"
+    android:padding="@dimen/dp_12"
+    android:gravity="center_vertical">
+
+    <!-- 缩进占位 -->
+    <View
+        android:id="@+id/view_indent"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginRight="4dp"/>
+
+    <!-- 展开/折叠箭头 -->
+    <ImageView
+        android:id="@+id/iv_arrow"
+        android:layout_width="@dimen/dp_24"
+        android:layout_height="@dimen/dp_24"
+        android:src="@drawable/ic_arrow_right"
+        android:visibility="visible"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <!-- 加载中进度条 -->
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="@dimen/dp_24"
+        android:layout_height="@dimen/dp_24"
+        android:visibility="gone"
+        android:indeterminateTint="#666666"/>
+
+    <!-- 节点图标 -->
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="@dimen/dp_24"
+        android:layout_height="@dimen/dp_24"
+        android:visibility="gone"
+        android:layout_marginLeft="4dp"/>
+
+    <!-- 节点文字 -->
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:layout_marginLeft="4dp"/>
+
+</LinearLayout>
