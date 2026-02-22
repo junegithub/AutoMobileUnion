@@ -1,5 +1,6 @@
 package com.yt.car.union.pages
 
+import android.content.Intent
 import com.yt.car.union.net.TreeItem
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,16 +10,20 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import android.widget.Toast
 import androidx.activity.viewModels
+import com.yt.car.union.MainActivity
 import com.yt.car.union.databinding.ActivityTreeListBinding
+import com.yt.car.union.net.BaseCarInfo
 import com.yt.car.union.net.TreeNode
 import com.yt.car.union.pages.adapter.DynamicTreeAdapter
 import com.yt.car.union.pages.adapter.DynamicTreeItemClickListener
+import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.TreeDataMapper
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.viewmodel.SearchViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
 import kotlin.getValue
 
 class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, CoroutineScope by MainScope() {
@@ -86,6 +91,15 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
 
     // ==================== 点击事件回调实现 ====================
     override fun onItemClick(item: TreeItem) {
+        if (item.isLeaf()) {
+            EventBus.getDefault().post(EventData(EventData.EVENT_CAR_DETAIL,
+                BaseCarInfo(item.id, item.name,
+                    0.0, 0.0, 0
+                )
+            ))
+            startActivity(Intent(this@TreeListActivity, MainActivity::class.java))
+            finish()
+        }
     }
 
     override fun onExpandStateChange(item: TreeItem, isExpanded: Boolean) {
