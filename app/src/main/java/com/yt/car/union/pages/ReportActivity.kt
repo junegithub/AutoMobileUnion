@@ -31,6 +31,11 @@ import com.yt.car.union.pages.adapter.ReportAdapter
 import com.yt.car.union.pages.adapter.ReportItem
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityReportBinding
@@ -54,6 +59,10 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private val pageSize = 20
     private var loadFromMore: Boolean = false
 
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+    private var startDate: String = ""
+    private var endDate: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReportBinding.inflate(layoutInflater)
@@ -64,7 +73,6 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         initRecyclerView()
         initStateFlow()
         initSearch()
-        initOfflineDate()
         loadData()
     }
 
@@ -74,6 +82,8 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         PressEffectUtils.setCommonPressEffect(binding.tvToday)
         PressEffectUtils.setCommonPressEffect(binding.tv3days)
         PressEffectUtils.setCommonPressEffect(binding.tv7days)
+        PressEffectUtils.setCommonPressEffect(binding.ivCalendar)
+        PressEffectUtils.setCommonPressEffect(binding.ivClearDate)
 
         binding.ivBack.setOnClickListener {
             finish()
@@ -82,6 +92,31 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         binding.tvToday.setOnClickListener(this)
         binding.tv3days.setOnClickListener(this)
         binding.tv7days.setOnClickListener(this)
+        binding.ivCalendar.setOnClickListener {
+            val calendarDlg = CalendarDialog.newInstance()
+            calendarDlg.updateStartAndEndData(startDate, endDate)
+            calendarDlg.setOnDateSelectedListener(object : CalendarDialog.OnDateSelectedListener {
+                override fun onSelected(start: String, end: String) {
+                    startDate = dateFormat.format(Date(start))
+                    endDate = dateFormat.format(Date(end))
+                    updateDateRange()
+                    pageNum = 1
+                    loadData()
+                }
+            })
+            calendarDlg.show(supportFragmentManager, "DATE_PICKER")
+        }
+
+        binding.ivClearDate.setOnClickListener {
+            startDate = "开始日期"
+            endDate = "结束日期"
+            updateDateRange()
+        }
+    }
+
+    private fun updateDateRange() {
+        binding.tvStartDate.text = startDate
+        binding.tvEndDate.text = endDate
     }
 
     private fun initTabLayout() {
@@ -287,28 +322,14 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             loadData()
             true
         }
-    }
 
-    /**
-     * 初始化离线时间选择
-     */
-    private fun initOfflineDate() {
-        // 清空时间选择
-        binding.ivClearDate.setOnClickListener {
-            binding.tvStartDate.text = "2026-02-03"
-            binding.tvEndDate.text = "2026-02-20"
-            loadData()
-        }
-
-        // 点击选择开始时间（实际项目替换为时间选择器）
-        binding.tvStartDate.setOnClickListener {
-            Toast.makeText(this, "请选择开始时间", Toast.LENGTH_SHORT).show()
-        }
-
-        // 点击选择结束时间
-        binding.tvEndDate.setOnClickListener {
-            Toast.makeText(this, "请选择结束时间", Toast.LENGTH_SHORT).show()
-        }
+        // 1. 定义日期格式（匹配 yyyy-MM-dd）
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        // 2. 获取今天的日期
+        val today = LocalDate.now()
+        startDate = today.minusDays(20).format(formatter)
+        endDate = today.minusDays(0).format(formatter)
+        updateDateRange()
     }
 
     private fun initStateFlow() {
