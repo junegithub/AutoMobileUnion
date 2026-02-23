@@ -32,6 +32,10 @@ import org.greenrobot.eventbus.EventBus
 
 class LoginActivity : AppCompatActivity() {
 
+    companion object {
+        const val LOGIN_TYPE_TRAINING = "login_type_training"
+    }
+
     // 目标电话号码
     private val targetPhone = "05354971763"
 
@@ -45,12 +49,15 @@ class LoginActivity : AppCompatActivity() {
     private var lybhStateFlow = MutableStateFlow<ApiState<Boolean>>(ApiState.Idle)
     private val alarmTypesStateFlow = MutableStateFlow<ApiState<DictItem>>(ApiState.Idle)
 
+    private var trainingLogin = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 初始化ViewBinding
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        trainingLogin = intent.getBooleanExtra(LOGIN_TYPE_TRAINING, false)
         updatePageWithLoginState()
         initListener()
         initAgreementText()

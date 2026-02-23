@@ -3,6 +3,7 @@ package com.yt.car.union.util
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.yt.car.union.pages.LoginActivity
 
 /**
@@ -15,7 +16,7 @@ object DialogUtils {
      * @param context 上下文（Activity/Fragment）
      */
     fun showLoginPromptDialog(
-        context: Context
+        context: Context, trainingLogin: Boolean = false
     ) {
         // 构建AlertDialog
         val dialogBuilder = AlertDialog.Builder(context)
@@ -26,7 +27,9 @@ object DialogUtils {
             }
             // 立即登录按钮（积极按钮）
             .setPositiveButton("立即登录") { dialog, _ ->
-                context.startActivity(Intent(context, LoginActivity::class.java))
+                val intent = Intent(context, LoginActivity::class.java)
+                intent.putExtra(LoginActivity.LOGIN_TYPE_TRAINING, trainingLogin)
+                context.startActivity(intent)
             }
 
         // 创建弹窗并配置样式

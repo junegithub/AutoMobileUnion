@@ -24,6 +24,10 @@ class TrainingFragment : Fragment() {
     }
 
     private fun initView() {
+        addListener()
+    }
+
+    private fun addListener() {
         PressEffectUtils.setCommonPressEffect(binding.trainingHomeRing)
         PressEffectUtils.setCommonPressEffect(binding.trainingHomeUser)
         PressEffectUtils.setCommonPressEffect(binding.trainingHomeLearn)
@@ -42,6 +46,8 @@ class TrainingFragment : Fragment() {
         PressEffectUtils.setCommonPressEffect(binding.trainingHomeDuty)
 
         PressEffectUtils.setCommonPressEffect(binding.trainingHomeFindJob)
+
+        
     }
 
     override fun onDestroyView() {
