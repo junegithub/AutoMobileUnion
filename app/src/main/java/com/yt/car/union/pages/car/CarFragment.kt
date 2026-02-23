@@ -41,6 +41,7 @@ import com.yt.car.union.net.CarInfo
 import com.yt.car.union.net.MapPositionData
 import com.yt.car.union.net.MapPositionItem
 import com.yt.car.union.net.RealTimeAddressData
+import com.yt.car.union.net.SearchHistoryRequest
 import com.yt.car.union.net.SearchResult
 import com.yt.car.union.pages.DeviceAlarmActivity
 import com.yt.car.union.pages.status.DeviceStatusActivity
@@ -82,6 +83,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     private val sendStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
     private val takePhotoStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
     private val searListStateFlow = MutableStateFlow<ApiState<List<SearchResult>>>(ApiState.Idle)
+    private val addSearchStateFlow = MutableStateFlow<ApiState<Int>>(ApiState.Idle)
 
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
 
@@ -98,6 +100,8 @@ class CarFragment : Fragment(), AMapLocationListener {
     private var locationClient: AMapLocationClient? = null
 
     private var requestFromOtherPage: Boolean = false
+
+    private lateinit var labelAdapter: LabelAdapter
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -145,6 +149,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             addressStateFlow)
         carInfoViewModel.getCarInfo(id!!,
             carInfoStateFlow)
+        carInfoViewModel.addSearchHistory(SearchHistoryRequest(currentCar?.carnum!!), addSearchStateFlow)
         showSingleMarker(marker)
     }
 
@@ -181,6 +186,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         PressEffectUtils.setCommonPressEffect(binding.report)
         PressEffectUtils.setCommonPressEffect(binding.analysis)
         PressEffectUtils.setCommonPressEffect(binding.status)
+        PressEffectUtils.setCommonPressEffect(binding.tvSearch)
         PressEffectUtils.setCommonPressEffect(binding.btnAllCars)
         PressEffectUtils.setCommonPressEffect(binding.locationAllCars)
         PressEffectUtils.setCommonPressEffect(binding.currentLocation)
@@ -219,6 +225,9 @@ class CarFragment : Fragment(), AMapLocationListener {
             } else {
                 DialogUtils.showLoginPromptDialog(requireContext())
             }
+        }
+        binding.tvSearch.setOnClickListener {
+            startActivity(Intent(requireContext(), OperationAnalysisActivity::class.java))
         }
 
         binding.locationAllCars.setOnClickListener {
@@ -286,6 +295,8 @@ class CarFragment : Fragment(), AMapLocationListener {
         // 初始化地图核心逻辑
         initAmap()
         initListener()
+        labelAdapter = LabelAdapter()
+        binding.plateRecycler.adapter = labelAdapter
         binding.plateRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         updateViewLoginState()
 
@@ -305,6 +316,16 @@ class CarFragment : Fragment(), AMapLocationListener {
                         carList = statistics?.list
                         addCarMarkers()
                         zoomToAllCars()
+                        if (searListStateFlow.value is ApiState.Success && labelAdapter.itemCount == 0) {
+                            carList?.let {
+                                val newArr = carList!!.subList(0, minOf(5, carList!!.size))
+                                val searchList = mutableListOf<SearchResult>()
+                                newArr.forEach { item ->
+                                    searchList.add(SearchResult("", "", item.carnum, 0))
+                                }
+                                labelAdapter.updateData(searchList)
+                            }
+                        }
                     }
 
                     is ApiState.Error -> {
@@ -435,7 +456,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                     is ApiState.Success -> {
                         // 成功：隐藏进度条，显示数据
                         binding.plateRecycler.visibility = View.VISIBLE
-                        binding.plateRecycler.adapter = it.data?.let { vehicleList -> LabelAdapter(vehicleList) }
+                        labelAdapter.updateData(it.data)
                     }
                     is ApiState.Error -> {
                         // 失败：显示错误信息，隐藏其他视图
@@ -782,14 +803,22 @@ class CarFragment : Fragment(), AMapLocationListener {
                     openCarDetails(marker)
                 } else {
                     requestFromOtherPage = true
-                    val mapPositionItem = MapPositionItem("", "", "",
-                        vehicleInfo.latitude, "", vehicleInfo.carId, vehicleInfo.carNum,
-                        vehicleInfo.longitude, vehicleInfo.status, "")
-                    showSingleMarker(addCarMarker(mapPositionItem, true))
-                    carInfoViewModel.getRealTimeAddress(id, vehicleInfo.carNum,
+                    val carId = vehicleInfo.carId.toInt()
+                    carInfoViewModel.getRealTimeAddress(carId, vehicleInfo.carNum,
                         addressStateFlow)
-                    carInfoViewModel.getCarInfo(id,
-                        carInfoStateFlow)
+                    carInfoViewModel.getCarInfo(carId, carInfoStateFlow)
+                }
+            }
+            EventData.EVENT_LABEL_DETAIL -> {
+                val carNum = event.data as String
+                val marker = markerList.find { it.title == carNum}
+                if (marker != null) {
+                    openCarDetails(marker)
+                } else {
+                    requestFromOtherPage = true
+                    carInfoViewModel.getRealTimeAddress(0, carNum,
+                        addressStateFlow
+                    )
                 }
             }
         }
