@@ -63,7 +63,7 @@ object TreeDataMapper {
             parentId = treeNode.pid,
             ancestors = treeNode.ancestors,
             // 子节点先不处理，按需加载（或直接映射，根据接口返回策略）
-            children = mutableListOf()
+            children = mapToTreeItems(treeNode.children, level + 1)
         )
     }
 
@@ -72,7 +72,10 @@ object TreeDataMapper {
      * @param treeNodes 接口返回节点列表
      * @param level 基础层级
      */
-    fun mapToTreeItems(treeNodes: List<TreeNode>, level: Int): List<TreeItem> {
-        return treeNodes.map { mapToTreeItem(it, level) }
+    fun mapToTreeItems(treeNodes: List<TreeNode>?, level: Int): MutableList<TreeItem> {
+        if (treeNodes == null) {
+            return mutableListOf()
+        }
+        return treeNodes.map { mapToTreeItem(it, level) } as MutableList<TreeItem>
     }
 }

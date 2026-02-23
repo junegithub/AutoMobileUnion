@@ -354,7 +354,7 @@ data class TreeNode(
 
     // 扩展方法：获取计数文本（非叶子节点专用）
     fun getCountText(): String {
-        return if (isLeafNode()) name else "(${onlineNum ?: 0}/${totalNum ?: 0})"
+        return if (isLeafNode()) "" else "(${onlineNum ?: 0}/${totalNum ?: 0})"
     }
 }
 
