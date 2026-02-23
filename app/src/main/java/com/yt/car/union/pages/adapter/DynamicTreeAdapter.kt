@@ -37,6 +37,11 @@ class DynamicTreeAdapter(
     private val indentWidth = 20
     private val CLICK_INTERVAL = 500L
     private var lastClickTime = 0L
+    private var search = false
+
+    fun setSearch(b: Boolean) {
+        search = b
+    }
 
     inner class TreeViewHolder(private val binding: ItemDynamicTreeBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -91,7 +96,7 @@ class DynamicTreeAdapter(
 
         private fun handleExpandCollapse(item: TreeItem) {
             if (!item.isExpanded) {
-                if (item.children.isEmpty() && item.hasMoreChildren) {
+                if (!search && item.children.isEmpty() && item.hasMoreChildren) {
                     // 加载子节点：调用真实网络请求
                     loadChildrenFromNetwork(item)
                 } else {

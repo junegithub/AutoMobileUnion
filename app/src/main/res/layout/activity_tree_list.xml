@@ -57,9 +57,47 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_2"
         android:background="@color/light_gray" />
+
+    <!-- 替换为TabLayout（替代原自定义标签栏） -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:background="@color/white"
+        app:tabIndicatorColor="@color/tab_selected"
+        app:tabIndicatorHeight="2dp"
+        app:tabSelectedTextColor="@color/tab_selected"
+        android:visibility="gone"
+        app:tabTextColor="@color/gray_600"
+        app:tabGravity="fill"
+        app:tabMode="fixed"/>
+
+    <!-- 替换为Spinner（替代原筛选按钮） -->
+    <Spinner
+        android:id="@+id/spinner_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_32"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginTop="@dimen/dp_12"
+        android:background="@drawable/label_bg"
+        android:paddingHorizontal="@dimen/dp_12"
+        android:paddingVertical="@dimen/dp_4"
+        android:popupBackground="@color/white"
+        android:visibility="gone"
+        android:spinnerMode="dropdown"/>
+
+    <!-- 车牌号列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_carnum_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="@dimen/dp_16"
+        android:paddingTop="@dimen/dp_12"/>
 
     <!-- 动态树形列表 -->
     <androidx.recyclerview.widget.RecyclerView

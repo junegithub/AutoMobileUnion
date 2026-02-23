@@ -227,7 +227,14 @@ class CarFragment : Fragment(), AMapLocationListener {
             }
         }
         binding.tvSearch.setOnClickListener {
-            startActivity(Intent(requireContext(), OperationAnalysisActivity::class.java))
+            if (MyApp.isLogin == true) {
+                val intent = Intent(requireContext(), TreeListActivity::class.java)
+                intent.putExtra(TreeListActivity.KEY_CAR_NUM, totalCars)
+                intent.putExtra(TreeListActivity.KEY_CAR_SEARCH, true)
+                startActivity(intent)
+            } else {
+                DialogUtils.showLoginPromptDialog(requireContext())
+            }
         }
 
         binding.locationAllCars.setOnClickListener {
