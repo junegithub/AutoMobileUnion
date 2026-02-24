@@ -84,4 +84,73 @@
     <string name="text_expired_time">到期时间</string>
     <string name="text_offline_days">离线天数</string>
     <string name="text_belong_company">所属公司</string>
+
+
+    <string name="title_profile">个人中心</string>
+    <string name="title_change_password">修改密码</string>
+    <string name="title_account_info">账号信息</string>
+    <string name="title_about_app">关于APP</string>
+    <string name="title_learning_certificate">学习证明</string>
+    <string name="title_payment">支付详情</string>
+    <string name="title_modify">修改信息</string>
+
+    <string name="user_name">safe</string>
+    <string name="user_type">测试账号</string>
+    <string name="user_type_normal">普通用户</string>
+    <string name="create_time">2024-01-01</string>
+
+    <string name="menu_change_password">修改密码</string>
+    <string name="menu_contact_service">联系客服</string>
+    <string name="menu_account_info">账号信息</string>
+    <string name="menu_about_app">关于APP</string>
+    <string name="menu_learning_certificate">学习证明</string>
+    <string name="menu_learning_detail">学习详情</string>
+    <string name="menu_annual_payment">年度支付</string>
+    <string name="menu_logout_account">注销账号</string>
+
+    <string name="hint_old_password">请输入原密码</string>
+    <string name="hint_new_password">请输入新密码</string>
+    <string name="hint_confirm_password">请再次输入新密码</string>
+    <string name="btn_confirm">确定</string>
+    <string name="btn_logout">退出登录</string>
+
+    <string name="logo_name">车启联</string>
+    <string name="app_description">视频监控管理系统</string>
+    <string name="app_version">Version 1.0.12</string>
+    <string name="service_terms">服务协议</string>
+    <string name="privacy_policy">隐私政策</string>
+
+    <string name="certificate_title">我的证书 · 已培训课程</string>
+    <string name="certificate_date">2025-01-01</string>
+    <string name="tab_safety_training">安全培训</string>
+    <string name="tab_continuing_education">继续教育</string>
+    <string name="tab_pre_job_training">岗前培训</string>
+    <string name="no_training_record">暂无培训记录</string>
+
+    <string name="payment_title">年度支付</string>
+    <string name="payment_records">支付记录</string>
+    <string name="payment_name">年度服务费</string>
+    <string name="payment_amount">¥ 0.00</string>
+    <string name="btn_pay">支付</string>
+
+    <string name="field_old_password">原密码</string>
+    <string name="field_new_password">新密码</string>
+    <string name="field_confirm_password">确认密码</string>
+    <string name="field_user_name">用户名称</string>
+    <string name="field_user_nickname">用户昵称</string>
+    <string name="field_user_type">用户类型</string>
+    <string name="field_create_time">创建时间</string>
+    <string name="field_payment_name">计费名称</string>
+    <string name="field_payment_amount">支付金额</string>
+
+    <string name="toast_password_change_success">密码修改成功</string>
+    <string name="toast_please_fill_all_fields">请填写所有密码字段</string>
+    <string name="toast_password_not_match">两次输入的新密码不一致</string>
+    <string name="toast_logout_success">已退出登录</string>
+    <string name="toast_not_supported">暂不支持此操作</string>
+
+    <string name="dialog_logout_title">退出登录</string>
+    <string name="dialog_logout_message">确定要退出登录吗？</string>
+    <string name="dialog_confirm">确定</string>
+    <string name="dialog_cancel">取消</string>
 </resources>

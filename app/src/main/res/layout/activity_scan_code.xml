@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- 1. BarcodeScanner核心预览View -->
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/barcode_scanner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"/>
+
+    <!-- 顶部栏：返回 + 扫码 + 相册 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/dp_32"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@android:color/transparent">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/arrow_back"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <!-- 扫码标题（居中） -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="扫码"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"/>
+
+        <!-- 相册按钮 -->
+        <TextView
+            android:id="@+id/tv_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="相册"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:clickable="true"
+            android:focusable="true"/>
+
+    </LinearLayout>
+
+    <!-- 3. 扫码框（核心：修正后的四角样式） -->
+    <View
+        android:id="@+id/v_scan_frame"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_scan_frame"
+        android:elevation="2dp"/>
+
+    <!-- 4. 扫描线（上下移动动画） -->
+    <ImageView
+        android:id="@+id/iv_scan_line"
+        android:layout_width="240dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_scan_line"
+        android:elevation="3dp"/>
+
+    <!-- 闪光灯按钮 -->
+    <LinearLayout
+        android:id="@+id/ll_flash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="80dp"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:id="@+id/iv_flash"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_flash_off"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="轻触照亮"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="4dp"/>
+
+    </LinearLayout>
+
+</FrameLayout>

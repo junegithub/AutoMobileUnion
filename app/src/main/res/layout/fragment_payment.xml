@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:orientation="vertical">
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/fragment_title" />
+
+    <!-- 标题区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/dp_8">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/payment_title"
+            android:textColor="@color/colorTextDark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_payment_records"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:text="@string/payment_records"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- 支付信息 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/field_payment_name"
+        android:layout_margin="@dimen/dp_8"
+        android:textColor="@color/colorTextLight"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/et_payment_name"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/et_gray_radius"
+        android:focusable="false"
+        android:inputType="none"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="@string/payment_name"
+        android:textColor="@color/colorTextDark"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/field_payment_amount"
+        android:layout_margin="@dimen/dp_8"
+        android:textColor="@color/colorTextLight"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/et_payment_amount"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/et_gray_radius"
+        android:layout_margin="@dimen/dp_8"
+        android:focusable="false"
+        android:inputType="none"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="@string/payment_amount"
+        android:textColor="@color/colorTextDark"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_pay"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="@dimen/dp_16"
+        android:background="@drawable/btn_bg_blue"
+        android:text="@string/btn_pay"
+        android:textColor="@color/colorWhite"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+</LinearLayout>

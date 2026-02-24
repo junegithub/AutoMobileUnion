@@ -632,17 +632,43 @@ data class UserLoginRequest(
 )
 
 data class UserLoginData(
-    val userinfo: UserInfo?,
-    val userid: String,
-    val timestamp: Long,
-    val webtoken: String,
-    val token: String,
-    val userState: Int,
-    val otherinfo: OtherUserInfo?,
-    val eachtime: Long
+    val userinfo: TrainingUserInfo,          // 用户基础信息
+    val userid: String,              // 用户ID（字符串类型）
+    val timestamp: Long,             // 时间戳（秒级，用Long避免溢出）
+    val webtoken: String,            // web端token
+    val token: String,               // 通用token
+    val userState: Int,              // 用户状态
+    val otherinfo: TrainingOtherInfo,        // 用户详细信息
+    val eachtime: Int                // 每次时长（秒）
 )
 
-data class OtherUserInfo(
+/**
+ * 用户基础信息（对应userinfo节点）
+ */
+data class TrainingUserInfo(
+    val id: Int,
+    val group_id: Int,
+    val username: String,
+    val nickname: String,
+    val mobile: String,
+    val type: String,
+    val avatar: String,
+    val score: Int,
+    val jointime: Long,
+    val deletetime: Long,
+    val status: String,
+    val endtime: Long,
+    val token: String,
+    val user_id: Int,
+    val createtime: Long,
+    val expiretime: Long,
+    val expires_in: Int
+)
+
+/**
+ * 用户详细信息（对应otherinfo节点）
+ */
+data class TrainingOtherInfo(
     val id: Int,
     val group_id: Int,
     val username: String,
@@ -655,12 +681,12 @@ data class OtherUserInfo(
     val type: String,
     val category_id: Int,
     val avatar: String,
-    val avtvartime: Long?,
+    val avtvartime: Long,
     val level: Int,
     val gender: Int,
-    val birthday: String?,
+    val birthday: String?,           // 可为空，标注?
     val bio: String,
-    val money: String,
+    val money: String,               // 金额用String避免浮点精度问题
     val score: Int,
     val successions: Int,
     val maxsuccessions: Int,
@@ -672,7 +698,7 @@ data class OtherUserInfo(
     val jointime: Long,
     val createtime: Long,
     val updatetime: Long,
-    val deletetime: String?,
+    val deletetime: Long,
     val token: String,
     val status: String,
     val verification: String,
@@ -686,28 +712,30 @@ data class OtherUserInfo(
     val epidemictype: String,
     val epidemictime: Long,
     val epidemicfile: String,
-    val jobtype: String?,
+    val jobtype: String?,            // 可为空，标注?
     val provice_id: Int,
     val city_id: Int,
     val area_id: Int,
     val endtime: Long,
-    val openid: String?,
+    val openid: String?,             // 可为空，标注?
     val pid: Int,
-    val cardimg: String?,
-    val backcardimg: String?,
-    val practicetime: Long?,
-    val year: Int?,
+    val cardimg: String,
+    val backcardimg: String,
+    val practicetime: Long,
+    val fristpracticetime: Long,
+    val year: Int,
     val jxstatus: String,
-    val validtime: Long,
+    val validtime: Int,
+    val qualificationId: String?,    // 可为空，标注?
     val renzhen: String,
-    val otherinfo: String?,
-    val renzhengtime: String?,
+    val otherinfo: String?,          // 可为空，标注?
+    val renzhengtime: Long?,         // 可为空，标注?
     val school_id: Int,
-    val usualtime: Long,
+    val usualtime: Int,
     val usualpaytype: String,
     val usualpaytime: Long,
     val check_adminid: Int,
-    val check_name: String?
+    val check_name: String
 )
 
 data class SignViewData(

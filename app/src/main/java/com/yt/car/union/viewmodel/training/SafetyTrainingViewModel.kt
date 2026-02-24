@@ -6,10 +6,10 @@ import com.yt.car.union.net.CoursewareListData
 import com.yt.car.union.net.DailySafetyOrderData
 import com.yt.car.union.net.EpidemicViewData
 import com.yt.car.union.net.FaceData
-import com.yt.car.union.net.OtherUserInfo
 import com.yt.car.union.net.SafeStudyData
 import com.yt.car.union.net.SafetyListData
 import com.yt.car.union.net.SignViewData
+import com.yt.car.union.net.TrainingOtherInfo
 import com.yt.car.union.net.UploadFileData
 import com.yt.car.union.net.UserLoginData
 import com.yt.car.union.net.UserLoginRequest
@@ -126,7 +126,7 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     }
 
     // 获取用户其他信息
-    fun getUserOtherInfo(stateFlow: MutableStateFlow<ApiState<OtherUserInfo>>) {
+    fun getUserOtherInfo(stateFlow: MutableStateFlow<ApiState<TrainingOtherInfo>>) {
         launchRequest(
             block = { vehicleRepository.getUserOtherInfo() },
             stateFlow

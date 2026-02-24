@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:orientation="vertical">
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/fragment_title" />
+
+    <!-- 用户信息区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_24"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/profile_avatar"
+            android:layout_width="@dimen/dp_64"
+            android:layout_height="@dimen/dp_64"
+            android:src="@drawable/ic_training_user" />
+
+        <LinearLayout
+            android:id="@+id/profile_name_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorTextDark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/profile_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/colorTextLight"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/qr_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:textColor="@color/colorTextDark"
+            android:text="扫一扫"
+            android:drawableTop="@drawable/ic_qrcode" />
+    </LinearLayout>
+
+    <!-- 功能列表 -->
+    <TextView
+        android:id="@+id/item_change_password"
+        style="@style/TrainingProfileItem"
+        android:drawableStart="@drawable/ic_lock"
+        android:text="@string/menu_change_password" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBorder"
+        android:layout_marginLeft="@dimen/dp_48" />
+
+    <TextView
+        android:id="@+id/item_contact_service"
+        style="@style/TrainingProfileItem"
+        android:drawableStart="@drawable/ic_contact"
+        android:text="@string/menu_contact_service" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBorder"
+        android:layout_marginLeft="@dimen/dp_48" />
+
+    <TextView
+        android:id="@+id/item_account_info"
+        style="@style/TrainingProfileItem"
+        android:drawableStart="@drawable/ic_info"
+        android:text="@string/menu_account_info" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBorder"
+        android:layout_marginLeft="@dimen/dp_48" />
+
+    <TextView
+        android:id="@+id/item_about_app"
+        style="@style/TrainingProfileItem"
+        android:drawableStart="@drawable/ic_about"
+        android:text="@string/menu_about_app" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBorder"
+        android:layout_marginLeft="@dimen/dp_48" />
+
+    <TextView
+        android:id="@+id/item_learning_certificate"
+        style="@style/TrainingProfileItem"
+        android:drawableStart="@drawable/ic_certificate"
+        android:text="@string/menu_learning_certificate" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBorder"
+        android:layout_marginLeft="@dimen/dp_48" />
+
+    <TextView
+        android:id="@+id/item_learning_detail"
+        style="@style/TrainingProfileItem"
+        android:drawableStart="@drawable/ic_detail"
+        android:text="@string/menu_learning_detail" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBorder"
+        android:layout_marginLeft="@dimen/dp_48" />
+
+    <TextView
+        android:id="@+id/item_annual_payment"
+        style="@style/TrainingProfileItem"
+        android:drawableStart="@drawable/ic_payment"
+        android:text="@string/menu_annual_payment" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBorder"
+        android:layout_marginLeft="@dimen/dp_48" />
+
+    <TextView
+        android:id="@+id/item_logout_account"
+        style="@style/TrainingProfileItem"
+        android:drawableStart="@drawable/ic_logout"
+        android:text="@string/menu_logout_account" />
+</LinearLayout>

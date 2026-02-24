@@ -22,7 +22,7 @@ interface TrainingApiService {
     suspend fun getUserInfo(): Response<TrainingBaseResponse<UserInfoData>>
 
     @GET("api/user/userotherinfo")
-    suspend fun getUserOtherInfo(): Response<TrainingBaseResponse<OtherUserInfo>>
+    suspend fun getUserOtherInfo(): Response<TrainingBaseResponse<TrainingOtherInfo>>
 
     @GET("api/user/epidemicview")
     suspend fun epidemicView(): Response<TrainingBaseResponse<EpidemicViewData>>

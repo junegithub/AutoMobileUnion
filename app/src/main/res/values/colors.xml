@@ -94,4 +94,15 @@
     <color name="background">#F5F7FA</color>
     <color name="text_blue">#4A90E2</color>
     <color name="divider">#EEEEEE</color>
+
+    <color name="colorPrimary">#3B82F6</color>
+    <color name="colorPrimaryDark">#2563EB</color>
+    <color name="colorAccent">#3B82F6</color>
+    <color name="colorTextDark">#1F2937</color>
+    <color name="colorTextLight">#6B7280</color>
+    <color name="colorBackground">#F9FAFB</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBorder">#E5E7EB</color>
+    <color name="colorGray50">#F9FAFB</color>
+    <color name="colorGray100">#F3F4F6</color>
 </resources>

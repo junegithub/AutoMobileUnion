@@ -87,6 +87,12 @@ dependencies {
 
     implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.3.3")
 
+    // ZXing核心依赖（必须）
+    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    // AndroidX Exif（处理图片旋转）
+    implementation("androidx.exifinterface:exifinterface:1.3.6")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

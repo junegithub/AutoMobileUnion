@@ -1,5 +1,6 @@
 package com.yt.car.union.pages.training
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.yt.car.union.MyApp
 import com.yt.car.union.databinding.FragmentTrainingBinding
+import com.yt.car.union.pages.training.user.UserCenterActivity
 import com.yt.car.union.util.LoginDialogUtils
 import com.yt.car.union.util.PressEffectUtils
 
@@ -80,7 +82,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
             }
             binding.trainingHomeUser.id -> {
-
+                startActivity(Intent(requireActivity(), UserCenterActivity::class.java))
             }
             binding.trainingHomeLearn.id -> {
 
