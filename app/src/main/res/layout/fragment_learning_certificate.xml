@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorBackground"
     android:orientation="vertical">
 
@@ -18,84 +19,81 @@
         android:padding="12dp">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/certificate_title"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/certificate_date"
+            android:text="@string/certificate_title"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/certificate_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/certificate_content"
             android:textColor="@color/colorWhite"
             android:textSize="14sp" />
     </LinearLayout>
 
-    <!-- 内容区域 -->
-    <LinearLayout
+    <!-- 3. Tab栏（原Activity的TabLayout） -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        app:tabIndicatorColor="#2F67FF"
+        app:tabIndicatorHeight="2dp"
+        app:tabMode="fixed"
+        app:tabPaddingStart="0dp"
+        app:tabPaddingEnd="0dp"
+        app:tabSelectedTextColor="#2F67FF"
+        app:tabTextColor="@color/black"
+        app:tabTextAppearance="@style/TabTextStyle">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="安全教育" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="继续教育" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="岗前培训" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <!-- 4. 月份选择栏（仅安全培训显示） -->
+    <TextView
+        android:id="@+id/tv_selected_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:visibility="gone"
+        android:drawablePadding="@dimen/dp_4"
+        android:layout_margin="@dimen/dp_8"
+        android:drawableEnd="@drawable/ic_arrow_right"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <!-- 5. 空状态提示 -->
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="暂无培训记录"
+        android:textColor="#999999"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:visibility="gone"/>
+
+    <!-- 6. 共用的RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_study_prove"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorWhite"
-        android:orientation="vertical">
-
-        <!-- Tab切换 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/tab_safety_training"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="@string/tab_safety_training"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/tab_continuing_education"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="@string/tab_continuing_education"
-                android:textColor="@color/colorTextLight"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/tab_pre_job_training"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="@string/tab_pre_job_training"
-                android:textColor="@color/colorTextLight"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorBorder" />
-
-        <!-- 内容区域 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_training_record"
-                android:textColor="@color/colorTextLight"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </LinearLayout>
+        android:paddingHorizontal="15dp"/>
 </LinearLayout>

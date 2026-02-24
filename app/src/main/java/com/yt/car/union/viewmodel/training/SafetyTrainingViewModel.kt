@@ -1,9 +1,11 @@
 package com.yt.car.union.viewmodel.training
 
+import com.yt.car.union.net.BeforeEducationCertificateData
 import com.yt.car.union.net.CarNumSearchData
 import com.yt.car.union.net.CompanyListData
 import com.yt.car.union.net.CoursewareListData
 import com.yt.car.union.net.DailySafetyOrderData
+import com.yt.car.union.net.EducationCertificate
 import com.yt.car.union.net.EpidemicViewData
 import com.yt.car.union.net.FaceData
 import com.yt.car.union.net.SafeStudyData
@@ -13,6 +15,7 @@ import com.yt.car.union.net.TrainingOtherInfo
 import com.yt.car.union.net.UploadFileData
 import com.yt.car.union.net.UserLoginData
 import com.yt.car.union.net.UserLoginRequest
+import com.yt.car.union.net.UserStudyProveListData
 import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.MultipartBody
@@ -138,6 +141,26 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                  stateFlow: MutableStateFlow<ApiState<Any>>) {
         launchRequest(
             block = { vehicleRepository.resetPwd(newpassword, oldpassword) },
+            stateFlow
+        )
+    }
+
+    fun getUserStudyProveList(month: String,
+                 stateFlow: MutableStateFlow<ApiState<UserStudyProveListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getUserStudyProveList(month) },
+            stateFlow
+        )
+    }
+    fun getEducationCertificate(stateFlow: MutableStateFlow<ApiState<List<EducationCertificate>>>) {
+        launchRequest(
+            block = { vehicleRepository.getEducationCertificate() },
+            stateFlow
+        )
+    }
+    fun getBeforeEducationCertificate(stateFlow: MutableStateFlow<ApiState<BeforeEducationCertificateData>>) {
+        launchRequest(
+            block = { vehicleRepository.getBeforeEducationCertificate() },
             stateFlow
         )
     }

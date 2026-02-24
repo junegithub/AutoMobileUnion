@@ -11,6 +11,7 @@ object ApiConfig {
     const val WRITE_TIMEOUT = 15L
     // Token存储键（项目全局，与前序接口一致）
     const val SP_KEY_TOKEN = "user_token"
+    const val SP_KEY_TRAINING_TOKEN = "user_token_training"
 
     // 车牌颜色静态配置（与前端label/value完全一致）
     enum class CarColor(val value: Int, val label: String) {

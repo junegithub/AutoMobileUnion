@@ -93,7 +93,8 @@ dependencies {
     // AndroidX Exif（处理图片旋转）
     implementation("androidx.exifinterface:exifinterface:1.3.6")
 
-    implementation("com.github.kongzue.DialogX:DialogX:0.0.45.beta12")
+    implementation("com.github.kongzue.DialogX:DialogX:0.0.51.beta1")
+    implementation("com.github.kongzue.DialogXSample:DatePicker:0.0.14")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -39,6 +39,14 @@ object SPUtils {
         return getSP().getString(ApiConfig.SP_KEY_TOKEN, "") ?: ""
     }
 
+    fun saveTrainingToken(token: String?) {
+        getSP().edit().putString(ApiConfig.SP_KEY_TRAINING_TOKEN, token).apply()
+    }
+
+    fun getTrainingToken(): String {
+        return getSP().getString(ApiConfig.SP_KEY_TRAINING_TOKEN, "") ?: ""
+    }
+
     // 获取账号
     fun getAccount(): String {
         return getSP().getString(KEY_ACCOUNT, "") ?: ""

@@ -120,8 +120,8 @@
     <string name="service_terms">服务协议</string>
     <string name="privacy_policy">隐私政策</string>
 
-    <string name="certificate_title">我的证书 · 已培训课程</string>
-    <string name="certificate_date">2025-01-01</string>
+    <string name="certificate_title">我的证书 · </string>
+    <string name="certificate_content">已获得%d张</string>
     <string name="tab_safety_training">安全培训</string>
     <string name="tab_continuing_education">继续教育</string>
     <string name="tab_pre_job_training">岗前培训</string>
