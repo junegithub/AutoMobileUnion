@@ -1,4 +1,4 @@
-package com.yt.car.union.viewmodel
+package com.yt.car.union.viewmodel.training
 
 import com.yt.car.union.net.CarNumSearchData
 import com.yt.car.union.net.CompanyListData
@@ -13,6 +13,7 @@ import com.yt.car.union.net.SignViewData
 import com.yt.car.union.net.UploadFileData
 import com.yt.car.union.net.UserLoginData
 import com.yt.car.union.net.UserLoginRequest
+import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

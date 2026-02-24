@@ -1,10 +1,11 @@
-package com.yt.car.union.pages
+package com.yt.car.union.pages.car
 
 import android.content.Intent
 import com.yt.car.union.net.TreeItem
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -29,7 +30,7 @@ import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.TreeDataMapper
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.SearchViewModel
+import com.yt.car.union.viewmodel.car.SearchViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -155,13 +156,13 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
         binding.spinnerFilter.setSelection(0)
 
         // Spinner选择监听
-        binding.spinnerFilter.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+        binding.spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedFilter = filterList[position]
                 // 补充筛选逻辑：根据选中的状态过滤列表
             }
 
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 

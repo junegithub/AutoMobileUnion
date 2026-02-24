@@ -10,7 +10,7 @@ import com.yt.car.union.net.TreeItem
 import com.yt.car.union.net.TreeNode
 import com.yt.car.union.util.TreeDataMapper
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.SearchViewModel
+import com.yt.car.union.viewmodel.car.SearchViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

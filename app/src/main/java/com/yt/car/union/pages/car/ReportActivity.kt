@@ -1,6 +1,7 @@
-package com.yt.car.union.pages
+package com.yt.car.union.pages.car
 
 import android.content.Intent
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,7 +9,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yt.car.union.databinding.ActivityReportBinding
-import com.yt.car.union.viewmodel.ReportViewModel
+import com.yt.car.union.viewmodel.car.ReportViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +28,7 @@ import com.yt.car.union.net.OilAddReportData
 import com.yt.car.union.net.OilDayReportData
 import com.yt.car.union.net.PhotoReportData
 import com.yt.car.union.net.WarningReportData
+import com.yt.car.union.pages.CalendarDialog
 import com.yt.car.union.pages.adapter.ReportAdapter
 import com.yt.car.union.pages.adapter.ReportItem
 import com.yt.car.union.util.PressEffectUtils
@@ -93,7 +95,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         binding.tv3days.setOnClickListener(this)
         binding.tv7days.setOnClickListener(this)
         binding.ivCalendar.setOnClickListener {
-            val calendarDlg = CalendarDialog.newInstance()
+            val calendarDlg = CalendarDialog.Companion.newInstance()
             calendarDlg.updateStartAndEndData(startDate, endDate)
             calendarDlg.setOnDateSelectedListener(object : CalendarDialog.OnDateSelectedListener {
                 override fun onSelected(start: String, end: String) {
@@ -199,28 +201,28 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 currentTimeType = 1
                 binding.tvYesterday.setTextColor(resources.getColor(R.color.time_selected, theme))
                 binding.tvYesterday.typeface = binding.tvYesterday.typeface?.let {
-                    android.graphics.Typeface.create(it, android.graphics.Typeface.BOLD)
+                    Typeface.create(it, Typeface.BOLD)
                 }
             }
             binding.tvToday -> {
                 currentTimeType = 2
                 binding.tvToday.setTextColor(resources.getColor(R.color.time_selected, theme))
                 binding.tvToday.typeface = binding.tvToday.typeface?.let {
-                    android.graphics.Typeface.create(it, android.graphics.Typeface.BOLD)
+                    Typeface.create(it, Typeface.BOLD)
                 }
             }
             binding.tv3days -> {
                 currentTimeType = 3
                 binding.tv3days.setTextColor(resources.getColor(R.color.time_selected, theme))
                 binding.tv3days.typeface = binding.tv3days.typeface?.let {
-                    android.graphics.Typeface.create(it, android.graphics.Typeface.BOLD)
+                    Typeface.create(it, Typeface.BOLD)
                 }
             }
             binding.tv7days -> {
                 currentTimeType = 4
                 binding.tv7days.setTextColor(resources.getColor(R.color.time_selected, theme))
                 binding.tv7days.typeface = binding.tv7days.typeface?.let {
-                    android.graphics.Typeface.create(it, android.graphics.Typeface.BOLD)
+                    Typeface.create(it, Typeface.BOLD)
                 }
             }
         }
@@ -231,7 +233,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private fun resetTime() {
         listOf(binding.tvYesterday, binding.tvToday, binding.tv3days, binding.tv7days).forEach {
             it.setTextColor(resources.getColor(R.color.time_unselected, theme))
-            it.typeface = android.graphics.Typeface.DEFAULT
+            it.typeface = Typeface.DEFAULT
         }
     }
 

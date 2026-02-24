@@ -19,7 +19,7 @@ import com.yt.car.union.pages.adapter.StatusAdapter
 import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.CarInfoViewModel
+import com.yt.car.union.viewmodel.car.CarInfoViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus

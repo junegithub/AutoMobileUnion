@@ -6,10 +6,8 @@ import com.yt.car.union.net.DictItem
 import com.yt.car.union.net.DictMapManager
 import com.yt.car.union.net.IBaseResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 /**
@@ -21,8 +19,6 @@ open class BaseViewModel : ViewModel() {
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onRequestError(throwable)
     }
-
-
 
     /**
      * 通用网络请求协程封装

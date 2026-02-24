@@ -42,16 +42,16 @@
         </activity>
 
         <activity android:name=".pages.LoginActivity" />
-        <activity android:name=".pages.DeviceAlarmActivity" />
+        <activity android:name=".pages.car.DeviceAlarmActivity" />
         <activity android:name=".pages.status.DeviceStatusActivity" />
-        <activity android:name=".pages.OperationAnalysisActivity" />
-        <activity android:name=".pages.ReportActivity" />
+        <activity android:name=".pages.car.OperationAnalysisActivity" />
+        <activity android:name=".pages.car.ReportActivity" />
         <activity android:name=".pages.status.DeviceStatusListActivity" />
         <activity android:name=".pages.status.ExpireCarActivity" />
-        <activity android:name=".pages.ReportAlarmDetailActivity" />
-        <activity android:name=".pages.CarInfoActivity" />
-        <activity android:name=".pages.OfflineDetailActivity" />
-        <activity android:name=".pages.TreeListActivity" />
+        <activity android:name=".pages.car.ReportAlarmDetailActivity" />
+        <activity android:name=".pages.car.CarInfoActivity" />
+        <activity android:name=".pages.car.OfflineDetailActivity" />
+        <activity android:name=".pages.car.TreeListActivity" />
     </application>
 
 </manifest>

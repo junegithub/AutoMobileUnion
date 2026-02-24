@@ -11,7 +11,7 @@ import com.yt.car.union.net.CarStatusListData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.ProgressDialogUtils
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.CarInfoViewModel
+import com.yt.car.union.viewmodel.car.CarInfoViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.getValue

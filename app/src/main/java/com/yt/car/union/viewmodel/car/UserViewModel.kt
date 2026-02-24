@@ -1,9 +1,10 @@
-package com.yt.car.union.viewmodel
+package com.yt.car.union.viewmodel.car
 
 import com.yt.car.union.net.CarUserInfo
 import com.yt.car.union.net.DictItem
 import com.yt.car.union.net.LoginData
 import com.yt.car.union.net.LoginRequest
+import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**

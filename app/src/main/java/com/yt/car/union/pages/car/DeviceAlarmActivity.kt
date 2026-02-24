@@ -1,7 +1,9 @@
-package com.yt.car.union.pages
+package com.yt.car.union.pages.car
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -19,10 +21,11 @@ import com.yt.car.union.net.AlarmListData
 import com.yt.car.union.net.BaseCarInfo
 import com.yt.car.union.net.DictMapManager
 import com.yt.car.union.net.VehicleInfo
+import com.yt.car.union.pages.CalendarDialog
 import com.yt.car.union.pages.adapter.AlarmAdapter
 import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
-import com.yt.car.union.viewmodel.AlarmViewModel
+import com.yt.car.union.viewmodel.car.AlarmViewModel
 import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -169,7 +172,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
 
         // 日期选择弹窗（MaterialDatePicker实现范围选择）
         binding.tvDateRange.setOnClickListener {
-            val calendarDlg = CalendarDialog.newInstance()
+            val calendarDlg = CalendarDialog.Companion.newInstance()
             calendarDlg.updateStartAndEndData(startDate, endDate)
             calendarDlg.setOnDateSelectedListener(object : CalendarDialog.OnDateSelectedListener {
                 override fun onSelected(start: String, end: String) {
@@ -186,17 +189,17 @@ class DeviceAlarmActivity : AppCompatActivity() {
 
         // Spinner选择事件（可选扩展）
         binding.spinnerAlarmType.onItemSelectedListener =
-            object : android.widget.AdapterView.OnItemSelectedListener {
+            object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
-                    parent: android.widget.AdapterView<*>?,
-                    view: android.view.View?,
+                    parent: AdapterView<*>?,
+                    view: View?,
                     position: Int,
                     id: Long
                 ) {
                     updateListWithSpinnerSelection(position)
                 }
 
-                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
     }
 

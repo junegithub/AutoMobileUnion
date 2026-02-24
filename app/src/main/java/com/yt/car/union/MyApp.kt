@@ -5,6 +5,7 @@ import android.content.Context
 import com.amap.api.maps.MapsInitializer
 import com.yt.car.union.net.CarUser
 import com.yt.car.union.net.RetrofitClient
+import com.yt.car.union.net.UserLoginData
 
 class MyApp : Application() {
 
@@ -41,5 +42,8 @@ class MyApp : Application() {
         var isLogin: Boolean? = null
         var userInfo: CarUser? = null
         var isLYBH: Boolean? = null
+
+        var isTrainingLogin: Boolean? = null
+        var trainingUserInfo: UserLoginData? = null
     }
 }

@@ -1,4 +1,4 @@
-package com.yt.car.union.pages
+package com.yt.car.union.pages.car
 
 import android.os.Bundle
 import android.widget.Toast
@@ -12,11 +12,10 @@ import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
 import com.yt.car.union.databinding.ActivityReportWarningDetailBinding
 import com.yt.car.union.net.WarningDetailData
 import com.yt.car.union.net.WarningDetailItem
-import com.yt.car.union.net.WarningReportItem
 import com.yt.car.union.pages.adapter.WarningDetailAdapter
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.ReportViewModel
+import com.yt.car.union.viewmodel.car.ReportViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.getValue

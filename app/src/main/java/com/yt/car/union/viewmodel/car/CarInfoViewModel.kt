@@ -1,11 +1,10 @@
-package com.yt.car.union.viewmodel
+package com.yt.car.union.viewmodel.car
 
 import com.yt.car.union.net.CarExpireResponse
 import com.yt.car.union.net.CarInfo
 import com.yt.car.union.net.CarStatusDetailItem
 import com.yt.car.union.net.CarStatusListData
 import com.yt.car.union.net.DashboardInfoData
-import com.yt.car.union.net.ExpiredCarData
 import com.yt.car.union.net.LeakReportData
 import com.yt.car.union.net.MapPositionData
 import com.yt.car.union.net.OilAddReportData
@@ -15,6 +14,7 @@ import com.yt.car.union.net.SearchHistoryRequest
 import com.yt.car.union.net.SearchResult
 import com.yt.car.union.net.SendContentRequest
 import com.yt.car.union.net.TrackData
+import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**

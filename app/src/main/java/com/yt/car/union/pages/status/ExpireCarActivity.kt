@@ -14,7 +14,7 @@ import com.yt.car.union.net.CarExpireItem
 import com.yt.car.union.net.CarExpireResponse
 import com.yt.car.union.pages.adapter.ExpireCarAdapter
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.CarInfoViewModel
+import com.yt.car.union.viewmodel.car.CarInfoViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.getValue

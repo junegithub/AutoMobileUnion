@@ -1,8 +1,9 @@
-package com.yt.car.union.viewmodel
+package com.yt.car.union.viewmodel.training
 
 import com.yt.car.union.net.TravelLogData
 import com.yt.car.union.net.TravelPostRequest
 import com.yt.car.union.net.TravelPostResponse
+import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**

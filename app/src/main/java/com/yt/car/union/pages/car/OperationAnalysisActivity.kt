@@ -1,4 +1,4 @@
-package com.yt.car.union.pages
+package com.yt.car.union.pages.car
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -14,7 +14,7 @@ import com.yt.car.union.util.CustomMarkerView
 import com.yt.car.union.util.PieChartConfig
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.CarInfoViewModel
+import com.yt.car.union.viewmodel.car.CarInfoViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.getValue

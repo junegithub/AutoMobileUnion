@@ -21,11 +21,15 @@ import com.yt.car.union.net.CarUserInfo
 import com.yt.car.union.net.DictItem
 import com.yt.car.union.net.LoginData
 import com.yt.car.union.net.LoginRequest
+import com.yt.car.union.net.UserLoginData
+import com.yt.car.union.net.UserLoginRequest
 import com.yt.car.union.util.EventData
 import com.yt.car.union.util.PressEffectUtils
+import com.yt.car.union.util.ProgressDialogUtils
 import com.yt.car.union.util.SPUtils
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.UserViewModel
+import com.yt.car.union.viewmodel.car.UserViewModel
+import com.yt.car.union.viewmodel.training.SafetyTrainingViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -49,6 +53,9 @@ class LoginActivity : AppCompatActivity() {
     private var lybhStateFlow = MutableStateFlow<ApiState<Boolean>>(ApiState.Idle)
     private val alarmTypesStateFlow = MutableStateFlow<ApiState<DictItem>>(ApiState.Idle)
 
+    private val trainingViewModel by viewModels<SafetyTrainingViewModel>()
+    private var trainingLoginStateFlow = MutableStateFlow<ApiState<UserLoginData>>(ApiState.Idle)
+
     private var trainingLogin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,9 +65,20 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         trainingLogin = intent.getBooleanExtra(LOGIN_TYPE_TRAINING, false)
+        mockData()
         updatePageWithLoginState()
         initListener()
         initAgreementText()
+    }
+
+    private fun mockData() {
+        if (trainingLogin) {
+            binding.etAccount.setText("safe")
+            binding.etPwd.setText("123456")
+        } else {
+            binding.etAccount.setText("admin")
+            binding.etPwd.setText("32kVDyQXzPnfMJ")
+        }
     }
 
     private fun updatePageWithLoginState() {
@@ -112,11 +130,11 @@ class LoginActivity : AppCompatActivity() {
             loginStateFlow.collect { uiState ->
                 when (uiState) {
                     is ApiState.Loading -> {
-                        // 加载中：显示进度条，隐藏其他视图
+                        ProgressDialogUtils.show(this@LoginActivity, "登录中...")
                     }
 
                     is ApiState.Success -> {
-                        // 成功：隐藏进度条，显示数据
+                        ProgressDialogUtils.dismiss()
                         // 更新统计数据
                         val statistics = uiState.data
                         // 保存Token
@@ -130,10 +148,10 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     is ApiState.Error -> {
-                        // 失败：显示错误信息，隐藏其他视图
+                        ProgressDialogUtils.dismiss()
+                        Toast.makeText(this@LoginActivity, "登录失败：${uiState.msg}", Toast.LENGTH_SHORT).show()
                     }
                     is ApiState.Idle -> {
-
                     }
                 }
             }
@@ -192,10 +210,38 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            trainingLoginStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                        ProgressDialogUtils.show(this@LoginActivity, "登录中...")
+                    }
+
+                    is ApiState.Success -> {
+                        ProgressDialogUtils.dismiss()
+                        MyApp.isTrainingLogin = true
+                        MyApp.trainingUserInfo = uiState.data
+                        finish()
+                    }
+
+                    is ApiState.Error -> {
+                        ProgressDialogUtils.dismiss()
+                        Toast.makeText(this@LoginActivity, "登录失败：${uiState.msg}", Toast.LENGTH_SHORT).show()
+                    }
+                    is ApiState.Idle -> {
+                    }
+                }
+            }
+        }
     }
 
     fun doLogin(account: String, password: String) {
-        userViewModel.login(LoginRequest(account, password), loginStateFlow)
+        if (trainingLogin) {
+            trainingViewModel.userLogin(UserLoginRequest(account, password), trainingLoginStateFlow)
+        } else {
+            userViewModel.login(LoginRequest(account, password), loginStateFlow)
+        }
     }
 
     fun doLogout() {
@@ -265,6 +311,10 @@ class LoginActivity : AppCompatActivity() {
         binding.tvAgreementText.highlightColor = getResources().getColor(android.R.color.transparent)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        ProgressDialogUtils.dismiss()
+    }
 }
 fun Context.openDial(targetPhone: String) {
     try {

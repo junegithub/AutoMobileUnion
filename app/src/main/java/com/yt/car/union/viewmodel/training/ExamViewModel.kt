@@ -1,4 +1,4 @@
-package com.yt.car.union.viewmodel
+package com.yt.car.union.viewmodel.training
 
 import com.yt.car.union.net.AnswerData
 import com.yt.car.union.net.AnswerRequest
@@ -11,6 +11,7 @@ import com.yt.car.union.net.StartTwoAnswerData
 import com.yt.car.union.net.StartTwoAnswerRequest
 import com.yt.car.union.net.SubmitExamRequest
 import com.yt.car.union.net.UpdateTwoQuestionRequest
+import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**

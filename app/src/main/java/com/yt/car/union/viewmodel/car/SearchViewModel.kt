@@ -1,8 +1,8 @@
-package com.yt.car.union.viewmodel
+package com.yt.car.union.viewmodel.car
 
 import com.yt.car.union.net.SearchCarTypeData
-import com.yt.car.union.net.SearchHistoryRequest
 import com.yt.car.union.net.TreeNode
+import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**

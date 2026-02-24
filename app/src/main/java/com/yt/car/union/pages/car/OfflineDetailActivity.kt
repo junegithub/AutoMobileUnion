@@ -1,4 +1,4 @@
-package com.yt.car.union.pages
+package com.yt.car.union.pages.car
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -9,7 +9,7 @@ import com.yt.car.union.databinding.ActivityOfflineDetailBinding
 import com.yt.car.union.pages.adapter.OfflineDateAdapter
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.ReportViewModel
+import com.yt.car.union.viewmodel.car.ReportViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.getValue
