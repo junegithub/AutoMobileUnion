@@ -24,6 +24,7 @@ import com.yt.car.union.net.LoginRequest
 import com.yt.car.union.net.UserLoginData
 import com.yt.car.union.net.UserLoginRequest
 import com.yt.car.union.util.EventData
+import com.yt.car.union.util.LoginDialogUtils
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.ProgressDialogUtils
 import com.yt.car.union.util.SPUtils
@@ -280,7 +281,7 @@ class LoginActivity : AppCompatActivity() {
         // 设置「服务协议」可点击
         spannableString.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
-                Toast.makeText(this@LoginActivity, "点击了$serviceText", Toast.LENGTH_SHORT).show()
+                LoginDialogUtils.showTermsDlg(this@LoginActivity)
             }
 
             override fun updateDrawState(ds: TextPaint) {
@@ -300,7 +301,7 @@ class LoginActivity : AppCompatActivity() {
             override fun onClick(widget: View) {
                 widget.clearFocus()
                 // 点击隐私政策的逻辑（如跳转到隐私政策页面）
-                Toast.makeText(this@LoginActivity, "点击了$privacyText", Toast.LENGTH_SHORT).show()
+                LoginDialogUtils.showPrivacyDlg(this@LoginActivity)
             }
         }, privacyStart, privacyEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 

@@ -3,6 +3,7 @@ package com.yt.car.union
 import android.app.Application
 import android.content.Context
 import com.amap.api.maps.MapsInitializer
+import com.kongzue.dialogx.DialogX
 import com.yt.car.union.net.CarUser
 import com.yt.car.union.net.RetrofitClient
 import com.yt.car.union.net.UserLoginData
@@ -15,8 +16,9 @@ class MyApp : Application() {
         // 初始化Retrofit单例
         RetrofitClient.init()
         // 高德地图隐私合规初始化（必须在初始化地图之前调用）
-        MapsInitializer.updatePrivacyShow(this, true, true);
-        MapsInitializer.updatePrivacyAgree(this, true);
+        MapsInitializer.updatePrivacyShow(this, true, true)
+        MapsInitializer.updatePrivacyAgree(this, true)
+        DialogX.init(this)
     }
 
     // 3. 公共静态方法，全局获取MyApp实例

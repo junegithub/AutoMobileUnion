@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.yt.car.union.R
 import com.yt.car.union.databinding.FragmentAboutAppBinding
+import com.yt.car.union.util.LoginDialogUtils
 import com.yt.car.union.util.PressEffectUtils
 
 class AboutAppFragment : BaseUserFragment() {
@@ -27,9 +28,11 @@ class AboutAppFragment : BaseUserFragment() {
         PressEffectUtils.setCommonPressEffect(binding.privacyPolicy)
         // 绑定点击事件
         binding.termsOfService.setOnClickListener {
+            LoginDialogUtils.showTermsDlg(requireContext())
         }
         
         binding.privacyPolicy.setOnClickListener {
+            LoginDialogUtils.showPrivacyDlg(requireContext())
         }
     }
 
