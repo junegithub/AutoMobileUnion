@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +25,7 @@ import com.yt.car.union.car.adapter.AlarmAdapter
 import com.yt.car.union.pages.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.car.viewmodel.AlarmViewModel
+import com.yt.car.union.training.user.showToast
 import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -135,7 +135,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
                         }
                     }
                     is ApiState.Error -> {
-                        Toast.makeText(this@DeviceAlarmActivity, "获取数据失败：${state.msg}", Toast.LENGTH_SHORT).show()
+                        showToast("获取数据失败：${state.msg}")
                         // 重置状态
                         alarmListStateFlow.value = ApiState.Idle
                         if (loadFromMore) {

@@ -1,7 +1,6 @@
 package com.yt.car.union.car.status
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +14,7 @@ import com.yt.car.union.net.CarExpireResponse
 import com.yt.car.union.car.adapter.ExpireCarAdapter
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.CarInfoViewModel
+import com.yt.car.union.training.user.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -65,7 +65,8 @@ class ExpireCarActivity : AppCompatActivity() {
                         }
                     }
                     is ApiState.Error -> {
-                        Toast.makeText(this@ExpireCarActivity, "获取数据失败：${state.msg}", Toast.LENGTH_SHORT).show()
+
+                        showToast("获取数据失败：${state.msg}")
                         // 重置状态
                         statusListStateFlow.value = ApiState.Idle
                         if (loadFromMore) {

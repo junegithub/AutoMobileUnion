@@ -12,7 +12,6 @@ import android.provider.MediaStore
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -101,7 +100,7 @@ class ScanCodeActivity : AppCompatActivity() {
                 barcodeView.resume() // 启动预览
                 binding.ivScanLine.startAnimation(scanLineAnim)
             } else {
-                Toast.makeText(this, "需要相机权限才能扫码", Toast.LENGTH_SHORT).show()
+                showToast("需要相机权限才能扫码")
                 finish()
             }
         }
@@ -111,7 +110,7 @@ class ScanCodeActivity : AppCompatActivity() {
             if (granted) {
                 openAlbum()
             } else {
-                Toast.makeText(this, "需要存储权限访问相册", Toast.LENGTH_SHORT).show()
+                showToast("需要存储权限访问相册")
             }
         }
 
@@ -126,7 +125,7 @@ class ScanCodeActivity : AppCompatActivity() {
                         if (resultStr != null) {
                             handleScanSuccess(resultStr)
                         } else {
-                            Toast.makeText(this, "未识别到二维码", Toast.LENGTH_SHORT).show()
+                            showToast("未识别到二维码")
                         }
                     }
                 }
@@ -173,7 +172,7 @@ class ScanCodeActivity : AppCompatActivity() {
             )
         } catch (e: Exception) {
             isFlashOn = false
-            Toast.makeText(this, "当前设备不支持闪光灯", Toast.LENGTH_SHORT).show()
+            showToast("当前设备不支持闪光灯")
         }
     }
 
@@ -289,7 +288,7 @@ class ScanCodeActivity : AppCompatActivity() {
             isFlashOn = false
         }
         // 提示并返回结果
-        Toast.makeText(this, "扫码成功：$result", Toast.LENGTH_SHORT).show()
+        showToast("扫码成功：$result")
         setResult(RESULT_OK, Intent().putExtra("scan_result", result))
         finish()
     }

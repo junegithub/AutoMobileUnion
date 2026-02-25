@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -51,6 +50,7 @@ import com.yt.car.union.car.base.MarkerViewUtil
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.CarInfoViewModel
+import com.yt.car.union.training.user.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -405,14 +405,14 @@ class CarFragment : Fragment(), AMapLocationListener {
                         // 隐藏进度框，关闭输入框，提示成功
                         hideLoadingDialog()
                         inputDialog?.dismiss()
-                        Toast.makeText(requireContext(), "下发成功", Toast.LENGTH_SHORT).show()
+                        context?.showToast("下发成功")
                         // 重置状态
                         sendStateFlow.value = ApiState.Idle
                     }
                     is ApiState.Error -> {
                         // 隐藏进度框，提示错误
                         hideLoadingDialog()
-                        Toast.makeText(requireContext(), "下发失败：${state.msg}", Toast.LENGTH_SHORT).show()
+                        context?.showToast("下发失败：${state.msg}")
                         // 重置状态
                         sendStateFlow.value = ApiState.Idle
                     }
@@ -432,14 +432,14 @@ class CarFragment : Fragment(), AMapLocationListener {
                     is ApiState.Success -> {
                         // 隐藏进度框，关闭输入框，提示成功
                         hideLoadingDialog()
-                        Toast.makeText(requireContext(), "拍照成功", Toast.LENGTH_SHORT).show()
+                        context?.showToast("拍照成功")
                         // 重置状态
                         sendStateFlow.value = ApiState.Idle
                     }
                     is ApiState.Error -> {
                         // 隐藏进度框，提示错误
                         hideLoadingDialog()
-                        Toast.makeText(requireContext(), "拍照失败：${state.msg}", Toast.LENGTH_SHORT).show()
+                        context?.showToast("拍照失败：${state.msg}")
                         // 重置状态
                         sendStateFlow.value = ApiState.Idle
                     }
@@ -594,7 +594,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                 val content = editText.text.toString().trim()
                 // 1. 输入判空逻辑
                 if (content.isEmpty()) {
-                    Toast.makeText(requireContext(), "请输入下发内容", Toast.LENGTH_SHORT).show()
+                    context?.showToast( "请输入下发内容")
                 }
                 carInfoViewModel.sendContent(currentCar?.id!!, content, sendStateFlow)
             }
@@ -713,7 +713,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             locationClient?.startLocation()
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(requireContext(), "定位初始化失败：${e.message}", Toast.LENGTH_SHORT).show()
+            context?.showToast("定位初始化失败：${e.message}")
         }
     }
 
@@ -724,14 +724,10 @@ class CarFragment : Fragment(), AMapLocationListener {
                 // 定位成功
                 val latLng = LatLng(it.latitude, it.longitude)
                 moveMapToLocation(latLng)
-                Toast.makeText(requireContext(), "定位成功：${it.address}", Toast.LENGTH_SHORT).show()
+                context?.showToast( "定位成功：${it.address}")
             } else {
                 // 定位失败
-                Toast.makeText(
-                    requireContext(),
-                    "定位失败：${it.errorInfo} (错误码：${it.errorCode})",
-                    Toast.LENGTH_SHORT
-                ).show()
+                context?.showToast("定位失败：${it.errorInfo} (错误码：${it.errorCode})")
             }
         }
     }
@@ -755,7 +751,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             if (allGranted) {
                 startLocation()
             } else {
-                Toast.makeText(requireContext(), "缺少定位权限，无法获取当前位置", Toast.LENGTH_SHORT).show()
+                context?.showToast( "缺少定位权限，无法获取当前位置")
             }
         }
     }

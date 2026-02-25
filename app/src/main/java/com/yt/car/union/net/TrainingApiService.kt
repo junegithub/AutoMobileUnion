@@ -273,7 +273,7 @@ interface TrainingApiService {
     suspend fun getBeforeEducationCertificate(): Response<TrainingBaseResponse<BeforeEducationCertificateData>>
 
     @GET("api/user/studysafetylist")
-    suspend fun getStudySafetyList(@Query("month") month: String): Response<TrainingBaseResponse<List<SafetyPlan>>>
+    suspend fun getStudySafetyList(@Query("month") month: String): Response<TrainingBaseResponse<StudyDetailData>>
 
     @GET("api/other/carcheck")
     suspend fun getCarCheck(): Response<TrainingBaseResponse<CarCheckData>>

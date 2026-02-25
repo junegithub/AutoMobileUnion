@@ -93,6 +93,7 @@
     <string name="title_learning_certificate">学习证明</string>
     <string name="title_payment">支付详情</string>
     <string name="title_modify">修改信息</string>
+    <string name="title_study_detail">学习详情</string>
 
     <string name="user_name">safe</string>
     <string name="user_type">测试账号</string>

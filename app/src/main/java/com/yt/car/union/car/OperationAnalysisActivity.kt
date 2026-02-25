@@ -1,6 +1,5 @@
 package com.yt.car.union.car
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +14,7 @@ import com.yt.car.union.car.base.PieChartConfig
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.CarInfoViewModel
+import com.yt.car.union.training.user.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -45,7 +45,7 @@ class OperationAnalysisActivity : AppCompatActivity() {
                         }
                     }
                     is ApiState.Error -> {
-                        Toast.makeText(this@OperationAnalysisActivity, "获取数据失败：${state.msg}", Toast.LENGTH_SHORT).show()
+                        showToast("获取数据失败：${state.msg}")
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理

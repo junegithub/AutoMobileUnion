@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.yt.car.union.R
@@ -60,7 +59,7 @@ class ChangePasswordFragment : BaseUserFragment() {
 
                     is ApiState.Error -> {
                         ProgressDialogUtils.dismiss()
-                        Toast.makeText(requireContext(), "修改失败：${uiState.msg}", Toast.LENGTH_SHORT).show()
+                        context?.showToast("修改失败：${uiState.msg}")
                     }
                     is ApiState.Idle -> {
                     }

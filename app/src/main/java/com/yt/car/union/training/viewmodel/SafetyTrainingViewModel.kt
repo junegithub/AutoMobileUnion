@@ -10,7 +10,9 @@ import com.yt.car.union.net.EpidemicViewData
 import com.yt.car.union.net.FaceData
 import com.yt.car.union.net.SafeStudyData
 import com.yt.car.union.net.SafetyListData
+import com.yt.car.union.net.SafetyPlan
 import com.yt.car.union.net.SignViewData
+import com.yt.car.union.net.StudyDetailData
 import com.yt.car.union.net.TrainingOtherInfo
 import com.yt.car.union.net.UploadFileData
 import com.yt.car.union.net.UserLoginData
@@ -161,6 +163,13 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     fun getBeforeEducationCertificate(stateFlow: MutableStateFlow<ApiState<BeforeEducationCertificateData>>) {
         launchRequest(
             block = { vehicleRepository.getBeforeEducationCertificate() },
+            stateFlow
+        )
+    }
+
+    fun getStudySafetyList(month: String, stateFlow: MutableStateFlow<ApiState<StudyDetailData>>) {
+        launchRequest(
+            block = { vehicleRepository.getStudySafetyList(month) },
             stateFlow
         )
     }

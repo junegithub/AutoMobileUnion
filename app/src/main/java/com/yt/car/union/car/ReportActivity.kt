@@ -5,7 +5,6 @@ import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yt.car.union.databinding.ActivityReportBinding
@@ -31,6 +30,7 @@ import com.yt.car.union.net.WarningReportData
 import com.yt.car.union.pages.CalendarDialog
 import com.yt.car.union.car.adapter.ReportAdapter
 import com.yt.car.union.car.adapter.ReportItem
+import com.yt.car.union.training.user.showToast
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
 import java.text.SimpleDateFormat
@@ -352,7 +352,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
                         binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        showToast(state.msg)
                     }
                     ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -380,7 +380,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
                         binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        showToast(state.msg)
                     }
                     ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -408,7 +408,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
                         binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        showToast(state.msg)
                     }
                     ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -436,7 +436,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
                         binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        showToast(state.msg)
                     }
                     ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -464,7 +464,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
                         binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        showToast(state.msg)
                     }
                     ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -492,7 +492,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
                         binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        showToast(state.msg)
                     }
                     ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -520,7 +520,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
                         binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        showToast(state.msg)
                     }
                     ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -548,7 +548,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
                         binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        showToast(state.msg)
                     }
                     ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -576,7 +576,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
                         binding.tvEmptyTip.text = state.msg
-                        Toast.makeText(this@ReportActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        showToast(state.msg)
                     }
                     ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE

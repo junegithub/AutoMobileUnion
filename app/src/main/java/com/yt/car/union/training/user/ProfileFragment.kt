@@ -66,6 +66,7 @@ class ProfileFragment : BaseUserFragment() {
         }
 
         binding.itemLearningDetail.setOnClickListener {
+            getHostActivity().replaceFragment(StudyDetailsFragment())
         }
 
         binding.itemAnnualPayment.setOnClickListener {

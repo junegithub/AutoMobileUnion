@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -297,7 +296,7 @@ class LearningCertificateFragment : BaseUserFragment() {
      * 跳转证书详情页
      */
     private fun navigateToCertificateDetail(certificateId: Int) {
-        Toast.makeText(context, "查看证书 ID: $certificateId", Toast.LENGTH_SHORT).show()
+        context?.showToast("查看证书 ID: $certificateId")
         // 补充证书详情页跳转逻辑
     }
 
@@ -305,7 +304,7 @@ class LearningCertificateFragment : BaseUserFragment() {
      * 跳转打卡记录页
      */
     private fun navigateToCheckRecord(certificateId: Int) {
-        Toast.makeText(context, "查看打卡记录 ID: $certificateId", Toast.LENGTH_SHORT).show()
+        context?.showToast("查看打卡记录 ID: $certificateId")
         // 补充打卡记录页跳转逻辑
     }
 

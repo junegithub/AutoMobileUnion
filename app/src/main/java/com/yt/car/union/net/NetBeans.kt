@@ -1002,6 +1002,10 @@ data class SafetyListData(
     val publicList: List<SafetyPlan>
 )
 
+data class StudyDetailData(
+    val rows: List<SafetyPlan>
+)
+
 data class SafetyPlan(
     val id: Int,
     val name: String,

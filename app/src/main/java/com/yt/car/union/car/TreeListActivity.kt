@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.chad.library.adapter4.QuickAdapterHelper
 import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
@@ -31,6 +30,7 @@ import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.car.base.TreeDataMapper
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.SearchViewModel
+import com.yt.car.union.training.user.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -185,11 +185,11 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
                             }
                         } else {
                             // 无数据
-                            Toast.makeText(this@TreeListActivity, "暂无数据", Toast.LENGTH_SHORT).show()
+                            showToast("暂无数据")
                         }
                     }
                     is ApiState.Error -> {
-                        Toast.makeText(this@TreeListActivity, "加载失败：${state.msg}", Toast.LENGTH_SHORT).show()
+                        showToast("加载失败：${state.msg}")
                     }
                     ApiState.Loading -> {
                     }
@@ -242,7 +242,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
                         binding.tabLayout.visibility = View.VISIBLE
                     }
                     is ApiState.Error -> {
-                        Toast.makeText(this@TreeListActivity, "加载失败：${state.msg}", Toast.LENGTH_SHORT).show()
+                        showToast("加载失败：${state.msg}")
                     }
                     ApiState.Loading -> {
                     }
@@ -290,7 +290,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     }
 
     override fun onLoadError(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        showToast(msg)
     }
 
     // 销毁时取消协程，避免内存泄漏

@@ -10,7 +10,6 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -29,6 +28,7 @@ import com.yt.car.union.util.ProgressDialogUtils
 import com.yt.car.union.util.SPUtils
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.UserViewModel
+import com.yt.car.union.training.user.showToast
 import com.yt.car.union.training.viewmodel.SafetyTrainingViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -102,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
         // 通过Binding对象调用控件（替换kotlinx.android.synthetic）
         binding.btnLogin.setOnClickListener {
             if (!binding.cbAgreement.isChecked) {
-                Toast.makeText(this, R.string.toast_agreement, Toast.LENGTH_SHORT).show()
+                showToast(getString(R.string.toast_agreement))
                 return@setOnClickListener
             }
             val account = binding.etAccount.text.toString().trim()
@@ -110,7 +110,7 @@ class LoginActivity : AppCompatActivity() {
             if (account.isNotEmpty() && pwd.isNotEmpty()) {
                 doLogin(account, pwd)
             } else {
-                Toast.makeText(this, R.string.toast_empty_account, Toast.LENGTH_SHORT).show()
+                showToast(getString(R.string.toast_empty_account))
             }
         }
         binding.contact.setOnClickListener {
@@ -149,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
 
                     is ApiState.Error -> {
                         ProgressDialogUtils.dismiss()
-                        Toast.makeText(this@LoginActivity, "登录失败：${uiState.msg}", Toast.LENGTH_SHORT).show()
+                        showToast("登录失败：${uiState.msg}")
                     }
                     is ApiState.Idle -> {
                     }
@@ -228,7 +228,7 @@ class LoginActivity : AppCompatActivity() {
 
                     is ApiState.Error -> {
                         ProgressDialogUtils.dismiss()
-                        Toast.makeText(this@LoginActivity, "登录失败：${uiState.msg}", Toast.LENGTH_SHORT).show()
+                        showToast("登录失败：${uiState.msg}")
                     }
                     is ApiState.Idle -> {
                     }
@@ -324,9 +324,7 @@ fun Context.openDial(targetPhone: String) {
         }
         startActivity(intent)
     } catch (e: Exception) {
-        Toast.makeText(this,
-            "请检查系统拨号应用是否被禁用/冻结", Toast.LENGTH_LONG
-        ).show()
+        showToast("请检查系统拨号应用是否被禁用/冻结")
         e.printStackTrace()
     }
 }

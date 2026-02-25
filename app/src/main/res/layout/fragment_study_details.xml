@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/fragment_title" />
+
+    <TextView
+        android:id="@+id/tv_selected_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:drawablePadding="@dimen/dp_4"
+        android:layout_margin="@dimen/dp_8"
+        android:drawableEnd="@drawable/ic_arrow_right"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <!-- 5. 空状态提示 -->
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="暂无学习记录"
+        android:textColor="#999999"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_study_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="15dp"/>
+</LinearLayout>
