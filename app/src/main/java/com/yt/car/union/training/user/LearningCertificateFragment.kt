@@ -23,9 +23,9 @@ import com.yt.car.union.training.adapter.BeforeEducationAdapter
 import com.yt.car.union.training.adapter.ContinueEducationAdapter
 import com.yt.car.union.training.adapter.SafetyEducationAdapter
 import com.yt.car.union.training.adapter.StudyProveItem
-import com.yt.car.union.util.TimeUtils
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.training.viewmodel.SafetyTrainingViewModel
+import com.yt.car.union.util.DateUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -107,7 +107,7 @@ class LearningCertificateFragment : BaseUserFragment() {
      */
     private fun initView() {
 
-        binding.tvSelectedMonth.text = TimeUtils.getCurrentYearMonthCompat()
+        binding.tvSelectedMonth.text = DateUtil.getCurrentYearMonthCompat()
         // 初始化共用的RecyclerView
         binding.rvStudyProve.apply {
             layoutManager = LinearLayoutManager(context)
@@ -124,9 +124,9 @@ class LearningCertificateFragment : BaseUserFragment() {
         binding.tvSelectedMonth.setOnClickListener {
             if (currentTabType == StudyProveTabType.SAFETY_EDUCATION) {
                 DatePickerDialog.build()
-                    .setMaxYear(TimeUtils.getCurrentYear())
-                    .setDefaultSelect(TimeUtils.getCurrentYear(), TimeUtils.getCurrentMonth(),
-                        TimeUtils.getCurrentDay())
+                    .setMaxYear(DateUtil.getCurrentYear())
+                    .setDefaultSelect(DateUtil.getCurrentYear(), DateUtil.getCurrentMonth(),
+                        DateUtil.getCurrentDay())
                     .show(object : OnDateSelected() {
                     override fun onSelect(text: String?, year: Int, month: Int, day: Int) {
                         binding.tvSelectedMonth.text = "$year-$month"

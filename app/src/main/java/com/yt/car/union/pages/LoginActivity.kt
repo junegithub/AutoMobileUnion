@@ -23,7 +23,6 @@ import com.yt.car.union.net.LoginData
 import com.yt.car.union.net.LoginRequest
 import com.yt.car.union.net.UserLoginData
 import com.yt.car.union.net.UserLoginRequest
-import com.yt.car.union.util.EventData
 import com.yt.car.union.util.LoginDialogUtils
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.ProgressDialogUtils

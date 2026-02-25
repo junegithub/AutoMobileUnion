@@ -46,8 +46,8 @@ import com.yt.car.union.car.status.DeviceStatusActivity
 import com.yt.car.union.car.adapter.LabelAdapter
 import com.yt.car.union.pages.openDial
 import com.yt.car.union.util.LoginDialogUtils
-import com.yt.car.union.util.EventData
-import com.yt.car.union.util.MarkerViewUtil
+import com.yt.car.union.pages.EventData
+import com.yt.car.union.car.base.MarkerViewUtil
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.CarInfoViewModel

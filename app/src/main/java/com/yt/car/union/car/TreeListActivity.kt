@@ -26,9 +26,9 @@ import com.yt.car.union.car.adapter.CarNumAdapter
 import com.yt.car.union.car.adapter.DynamicTreeAdapter
 import com.yt.car.union.car.adapter.DynamicTreeItemClickListener
 import com.yt.car.union.car.adapter.FilterSpinnerAdapter
-import com.yt.car.union.util.EventData
+import com.yt.car.union.pages.EventData
 import com.yt.car.union.util.PressEffectUtils
-import com.yt.car.union.util.TreeDataMapper
+import com.yt.car.union.car.base.TreeDataMapper
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.SearchViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

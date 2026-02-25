@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yt.car.union.databinding.ItemDynamicTreeBinding
 import com.yt.car.union.net.TreeItem
 import com.yt.car.union.net.TreeNode
-import com.yt.car.union.util.TreeDataMapper
+import com.yt.car.union.car.base.TreeDataMapper
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.SearchViewModel
 import kotlinx.coroutines.CoroutineScope

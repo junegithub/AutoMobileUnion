@@ -1,4 +1,4 @@
-package com.yt.car.union.util;
+package com.yt.car.union.pages;
 
 public class EventData {
     public static final int EVENT_LOGIN = 1;

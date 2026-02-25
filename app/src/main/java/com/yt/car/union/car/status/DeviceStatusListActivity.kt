@@ -16,7 +16,7 @@ import com.yt.car.union.databinding.ActivityDeviceStatusListBinding
 import com.yt.car.union.net.BaseCarInfo
 import com.yt.car.union.net.CarStatusDetailItem
 import com.yt.car.union.car.adapter.StatusAdapter
-import com.yt.car.union.util.EventData
+import com.yt.car.union.pages.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.CarInfoViewModel

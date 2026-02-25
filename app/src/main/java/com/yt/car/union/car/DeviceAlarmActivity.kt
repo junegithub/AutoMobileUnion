@@ -23,7 +23,7 @@ import com.yt.car.union.net.DictMapManager
 import com.yt.car.union.net.VehicleInfo
 import com.yt.car.union.pages.CalendarDialog
 import com.yt.car.union.car.adapter.AlarmAdapter
-import com.yt.car.union.util.EventData
+import com.yt.car.union.pages.EventData
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.car.viewmodel.AlarmViewModel
 import com.yt.car.union.viewmodel.ApiState

@@ -9,8 +9,8 @@ import androidx.appcompat.app.AlertDialog
 import com.yt.car.union.MyApp
 import com.yt.car.union.R
 import com.yt.car.union.databinding.FragmentAccountInfoBinding
+import com.yt.car.union.util.DateUtil
 import com.yt.car.union.util.PressEffectUtils
-import com.yt.car.union.util.TimeUtils
 
 class AccountInfoFragment : BaseUserFragment() {
 
@@ -45,7 +45,7 @@ class AccountInfoFragment : BaseUserFragment() {
         } else {
             binding.accountType.text = "个人用户"
         }
-        binding.accountCreatetime.text = TimeUtils.timestamp2Date(MyApp.trainingUserInfo?.userinfo?.createtime)
+        binding.accountCreatetime.text = DateUtil.timestamp2Date(MyApp.trainingUserInfo?.userinfo?.createtime)
     }
 
     override fun getTitle(): String = getString(R.string.title_account_info)

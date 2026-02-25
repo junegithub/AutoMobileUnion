@@ -6,7 +6,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.yt.car.union.databinding.ItemLabelBinding
 import com.yt.car.union.net.SearchResult
-import com.yt.car.union.util.EventData
+import com.yt.car.union.pages.EventData
 import com.yt.car.union.util.PressEffectUtils
 import org.greenrobot.eventbus.EventBus
 

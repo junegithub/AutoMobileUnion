@@ -1,15 +1,16 @@
-package com.yt.car.union.util
+package com.yt.car.union.car.base
 
 import android.content.Context
-import android.view.View
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.amap.api.maps.model.BitmapDescriptor
 import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.yt.car.union.R
+import com.yt.car.union.car.base.VehicleImageProvider
 
 object MarkerViewUtil {
 
