@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.yt.car.union.MyApp
 import com.yt.car.union.databinding.FragmentTrainingBinding
+import com.yt.car.union.training.safetytraining.SafetyTrainingActivity
 import com.yt.car.union.training.user.UserCenterActivity
 import com.yt.car.union.util.DialogUtils
 import com.yt.car.union.util.PressEffectUtils
@@ -85,7 +86,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                 startActivity(Intent(requireActivity(), UserCenterActivity::class.java))
             }
             binding.trainingHomeLearn.id -> {
-
+                startActivity(Intent(requireActivity(), SafetyTrainingActivity::class.java))
             }
             binding.trainingHomeExamPast.id -> {
 

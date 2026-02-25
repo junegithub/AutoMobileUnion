@@ -8,6 +8,7 @@ import com.yt.car.union.net.DailySafetyOrderData
 import com.yt.car.union.net.EducationCertificate
 import com.yt.car.union.net.EpidemicViewData
 import com.yt.car.union.net.FaceData
+import com.yt.car.union.net.OldSafetyListData
 import com.yt.car.union.net.SafeStudyData
 import com.yt.car.union.net.SafetyListData
 import com.yt.car.union.net.SafetyPlan
@@ -55,10 +56,18 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     }
 
     // 获取安全培训列表
-    fun getSafetyList(page: String?, type: String?,
+    fun getSafetyList(page: Int, type: Int,
                       stateFlow: MutableStateFlow<ApiState<SafetyListData>>) {
         launchRequest(
             block = { vehicleRepository.getSafetyList(page, type) },
+            stateFlow
+        )
+    }
+
+    fun getOldSafetyList(page: Int,
+                      stateFlow: MutableStateFlow<ApiState<OldSafetyListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getOldSafetyList(page) },
             stateFlow
         )
     }

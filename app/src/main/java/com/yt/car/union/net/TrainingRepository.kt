@@ -21,12 +21,12 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun getCompanyList(page: String?, type: String?) = apiService.getCompanyList(page, type)
 
-    suspend fun getSafetyList(page: String?, type: String?) = apiService.getSafetyList(page, type)
+    suspend fun getSafetyList(page: Int, type: Int) = apiService.getSafetyList(page, type)
 
     suspend fun dailySafetyOrderPay(trainingPublicPlanId: String?) =
         apiService.dailySafetyOrderPay(trainingPublicPlanId)
 
-    suspend fun getOldSafetyList(page: String) = apiService.getOldSafetyList(page)
+    suspend fun getOldSafetyList(page: Int) = apiService.getOldSafetyList(page)
 
     suspend fun getCoursewareList(page: String, trainingPublicPlanId: String) =
         apiService.getCoursewareList(page, trainingPublicPlanId)

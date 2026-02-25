@@ -38,8 +38,8 @@ interface TrainingApiService {
 
     @GET("api/user/safetylist")
     suspend fun getSafetyList(
-        @Query("page") page: String?,
-        @Query("type") type: String?
+        @Query("page") page: Int,
+        @Query("type") type: Int
     ): Response<TrainingBaseResponse<SafetyListData>>
 
     @GET("api/dailysafety/orderisPay")
@@ -48,7 +48,7 @@ interface TrainingApiService {
     ): Response<TrainingBaseResponse<DailySafetyOrderData>>
 
     @GET("api/training/oldsafetylist")
-    suspend fun getOldSafetyList(@Query("page") page: String): Response<TrainingBaseResponse<OldSafetyListData>>
+    suspend fun getOldSafetyList(@Query("page") page: Int): Response<TrainingBaseResponse<OldSafetyListData>>
 
     @GET("api/dailysafety/coursewareList")
     suspend fun getCoursewareList(
