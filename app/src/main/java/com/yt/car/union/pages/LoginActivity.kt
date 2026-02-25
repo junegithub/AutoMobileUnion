@@ -29,8 +29,8 @@ import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.ProgressDialogUtils
 import com.yt.car.union.util.SPUtils
 import com.yt.car.union.viewmodel.ApiState
-import com.yt.car.union.viewmodel.car.UserViewModel
-import com.yt.car.union.viewmodel.training.SafetyTrainingViewModel
+import com.yt.car.union.car.viewmodel.UserViewModel
+import com.yt.car.union.training.viewmodel.SafetyTrainingViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus

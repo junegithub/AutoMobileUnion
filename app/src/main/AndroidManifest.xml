@@ -33,13 +33,12 @@
         android:theme="@style/Theme.AutoMobileUnion"
         tools:targetApi="31">
 
-        <!-- 高德地图Key（需要替换为自己的Key） -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="61d6757b325acc419cc37ef20ee962bb"/>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".pages.MainActivity"
             android:theme="@style/Theme.AutoMobileUnion"
             android:launchMode="singleTask"
             android:exported="true">
@@ -50,18 +49,18 @@
         </activity>
 
         <activity android:name=".pages.LoginActivity" />
-        <activity android:name=".pages.car.DeviceAlarmActivity" />
-        <activity android:name=".pages.status.DeviceStatusActivity" />
-        <activity android:name=".pages.car.OperationAnalysisActivity" />
-        <activity android:name=".pages.car.ReportActivity" />
-        <activity android:name=".pages.status.DeviceStatusListActivity" />
-        <activity android:name=".pages.status.ExpireCarActivity" />
-        <activity android:name=".pages.car.ReportAlarmDetailActivity" />
-        <activity android:name=".pages.car.CarInfoActivity" />
-        <activity android:name=".pages.car.OfflineDetailActivity" />
-        <activity android:name=".pages.car.TreeListActivity" />
-        <activity android:name=".pages.training.user.UserCenterActivity" />
-        <activity android:name=".pages.training.user.ScanCodeActivity" />
+        <activity android:name=".car.DeviceAlarmActivity" />
+        <activity android:name="com.yt.car.union.car.status.DeviceStatusActivity" />
+        <activity android:name=".car.OperationAnalysisActivity" />
+        <activity android:name=".car.ReportActivity" />
+        <activity android:name="com.yt.car.union.car.status.DeviceStatusListActivity" />
+        <activity android:name="com.yt.car.union.car.status.ExpireCarActivity" />
+        <activity android:name=".car.ReportAlarmDetailActivity" />
+        <activity android:name=".car.CarInfoActivity" />
+        <activity android:name=".car.OfflineDetailActivity" />
+        <activity android:name=".car.TreeListActivity" />
+        <activity android:name=".training.user.UserCenterActivity" />
+        <activity android:name=".training.user.ScanCodeActivity" />
     </application>
 
 </manifest>
