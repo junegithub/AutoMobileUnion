@@ -19,7 +19,7 @@ interface TrainingApiService {
     suspend fun signView(): Response<TrainingBaseResponse<SignViewData>>
 
     @GET("api/user/info")
-    suspend fun getUserInfo(): Response<TrainingBaseResponse<UserInfoData>>
+    suspend fun getUserInfoSafe(): Response<TrainingBaseResponse<UserInfoData>>
 
     @GET("api/user/userotherinfo")
     suspend fun getUserOtherInfo(): Response<TrainingBaseResponse<TrainingOtherInfo>>

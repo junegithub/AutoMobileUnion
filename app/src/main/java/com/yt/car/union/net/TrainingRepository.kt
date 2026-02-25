@@ -11,7 +11,7 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun signView() = apiService.signView()
 
-    suspend fun getUserInfo() = apiService.getUserInfo()
+    suspend fun getUserInfoSafe() = apiService.getUserInfoSafe()
 
     suspend fun getUserOtherInfo() = apiService.getUserOtherInfo()
 

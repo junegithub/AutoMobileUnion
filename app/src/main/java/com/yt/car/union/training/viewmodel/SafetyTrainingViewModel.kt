@@ -15,6 +15,7 @@ import com.yt.car.union.net.SignViewData
 import com.yt.car.union.net.StudyDetailData
 import com.yt.car.union.net.TrainingOtherInfo
 import com.yt.car.union.net.UploadFileData
+import com.yt.car.union.net.UserInfoData
 import com.yt.car.union.net.UserLoginData
 import com.yt.car.union.net.UserLoginRequest
 import com.yt.car.union.net.UserStudyProveListData
@@ -134,6 +135,14 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     fun getUserOtherInfo(stateFlow: MutableStateFlow<ApiState<TrainingOtherInfo>>) {
         launchRequest(
             block = { vehicleRepository.getUserOtherInfo() },
+            stateFlow
+        )
+    }
+
+    // 获取用户其他信息
+    fun getUserInfoSafe(stateFlow: MutableStateFlow<ApiState<UserInfoData>>) {
+        launchRequest(
+            block = { vehicleRepository.getUserInfoSafe() },
             stateFlow
         )
     }
