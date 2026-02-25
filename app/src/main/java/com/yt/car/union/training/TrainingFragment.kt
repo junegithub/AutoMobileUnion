@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import com.yt.car.union.MyApp
 import com.yt.car.union.databinding.FragmentTrainingBinding
 import com.yt.car.union.training.user.UserCenterActivity
-import com.yt.car.union.util.LoginDialogUtils
+import com.yt.car.union.util.DialogUtils
 import com.yt.car.union.util.PressEffectUtils
 
 class TrainingFragment : Fragment(), View.OnClickListener {
@@ -74,7 +74,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         if (MyApp.isTrainingLogin != true) {
-            LoginDialogUtils.showTrainingLoginPromptDialog(requireActivity())
+            DialogUtils.showTrainingLoginPromptDialog(requireActivity())
             return
         }
         when(v.id) {

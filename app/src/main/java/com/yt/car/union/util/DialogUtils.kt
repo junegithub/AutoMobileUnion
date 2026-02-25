@@ -11,7 +11,7 @@ import com.kongzue.dialogx.dialogs.MessageDialog
 /**
  * 登录弹窗工具类，基于系统AlertDialog实现，可全局复用
  */
-object LoginDialogUtils {
+object DialogUtils {
 
     /**
      * 显示登录提示弹窗
@@ -70,5 +70,9 @@ object LoginDialogUtils {
     fun showPrivacyDlg(context: Context) {
         MessageDialog.show("隐私政策",
             Html.fromHtml(AssetFileReader.readTxtFile(context, "privacy.html"), Html.FROM_HTML_MODE_COMPACT), "确定")
+    }
+
+    fun showAttendRecordsDlg() {
+
     }
 }

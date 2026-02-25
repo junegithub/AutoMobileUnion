@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,20 +16,23 @@ import com.google.android.material.tabs.TabLayout
 import com.kongzue.dialogx.datepicker.DatePickerDialog
 import com.kongzue.dialogx.datepicker.interfaces.OnDateSelected
 import com.yt.car.union.R
+import com.yt.car.union.databinding.DialogCheckinRecordBinding
 import com.yt.car.union.databinding.FragmentLearningCertificateBinding
 import com.yt.car.union.net.BeforeEducationCertificateData
 import com.yt.car.union.net.EducationCertificate
 import com.yt.car.union.net.UserStudyProveListData
+import com.yt.car.union.training.adapter.AvatarGridViewAdapter
 import com.yt.car.union.training.adapter.BeforeEducationAdapter
 import com.yt.car.union.training.adapter.ContinueEducationAdapter
 import com.yt.car.union.training.adapter.SafetyEducationAdapter
 import com.yt.car.union.training.adapter.StudyProveItem
-import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.training.viewmodel.SafetyTrainingViewModel
 import com.yt.car.union.util.DateUtil
+import com.yt.car.union.util.PressEffectUtils
+import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlin.getValue
+
 
 // Tab类型枚举（统一管理Tab标识）
 enum class StudyProveTabType {
@@ -80,23 +85,23 @@ class LearningCertificateFragment : BaseUserFragment() {
      */
     private fun initAdapter() {
         // 安全教育Adapter
-        safetyAdapter = SafetyEducationAdapter { certificateId ->
-            navigateToCertificateDetail(certificateId)
+        safetyAdapter = SafetyEducationAdapter { item ->
+            navigateToCertificateDetail(item)
         }
 
         // 继续教育Adapter
         continueAdapter = ContinueEducationAdapter(
-            onViewCertificate = { certificateId ->
-                navigateToCertificateDetail(certificateId)
+            onViewCertificate = { item ->
+                navigateToCertificateDetail(item)
             },
-            onCheckRecord = { certificateId ->
-                navigateToCheckRecord(certificateId)
+            onCheckRecord = { item ->
+                navigateToCheckRecord(item)
             }
         )
 
         // 岗前培训Adapter
-        beforeAdapter = BeforeEducationAdapter { certificateId ->
-            navigateToCertificateDetail(certificateId)
+        beforeAdapter = BeforeEducationAdapter { item ->
+            navigateToCertificateDetail(item)
         }
     }
 
@@ -181,7 +186,8 @@ class LearningCertificateFragment : BaseUserFragment() {
                                     date = item.starttime,
                                     trainingProject = item.category,
                                     getTime = item.endtime,
-                                    certificateId = index
+                                    certificateId = index,
+                                    urls = item.imgurl
                                 )
                             }
 
@@ -295,17 +301,16 @@ class LearningCertificateFragment : BaseUserFragment() {
     /**
      * 跳转证书详情页
      */
-    private fun navigateToCertificateDetail(certificateId: Int) {
-        context?.showToast("查看证书 ID: $certificateId")
+    private fun navigateToCertificateDetail(item: StudyProveItem) {
+        context?.showToast("查看证书 ID: $item")
         // 补充证书详情页跳转逻辑
     }
 
     /**
      * 跳转打卡记录页
      */
-    private fun navigateToCheckRecord(certificateId: Int) {
-        context?.showToast("查看打卡记录 ID: $certificateId")
-        // 补充打卡记录页跳转逻辑
+    private fun navigateToCheckRecord(item: StudyProveItem) {
+        showCheckinRecordDialog((item as StudyProveItem.ContinueEducationItem).urls)
     }
 
     // ------------------------ 各Tab数据加载 ------------------------
@@ -328,5 +333,21 @@ class LearningCertificateFragment : BaseUserFragment() {
      */
     private fun loadBeforeEducationData() {
         trainingViewModel.getBeforeEducationCertificate(beforeEduStateFlow)
+    }
+
+    // 显示打卡记录弹窗（GridView优化版）
+    private fun showCheckinRecordDialog(urlList: List<String>) {
+        val bind = DialogCheckinRecordBinding.inflate(LayoutInflater.from(requireActivity()))
+
+        // 设置适配器
+        val adapter = AvatarGridViewAdapter(requireActivity(), urlList)
+        bind.gvAvatars.setAdapter(adapter)
+
+        val checkinDlg = AlertDialog.Builder(requireActivity()).setView(bind.root).show()
+
+        PressEffectUtils.setCommonPressEffect(bind.tvConfirm)
+        bind.tvConfirm.setOnClickListener{
+            checkinDlg.dismiss()
+        }
     }
 }

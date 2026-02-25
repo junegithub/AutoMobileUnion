@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yt.car.union.databinding.ItemBeforeEducationBinding
 
 class BeforeEducationAdapter(
-    private val onViewCertificate: (Int) -> Unit
+    private val onViewCertificate: (StudyProveItem) -> Unit
 ) : ListAdapter<StudyProveItem.BeforeEducationItem, BeforeEducationAdapter.ViewHolder>(DiffCallback()) {
 
     class DiffCallback : DiffUtil.ItemCallback<StudyProveItem.BeforeEducationItem>() {
@@ -36,7 +36,7 @@ class BeforeEducationAdapter(
             binding.tvGetTime.text = "获得日期：${item.getTime}"
 
             binding.tvViewCertificate.setOnClickListener {
-                onViewCertificate(item.certificateId)
+                onViewCertificate(item)
             }
         }
     }

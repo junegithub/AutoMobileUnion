@@ -15,7 +15,8 @@ sealed class StudyProveItem {
         val date: String,
         val trainingProject: String,
         val getTime: String,
-        val certificateId: Int
+        val certificateId: Int,
+        val urls: List<String>
     ) : StudyProveItem()
 
     // 岗前培训Item

@@ -44,7 +44,7 @@ import com.yt.car.union.net.SearchResult
 import com.yt.car.union.car.status.DeviceStatusActivity
 import com.yt.car.union.car.adapter.LabelAdapter
 import com.yt.car.union.pages.openDial
-import com.yt.car.union.util.LoginDialogUtils
+import com.yt.car.union.util.DialogUtils
 import com.yt.car.union.pages.EventData
 import com.yt.car.union.car.base.MarkerViewUtil
 import com.yt.car.union.util.PressEffectUtils
@@ -210,7 +210,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             if (MyApp.isLogin == true) {
                 startActivity(Intent(requireContext(), ReportActivity::class.java))
             } else {
-                LoginDialogUtils.showLoginPromptDialog(requireContext())
+                DialogUtils.showLoginPromptDialog(requireContext())
             }
         }
         binding.btnAllCars.setOnClickListener {
@@ -219,7 +219,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                 intent.putExtra(TreeListActivity.KEY_CAR_NUM, totalCars)
                 startActivity(intent)
             } else {
-                LoginDialogUtils.showLoginPromptDialog(requireContext())
+                DialogUtils.showLoginPromptDialog(requireContext())
             }
         }
         binding.tvSearch.setOnClickListener {
@@ -229,7 +229,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                 intent.putExtra(TreeListActivity.KEY_CAR_SEARCH, true)
                 startActivity(intent)
             } else {
-                LoginDialogUtils.showLoginPromptDialog(requireContext())
+                DialogUtils.showLoginPromptDialog(requireContext())
             }
         }
 

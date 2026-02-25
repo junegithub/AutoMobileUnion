@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yt.car.union.databinding.ItemSafetyEducationBinding
 
 class SafetyEducationAdapter(
-    private val onViewCertificate: (Int) -> Unit // 查看证书点击回调
+    private val onViewCertificate: (StudyProveItem) -> Unit // 查看证书点击回调
 ) : ListAdapter<StudyProveItem.SafetyEducationItem, SafetyEducationAdapter.ViewHolder>(DiffCallback()) {
 
     // DiffUtil：优化列表刷新
@@ -39,7 +39,7 @@ class SafetyEducationAdapter(
 
             // 查看证书点击事件
             binding.tvViewCertificate.setOnClickListener {
-                onViewCertificate(item.certificateId)
+                onViewCertificate(item)
             }
         }
     }

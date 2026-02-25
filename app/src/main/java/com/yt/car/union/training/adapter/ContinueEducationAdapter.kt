@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yt.car.union.databinding.ItemContinueEducationBinding
 
 class ContinueEducationAdapter(
-    private val onViewCertificate: (Int) -> Unit,
-    private val onCheckRecord: (Int) -> Unit
+    private val onViewCertificate: (StudyProveItem.ContinueEducationItem) -> Unit,
+    private val onCheckRecord: (StudyProveItem.ContinueEducationItem) -> Unit
 ) : ListAdapter<StudyProveItem.ContinueEducationItem, ContinueEducationAdapter.ViewHolder>(DiffCallback()) {
 
     class DiffCallback : DiffUtil.ItemCallback<StudyProveItem.ContinueEducationItem>() {
@@ -37,10 +37,10 @@ class ContinueEducationAdapter(
             binding.tvGetTime.text = "获得日期：${item.getTime}"
 
             binding.tvViewCertificate.setOnClickListener {
-                onViewCertificate(item.certificateId)
+                onViewCertificate(item)
             }
             binding.tvCheckRecord.setOnClickListener {
-                onCheckRecord(item.certificateId)
+                onCheckRecord(item)
             }
         }
     }

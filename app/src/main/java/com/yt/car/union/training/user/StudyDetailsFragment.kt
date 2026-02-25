@@ -14,7 +14,6 @@ import com.kongzue.dialogx.datepicker.DatePickerDialog
 import com.kongzue.dialogx.datepicker.interfaces.OnDateSelected
 import com.yt.car.union.R
 import com.yt.car.union.databinding.FragmentStudyDetailsBinding
-import com.yt.car.union.net.SafetyPlan
 import com.yt.car.union.net.StudyDetailData
 import com.yt.car.union.training.adapter.StudyDetailAdapter
 import com.yt.car.union.viewmodel.ApiState

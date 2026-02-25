@@ -22,7 +22,7 @@ import com.yt.car.union.net.LoginData
 import com.yt.car.union.net.LoginRequest
 import com.yt.car.union.net.UserLoginData
 import com.yt.car.union.net.UserLoginRequest
-import com.yt.car.union.util.LoginDialogUtils
+import com.yt.car.union.util.DialogUtils
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.util.ProgressDialogUtils
 import com.yt.car.union.util.SPUtils
@@ -281,7 +281,7 @@ class LoginActivity : AppCompatActivity() {
         // 设置「服务协议」可点击
         spannableString.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
-                LoginDialogUtils.showTermsDlg(this@LoginActivity)
+                DialogUtils.showTermsDlg(this@LoginActivity)
             }
 
             override fun updateDrawState(ds: TextPaint) {
@@ -301,7 +301,7 @@ class LoginActivity : AppCompatActivity() {
             override fun onClick(widget: View) {
                 widget.clearFocus()
                 // 点击隐私政策的逻辑（如跳转到隐私政策页面）
-                LoginDialogUtils.showPrivacyDlg(this@LoginActivity)
+                DialogUtils.showPrivacyDlg(this@LoginActivity)
             }
         }, privacyStart, privacyEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
