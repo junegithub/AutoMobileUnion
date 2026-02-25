@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -27,6 +26,7 @@ import com.yt.car.union.training.adapter.ContinueEducationAdapter
 import com.yt.car.union.training.adapter.SafetyEducationAdapter
 import com.yt.car.union.training.adapter.StudyProveItem
 import com.yt.car.union.training.viewmodel.SafetyTrainingViewModel
+import com.yt.car.union.training.widget.CertificateGenerator
 import com.yt.car.union.util.DateUtil
 import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
@@ -54,6 +54,10 @@ class LearningCertificateFragment : BaseUserFragment() {
     private lateinit var safetyAdapter: SafetyEducationAdapter
     private lateinit var continueAdapter: ContinueEducationAdapter
     private lateinit var beforeAdapter: BeforeEducationAdapter
+    private lateinit var certificateGenerator: CertificateGenerator
+
+    private var saftyEduPlatform: String = ""
+    private var beforeEduPlatform: String = ""
 
     // 当前选中的Tab类型
     private var currentTabType: StudyProveTabType = StudyProveTabType.SAFETY_EDUCATION
@@ -148,13 +152,15 @@ class LearningCertificateFragment : BaseUserFragment() {
 
                     is ApiState.Success -> {
                         uiState.data?.let {
+                            saftyEduPlatform = getPlatform(uiState.data.ischange)
                             val items = uiState.data.plan.flatMap { plan ->
                                 plan.list.map { certificate ->
                                     StudyProveItem.SafetyEducationItem(
                                         month = plan.month,
                                         trainingProject = certificate.title,
                                         getTime = certificate.getTime,
-                                        certificateId = certificate.id
+                                        certificateId = certificate.id,
+                                        originData = certificate
                                     )
                                 }
                             }
@@ -187,7 +193,7 @@ class LearningCertificateFragment : BaseUserFragment() {
                                     trainingProject = item.category,
                                     getTime = item.endtime,
                                     certificateId = index,
-                                    urls = item.imgurl
+                                    originData = item
                                 )
                             }
 
@@ -212,12 +218,14 @@ class LearningCertificateFragment : BaseUserFragment() {
 
                     is ApiState.Success -> {
                         uiState.data?.let {
+                            beforeEduPlatform = getPlatform(uiState.data.ischange)
                             val items = listOf(
                                 StudyProveItem.BeforeEducationItem(
                                     month = uiState.data.date,
                                     totalHours = uiState.data.ksnum,
                                     getTime = uiState.data.addtime,
-                                    certificateId = uiState.data.ksnum
+                                    certificateId = uiState.data.ksnum,
+                                    originData = uiState.data
                                 )
                             )
 
@@ -234,6 +242,8 @@ class LearningCertificateFragment : BaseUserFragment() {
                 }
             }
         }
+
+        certificateGenerator = CertificateGenerator(requireActivity())
     }
 
     /**
@@ -302,15 +312,22 @@ class LearningCertificateFragment : BaseUserFragment() {
      * 跳转证书详情页
      */
     private fun navigateToCertificateDetail(item: StudyProveItem) {
-        context?.showToast("查看证书 ID: $item")
-        // 补充证书详情页跳转逻辑
+        if (item is StudyProveItem.SafetyEducationItem) {
+            certificateGenerator.showBasicCertificate(
+                item.originData,
+                null, saftyEduPlatform)
+        } else if (item is StudyProveItem.ContinueEducationItem) {
+            certificateGenerator.showContinuingEducationCertificate(item.originData, saftyEduPlatform)
+        } else if (item is StudyProveItem.BeforeEducationItem) {
+            certificateGenerator.showBasicCertificate(null, item.originData,  beforeEduPlatform)
+        }
     }
 
     /**
      * 跳转打卡记录页
      */
     private fun navigateToCheckRecord(item: StudyProveItem) {
-        showCheckinRecordDialog((item as StudyProveItem.ContinueEducationItem).urls)
+        showCheckinRecordDialog((item as StudyProveItem.ContinueEducationItem).originData.imgurl)
     }
 
     // ------------------------ 各Tab数据加载 ------------------------
@@ -348,6 +365,14 @@ class LearningCertificateFragment : BaseUserFragment() {
         PressEffectUtils.setCommonPressEffect(bind.tvConfirm)
         bind.tvConfirm.setOnClickListener{
             checkinDlg.dismiss()
+        }
+    }
+
+    private fun getPlatform(ischange: Int) : String {
+        return if (ischange == 1) {
+            "江西南网科技有限公司"
+        } else {
+            "山东易车联电子科技有限公司"
         }
     }
 }

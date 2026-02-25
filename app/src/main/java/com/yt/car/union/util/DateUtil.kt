@@ -131,4 +131,24 @@ object DateUtil {
             Calendar.getInstance(Locale.CHINA).get(Calendar.DAY_OF_MONTH)
         }
     }
+
+    fun extractYMDFromDateStr(dateStr: String): Triple<Int, Int, Int> {
+        return try {
+            // 按 "-" 分割字符串
+            val parts = dateStr.split("-")
+            // 确保分割后有3个部分（年、月、日）
+            if (parts.size != 3) {
+                Triple(0, 0, 0)
+            } else {
+                val year = parts[0].toInt()
+                val month = parts[1].toInt()
+                val day = parts[2].toInt()
+                Triple(year, month, day)
+            }
+        } catch (e: Exception) {
+            // 捕获转换异常（如非数字、格式错误）
+            e.printStackTrace()
+            Triple(0, 0, 0)
+        }
+    }
 }
