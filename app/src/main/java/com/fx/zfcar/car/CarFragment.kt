@@ -95,7 +95,6 @@ class CarFragment : Fragment(), AMapLocationListener {
     private val searListStateFlow = MutableStateFlow<ApiState<List<SearchResult>>>(ApiState.Idle)
     private val addSearchStateFlow = MutableStateFlow<ApiState<Int>>(ApiState.Idle)
     private val shareLocationStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
-    private val trackInfoStateFlow = MutableStateFlow<ApiState<TrackData>>(ApiState.Idle)
 
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
 
@@ -124,7 +123,6 @@ class CarFragment : Fragment(), AMapLocationListener {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
-    private lateinit var timeFilterHelper: TimeFilterHelper
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -237,7 +235,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             }
         }
         binding.btnAllCars.setOnClickListener {
-            if (MyApp.Companion.isLogin == true) {
+            if (MyApp.isLogin == true) {
                 val intent = Intent(requireContext(), TreeListActivity::class.java)
                 intent.putExtra(TreeListActivity.KEY_CAR_NUM, totalCars)
                 startActivity(intent)
@@ -246,7 +244,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             }
         }
         binding.tvSearch.setOnClickListener {
-            if (MyApp.Companion.isLogin == true) {
+            if (MyApp.isLogin == true) {
                 val intent = Intent(requireContext(), TreeListActivity::class.java)
                 intent.putExtra(TreeListActivity.KEY_CAR_NUM, totalCars)
                 intent.putExtra(TreeListActivity.KEY_CAR_SEARCH, true)
@@ -310,8 +308,10 @@ class CarFragment : Fragment(), AMapLocationListener {
                 } else if (tab.position == 1) {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
                     binding.rootCarDetail.rootMore.root.visibility = View.GONE
-                    binding.rootCarDetail.trackItemContainer.visibility = View.VISIBLE
-                    timeFilterHelper.bindView(binding.rootCarDetail.trackItemContainer)
+                    val intent = Intent(requireContext(), TrackPlayActivity::class.java)
+                    intent.putExtra(TrackPlayActivity.KEY_CAR_ID, currentRealTimeAddress?.carinfo?.id)
+                    startActivity(intent)
+
                 } else if (tab.position == 2) {
 
                 } else if (tab.position == 3) {
@@ -337,19 +337,6 @@ class CarFragment : Fragment(), AMapLocationListener {
         binding.plateRecycler.adapter = labelAdapter
         binding.plateRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         updateViewLoginState()
-
-        timeFilterHelper = TimeFilterHelper(requireContext()) { start, end ->
-            if (start == -1L && end == -1L) {
-                // 取消操作
-
-            } else {
-                // 确定操作
-                carInfoViewModel.getTrackInfo(
-                    currentRealTimeAddress?.carinfo?.id!!.toInt(),
-                    DateUtil.timestamp2Date(end), true, true,
-                    DateUtil.timestamp2Date(start), trackInfoStateFlow)
-            }
-        }
 
         // 5. 观察UI状态变化，刷新UI（lifecycleScope自动绑定Activity生命周期）
         lifecycleScope.launch {

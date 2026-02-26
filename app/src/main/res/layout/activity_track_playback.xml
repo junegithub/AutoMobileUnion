@@ -9,336 +9,330 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- 轨迹信息卡片 -->
+
     <LinearLayout
-        android:id="@+id/track_info_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_32"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/dp_16"
+        android:paddingEnd="@dimen/dp_16">
+
+        <ImageView
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:background="@drawable/bg_circle"
+            android:scaleType="centerInside"
+            android:src="@drawable/arrow_back" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:text="轨迹回放"
+            android:visibility="gone"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+        <!-- 分享按钮 -->
+        <Button
+            android:id="@+id/btn_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="分享" />
+    </LinearLayout>
+
+    <!-- 停车点显示开关 -->
+    <Switch
+        android:id="@+id/switch_show_parking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="end"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="16dp"
+        android:checked="true"
+        android:text="停车点" />
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_gravity="bottom"
-        android:background="@android:color/white"
+        android:background="@drawable/bg_bottom_sheet"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:elevation="8dp"
-        android:layout_margin="16dp"
-        android:radius="8dp">
+        android:padding="15dp">
 
-        <!-- 车辆信息 -->
+        <!-- 时间选择标签 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/darker_gray"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:radius="12dp">
+
+            <TextView
+                android:id="@+id/tv_5min"
+                android:layout_width="40dp"
+                android:layout_height="24dp"
+                android:background="@android:color/holo_blue_light"
+                android:gravity="center"
+                android:radius="10dp"
+                android:text="5分钟"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_15min"
+                android:layout_width="40dp"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:radius="10dp"
+                android:text="15分钟"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
+        <!-- 1. 车牌号 -->
+        <TextView
+            android:id="@+id/tv_car_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="鲁F726SH"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+
+        <!-- 2. 第一行数据：速度 + GPS状态 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
+            android:layout_marginTop="@dimen/dp_8"
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_speed"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:text="速度:0.0Km/h"
+                android:textColor="#333333"
+                android:textSize="12sp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="车牌号"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/car_num"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="鲁FD89980"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black"
-                    android:fontFamily="sans-serif-medium" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_gps_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="所属公司"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/car_company"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="烟台芝罘区埃安汽车服务有限公司"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black"
-                    android:maxLines="1"
-                    android:ellipsize="end" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="联系人"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/contacts"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="臧卫刚"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
+                android:gravity="right"
+                android:text="GPS状态:ACC开;定位;"
+                android:textColor="#333333"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- 轨迹统计信息 -->
+        <!-- 3. 第二行数据：定位时间 + 通讯时间 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="4"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/dp_8"
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_location_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:text="定位时间:2026-02-26 03:26:48"
+                android:textColor="#333333"
+                android:textSize="12sp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="总里程"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/total_mileage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="14.20Km"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black"
-                    android:fontFamily="sans-serif-medium" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_communication_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="平均速度"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/avg_speed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="35.62Km/h"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black"
-                    android:fontFamily="sans-serif-medium" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="最大速度"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/max_speed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="75.90Km/h"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black"
-                    android:fontFamily="sans-serif-medium" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="行驶时间"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/drive_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="23分钟55秒"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black"
-                    android:fontFamily="sans-serif-medium" />
-            </LinearLayout>
+                android:gravity="right"
+                android:text="通讯时间:2026-02-26 03:26:50"
+                android:textColor="#333333"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- 当前状态信息 -->
+        <!-- 4. 起始位置 -->
+        <TextView
+            android:id="@+id/tv_start_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="起始位置:山东省,烟台市,蓬莱市,南环路(北37米),十里埠村(南247米)"
+            android:textColor="#333333"
+            android:textSize="12sp" />
+
+        <!-- 5. 结束位置 -->
+        <TextView
+            android:id="@+id/tv_end_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="结束位置:山东省,潍坊市,诸城市,S329(北104米),李月平诊所(北63米)"
+            android:textColor="#333333"
+            android:textSize="12sp" />
+
+        <!-- 6. 开始时间 -->
+        <TextView
+            android:id="@+id/tv_start_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="开始时间:2026-02-26 00:00:00"
+            android:textColor="#333333"
+            android:textSize="12sp" />
+
+        <!-- 7. 结束时间 -->
+        <TextView
+            android:id="@+id/tv_end_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="结束时间:2026-02-26 23:59:59"
+            android:textColor="#333333"
+            android:textSize="12sp" />
+
+        <!-- 8. 第三行数据：行车时长 + 最高时速 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_driving_duration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="行车时长:6小时34分钟8秒"
+                android:textColor="#333333"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_max_speed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="最高时速:120.00Km/h"
+                android:textColor="#333333"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 9. 第四行数据：停车时长 + 平均时速 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_parking_duration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="停车时长:17小时25分钟50秒"
+                android:textColor="#333333"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_avg_speed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="平均时速:60.80Km/h"
+                android:textColor="#333333"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 10. 行驶总里程 -->
+        <TextView
+            android:id="@+id/tv_total_mileage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="行驶总里程:399.40Km"
+            android:textColor="#333333"
+            android:textSize="12sp" />
+
+        <!-- 11. 进度条区域 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/dp_8">
+
+            <!-- 暂停图标 -->
+            <ImageView
+                android:id="@+id/iv_play_pause"
+                android:layout_width="@dimen/dp_32"
+                android:layout_height="@dimen/dp_32"
+                android:src="@drawable/track_pause" />
+
+            <!-- 进度条 -->
+            <SeekBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginStart="@dimen/dp_8"
+                android:thumb="@drawable/ic_huoche_xingshi"
+                android:max="100"
+                android:progress="50" />
+        </LinearLayout>
+        <!-- 播放速度控制 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/darker_gray"
             android:orientation="horizontal"
-            android:weightSum="4"
-            android:layout_marginTop="12dp">
+            android:radius="12dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_speed_slow"
+                android:layout_width="40dp"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:radius="10dp"
+                android:text="慢"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="停留时间"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
+            <TextView
+                android:id="@+id/tv_speed_normal"
+                android:layout_width="40dp"
+                android:layout_height="24dp"
+                android:background="@android:color/holo_blue_light"
+                android:gravity="center"
+                android:radius="10dp"
+                android:text="正常"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
 
-                <TextView
-                    android:id="@+id/stop_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="36分钟4秒"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black"
-                    android:fontFamily="sans-serif-medium" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="当前时间"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/current_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2026-02-10 14:51:56"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="当前速度"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/current_speed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="0.0Km/h"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black"
-                    android:fontFamily="sans-serif-medium" />
-            </LinearLayout>
-
-            <!-- 控制按钮区域 -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <!-- 播放时间选择 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginBottom="4dp">
-
-                    <Button
-                        android:id="@+id/btn_5min"
-                        android:layout_width="40dp"
-                        android:layout_height="24dp"
-                        android:text="5分钟"
-                        android:textSize="10sp"
-                        android:background="@android:color/holo_blue_light"
-                        android:textColor="@android:color/white"
-                        android:layout_marginRight="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_15min"
-                        android:layout_width="40dp"
-                        android:layout_height="24dp"
-                        android:text="15分钟"
-                        android:textSize="10sp"
-                        android:background="@android:color/darker_gray"
-                        android:textColor="@android:color/white" />
-                </LinearLayout>
-
-                <!-- 播放控制按钮 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <Button
-                        android:id="@+id/btn_play"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/ic_play"
-                        android:layout_marginRight="8dp" />
-
-                    <Button
-                        android:id="@+id/btn_pause"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/ic_pause"
-                        android:layout_marginRight="8dp" />
-
-                    <Button
-                        android:id="@+id/btn_reset"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/ic_reset" />
-                </LinearLayout>
-            </LinearLayout>
+            <TextView
+                android:id="@+id/tv_speed_fast"
+                android:layout_width="40dp"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:radius="10dp"
+                android:text="快"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
+    <FrameLayout
+        android:id="@+id/time_choose_container"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </FrameLayout>
