@@ -37,6 +37,13 @@
             android:name="com.amap.api.v2.apikey"
             android:value="61d6757b325acc419cc37ef20ee962bb"/>
 
+        <!-- 微信分享必备配置 -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
         <activity
             android:name=".pages.MainActivity"
             android:theme="@style/Theme.AutoMobileUnion"
@@ -49,16 +56,19 @@
         </activity>
 
         <activity android:name=".pages.LoginActivity" />
+
         <activity android:name=".car.DeviceAlarmActivity" />
-        <activity android:name="com.yt.car.union.car.status.DeviceStatusActivity" />
+        <activity android:name=".car.status.DeviceStatusActivity" />
         <activity android:name=".car.OperationAnalysisActivity" />
         <activity android:name=".car.ReportActivity" />
-        <activity android:name="com.yt.car.union.car.status.DeviceStatusListActivity" />
-        <activity android:name="com.yt.car.union.car.status.ExpireCarActivity" />
+        <activity android:name=".car.status.DeviceStatusListActivity" />
+        <activity android:name=".car.status.ExpireCarActivity" />
         <activity android:name=".car.ReportAlarmDetailActivity" />
         <activity android:name=".car.CarInfoActivity" />
         <activity android:name=".car.OfflineDetailActivity" />
         <activity android:name=".car.TreeListActivity" />
+        <activity android:name=".car.ActivityNavi" />
+
         <activity android:name=".training.user.UserCenterActivity" />
         <activity android:name=".training.user.ScanCodeActivity" />
         <activity android:name=".training.safetytraining.SafetyTrainingActivity" />

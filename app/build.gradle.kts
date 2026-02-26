@@ -21,6 +21,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders["WX_APPID"] = "wx2e369872d915263d"
     }
 
     buildTypes {
@@ -95,6 +97,9 @@ dependencies {
 
     implementation("com.github.kongzue.DialogX:DialogX:0.0.51.beta1")
     implementation("com.github.kongzue.DialogXSample:DatePicker:0.0.14")
+
+    // 微信SDK（通过jcenter，或下载官方aar包）
+    implementation("com.tencent.mm.opensdk:wechat-sdk-android:6.8.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

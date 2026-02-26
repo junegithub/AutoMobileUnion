@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -30,6 +31,11 @@ import com.amap.api.maps.model.Marker
 import com.amap.api.maps.model.MarkerOptions
 import com.amap.api.maps.model.MyLocationStyle
 import com.google.android.material.tabs.TabLayout
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject
+import com.tencent.mm.opensdk.openapi.IWXAPI
+import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import com.yt.car.union.pages.LoginActivity
 import com.yt.car.union.MyApp
 import com.yt.car.union.R
@@ -51,11 +57,14 @@ import com.yt.car.union.util.PressEffectUtils
 import com.yt.car.union.viewmodel.ApiState
 import com.yt.car.union.car.viewmodel.CarInfoViewModel
 import com.yt.car.union.training.user.showToast
+import com.yt.car.union.util.Constant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.net.URLEncoder
+import java.util.Calendar
 import kotlin.getValue
 
 /**
@@ -80,8 +89,14 @@ class CarFragment : Fragment(), AMapLocationListener {
     private val takePhotoStateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
     private val searListStateFlow = MutableStateFlow<ApiState<List<SearchResult>>>(ApiState.Idle)
     private val addSearchStateFlow = MutableStateFlow<ApiState<Int>>(ApiState.Idle)
+    private val shareLocationStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
 
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
+
+    // 微信API实例
+    private lateinit var wxApi: IWXAPI
+
+    // 微信APP_ID（替换成你的实际ID）
 
     private var phone: String? = null
     private var totalCars = 1
@@ -90,6 +105,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     private var inputDialog: AlertDialog? = null
     private var loadingDialog: AlertDialog? = null // 进度提示框
     private var currentCar: MapPositionItem? = null
+    private var currentRealTimeAddress: RealTimeAddressData? = null
 
     private var isAnimating = false // 防止相机动画循环触发
     private val markerList = mutableListOf<Marker>()
@@ -250,10 +266,14 @@ class CarFragment : Fragment(), AMapLocationListener {
             }
         }
         binding.rootCarDetail.rootMore.tvWechat.setOnClickListener {
-
+            carInfoViewModel.shareLastPosition(currentRealTimeAddress?.carinfo?.id?.toLong()!!, shareLocationStateFlow)
         }
         binding.rootCarDetail.rootMore.tvNavigation.setOnClickListener {
-
+            val intent = Intent(requireContext(), ActivityNavi::class.java)
+            intent.putExtra(ActivityNavi.KEY_ADDRESS, currentRealTimeAddress?.address)
+            intent.putExtra(ActivityNavi.KEY_LAT, currentRealTimeAddress?.carinfo?.latitude)
+            intent.putExtra(ActivityNavi.KEY_LON, currentRealTimeAddress?.carinfo?.longitude)
+            startActivity(intent)
         }
         binding.rootCarDetail.rootMore.tvSendtext.setOnClickListener {
             showInputDialog()
@@ -284,6 +304,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                 } else if (tab.position == 2) {
 
                 } else if (tab.position == 3) {
+
                 } else if (tab.position == 4) {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
                     binding.rootCarDetail.rootMore.root.visibility = View.VISIBLE
@@ -295,6 +316,8 @@ class CarFragment : Fragment(), AMapLocationListener {
     }
 
     private fun initView() {
+        // 初始化微信API
+        initWxApi()
         // 初始化地图核心逻辑
         initAmap()
         initListener()
@@ -470,7 +493,36 @@ class CarFragment : Fragment(), AMapLocationListener {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            shareLocationStateFlow.collect {
+                when (it) {
+                    is ApiState.Loading -> {
+                        // 加载中：显示进度条，隐藏其他视图
+                    }
+                    is ApiState.Success -> {
+                        it.data?.let { token -> shareToWeChat(token) }
+                    }
+                    is ApiState.Error -> {
+                        // 失败：显示错误信息，隐藏其他视图
+                    }
+                    is ApiState.Idle -> {
+                        // 初始状态，无需处理
+                    }
+                }
+            }
+        }
     }
+
+    /**
+     * 初始化微信API
+     */
+    private fun initWxApi() {
+        wxApi = WXAPIFactory.createWXAPI(requireContext(), Constant.WX_APP_ID, true)
+        // 将应用注册到微信
+        wxApi.registerApp(Constant.WX_APP_ID)
+    }
+
     fun loadCarStatus() {
         carInfoViewModel.getMapPositions(150, carsStateFlow)
         carInfoViewModel.getSearchHistory(searListStateFlow)
@@ -545,6 +597,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     }
 
     private fun refreshRealAddressCarDetails(realTimeAddress: RealTimeAddressData?) {
+        currentRealTimeAddress = realTimeAddress
         binding.rootCarDetail.tabLayout.getTabAt(0)?.select()
         val realTimeCarInfo = realTimeAddress?.carinfo
         binding.rootCarDetail.root.visibility = View.VISIBLE
@@ -753,6 +806,93 @@ class CarFragment : Fragment(), AMapLocationListener {
             } else {
                 context?.showToast( "缺少定位权限，无法获取当前位置")
             }
+        }
+    }
+
+    /**
+     * 核心分享逻辑（对应原JS代码）
+     * @param token 要分享的token
+     */
+    private fun shareToWeChat(token: String) {
+        // 1. 编码token（对应JS的encodeURIComponent）
+        val encodedToken = try {
+            URLEncoder.encode(token, "UTF-8")
+        } catch (e: Exception) {
+            context?.showToast("Token编码失败")
+            return
+        }
+
+        // 2. 计算5分钟后的时间戳（对应JS的date.setMinutes +5）
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.MINUTE, 5) // 加5分钟
+        val endTime = calendar.timeInMillis // 毫秒级时间戳
+        val currentTime = System.currentTimeMillis() // 当前时间戳（对应JS的date.getTime()）
+
+        // 打印时间戳（对应JS的console.log）
+        println("当前时间戳：$currentTime")
+        println("5分钟后时间戳：$endTime")
+
+        // 3. 拼接分享链接
+        val shareUrl = "https://www.ezbeidou.com/share?token=$encodedToken&endTime=$endTime"
+        println("分享链接：$shareUrl")
+
+        // 4. 检查微信是否安装
+        if (!wxApi.isWXAppInstalled) {
+            context?.showToast("未安装微信")
+            return
+        }
+
+        // 5. 构建微信分享对象
+        // 5.1 创建网页对象
+        val webpageObject = WXWebpageObject().apply {
+            webpageUrl = shareUrl
+        }
+
+        // 5.2 创建媒体消息
+        val msg = WXMediaMessage(webpageObject).apply {
+            title = "实时位置" // 分享标题
+            description = currentRealTimeAddress?.carinfo?.carnum // 分享摘要
+            // 注意：微信分享图片不能直接用网络URL，需先下载为Bitmap
+            thumbData = getDefaultThumbnail() // 缩略图（必填）
+        }
+
+        // 5.3 创建发送请求
+        val req = SendMessageToWX.Req().apply {
+            transaction = "webpage_share_${System.currentTimeMillis()}" // 唯一标识
+            message = msg
+            scene = SendMessageToWX.Req.WXSceneSession // 分享到微信会话（对应JS的WXSceneSession）
+        }
+
+        // 6. 发送分享请求
+        val result = wxApi.sendReq(req)
+        if (!result) {
+            context?.showToast("分享请求发送失败")
+        }
+    }
+
+    /**
+     * 获取默认分享缩略图（微信分享必填）
+     * 备注：如需使用原代码的网络图片，需先下载Bitmap再转byte[]
+     */
+    private fun getDefaultThumbnail(): ByteArray? {
+        return try {
+            // 简化方案：使用应用图标作为缩略图
+            val drawable = resources.getDrawable(R.drawable.icon_logo)
+            val bitmap = Bitmap.createBitmap(
+                drawable.intrinsicWidth,
+                drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = android.graphics.Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+
+            // 压缩Bitmap为byte[]（微信要求小于32KB）
+            val baos = java.io.ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 80, baos)
+            baos.toByteArray()
+        } catch (e: Exception) {
+            null
         }
     }
 

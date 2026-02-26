@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 高德地图容器 -->
+    <com.amap.api.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 地址文案展示 -->
+        <TextView
+            android:id="@+id/tvTargetAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="山东省烟台市蓬莱市山东路"/>
+
+        <TextView
+            android:id="@+id/tvTargetAddressDesp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="点击按钮选择导航应用前往"
+            android:textColor="@color/gray_600"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_back"
+        android:src="@drawable/arrow_back"
+        android:scaleType="centerInside"
+        android:background="@drawable/bg_circle"
+        android:layout_marginTop="@dimen/dp_32"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_width="@dimen/dp_32"
+        android:layout_height="@dimen/dp_32" />
+
+    <!-- 导航按钮（居中 + 圆角 + 渐变背景） -->
+    <ImageView
+        android:id="@+id/btnNavigate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/btn_navigation"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/dp_16"
+        app:tint="@color/blue" />
+</FrameLayout>

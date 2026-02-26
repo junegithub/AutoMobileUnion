@@ -5,15 +5,13 @@ import com.yt.car.union.net.CarInfo
 import com.yt.car.union.net.CarStatusDetailItem
 import com.yt.car.union.net.CarStatusListData
 import com.yt.car.union.net.DashboardInfoData
-import com.yt.car.union.net.LeakReportData
 import com.yt.car.union.net.MapPositionData
-import com.yt.car.union.net.OilAddReportData
-import com.yt.car.union.net.OilDayReportData
 import com.yt.car.union.net.RealTimeAddressData
 import com.yt.car.union.net.SearchHistoryRequest
 import com.yt.car.union.net.SearchResult
 import com.yt.car.union.net.SendContentRequest
 import com.yt.car.union.net.TrackData
+import com.yt.car.union.net.VideoInfoData
 import com.yt.car.union.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -26,24 +24,6 @@ class CarInfoViewModel : CarBaseViewModel() {
     fun getCarInfo(carId: Int, stateFlow: MutableStateFlow<ApiState<CarInfo>>) {
         launchRequest(
             block = { vehicleRepository.getCarInfo(carId) },
-            stateFlow
-        )
-    }
-
-    // 油费日报
-    fun getOilDayReport(page: Int, pageSize: Int?, search: String?, timetype: Int,
-                        stateFlow: MutableStateFlow<ApiState<OilDayReportData>>) {
-        launchRequest(
-            block = { vehicleRepository.getOilDayReport(page, pageSize, search, timetype) },
-            stateFlow
-        )
-    }
-
-    // 泄漏报表
-    fun getLeakReport(page: Int, pageSize: Int?, search: String?, timetype: Int,
-                      stateFlow: MutableStateFlow<ApiState<LeakReportData>>) {
-        launchRequest(
-            block = { vehicleRepository.getLeakReport(page, pageSize, search, timetype) },
             stateFlow
         )
     }
@@ -114,15 +94,6 @@ class CarInfoViewModel : CarBaseViewModel() {
         )
     }
 
-    // 其他车辆报表/状态相关方法...（按相同逻辑迁移）
-    fun getOilAddReport(page: Int, pageSize: Int?, search: String?, timetype: Int,
-                        stateFlow: MutableStateFlow<ApiState<OilAddReportData>>) {
-        launchRequest(
-            block = { vehicleRepository.getOilAddReport(page, pageSize, search, timetype) },
-            stateFlow
-        )
-    }
-
     fun getCarStatusList(stateFlow: MutableStateFlow<ApiState<CarStatusListData>>) {
         launchRequest(
             block = { vehicleRepository.getCarStatusList() },
@@ -142,6 +113,20 @@ class CarInfoViewModel : CarBaseViewModel() {
     fun getSearchHistory(stateFlow: MutableStateFlow<ApiState<List<SearchResult>>>) {
         launchRequest(
             block = { vehicleRepository.getSearchHistory() },
+            stateFlow
+        )
+    }
+
+    fun getVideoInfo(carId: Int, stateFlow: MutableStateFlow<ApiState<VideoInfoData>>) {
+        launchRequest(
+            block = { vehicleRepository.getVideoInfo(carId) },
+            stateFlow
+        )
+    }
+
+    fun shareLastPosition(carId: Long, stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = { vehicleRepository.shareLastPosition(carId) },
             stateFlow
         )
     }
