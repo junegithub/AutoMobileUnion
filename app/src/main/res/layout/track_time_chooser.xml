@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="16dp"
+    android:paddingStart="16dp"
+    android:paddingBottom="16dp">
+
+    <!-- 快捷时间单选组（核心：原生支持单选） -->
+    <RadioGroup
+        android:id="@+id/rg_quick_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <!-- 一小时前 -->
+        <RadioButton
+            android:id="@+id/rb_one_hour_ago"
+            style="@style/TimeFilterRadioButtonStyle"
+            android:text="一小时前"
+            android:checked="true"/> <!-- 默认选中 -->
+
+        <!-- 今天 -->
+        <RadioButton
+            android:id="@+id/rb_today"
+            style="@style/TimeFilterRadioButtonStyle"
+            android:layout_marginStart="@dimen/dp_16"
+            android:text="今天"/>
+
+        <!-- 昨天 -->
+        <RadioButton
+            android:id="@+id/rb_yesterday"
+            style="@style/TimeFilterRadioButtonStyle"
+            android:layout_marginStart="@dimen/dp_16"
+            android:text="昨天"/>
+
+        <!-- 前天 -->
+        <RadioButton
+            android:id="@+id/rb_day_before_yesterday"
+            style="@style/TimeFilterRadioButtonStyle"
+            android:layout_marginStart="@dimen/dp_16"
+            android:text="前天"/>
+
+    </RadioGroup>
+
+    <!-- 时间显示区域 -->
+    <TextView
+        android:id="@+id/tv_start_time"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/dp_8"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/bg_time_display_top"
+        android:text="开始时间: 2026-02-26 13:22:57"
+        android:textSize="14sp"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/tv_end_time"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_marginTop="@dimen/dp_4"
+        android:background="@drawable/bg_time_display_bottom"
+        android:text="结束时间: 2026-02-26 14:22:57"
+        android:textSize="14sp"
+        android:textColor="@color/black"/>
+
+    <!-- 底部按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/dp_8">
+
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="取消"
+            android:textSize="16sp"
+            android:textColor="@color/blue"
+            android:background="@drawable/bg_button_left"/>
+
+        <TextView
+            android:id="@+id/tv_confirm"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="确定"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_button_right"/>
+    </LinearLayout>
+
+</LinearLayout>

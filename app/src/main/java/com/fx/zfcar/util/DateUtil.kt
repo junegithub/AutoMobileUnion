@@ -2,11 +2,13 @@ package com.fx.zfcar.util
 
 import android.annotation.SuppressLint
 import android.os.Build
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 object DateUtil {
     fun getDaysInMonth(year: Int, month: Int): Int {
@@ -57,7 +59,7 @@ object DateUtil {
 
     /**
      * 将秒级时间戳转为指定格式的字符串
-     * @param timestamp 秒级时间戳（Long）
+     * @param timestamp 毫秒时间戳（Long）
      * @param format 时间格式，默认yyyy-MM-dd HH:mm:ss
      * @return 格式化后的时间字符串，异常时返回"--"
      */
@@ -68,10 +70,7 @@ object DateUtil {
             return "--"
         }
         return try {
-            // 秒级时间戳转毫秒（SimpleDateFormat需要毫秒级）
-            val millis = timestamp * 1000
-            val sdf = SimpleDateFormat(format, Locale.CHINA)
-            sdf.format(Date(millis))
+            SimpleDateFormat(format, Locale.CHINA).format(Date(timestamp))
         } catch (e: Exception) {
             // 捕获格式化异常，返回占位符
             "--"
@@ -149,6 +148,32 @@ object DateUtil {
             // 捕获转换异常（如非数字、格式错误）
             e.printStackTrace()
             Triple(0, 0, 0)
+        }
+    }
+
+    private val dateFormat by lazy {
+        SimpleDateFormat(FORMAT_DEFAULT, Locale.getDefault()).apply {
+            timeZone = TimeZone.getDefault()
+        }
+    }
+
+    /**
+     * 将 "yyyy-MM-dd HH:mm:ss" 格式的字符串转换为Long时间戳（毫秒）
+     * @param timeStr 时间字符串，如 "2026-02-26 14:22:57"
+     * @return 成功返回时间戳（毫秒），失败返回 -1
+     */
+    fun timeStrToLong(timeStr: String): Long {
+        return try {
+            // 解析字符串为Date，再转成时间戳（毫秒）
+            val date = dateFormat.parse(timeStr)
+            date?.time ?: -1L
+        } catch (e: ParseException) {
+            // 格式错误/解析失败时返回-1
+            e.printStackTrace()
+            -1L
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
+            -1L
         }
     }
 }

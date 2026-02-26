@@ -58,7 +58,10 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import com.fx.zfcar.R
+import com.fx.zfcar.car.base.TimeFilterHelper
 import com.fx.zfcar.databinding.FragmentMapBinding
+import com.fx.zfcar.net.TrackData
+import com.fx.zfcar.util.DateUtil
 import com.tencent.mm.opensdk.utils.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -67,7 +70,6 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.ByteArrayOutputStream
 import java.net.URLEncoder
-import java.util.Calendar
 import kotlin.getValue
 
 /**
@@ -93,6 +95,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     private val searListStateFlow = MutableStateFlow<ApiState<List<SearchResult>>>(ApiState.Idle)
     private val addSearchStateFlow = MutableStateFlow<ApiState<Int>>(ApiState.Idle)
     private val shareLocationStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
+    private val trackInfoStateFlow = MutableStateFlow<ApiState<TrackData>>(ApiState.Idle)
 
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
 
@@ -121,6 +124,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
+    private lateinit var timeFilterHelper: TimeFilterHelper
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -302,8 +306,12 @@ class CarFragment : Fragment(), AMapLocationListener {
                 if (tab.position == 0) {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.VISIBLE
                     binding.rootCarDetail.rootMore.root.visibility = View.GONE
+                    binding.rootCarDetail.trackItemContainer.visibility = View.GONE
                 } else if (tab.position == 1) {
-
+                    binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
+                    binding.rootCarDetail.rootMore.root.visibility = View.GONE
+                    binding.rootCarDetail.trackItemContainer.visibility = View.VISIBLE
+                    timeFilterHelper.bindView(binding.rootCarDetail.trackItemContainer)
                 } else if (tab.position == 2) {
 
                 } else if (tab.position == 3) {
@@ -311,6 +319,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                 } else if (tab.position == 4) {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
                     binding.rootCarDetail.rootMore.root.visibility = View.VISIBLE
+                    binding.rootCarDetail.trackItemContainer.visibility = View.GONE
                 }
             }
             override fun onTabUnselected(tab: TabLayout.Tab) {}
@@ -328,6 +337,19 @@ class CarFragment : Fragment(), AMapLocationListener {
         binding.plateRecycler.adapter = labelAdapter
         binding.plateRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         updateViewLoginState()
+
+        timeFilterHelper = TimeFilterHelper(requireContext()) { start, end ->
+            if (start == -1L && end == -1L) {
+                // 取消操作
+
+            } else {
+                // 确定操作
+                carInfoViewModel.getTrackInfo(
+                    currentRealTimeAddress?.carinfo?.id!!.toInt(),
+                    DateUtil.timestamp2Date(end), true, true,
+                    DateUtil.timestamp2Date(start), trackInfoStateFlow)
+            }
+        }
 
         // 5. 观察UI状态变化，刷新UI（lifecycleScope自动绑定Activity生命周期）
         lifecycleScope.launch {

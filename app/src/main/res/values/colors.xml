@@ -94,6 +94,7 @@
     <color name="background">#F5F7FA</color>
     <color name="text_blue">#4A90E2</color>
     <color name="divider">#EEEEEE</color>
+    <color name="blue_light">#404A90E2</color>
 
     <color name="colorPrimary">#3B82F6</color>
     <color name="colorPrimaryDark">#2563EB</color>

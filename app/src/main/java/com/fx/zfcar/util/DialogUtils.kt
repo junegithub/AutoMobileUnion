@@ -7,6 +7,7 @@ import com.fx.zfcar.pages.LoginActivity
 import com.fx.zfcar.pages.openDial
 import androidx.appcompat.app.AlertDialog
 import com.kongzue.dialogx.dialogs.MessageDialog
+import com.loper7.date_time_picker.dialog.CardDatePickerDialog
 
 /**
  * 登录弹窗工具类，基于系统AlertDialog实现，可全局复用
@@ -74,5 +75,29 @@ object DialogUtils {
 
     fun showAttendRecordsDlg() {
 
+    }
+
+    /**
+     * 显示日期时间选择弹窗
+     */
+    fun showDateTimePicker(context: Context, defaultTime: Long, listener: ((Long) -> Unit)? = null) {
+        val pickerDialog = CardDatePickerDialog.builder(context)
+            // 设置显示的时间单位：年、月、日、时、分、秒
+            .setBackGroundModel(CardDatePickerDialog.CARD)
+            .setDefaultTime(defaultTime)
+            .showFocusDateInfo(false)
+            .showBackNow(false)
+            .setWrapSelectorWheel(false)
+            .showDateLabel(true)
+            // 设置确认按钮点击事件
+            .setOnChoose {
+                listener?.invoke(it)
+            }
+            .setOnCancel{
+            }
+            .build()
+
+        // 显示弹窗
+        pickerDialog.show()
     }
 }

@@ -117,6 +117,11 @@ dependencies {
     // 微信SDK（通过jcenter，或下载官方aar包）
     implementation("com.tencent.mm.opensdk:wechat-sdk-android:6.8.0")
 
+    implementation("com.github.loper7:DateTimePicker:0.6.3") {
+        // 排除冲突的旧版依赖
+        exclude (group="org.jetbrains.kotlin", module="kotlin-android-extensions-runtime")
+    }
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
