@@ -106,7 +106,7 @@
                 android:textSize="16sp" />
 
             <!-- 印章 -->
-            <com.yt.car.union.training.widget.SealView
+            <com.fx.zfcar.training.widget.SealView
                 android:id="@+id/seal_transport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"

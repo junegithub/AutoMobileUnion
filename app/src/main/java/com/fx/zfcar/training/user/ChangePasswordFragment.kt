@@ -1,0 +1,92 @@
+package com.fx.zfcar.training.user
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
+import com.fx.zfcar.util.PressEffectUtils
+import com.fx.zfcar.util.ProgressDialogUtils
+import com.fx.zfcar.viewmodel.ApiState
+import com.fx.zfcar.R
+import com.fx.zfcar.databinding.FragmentChangePasswordBinding
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlin.getValue
+
+class ChangePasswordFragment : BaseUserFragment() {
+
+    private lateinit var binding: FragmentChangePasswordBinding
+
+    private val trainingViewModel by viewModels<SafetyTrainingViewModel>()
+    private var stateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentChangePasswordBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        PressEffectUtils.setCommonPressEffect(binding.btnConfirm)
+        // 绑定点击事件
+        binding.btnConfirm.setOnClickListener {
+            changePassword()
+        }
+        lifecycleScope.launch {
+            stateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                    }
+
+                    is ApiState.Success -> {
+                        context?.showToast(getString(R.string.toast_password_change_success))
+
+                        // 清空输入框
+                        binding.etOldPassword.text.clear()
+                        binding.etNewPassword.text.clear()
+                        binding.etConfirmPassword.text.clear()
+
+                        // 返回上一页
+                        activity?.onBackPressed()
+                    }
+
+                    is ApiState.Error -> {
+                        ProgressDialogUtils.dismiss()
+                        context?.showToast("修改失败：${uiState.msg}")
+                    }
+                    is ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+    }
+
+    override fun getTitle(): String = getString(R.string.title_change_password)
+
+    override fun getTitleView(): TextView = binding.titleLayout.tvTitle
+
+    private fun changePassword() {
+        val oldPassword = binding.etOldPassword.text.toString().trim()
+        val newPassword = binding.etNewPassword.text.toString().trim()
+        val confirmPassword = binding.etConfirmPassword.text.toString().trim()
+
+        when {
+            oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty() -> {
+                context?.showToast(getString(R.string.toast_please_fill_all_fields))
+            }
+            newPassword != confirmPassword -> {
+                context?.showToast(getString(R.string.toast_password_not_match))
+            }
+            else -> {
+                trainingViewModel.resetPwd(newPassword, oldPassword, stateFlow)
+            }
+        }
+    }
+}

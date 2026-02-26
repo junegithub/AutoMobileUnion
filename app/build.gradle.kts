@@ -8,13 +8,14 @@ plugins {
 }
 
 android {
-    namespace = "com.yt.car.union"
+    namespace = "com.fx.zfcar"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.yt.car.union"
+        manifestPlaceholders += mapOf()
+        applicationId = "com.fx.zfcar"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -25,7 +26,22 @@ android {
         manifestPlaceholders["WX_APPID"] = "wx2e369872d915263d"
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file(project.property("MYAPP_RELEASE_STORE_FILE").toString())
+            storePassword = project.property("MYAPP_RELEASE_STORE_PASSWORD").toString()
+            keyAlias = project.property("MYAPP_RELEASE_KEY_ALIAS").toString()
+            keyPassword = project.property("MYAPP_RELEASE_KEY_PASSWORD").toString()
+        }
+    }
+
+
     buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(

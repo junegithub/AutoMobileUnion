@@ -20,6 +20,8 @@
     <uses-feature android:name="android.hardware.camera"/>
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
 
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/> <!-- Android 11+必加 -->
+
 
     <application
         android:name=".MyApp"
@@ -35,7 +37,12 @@
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="61d6757b325acc419cc37ef20ee962bb"/>
+            android:value="810857a029f5f853a92a0d14d5de3c7d"/>
+
+        <!-- 微信SDK配置（可选） -->
+        <meta-data
+            android:name="wxapi.appid"
+            android:value="${WX_APPID}" />
 
         <!-- 微信分享必备配置 -->
         <activity

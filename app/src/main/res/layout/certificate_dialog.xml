@@ -126,7 +126,7 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <com.yt.car.union.training.widget.SealView
+                <com.fx.zfcar.training.widget.SealView
                     android:id="@+id/seal1"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
@@ -161,7 +161,7 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <com.yt.car.union.training.widget.SealView
+                <com.fx.zfcar.training.widget.SealView
                     android:id="@+id/seal2"
                     android:layout_width="60dp"
                     android:layout_height="60dp"

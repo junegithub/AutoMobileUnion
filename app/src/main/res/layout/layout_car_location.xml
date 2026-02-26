@@ -6,17 +6,17 @@
     <data>
         <variable
             name="realTimeCarInfo"
-            type="com.yt.car.union.net.RealTimeCarInfo" />
+            type="com.fx.zfcar.net.RealTimeCarInfo" />
 
         <!-- 定义格式化日期的工具方法（可选，简化代码） -->
-        <import type="com.yt.car.union.net.RealTimeCarInfo"/>
+        <import type="com.fx.zfcar.net.RealTimeCarInfo"/>
 
         <variable
             name="carInfo"
-            type="com.yt.car.union.net.CarInfo" />
+            type="com.fx.zfcar.net.CarInfo" />
 
         <!-- 定义格式化日期的工具方法（可选，简化代码） -->
-        <import type="com.yt.car.union.net.CarInfo"/>
+        <import type="com.fx.zfcar.net.CarInfo"/>
     </data>
 
     <!-- 外层ScrollView保证内容可滚动 -->
