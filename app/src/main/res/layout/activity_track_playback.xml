@@ -22,7 +22,7 @@
             android:id="@+id/iv_back"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
-            android:background="@drawable/bg_circle"
+            android:background="@drawable/bg_circle_alpha"
             android:scaleType="centerInside"
             android:src="@drawable/arrow_back" />
 
@@ -43,6 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:background="@drawable/btn_bg_radius_alpha"
             android:text="分享" />
     </LinearLayout>
 
@@ -55,7 +56,9 @@
         android:layout_gravity="end"
         android:layout_marginTop="90dp"
         android:layout_marginEnd="16dp"
-        android:checked="true"
+        android:textColor="@color/white"
+        android:padding="@dimen/dp_8"
+        android:background="@drawable/btn_bg_radius_alpha"
         android:text="停车点" />
 
     <LinearLayout
