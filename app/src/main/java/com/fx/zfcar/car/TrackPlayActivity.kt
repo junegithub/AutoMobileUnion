@@ -17,9 +17,10 @@ import com.amap.api.maps.MapView
 import com.amap.api.maps.model.*
 import com.fx.zfcar.R
 import com.fx.zfcar.car.base.TimeFilterHelper
+import com.fx.zfcar.car.base.WeChatShareHelper
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
-import com.fx.zfcar.net.MapPositionItem
 import com.fx.zfcar.util.DateUtil
+import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -69,16 +70,23 @@ class TrackPlayActivity : AppCompatActivity() {
     private var playing = false
     private var carId = ""
 
+    private lateinit var wechat: WeChatShareHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackPlaybackBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initData()
+        addListeners()
+        // 初始化地图UI
+        initMapUI(savedInstanceState)
+        collectStateFlow()
+    }
 
+    private fun initData() {
         carId = intent.getStringExtra(KEY_CAR_ID).toString()
-        // 初始化地图
-        mapView = binding.mapView
-        mapView.onCreate(savedInstanceState)
-        aMap = mapView.map
+
+        wechat = WeChatShareHelper(this, lifecycleScope)
 
         // 初始化停留点标记列表
         stopMarkers = ArrayList()
@@ -98,32 +106,48 @@ class TrackPlayActivity : AppCompatActivity() {
         val times = timeFilterHelper.getCurrentTimeRange()
         startTime = times.first
         endTime = times.second
+    }
 
-        lifecycleScope.launch {
-            trackInfoStateFlow.collect {uiState ->
-                when (uiState) {
-                    is ApiState.Loading -> {
-                    }
-                    is ApiState.Success -> {
-                        uiState.data?.let {
-                            trackData = uiState.data
-                            updateTrackInfoUI()
-                            drawTrack()
-                        }
-                    }
-                    is ApiState.Error -> {
-                    }
-                    is ApiState.Idle -> {
-                    }
-                }
-            }
+    /**
+     * 解析轨迹数据
+     */
+    private fun loadTrackData() {
+        carInfoViewModel.getTrackInfo(
+            carId.toInt(),
+            DateUtil.timestamp2Date(startTime), true, true,
+            DateUtil.timestamp2Date(startTime), trackInfoStateFlow)
+    }
+
+    /**
+     * 初始化地图UI
+     */
+    private fun initMapUI(savedInstanceState: Bundle?) {
+        // 初始化地图
+        mapView = binding.mapView
+        mapView.onCreate(savedInstanceState)
+        aMap = mapView.map
+        // 设置地图缩放级别
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(15f))
+
+        // 设置地图UI
+        val uiSettings = aMap.uiSettings
+        uiSettings.isZoomControlsEnabled = false
+        uiSettings.isMyLocationButtonEnabled = false
+    }
+
+    private fun addListeners() {
+        PressEffectUtils.setCommonPressEffect(binding.ivBack)
+        PressEffectUtils.setCommonPressEffect(binding.ivPlayPause)
+        PressEffectUtils.setCommonPressEffect(binding.tv5min)
+        PressEffectUtils.setCommonPressEffect(binding.tv15min)
+        PressEffectUtils.setCommonPressEffect(binding.tvSpeedSlow)
+        PressEffectUtils.setCommonPressEffect(binding.tvSpeedNormal)
+        PressEffectUtils.setCommonPressEffect(binding.tvSpeedFast)
+        PressEffectUtils.setCommonPressEffect(binding.btnShare)
+
+        binding.ivBack.setOnClickListener {
+            finish()
         }
-        // 解析轨迹数据
-        loadTrackData()
-
-        // 初始化地图UI
-        initMapUI()
-
         // 设置按钮点击事件
         binding.ivPlayPause.setOnClickListener {
             if (playing) {
@@ -159,14 +183,14 @@ class TrackPlayActivity : AppCompatActivity() {
         // 设置进度条拖动事件
         binding.progressBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser && trackData.postlist.isNotEmpty()) {
+                if (fromUser && trackData!!.postlist.isNotEmpty()) {
                     // 计算对应的轨迹点索引
-                    val newIndex = (progress / 100f * (trackData.postlist.size - 1)).toInt()
+                    val newIndex = (progress / 100f * (trackData!!.postlist.size - 1)).toInt()
                     if (newIndex != currentPointIndex) {
                         currentPointIndex = newIndex
 
                         // 更新UI显示
-                        val currentPoint = trackData.postlist[currentPointIndex]
+                        val currentPoint = trackData!!.postlist[currentPointIndex]
                         binding.tvLocationTime.text = currentPoint.gpstime
                         binding.tvSpeed.text = currentPoint.speed
 
@@ -200,27 +224,35 @@ class TrackPlayActivity : AppCompatActivity() {
 
         // 设置分享按钮点击事件
         binding.btnShare.setOnClickListener {
-
+            wechat.carnum = trackData!!.carinfo.carnum
+            carInfoViewModel.shareLastPosition(carId.toLong(), wechat.shareLocationStateFlow)
         }
     }
 
-    /**
-     * 解析轨迹数据
-     */
-    private fun loadTrackData() {
-        carInfoViewModel.getTrackInfo(
-            carId.toInt(),
-            DateUtil.timestamp2Date(startTime), true, true,
-            DateUtil.timestamp2Date(startTime), trackInfoStateFlow)
+    private fun collectStateFlow() {
+        lifecycleScope.launch {
+            trackInfoStateFlow.collect {uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                    }
+                    is ApiState.Success -> {
+                        uiState.data?.let {
+                            trackData = uiState.data
+                            updateTrackInfoUI(uiState.data)
+                            drawTrack(uiState.data)
+                            moveMapToFirstPoint(uiState.data)
+                        }
+                    }
+                    is ApiState.Error -> {
+                    }
+                    is ApiState.Idle -> {
+                    }
+                }
+            }
+        }
     }
 
-    /**
-     * 初始化地图UI
-     */
-    private fun initMapUI() {
-        // 设置地图缩放级别
-        aMap.moveCamera(CameraUpdateFactory.zoomTo(15f))
-
+    private fun moveMapToFirstPoint(trackData: TrackData) {
         // 设置地图中心点为第一个轨迹点
         if (trackData.postlist.isNotEmpty()) {
             val firstPoint = trackData.postlist[0]
@@ -230,17 +262,12 @@ class TrackPlayActivity : AppCompatActivity() {
                 )
             )
         }
-
-        // 设置地图UI
-        val uiSettings = aMap.uiSettings
-        uiSettings.isZoomControlsEnabled = false
-        uiSettings.isMyLocationButtonEnabled = false
     }
 
     /**
      * 绘制轨迹
      */
-    private fun drawTrack() {
+    private fun drawTrack(trackData: TrackData) {
         // 清除之前的轨迹
         aMap.clear()
         stopMarkers.clear()
@@ -310,7 +337,7 @@ class TrackPlayActivity : AppCompatActivity() {
     /**
      * 更新轨迹信息UI
      */
-    private fun updateTrackInfoUI() {
+    private fun updateTrackInfoUI(trackData: TrackData) {
         binding.content.visibility = View.VISIBLE
         binding.title.visibility = View.VISIBLE
         binding.switchShowParking.visibility = View.VISIBLE
@@ -345,8 +372,8 @@ class TrackPlayActivity : AppCompatActivity() {
                 binding.tv5min.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
                 binding.tv15min.setBackgroundColor(Color.TRANSPARENT)
                 // 5分钟 = 300秒，计算每段轨迹的播放间隔
-                animationInterval = if (trackData.postlist.size > 1) {
-                    (300000L / (trackData.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
+                animationInterval = if (trackData!!.postlist.size > 1) {
+                    (300000L / (trackData!!.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
                 } else {
                     1000L
                 }
@@ -355,8 +382,8 @@ class TrackPlayActivity : AppCompatActivity() {
                 binding.tv5min.setBackgroundColor(Color.TRANSPARENT)
                 binding.tv15min.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
                 // 15分钟 = 900秒，计算每段轨迹的播放间隔
-                animationInterval = if (trackData.postlist.size > 1) {
-                    (900000L / (trackData.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
+                animationInterval = if (trackData!!.postlist.size > 1) {
+                    (900000L / (trackData!!.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
                 } else {
                     1000L
                 }
@@ -415,8 +442,8 @@ class TrackPlayActivity : AppCompatActivity() {
         animationTimer?.schedule(object : TimerTask() {
             override fun run() {
                 runOnUiThread {
-                    if (currentPointIndex < trackData.postlist.size) {
-                        val currentPoint = trackData.postlist[currentPointIndex]
+                    if (currentPointIndex < trackData!!.postlist.size) {
+                        val currentPoint = trackData!!.postlist[currentPointIndex]
 
                         // 更新当前时间和速度显示
                         binding.tvLocationTime.text = currentPoint.gpstime
@@ -434,15 +461,15 @@ class TrackPlayActivity : AppCompatActivity() {
                         highlightCurrentTrackSegment()
 
                         // 更新进度条
-                        if (trackData.postlist.size > 1) {
-                            val progress = (currentPointIndex.toFloat() / (trackData.postlist.size - 1) * 100).toInt()
+                        if (trackData!!.postlist.size > 1) {
+                            val progress = (currentPointIndex.toFloat() / (trackData!!.postlist.size - 1) * 100).toInt()
                             binding.progressBar.progress = progress
                         }
 
                         currentPointIndex++
                     } else {
                         // 动画结束
-                        pauseAnimation()
+                        resetAnimation()
                     }
                 }
             }
@@ -469,7 +496,7 @@ class TrackPlayActivity : AppCompatActivity() {
 
         // 重置轨迹线颜色
         val latLngList = ArrayList<LatLng>()
-        for (point in trackData.postlist) {
+        for (point in trackData!!.postlist) {
             latLngList.add(LatLng(point.lat, point.lng))
         }
 
@@ -477,8 +504,8 @@ class TrackPlayActivity : AppCompatActivity() {
         polyline.color = resources.getColor(R.color.blue)
 
         // 重置当前时间和速度显示
-        if (trackData.postlist.isNotEmpty()) {
-            val firstPoint = trackData.postlist[0]
+        if (trackData!!.postlist.isNotEmpty()) {
+            val firstPoint = trackData!!.postlist[0]
             binding.tvLocationTime.text = firstPoint.gpstime
             binding.tvCommunicationTime.text = firstPoint.time
             binding.tvSpeed.text = firstPoint.speed
@@ -496,13 +523,13 @@ class TrackPlayActivity : AppCompatActivity() {
      * 高亮显示当前轨迹段
      */
     private fun highlightCurrentTrackSegment() {
-        if (currentPointIndex <= 0 || currentPointIndex >= trackData.postlist.size) {
+        if (currentPointIndex <= 0 || currentPointIndex >= trackData!!.postlist.size) {
             return
         }
 
         val latLngList = ArrayList<LatLng>()
-        for (i in 0 until trackData.postlist.size) {
-            val point = trackData.postlist[i]
+        for (i in 0 until trackData!!.postlist.size) {
+            val point = trackData!!.postlist[i]
             latLngList.add(LatLng(point.lat, point.lng))
         }
 
@@ -511,7 +538,7 @@ class TrackPlayActivity : AppCompatActivity() {
 
         // 创建分段颜色列表
         val colorList = ArrayList<Int>()
-        for (i in 0 until trackData.postlist.size - 1) {
+        for (i in 0 until trackData!!.postlist.size - 1) {
             if (i < currentPointIndex - 1) {
                 // 已走过的轨迹段
                 colorList.add(resources.getColor(R.color.blue))

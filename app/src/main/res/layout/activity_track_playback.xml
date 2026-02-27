@@ -19,6 +19,7 @@
         android:paddingEnd="@dimen/dp_16">
 
         <ImageView
+            android:id="@+id/iv_back"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
             android:background="@drawable/bg_circle"
