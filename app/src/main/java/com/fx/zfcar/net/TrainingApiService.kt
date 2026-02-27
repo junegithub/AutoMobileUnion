@@ -295,4 +295,8 @@ interface TrainingApiService {
 
     @POST("api/user/logoff")
     suspend fun logoff(): Response<TrainingBaseResponse<Any>>
+
+    @GET("api/other/notice")
+    suspend fun getNoticeInfo(@Query("page") page: Int, @Query("page") index: Int,
+                              @Query("type") type: Int): Response<TrainingBaseResponse<Any>>
 }

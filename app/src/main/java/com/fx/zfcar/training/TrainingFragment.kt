@@ -74,7 +74,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        if (MyApp.Companion.isTrainingLogin != true) {
+        if (MyApp.isTrainingLogin != true) {
             DialogUtils.showTrainingLoginPromptDialog(requireActivity())
             return
         }

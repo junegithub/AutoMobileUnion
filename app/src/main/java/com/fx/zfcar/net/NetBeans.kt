@@ -2211,3 +2211,40 @@ data class CarExpireItem(
     // 部门/所属名称（JSON字段：deptName）
     val deptName: String
 )
+
+
+// 公告类型枚举（对应params.type）
+enum class NoticeType(val type: Int) {
+    ENTERPRISE(1), // 企业通知
+    OFFICIAL(2),   // 公文公告
+    VIOLATION(3)   // 违章公告
+}
+
+// 分段选择器数据模型
+data class SectionItem(val name: String)
+
+// 公告列表项数据模型
+data class NoticeItem(
+    val notice_id: String,
+    val title: String,
+    val content: String,
+    val status: Int, // 0=未读，1=已读
+    val type: Int    // 1/2/3 对应不同公告类型
+)
+
+// 分页请求参数（对应小程序的params）
+data class NoticeParams(
+    var page: Int = 1,
+    var index: Int = 0,
+    var type: Int = 1
+)
+
+// 接口返回数据模型
+data class NoticeResponse(
+    val data: NoticeData
+)
+
+data class NoticeData(
+    val rows: List<NoticeItem>,
+    val total: Int // 总页数
+)

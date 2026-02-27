@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- 顶部导航栏（对应u-navbar） -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:tint="@color/text_black"
+            android:src="@drawable/arrow_back"
+            android:layout_marginLeft="16dp"/>
+
+        <!-- 标题（对应slot-wrap的h1） -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="消息公告"
+            android:textSize="26sp"
+            android:textColor="#3a4462"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- 分段选择器（对应u-subsection） -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:tabMode="fixed"
+        app:tabGravity="fill"
+        app:tabTextColor="#666666"
+        app:tabSelectedTextColor="#3a4462"
+        app:tabIndicatorColor="#3a4462"
+        app:tabIndicatorHeight="2dp"
+        app:tabTextAppearance="@style/TabTextStyle"/>
+
+    <!-- 内容区域（对应app-main的content） -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="@dimen/dp_12"
+        android:paddingVertical="@dimen/dp_2"
+        android:orientation="vertical">
+
+        <!-- 公告列表（替代scroll-view，用RecyclerView更高效） -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_notice_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"/>
+
+        <!-- 加载更多提示（触底时显示） -->
+        <TextView
+            android:id="@+id/tv_load_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="没有更多消息了"
+            android:textSize="14sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:padding="8dp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+</LinearLayout>
