@@ -106,4 +106,7 @@
     <color name="colorBorder">#E5E7EB</color>
     <color name="colorGray50">#F9FAFB</color>
     <color name="colorGray100">#F3F4F6</color>
+
+    <color name="orange">#FF9900</color>
+    <color name="background_gray">#F6F7F8</color>
 </resources>

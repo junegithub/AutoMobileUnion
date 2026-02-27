@@ -121,6 +121,7 @@ dependencies {
         // 排除冲突的旧版依赖
         exclude (group="org.jetbrains.kotlin", module="kotlin-android-extensions-runtime")
     }
+    implementation("androidx.webkit:webkit:1.10.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

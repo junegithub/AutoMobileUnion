@@ -94,6 +94,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     // 微信APP_ID（替换成你的实际ID）
 
     private var phone: String? = null
+    private var isVideoCar: Boolean = false
     private var totalCars = 1
 
     // 全局持有 Dialog 实例，用于防止重复弹出
@@ -312,6 +313,12 @@ class CarFragment : Fragment(), AMapLocationListener {
                 } else if (tab.position == 2) {
 
                 } else if (tab.position == 3) {
+                    val intent = Intent(requireContext(), VideoPlaybackActivity::class.java)
+                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_ID, currentRealTimeAddress!!.carinfo.id)
+                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_NUM, currentRealTimeAddress!!.carinfo.carnum)
+                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_VIDEO, isVideoCar)
+                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_ONLINE, currentRealTimeAddress!!.carinfo.online)
+                    startActivity(intent)
 
                 } else if (tab.position == 4) {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
@@ -627,6 +634,7 @@ class CarFragment : Fragment(), AMapLocationListener {
 
     private fun refreshCarDetails(carInfo: CarInfo?) {
         phone = carInfo?.phone
+        isVideoCar = carInfo?.isVideoCar == true
         binding.rootCarDetail.rootCarLocation.carInfo = carInfo
         binding.rootCarDetail.rootCarLocation.executePendingBindings()
     }

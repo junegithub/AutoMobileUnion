@@ -76,6 +76,7 @@
         <activity android:name=".car.TreeListActivity" />
         <activity android:name=".car.ActivityNavi" />
         <activity android:name=".car.TrackPlayActivity" />
+        <activity android:name=".car.VideoPlaybackActivity" />
 
         <activity android:name=".training.user.UserCenterActivity" />
         <activity android:name=".training.user.ScanCodeActivity" />
