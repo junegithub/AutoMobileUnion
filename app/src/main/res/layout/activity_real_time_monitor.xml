@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F6F7F8">
+
+    <!-- 自定义标题栏 -->
+    <LinearLayout
+        android:id="@+id/ll_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="@dimen/dp_32"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- 返回按钮 -->
+        <TextView
+            android:id="@+id/ll_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_arrow_left"
+            android:text="返回"
+            android:textSize="16sp"
+            android:drawablePadding="@dimen/dp_8"
+            android:textColor="#333333"/>
+
+        <!-- 标题 -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="实时状态"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <!-- 刷新按钮 -->
+        <TextView
+            android:id="@+id/tv_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="刷新"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:clickable="true"
+            android:focusable="true"/>
+    </LinearLayout>
+
+    <!-- 车辆选择栏 -->
+    <LinearLayout
+        android:id="@+id/ll_select_car"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/bg_btn_outline_r8"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/ll_title_bar">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择车辆"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_car_num"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:drawableEnd="@drawable/ic_arrow_right"
+            android:drawablePadding="@dimen/dp_8"
+            android:text="粤A12345"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+    <!-- 视频网格布局 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_video_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/ll_select_car"
+        app:layout_constraintBottom_toTopOf="@id/ll_bottom_buttons"/>
+
+    <!-- 底部功能按钮 -->
+    <LinearLayout
+        android:id="@+id/ll_bottom_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#F6F7F8"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- 打开对讲 -->
+        <LinearLayout
+            android:id="@+id/ll_speaking"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:background="@drawable/btn_bg_radius"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:elevation="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginEnd="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_voice"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="打开对讲"
+                android:textSize="14sp"
+                android:textColor="#0047FF"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <!-- 车辆状态 -->
+        <LinearLayout
+            android:id="@+id/ll_car_status"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:background="@drawable/btn_bg_radius"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:elevation="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginEnd="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_car_status"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="车辆状态"
+                android:textSize="14sp"
+                android:textColor="#0047FF"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <!-- 云台控制 -->
+        <LinearLayout
+            android:id="@+id/ll_ptz_control"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/btn_bg_radius"
+            android:gravity="center"
+            android:elevation="4dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_direction"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 隐藏的WebView容器 -->
+    <FrameLayout
+        android:id="@+id/fl_webviews"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

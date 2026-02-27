@@ -22,6 +22,10 @@
 
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/> <!-- Android 11+必加 -->
 
+    <!-- 音频权限（对讲功能） -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+
 
     <application
         android:name=".MyApp"
@@ -77,6 +81,7 @@
         <activity android:name=".car.ActivityNavi" />
         <activity android:name=".car.TrackPlayActivity" />
         <activity android:name=".car.VideoPlaybackActivity" />
+        <activity android:name=".car.RealTimeMonitorActivity" />
 
         <activity android:name=".training.user.UserCenterActivity" />
         <activity android:name=".training.user.ScanCodeActivity" />

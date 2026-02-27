@@ -123,6 +123,11 @@ dependencies {
     }
     implementation("androidx.webkit:webkit:1.10.0")
 
+    // Media3 ExoPlayer（替代废弃的 ExoPlayer 2.x）
+    implementation("androidx.media3:media3-exoplayer:1.4.0")
+    implementation("androidx.media3:media3-ui:1.4.0")
+    implementation("androidx.media3:media3-exoplayer-hls:1.4.0") // 如需播放 HLS 流
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

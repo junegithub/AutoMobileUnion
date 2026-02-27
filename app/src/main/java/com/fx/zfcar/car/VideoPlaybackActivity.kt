@@ -7,23 +7,29 @@ import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import com.fx.zfcar.car.adapter.VideoTimeSelectorAdapter
+import com.fx.zfcar.car.viewmodel.CarInfoViewModel
 import com.fx.zfcar.databinding.ActivityVideoPlaybackBinding
+import com.fx.zfcar.net.VideoChannel
+import com.fx.zfcar.net.VideoInfoData
+import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.PressEffectUtils
+import com.fx.zfcar.viewmodel.ApiState
 import com.kongzue.dialogx.dialogs.BottomMenu
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.getValue
 
 class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -53,7 +59,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
     private var mediaIndex = 0
     private var sim = ""
     private var version = 0
-    private var wayNums = listOf<WayNum>()
+    private var wayNums = listOf<VideoChannel>()
     private var videoCar = false
     private var online = false
 
@@ -66,8 +72,9 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
     // 日期格式化工具
     private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
 
-    // API基础地址（替换为你的实际地址）
-    private val BASE_API_URL = "https://api.yourapp.com/"
+    private val carInfoViewModel by viewModels<CarInfoViewModel>()
+    private val videoInfoStateFlow = MutableStateFlow<ApiState<VideoInfoData>>(ApiState.Idle)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -372,30 +379,34 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
      * 获取车辆视频信息
      */
     private fun getVideoInfo(carId: String) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_API_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        lifecycleScope.launch {
+            videoInfoStateFlow.collect {state ->
+                when (state) {
+                    is ApiState.Loading -> {
+                        // 加载中：显示进度条，隐藏其他视图
+                    }
+                    is ApiState.Success -> {
+                        state.data?.let {
+                            sim = state.data.sim ?: ""
+                            version = if (state.data.version == 2019) 1 else 0
+                            wayNums = state.data.waynums ?: emptyList()
 
-        val apiService = retrofit.create(VideoApiService::class.java)
-        apiService.getVideoInfo(carId).enqueue(object : Callback<VideoResponse> {
-            override fun onResponse(call: Call<VideoResponse>, response: Response<VideoResponse>) {
-                if (response.isSuccessful) {
-                    val data = response.body()?.data?.data ?: return
-                    sim = data.sim ?: ""
-                    version = if (data.version == 2019) 1 else 0
-                    wayNums = data.waynums ?: emptyList()
+                            // 更新通道列表
+                            updateChannelList()
 
-                    // 更新通道列表
-                    updateChannelList()
+                        }
+                    }
+                    is ApiState.Error -> {
+                        showToast("获取视频信息失败")
+                    }
+                    is ApiState.Idle -> {
+                        // 初始状态，无需处理
+                    }
                 }
             }
+        }
 
-            override fun onFailure(call: Call<VideoResponse>, t: Throwable) {
-                Log.e("VideoPlayback", "获取视频信息失败: ${t.message}", t)
-                Toast.makeText(this@VideoPlaybackActivity, "获取视频信息失败", Toast.LENGTH_SHORT).show()
-            }
-        })
+        carInfoViewModel.getVideoInfo(carId.toInt(), videoInfoStateFlow)
     }
 
     /**

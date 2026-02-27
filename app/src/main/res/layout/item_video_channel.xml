@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="160dp"
+    android:layout_height="160dp"
+    android:layout_margin="8dp">
+
+    <!-- Media3 PlayerView（兼容旧版 ExoPlayerView） -->
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/pv_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        app:show_buffering="always"
+        app:show_subtitle_button="false"
+        app:show_vr_button="false"/>
+
+    <!-- 通道标签 -->
+    <TextView
+        android:id="@+id/tv_channel_label"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#99000000"
+        android:text="通道1"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:visibility="gone"/>
+</RelativeLayout>

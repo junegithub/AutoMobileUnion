@@ -311,6 +311,12 @@ class CarFragment : Fragment(), AMapLocationListener {
                     startActivity(intent)
 
                 } else if (tab.position == 2) {
+                    val intent = Intent(requireContext(), RealTimeMonitorActivity::class.java)
+                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_ID, currentRealTimeAddress!!.carinfo.id)
+                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_NUM, currentRealTimeAddress!!.carinfo.carnum)
+                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_VIDEO, isVideoCar)
+                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_ONLINE, currentRealTimeAddress!!.carinfo.online)
+                    startActivity(intent)
 
                 } else if (tab.position == 3) {
                     val intent = Intent(requireContext(), VideoPlaybackActivity::class.java)
