@@ -17,6 +17,7 @@ import com.amap.api.maps.MapView
 import com.amap.api.maps.model.*
 import com.fx.zfcar.R
 import com.fx.zfcar.car.base.TimeFilterHelper
+import com.fx.zfcar.car.base.VehicleImageProvider
 import com.fx.zfcar.car.base.WeChatShareHelper
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
 import com.fx.zfcar.net.TrackPosition
@@ -33,6 +34,8 @@ class TrackPlayActivity : AppCompatActivity() {
 
     companion object {
         const val KEY_CAR_ID = "key_car_id"
+        const val KEY_CAR_DLTYPE = "key_car_dltype"
+        const val KEY_CAR_STATUS = "key_car_status"
     }
 
     private lateinit var binding: ActivityTrackPlaybackBinding
@@ -70,7 +73,10 @@ class TrackPlayActivity : AppCompatActivity() {
     private var currentPlaySpeed = PlaySpeed.NORMAL
     private var animationInterval = 200L // 默认动画间隔（毫秒）
     private var playing = false
+    private var panelExpand = true
     private var carId = ""
+    private var dlcartype = ""
+    private var carStatus = 0
 
     private lateinit var wechat: WeChatShareHelper
 
@@ -87,6 +93,8 @@ class TrackPlayActivity : AppCompatActivity() {
 
     private fun initData() {
         carId = intent.getStringExtra(KEY_CAR_ID).toString()
+        dlcartype = intent.getStringExtra(KEY_CAR_DLTYPE).toString()
+        carStatus = intent.getIntExtra(KEY_CAR_STATUS, 0)
 
         wechat = WeChatShareHelper(this, lifecycleScope)
 
@@ -96,7 +104,9 @@ class TrackPlayActivity : AppCompatActivity() {
         timeFilterHelper = TimeFilterHelper(this) { start, end ->
             if (start == -1L && end == -1L) {
                 // 取消操作
-
+                trackData?.let {
+                    switchBottomSheet()
+                }
             } else {
                 // 确定操作
                 startTime = start
@@ -108,6 +118,9 @@ class TrackPlayActivity : AppCompatActivity() {
         val times = timeFilterHelper.getCurrentTimeRange()
         startTime = times.first
         endTime = times.second
+
+        binding.progressBar.thumb = VehicleImageProvider.scaleBitmapDrawable(this,
+            VehicleImageProvider.getVehicleImageResId(dlcartype, carStatus),0.5f)
     }
 
     /**
@@ -129,7 +142,7 @@ class TrackPlayActivity : AppCompatActivity() {
         mapView.onCreate(savedInstanceState)
         aMap = mapView.map
         // 设置地图缩放级别
-        aMap.moveCamera(CameraUpdateFactory.zoomTo(15f))
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(5f))
 
         // 设置地图UI
         val uiSettings = aMap.uiSettings
@@ -139,9 +152,9 @@ class TrackPlayActivity : AppCompatActivity() {
 
     private fun addListeners() {
         PressEffectUtils.setCommonPressEffect(binding.ivBack)
+        PressEffectUtils.setCommonPressEffect(binding.rechooseTimeRange)
+        PressEffectUtils.setCommonPressEffect(binding.switchPanel)
         PressEffectUtils.setCommonPressEffect(binding.ivPlayPause)
-        PressEffectUtils.setCommonPressEffect(binding.tv5min)
-        PressEffectUtils.setCommonPressEffect(binding.tv15min)
         PressEffectUtils.setCommonPressEffect(binding.tvSpeedSlow)
         PressEffectUtils.setCommonPressEffect(binding.tvSpeedNormal)
         PressEffectUtils.setCommonPressEffect(binding.tvSpeedFast)
@@ -149,6 +162,19 @@ class TrackPlayActivity : AppCompatActivity() {
 
         binding.ivBack.setOnClickListener {
             finish()
+        }
+        binding.rechooseTimeRange.setOnClickListener {
+            switchBottomSheet(true)
+        }
+        binding.switchPanel.setOnClickListener {
+            panelExpand = !panelExpand
+            if (panelExpand) {
+                binding.switchPanel.setImageResource(R.drawable.collapse)
+                binding.content.translationY = 0f
+            } else {
+                binding.switchPanel.setImageResource(R.drawable.expand)
+                binding.content.translationY = (binding.content.height - binding.contentTopLayout.top).toFloat()
+            }
         }
         // 设置按钮点击事件
         binding.ivPlayPause.setOnClickListener {
@@ -160,13 +186,11 @@ class TrackPlayActivity : AppCompatActivity() {
             playing = !playing
         }
 
-        // 设置播放时间选择标签点击事件
-        binding.tv5min.setOnClickListener {
-            setPlayTimeMode(PlayTimeMode.MODE_5_MINUTES)
-        }
-
-        binding.tv15min.setOnClickListener {
-            setPlayTimeMode(PlayTimeMode.MODE_15_MINUTES)
+        binding.trackDurationGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                binding.tv5min.id -> setPlayTimeMode(PlayTimeMode.MODE_5_MINUTES)
+                binding.tv15min.id -> setPlayTimeMode(PlayTimeMode.MODE_15_MINUTES)
+            }
         }
 
         // 设置播放速度选择标签点击事件
@@ -244,6 +268,7 @@ class TrackPlayActivity : AppCompatActivity() {
                             updateTrackInfoUI(uiState.data)
                             drawTrack(uiState.data)
                             moveMapToFirstPoint(uiState.data)
+                            startAnimation()
                         }
                         ProgressDialogUtils.dismiss()
                     }
@@ -339,15 +364,27 @@ class TrackPlayActivity : AppCompatActivity() {
         }
     }
 
+    private fun switchBottomSheet(showTimeChoose: Boolean = false) {
+        if (showTimeChoose) {
+            binding.content.visibility = View.GONE
+            binding.title.visibility = View.GONE
+            binding.switchShowParking.visibility = View.GONE
+            binding.btnShare.visibility = View.GONE
+            binding.timeChooseContainer.visibility = View.VISIBLE
+        } else {
+            binding.content.visibility = View.VISIBLE
+            binding.title.visibility = View.VISIBLE
+            binding.switchShowParking.visibility = View.VISIBLE
+            binding.btnShare.visibility = View.VISIBLE
+            binding.timeChooseContainer.visibility = View.GONE
+        }
+    }
+
     /**
      * 更新轨迹信息UI
      */
     private fun updateTrackInfoUI(trackData: TrackData) {
-        binding.content.visibility = View.VISIBLE
-        binding.title.visibility = View.VISIBLE
-        binding.switchShowParking.visibility = View.VISIBLE
-        binding.btnShare.visibility = View.VISIBLE
-        binding.timeChooseContainer.visibility = View.GONE
+        switchBottomSheet()
 
         binding.tvCarNum.text = trackData.carinfo.carnum
 
@@ -355,8 +392,7 @@ class TrackPlayActivity : AppCompatActivity() {
         binding.tvEndTime.text = "结束时间:${DateUtil.timestamp2String(endTime)}"
 
         // 3. 位置相关
-        binding.tvStartLocation.text = "起始位置:${trackData.postlist[0].address}"
-        binding.tvEndLocation.text = "结束位置:${trackData.postlist[trackData.postlist.size-1].address}"
+
 
         // 4. 时长/速度相关
         binding.tvDrivingDuration.text = "行车时长:${trackData.gotime}"
@@ -369,8 +405,15 @@ class TrackPlayActivity : AppCompatActivity() {
 
         // 初始化当前时间和速度显示
         if (trackData.postlist.isNotEmpty()) {
-            val firstPoint = trackData.postlist[0]
-            updatePositionInfo(firstPoint)
+            val firstPoint = trackData.postlist.firstOrNull()
+            firstPoint?.let {
+                binding.tvStartLocation.text = "起始位置:${firstPoint.address}"
+                updatePositionInfo(firstPoint)
+            }
+            val lastPoint = trackData.postlist.lastOrNull()
+            lastPoint?.let {
+                binding.tvEndLocation.text = "结束位置:${lastPoint.address}"
+            }
         }
     }
 
@@ -390,8 +433,6 @@ class TrackPlayActivity : AppCompatActivity() {
         // 更新标签样式
         when (mode) {
             PlayTimeMode.MODE_5_MINUTES -> {
-                binding.tv5min.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
-                binding.tv15min.setBackgroundColor(Color.TRANSPARENT)
                 // 5分钟 = 300秒，计算每段轨迹的播放间隔
                 animationInterval = if (trackData!!.postlist.size > 1) {
                     (300000L / (trackData!!.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
@@ -400,8 +441,6 @@ class TrackPlayActivity : AppCompatActivity() {
                 }
             }
             PlayTimeMode.MODE_15_MINUTES -> {
-                binding.tv5min.setBackgroundColor(Color.TRANSPARENT)
-                binding.tv15min.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
                 // 15分钟 = 900秒，计算每段轨迹的播放间隔
                 animationInterval = if (trackData!!.postlist.size > 1) {
                     (900000L / (trackData!!.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
@@ -467,9 +506,7 @@ class TrackPlayActivity : AppCompatActivity() {
                         val currentPoint = trackData!!.postlist[currentPointIndex]
 
                         // 更新当前时间和速度显示
-                        binding.tvLocationTime.text = currentPoint.gpstime
-                        binding.tvCommunicationTime.text = currentPoint.time
-                        binding.tvSpeed.text = currentPoint.speed
+                        updatePositionInfo(currentPoint)
 
                         // 移动地图中心点到当前位置
                         aMap.moveCamera(
@@ -527,9 +564,7 @@ class TrackPlayActivity : AppCompatActivity() {
         // 重置当前时间和速度显示
         if (trackData!!.postlist.isNotEmpty()) {
             val firstPoint = trackData!!.postlist[0]
-            binding.tvLocationTime.text = firstPoint.gpstime
-            binding.tvCommunicationTime.text = firstPoint.time
-            binding.tvSpeed.text = firstPoint.speed
+            updatePositionInfo(firstPoint)
 
             // 移动地图中心点到起点
             aMap.moveCamera(

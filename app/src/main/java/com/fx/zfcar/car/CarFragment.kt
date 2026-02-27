@@ -304,7 +304,9 @@ class CarFragment : Fragment(), AMapLocationListener {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
                     binding.rootCarDetail.rootMore.root.visibility = View.GONE
                     val intent = Intent(requireContext(), TrackPlayActivity::class.java)
-                    intent.putExtra(TrackPlayActivity.KEY_CAR_ID, currentRealTimeAddress?.carinfo?.id)
+                    intent.putExtra(TrackPlayActivity.KEY_CAR_ID, currentRealTimeAddress!!.carinfo.id)
+                    intent.putExtra(TrackPlayActivity.KEY_CAR_DLTYPE, currentRealTimeAddress!!.carinfo.dlcartype)
+                    intent.putExtra(TrackPlayActivity.KEY_CAR_STATUS, currentRealTimeAddress!!.carinfo.status.toInt())
                     startActivity(intent)
 
                 } else if (tab.position == 2) {

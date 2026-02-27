@@ -218,4 +218,20 @@
         <!-- 文字颜色随选中态变化 -->
         <item name="android:textColor">@color/selector_quick_time_text</item>
     </style>
+
+    <!-- 时间筛选RadioButton样式 -->
+    <style name="TrackDurationRBStyle">
+        <!-- 基础属性 -->
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/dp_24</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+
+        <!-- 隐藏默认圆形按钮 -->
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/item_track_duration</item>
+
+        <!-- 文字颜色随选中态变化 -->
+        <item name="android:textColor">@color/selector_quick_time_text</item>
+    </style>
 </resources>

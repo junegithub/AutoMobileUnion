@@ -1,6 +1,14 @@
 package com.fx.zfcar.car.base
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.ScaleDrawable
+import android.view.Gravity
 import com.fx.zfcar.R
+import androidx.core.graphics.scale
 
 /**
  * 车辆图片资源提供者
@@ -119,5 +127,23 @@ object VehicleImageProvider {
      */
     fun getAllStatus(): Map<Int, String> {
         return statusMap
+    }
+
+    fun scaleBitmapDrawable(context: Context, drawableResId: Int, scale: Float): Drawable {
+        // 解码原始位图
+        val originalBitmap = BitmapFactory.decodeResource(context.resources, drawableResId)
+
+
+        // 缩放位图
+        val scaledBitmap = originalBitmap.scale(
+            (originalBitmap.width * scale).toInt(),
+            (originalBitmap.height * scale).toInt()
+        )
+
+        // 回收原始位图，避免内存泄漏
+        originalBitmap.recycle()
+
+        // 返回新的 BitmapDrawable
+        return BitmapDrawable(context.resources, scaledBitmap)
     }
 }

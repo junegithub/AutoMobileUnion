@@ -68,35 +68,58 @@
         android:orientation="vertical"
         android:padding="15dp">
 
-        <!-- 时间选择标签 -->
+        <ImageView
+            android:id="@+id/switch_panel"
+            android:src="@drawable/collapse"
+            android:layout_gravity="end"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24" />
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/content_top_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/darker_gray"
-            android:orientation="horizontal"
-            android:padding="2dp"
-            android:radius="12dp">
+            android:layout_marginTop="@dimen/sp_16"
+            android:layout_marginBottom="@dimen/dp_16"
+            android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/tv_5min"
-                android:layout_width="40dp"
-                android:layout_height="24dp"
-                android:background="@android:color/holo_blue_light"
-                android:gravity="center"
-                android:radius="10dp"
-                android:text="5分钟"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
+                android:id="@+id/rechoose_time_range"
+                android:text="重设起始时间"
+                android:textSize="@dimen/sp_16"
+                android:drawableStart="@drawable/arrow_back"
+                android:drawableTint="@color/blue"
+                android:textColor="@color/blue"
+                android:drawablePadding="@dimen/dp_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
+            <!-- 时间选择标签 -->
             <TextView
-                android:id="@+id/tv_15min"
-                android:layout_width="40dp"
-                android:layout_height="24dp"
-                android:gravity="center"
-                android:radius="10dp"
-                android:text="15分钟"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
+                android:text="播放时长："
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <RadioGroup
+                android:id="@+id/track_duration_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/tv_5min"
+                    style="@style/TrackDurationRBStyle"
+                    android:text="5分钟"
+                    android:checked="true"/> <!-- 默认选中 -->
+
+                <!-- 今天 -->
+                <RadioButton
+                    android:id="@+id/tv_15min"
+                    style="@style/TrackDurationRBStyle"
+                    android:layout_marginStart="@dimen/dp_4"
+                    android:text="15分钟"/>
+            </RadioGroup>
         </LinearLayout>
         <!-- 1. 车牌号 -->
         <TextView
@@ -272,7 +295,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_marginStart="@dimen/dp_8"
-                android:thumb="@drawable/ic_huoche_xingshi"
+                android:progressTint="@color/blue"
+                android:backgroundTint="@color/blue_light"
                 android:max="100"
                 android:progress="0" />
         </LinearLayout>
