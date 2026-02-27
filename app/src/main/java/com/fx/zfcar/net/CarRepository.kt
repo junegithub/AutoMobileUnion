@@ -47,8 +47,8 @@ class CarRepository(private val apiService: CarApiService) {
 
     suspend fun shareLastPosition(carId: Long) = apiService.shareLastPosition(carId)
 
-    suspend fun getTrackInfo(carId: Int, endtime: String, is704: Boolean?, isFilter: Boolean?, starttime: String) =
-        apiService.getTrackInfo(carId, endtime, is704, isFilter, starttime)
+    suspend fun getTrackInfo(carId: Int, endtime: String, starttime: String, isFilter: Boolean?, is704: Boolean?) =
+        apiService.getTrackInfo(carId, endtime, starttime, isFilter, is704)
 
     suspend fun getVideoInfo(carId: Int) = apiService.getVideoInfo(carId)
 

@@ -71,10 +71,10 @@ class CarInfoViewModel : CarBaseViewModel() {
     }
 
     // 轨迹信息
-    fun getTrackInfo(carId: Int, endtime: String, is704: Boolean?, isFilter: Boolean?,
-                     starttime: String, stateFlow: MutableStateFlow<ApiState<TrackData>>) {
+    fun getTrackInfo(carId: Int, endtime: String, starttime: String,
+                     stateFlow: MutableStateFlow<ApiState<TrackData>>) {
         launchRequest(
-            block = { vehicleRepository.getTrackInfo(carId, endtime, is704, isFilter, starttime) },
+            block = { vehicleRepository.getTrackInfo(carId, endtime, starttime, true, true) },
             stateFlow
         )
     }

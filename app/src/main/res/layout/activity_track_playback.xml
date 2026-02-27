@@ -104,7 +104,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_8"
-            android:text="鲁F726SH"
             android:textColor="#000000"
             android:textSize="12sp" />
 
@@ -120,7 +119,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="速度:0.0Km/h"
                 android:textColor="#333333"
                 android:textSize="12sp" />
 
@@ -130,7 +128,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="GPS状态:ACC开;定位;"
                 android:textColor="#333333"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -147,7 +144,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="定位时间:2026-02-26 03:26:48"
                 android:textColor="#333333"
                 android:textSize="12sp" />
 
@@ -157,7 +153,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="通讯时间:2026-02-26 03:26:50"
                 android:textColor="#333333"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -168,7 +163,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_8"
-            android:text="起始位置:山东省,烟台市,蓬莱市,南环路(北37米),十里埠村(南247米)"
             android:textColor="#333333"
             android:textSize="12sp" />
 
@@ -178,7 +172,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_8"
-            android:text="结束位置:山东省,潍坊市,诸城市,S329(北104米),李月平诊所(北63米)"
             android:textColor="#333333"
             android:textSize="12sp" />
 
@@ -188,7 +181,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_8"
-            android:text="开始时间:2026-02-26 00:00:00"
             android:textColor="#333333"
             android:textSize="12sp" />
 
@@ -198,7 +190,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_8"
-            android:text="结束时间:2026-02-26 23:59:59"
             android:textColor="#333333"
             android:textSize="12sp" />
 
@@ -214,7 +205,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="行车时长:6小时34分钟8秒"
                 android:textColor="#333333"
                 android:textSize="12sp" />
 
@@ -224,7 +214,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="最高时速:120.00Km/h"
                 android:textColor="#333333"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -241,7 +230,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="停车时长:17小时25分钟50秒"
                 android:textColor="#333333"
                 android:textSize="12sp" />
 
@@ -251,7 +239,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="平均时速:60.80Km/h"
                 android:textColor="#333333"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -262,7 +249,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_8"
-            android:text="行驶总里程:399.40Km"
             android:textColor="#333333"
             android:textSize="12sp" />
 
@@ -288,7 +274,7 @@
                 android:layout_marginStart="@dimen/dp_8"
                 android:thumb="@drawable/ic_huoche_xingshi"
                 android:max="100"
-                android:progress="50" />
+                android:progress="0" />
         </LinearLayout>
         <!-- 播放速度控制 -->
         <LinearLayout

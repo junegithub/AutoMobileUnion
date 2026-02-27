@@ -105,9 +105,9 @@ interface CarApiService {
     suspend fun getTrackInfo(
         @Query("car_id") carId: Int,
         @Query("endtime") endtime: String,
-        @Query("is704") is704: Boolean?,
+        @Query("starttime") starttime: String,
         @Query("isFilter") isFilter: Boolean?,
-        @Query("starttime") starttime: String
+        @Query("is704") is704: Boolean?
     ): Response<BaseResponse<TrackData>>
 
     @GET("aggregation/app/video/videonew")

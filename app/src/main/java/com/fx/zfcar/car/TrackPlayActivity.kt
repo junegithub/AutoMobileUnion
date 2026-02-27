@@ -19,8 +19,10 @@ import com.fx.zfcar.R
 import com.fx.zfcar.car.base.TimeFilterHelper
 import com.fx.zfcar.car.base.WeChatShareHelper
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
+import com.fx.zfcar.net.TrackPosition
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.PressEffectUtils
+import com.fx.zfcar.util.ProgressDialogUtils
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -114,8 +116,8 @@ class TrackPlayActivity : AppCompatActivity() {
     private fun loadTrackData() {
         carInfoViewModel.getTrackInfo(
             carId.toInt(),
-            DateUtil.timestamp2Date(startTime), true, true,
-            DateUtil.timestamp2Date(startTime), trackInfoStateFlow)
+            DateUtil.timestamp2String(endTime),
+            DateUtil.timestamp2String(startTime), trackInfoStateFlow)
     }
 
     /**
@@ -234,6 +236,7 @@ class TrackPlayActivity : AppCompatActivity() {
             trackInfoStateFlow.collect {uiState ->
                 when (uiState) {
                     is ApiState.Loading -> {
+                        ProgressDialogUtils.show(this@TrackPlayActivity)
                     }
                     is ApiState.Success -> {
                         uiState.data?.let {
@@ -242,8 +245,10 @@ class TrackPlayActivity : AppCompatActivity() {
                             drawTrack(uiState.data)
                             moveMapToFirstPoint(uiState.data)
                         }
+                        ProgressDialogUtils.dismiss()
                     }
                     is ApiState.Error -> {
+                        ProgressDialogUtils.dismiss()
                     }
                     is ApiState.Idle -> {
                     }
@@ -345,19 +350,35 @@ class TrackPlayActivity : AppCompatActivity() {
         binding.timeChooseContainer.visibility = View.GONE
 
         binding.tvCarNum.text = trackData.carinfo.carnum
-        binding.tvTotalMileage.text = trackData.mileage
-        binding.tvAvgSpeed.text = trackData.avgspeed
-        binding.tvMaxSpeed.text = trackData.maxspeed
-        binding.tvStartTime.text = trackData.gotime
-        binding.tvEndTime.text = trackData.stoptime
+
+        binding.tvStartTime.text = "开始时间:${DateUtil.timestamp2String(startTime)}"
+        binding.tvEndTime.text = "结束时间:${DateUtil.timestamp2String(endTime)}"
+
+        // 3. 位置相关
+        binding.tvStartLocation.text = "起始位置:${trackData.postlist[0].address}"
+        binding.tvEndLocation.text = "结束位置:${trackData.postlist[trackData.postlist.size-1].address}"
+
+        // 4. 时长/速度相关
+        binding.tvDrivingDuration.text = "行车时长:${trackData.gotime}"
+        binding.tvParkingDuration.text = "停车时长:${trackData.stoptime}"
+        binding.tvMaxSpeed.text = "最高时速:${trackData.maxspeed}"
+        binding.tvAvgSpeed.text = "平均时速:${trackData.avgspeed}"
+
+        // 5. 里程
+        binding.tvTotalMileage.text = "行驶总里程:${trackData.mileage}"
 
         // 初始化当前时间和速度显示
         if (trackData.postlist.isNotEmpty()) {
             val firstPoint = trackData.postlist[0]
-            binding.tvLocationTime.text = firstPoint.gpstime
-            binding.tvCommunicationTime.text = firstPoint.time
-            binding.tvSpeed.text = firstPoint.speed
+            updatePositionInfo(firstPoint)
         }
+    }
+
+    private fun updatePositionInfo(trackPosition: TrackPosition) {
+        binding.tvLocationTime.text = "定位时间:${trackPosition.gpstime}"
+        binding.tvCommunicationTime.text = "通讯时间:${trackPosition.time}"
+        binding.tvSpeed.text = "速度:${trackPosition.speed}"
+        binding.tvGpsStatus.text = "GPS状态:${trackPosition.statusFlagString}"
     }
 
     /**
@@ -577,6 +598,7 @@ class TrackPlayActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        ProgressDialogUtils.dismiss()
         mapView.onDestroy()
         pauseAnimation()
     }
