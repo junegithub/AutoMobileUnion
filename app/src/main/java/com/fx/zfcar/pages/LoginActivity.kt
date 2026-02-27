@@ -82,14 +82,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updatePageWithLoginState() {
-        if (MyApp.Companion.userInfo != null) {
-            binding.tvUsername.text = MyApp.Companion.userInfo?.username
-            binding.tvNickname.text = MyApp.Companion.userInfo?.nickname
-            binding.userGroup.visibility = View.VISIBLE
-            binding.loginGroup.visibility = View.GONE
-        } else {
-            binding.userGroup.visibility = View.GONE
-            binding.loginGroup.visibility = View.VISIBLE
+        if (!trainingLogin) {
+            if (MyApp.userInfo != null) {
+                binding.tvUsername.text = MyApp.userInfo?.username
+                binding.tvNickname.text = MyApp.userInfo?.nickname
+                binding.userGroup.visibility = View.VISIBLE
+                binding.loginGroup.visibility = View.GONE
+            } else {
+                binding.userGroup.visibility = View.GONE
+                binding.loginGroup.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -139,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
                         val statistics = uiState.data
                         // 保存Token
                         SPUtils.saveToken(statistics?.userinfo?.token)
-                        MyApp.Companion.isLogin = true
+                        MyApp.isLogin = true
                         getUserInfo()
                         isLYBH()
                         userViewModel.getAlarmWarningTypes(alarmTypesStateFlow)
@@ -182,7 +184,7 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     is ApiState.Success -> {
-                        MyApp.Companion.userInfo = uiState.data?.info
+                        MyApp.userInfo = uiState.data?.info
                     }
 
                     is ApiState.Error -> {
@@ -200,7 +202,7 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     is ApiState.Success -> {
-                        MyApp.Companion.isLYBH = uiState.data
+                        MyApp.isLYBH = uiState.data
                     }
 
                     is ApiState.Error -> {
@@ -221,8 +223,8 @@ class LoginActivity : AppCompatActivity() {
                     is ApiState.Success -> {
                         ProgressDialogUtils.dismiss()
                         SPUtils.saveTrainingToken(uiState.data?.token)
-                        MyApp.Companion.isTrainingLogin = true
-                        MyApp.Companion.trainingUserInfo = uiState.data
+                        MyApp.isTrainingLogin = true
+                        MyApp.trainingUserInfo = uiState.data
                         finish()
                     }
 
@@ -257,8 +259,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun clearCache() {
-        MyApp.Companion.isLogin = false
-        MyApp.Companion.userInfo = null
+        MyApp.isLogin = false
+        MyApp.userInfo = null
         SPUtils.saveToken("")
         EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
         finish()
