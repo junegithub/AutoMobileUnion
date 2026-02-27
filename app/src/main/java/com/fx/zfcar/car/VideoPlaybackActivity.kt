@@ -7,7 +7,6 @@ import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebViewClient
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import retrofit2.Call
@@ -17,12 +16,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import com.fx.zfcar.R
 import com.fx.zfcar.car.adapter.VideoTimeSelectorAdapter
 import com.fx.zfcar.databinding.ActivityVideoPlaybackBinding
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.PressEffectUtils
+import com.kongzue.dialogx.dialogs.BottomMenu
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -215,40 +214,36 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
                     binding.tvEndTime.text = endTime
                 }
             }
-            binding.llChannel.id -> showPickerDialog(channelArr, "视频通道") { index, value ->
-                channelIndex = index
-                binding.tvChannel.text = value
+            binding.llChannel.id -> {
+                BottomMenu.show(channelArr.toTypedArray()) { dialog, text, index ->
+                    channelIndex = index
+                    binding.tvChannel.text = text
+                    false
+                }
             }
-            binding.llStream.id -> showPickerDialog(streamArr.toList(), "码流通道") { index, value ->
-                streamIndex = index
-                binding.tvStream.text = value
+            binding.llStream.id -> {
+                BottomMenu.show(streamArr.toList()) { dialog, text, index ->
+                    streamIndex = index
+                    binding.tvStream.text = text
+                    false
+                }
             }
-            binding.llStorage.id -> showPickerDialog(storageArr.toList(), "存储类型") { index, value ->
-                storageIndex = index
-                binding.tvStorage.text = value
+            binding.llStorage.id -> {
+                BottomMenu.show(storageArr.toList()) { dialog, text, index ->
+                    storageIndex = index
+                    binding.tvStorage.text = text
+                    false
+                }
             }
-            binding.llMedia.id -> showPickerDialog(mediaArr.toList(), "资源类型") { index, value ->
-                mediaIndex = index
-                binding.tvMedia.text = value
+            binding.llMedia.id -> {
+                BottomMenu.show(mediaArr.toList()) { dialog, text, index ->
+                    mediaIndex = index
+                    binding.tvMedia.text = text
+                    false
+                }
             }
             binding.btnQuery.id -> playOnLive()
         }
-    }
-
-    /**
-     * 显示选择器弹窗
-     */
-    private fun showPickerDialog(
-        list: List<String>,
-        title: String,
-        callback: (index: Int, value: String) -> Unit
-    ) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(title)
-        builder.setItems(list.toTypedArray()) { _, which ->
-            callback(which, list[which])
-        }
-        builder.show()
     }
 
     /**
