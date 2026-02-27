@@ -263,6 +263,17 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_car_num_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="车牌号:鲁F726SH"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="15dp"
+        android:visibility="gone"/> <!-- 默认隐藏，列表为空时不显示 -->
+
     <!-- 内容容器 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvContent"

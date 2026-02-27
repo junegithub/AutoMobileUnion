@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:padding="15dp"
+    android:layout_marginBottom="10dp"
+    android:radius="8dp"
+    android:elevation="2dp">
+
+    <!-- 停车时长（对应date类） -->
+    <TextView
+        android:id="@+id/tv_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="停车时长:17小时25分钟50秒"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 开始时间 -->
+    <TextView
+        android:id="@+id/tv_start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开始时间:2026-02-26 00:00:00"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 结束时间 -->
+    <TextView
+        android:id="@+id/tv_end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="结束时间:2026-02-26 23:59:59"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 停车位置 -->
+    <TextView
+        android:id="@+id/tv_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="停车位置:山东省,潍坊市,诸城市,S329(北104米)"
+        android:textColor="#333333"
+        android:textSize="16sp"/>
+
+</LinearLayout>

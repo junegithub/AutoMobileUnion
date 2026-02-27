@@ -26,6 +26,8 @@ import com.fx.zfcar.databinding.ItemOilAddBinding
 import com.fx.zfcar.databinding.ItemOilDayBinding
 import com.fx.zfcar.databinding.ItemLeakBinding
 import com.fx.zfcar.databinding.ItemOfflineBinding
+import com.fx.zfcar.databinding.ItemStopCarBinding
+import com.fx.zfcar.net.StopDetailItem
 
 // 列表项类型
 sealed class ReportItem {
@@ -34,6 +36,7 @@ sealed class ReportItem {
     data class ActiveWarningItem(val data: ActiveWarningDataItem) : ReportItem()
     data class PhotoItem(val data: PhotoReportItem) : ReportItem()
     data class ExpiredItem(val data: ExpiredCarItem) : ReportItem()
+    data class StopItem(val data: StopDetailItem) : ReportItem()
     data class OilAddItem(val data: OilAddReportItem) : ReportItem()
     data class OilDayItem(val data: OilDayReportItem) : ReportItem()
     data class LeakItem(val data: LeakReportItem) : ReportItem()
@@ -43,7 +46,7 @@ sealed class ReportItem {
 class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, RecyclerView.ViewHolder>(DiffCallback()) {
 
     enum class ReportType {
-        MILEAGE, WARNING, ACTIVE_WARNING, PHOTO, EXPIRED, OIL_ADD, OIL_DAY, LEAK, OFFLINE
+        MILEAGE, WARNING, ACTIVE_WARNING, PHOTO, EXPIRED, STOP, OIL_ADD, OIL_DAY, LEAK, OFFLINE
     }
 
     override fun onCreateViewHolder(context: Context, parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -54,6 +57,7 @@ class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, Recycle
             ReportType.ACTIVE_WARNING -> ActiveWarningViewHolder(ItemActiveWarningBinding.inflate(inflater, parent, false))
             ReportType.PHOTO -> PhotoViewHolder(ItemPhotoBinding.inflate(inflater, parent, false))
             ReportType.EXPIRED -> ExpiredViewHolder(ItemExpiredBinding.inflate(inflater, parent, false))
+            ReportType.STOP -> StopViewHolder(ItemStopCarBinding.inflate(inflater, parent, false))
             ReportType.OIL_ADD -> OilAddViewHolder(ItemOilAddBinding.inflate(inflater, parent, false))
             ReportType.OIL_DAY -> OilDayViewHolder(ItemOilDayBinding.inflate(inflater, parent, false))
             ReportType.LEAK -> LeakViewHolder(ItemLeakBinding.inflate(inflater, parent, false))
@@ -68,6 +72,7 @@ class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, Recycle
             is ActiveWarningViewHolder -> holder.bind((item as ReportItem.ActiveWarningItem).data)
             is PhotoViewHolder -> holder.bind((item as ReportItem.PhotoItem).data)
             is ExpiredViewHolder -> holder.bind((item as ReportItem.ExpiredItem).data)
+            is StopViewHolder -> holder.bind((item as ReportItem.StopItem).data)
             is OilAddViewHolder -> holder.bind((item as ReportItem.OilAddItem).data)
             is OilDayViewHolder -> holder.bind((item as ReportItem.OilDayItem).data)
             is LeakViewHolder -> holder.bind((item as ReportItem.LeakItem).data)
@@ -121,6 +126,17 @@ class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, Recycle
         }
     }
 
+    class StopViewHolder(private val binding: ItemStopCarBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: StopDetailItem) {
+            binding.tvDuration.text = "停车时长:${item.duration}"
+            binding.tvStartTime.text = "开始时间:${item.startTime}"
+            binding.tvEndTime.text = "结束时间:${item.endTime}"
+            binding.tvPosition.text = "停车位置:${item.position}"
+        }
+    }
+
     // 加油项ViewHolder
     class OilAddViewHolder(private val binding: ItemOilAddBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: OilAddReportItem) {
@@ -171,6 +187,7 @@ class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, Recycle
                 oldItem is ReportItem.ActiveWarningItem && newItem is ReportItem.ActiveWarningItem -> oldItem.data.warningType == newItem.data.warningType
                 oldItem is ReportItem.PhotoItem && newItem is ReportItem.PhotoItem -> oldItem.data.carId == newItem.data.carId && oldItem.data.ts == newItem.data.ts
                 oldItem is ReportItem.ExpiredItem && newItem is ReportItem.ExpiredItem -> oldItem.data.carId == newItem.data.carId
+                oldItem is ReportItem.StopItem && newItem is ReportItem.StopItem -> oldItem.data.carId == newItem.data.carId
                 oldItem is ReportItem.OilAddItem && newItem is ReportItem.OilAddItem -> oldItem.data.carId == newItem.data.carId
                 oldItem is ReportItem.OilDayItem && newItem is ReportItem.OilDayItem -> oldItem.data.carId == newItem.data.carId
                 oldItem is ReportItem.LeakItem && newItem is ReportItem.LeakItem -> oldItem.data.carId == newItem.data.carId

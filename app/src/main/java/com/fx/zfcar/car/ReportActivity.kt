@@ -33,12 +33,12 @@ import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.android.material.chip.Chip
 import com.fx.zfcar.R
+import com.fx.zfcar.net.StopDetailData
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-import kotlin.collections.get
 
 class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityReportBinding
@@ -49,6 +49,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private val activeWarningStateFlow = MutableStateFlow<ApiState<ActiveWarningData>>(ApiState.Loading)
     private val photoStateFlow = MutableStateFlow<ApiState<PhotoReportData>>(ApiState.Loading)
     private val expiredDataStateFlow = MutableStateFlow<ApiState<ExpiredCarData>>(ApiState.Loading)
+    private val stopDataStateFlow = MutableStateFlow<ApiState<StopDetailData>>(ApiState.Loading)
     private val oilAddStateFlow = MutableStateFlow<ApiState<OilAddReportData>>(ApiState.Loading)
     private val oilDailyStateFlow = MutableStateFlow<ApiState<OilDayReportData>>(ApiState.Loading)
     private val leakStateFlow = MutableStateFlow<ApiState<LeakReportData>>(ApiState.Loading)
@@ -243,6 +244,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
      */
     private fun handleChipSelect(chip: Chip) {
         binding.ivHeader.visibility = View.GONE
+        binding.tvCarNumStop.visibility = View.GONE
         when (chip.id) {
             R.id.chipMileage -> { // 里程查询
                 currentTabIndex = 0
@@ -274,7 +276,9 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 binding.ivHeaderT3.visibility = View.GONE
                 binding.ivHeader.visibility = View.VISIBLE
             }
-            R.id.chipParking -> {currentTabIndex = 5} // 停车统计
+            R.id.chipParking -> {
+                currentTabIndex = 5
+            } // 停车统计
             R.id.chipRefuel -> {currentTabIndex = 6} // 加油报表
             R.id.chipOilDaily -> {currentTabIndex = 7} // 油耗日报表
             R.id.chipOilLeak -> {currentTabIndex = 8} // 漏油报表
@@ -307,6 +311,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             2 -> ReportAdapter.ReportType.ACTIVE_WARNING
             3 -> ReportAdapter.ReportType.PHOTO
             4 -> ReportAdapter.ReportType.EXPIRED
+            5 -> ReportAdapter.ReportType.STOP
             6 -> ReportAdapter.ReportType.OIL_ADD
             7 -> ReportAdapter.ReportType.OIL_DAY
             8 -> ReportAdapter.ReportType.LEAK
@@ -477,6 +482,36 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         lifecycleScope.launch {
+            stopDataStateFlow.collect { state ->
+                updateLoadState(state)
+                when (state) {
+                    is ApiState.Success -> {
+                        val dataList = state.data?.list?.map { ReportItem.StopItem(it) }
+                        if (dataList?.isEmpty() == true) {
+                            binding.llEmpty.visibility = View.VISIBLE
+                            binding.tvEmptyTip.text = "暂无过期数据"
+                            binding.tvCarNumStop.visibility = View.GONE
+                        } else {
+                            binding.llEmpty.visibility = View.GONE
+                            binding.tvCarNumStop.visibility = View.VISIBLE
+                            reportAdapter.submitList(dataList)
+                        }
+                    }
+                    is ApiState.Error -> {
+                        binding.llEmpty.visibility = View.VISIBLE
+                        binding.tvEmptyTip.text = state.msg
+                        showToast(state.msg)
+                    }
+                    ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
             oilAddStateFlow.collect { state ->
                 updateLoadState(state)
                 when (state) {
@@ -617,6 +652,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             2 -> loadActiveWarningData(searchText) // 安全查询
             3 -> loadPhotoData(searchText) // 照片查询
             4 -> loadExpiredData(searchText) // 过期查询
+            5 -> loadStopData(searchText) // 停车查询
             6 -> loadOilAddData(searchText) // 加油报表
             7 -> loadOilDayData(searchText) // 油耗日报表
             8 -> loadLeakData(searchText) // 漏油报表
@@ -662,6 +698,10 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
      */
     private fun loadExpiredData(search: String) {
         reportViewModel.getExpiredCars(pageNum, pageSize, search, expiredDataStateFlow)
+    }
+
+    private fun loadStopData(search: String) {
+        reportViewModel.getStopDetailReport(pageNum, pageSize, search, currentTimeType, stopDataStateFlow)
     }
 
     /**
