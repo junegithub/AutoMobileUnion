@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.amap.api.mapcore.util.dy
 import com.chad.library.adapter4.BaseQuickAdapter
 import com.fx.zfcar.databinding.*
 import com.fx.zfcar.net.BeforeSubjectItem
@@ -29,12 +30,12 @@ class TrainListAdapter(val trainType: Int) : BaseQuickAdapter<TrainListItem, Rec
     // 你定义的类型：0-安全 1-岗前 2-在线测验 3-安全会议 4-继续教育
     companion object {
         const val TYPE_SAFE = 0
-        const val TYPE_SAFE_OLD = 1
-        const val TYPE_PRE_JOB = 2
-        const val TYPE_EXAM = 3
-        const val TYPE_MEETING = 4
-        const val TYPE_CONTINUE = 5
+        const val TYPE_PRE_JOB = 1
+        const val TYPE_EXAM = 2
+        const val TYPE_MEETING = 3
+        const val TYPE_CONTINUE = 4
     }
+    private var dynamicType = 0
 
     // 点击事件（和你项目统一）
     var onItemClickListener: OnItemClickListener? = null
@@ -46,6 +47,11 @@ class TrainListAdapter(val trainType: Int) : BaseQuickAdapter<TrainListItem, Rec
         fun onMeetingClick(item: TrainListItem)
     }
 
+    fun updateDynamicType(type: Int) {
+        dynamicType = type
+        notifyDataSetChanged()
+    }
+
     // ==================== 创建 ViewHolder ====================
     override fun onCreateViewHolder(
         context: Context,
@@ -55,8 +61,12 @@ class TrainListAdapter(val trainType: Int) : BaseQuickAdapter<TrainListItem, Rec
         val inflater = LayoutInflater.from(parent.context)
 
         return when (trainType) {
-            TYPE_SAFE -> SafeViewHolder(ItemTrainSafeBinding.inflate(inflater, parent, false))
-            TYPE_SAFE_OLD -> SafeOldViewHolder(ItemTrainSafeBinding.inflate(inflater, parent, false))
+            TYPE_SAFE -> {
+                if (dynamicType == 0)
+                    SafeViewHolder(ItemTrainSafeBinding.inflate(inflater, parent, false))
+                else
+                    SafeOldViewHolder(ItemTrainSafeBinding.inflate(inflater, parent, false))
+            }
             TYPE_PRE_JOB -> PreJobViewHolder(ItemTrainPrejobBinding.inflate(inflater, parent, false))
             TYPE_EXAM -> ExamViewHolder(ItemTrainExamBinding.inflate(inflater, parent, false))
             TYPE_MEETING -> MeetingViewHolder(ItemTrainMeetingBinding.inflate(inflater, parent, false))
@@ -204,6 +214,8 @@ class TrainListAdapter(val trainType: Int) : BaseQuickAdapter<TrainListItem, Rec
         override fun areItemsTheSame(oldItem: TrainListItem, newItem: TrainListItem): Boolean {
             return when {
                 oldItem is TrainListItem.TypeSafeItem && newItem is TrainListItem.TypeSafeItem ->
+                    oldItem.data.id == newItem.data.id
+                oldItem is TrainListItem.TypeSafeOldItem && newItem is TrainListItem.TypeSafeOldItem ->
                     oldItem.data.id == newItem.data.id
                 oldItem is TrainListItem.TypePreJobItem && newItem is TrainListItem.TypePreJobItem ->
                     oldItem.data.id == newItem.data.id
