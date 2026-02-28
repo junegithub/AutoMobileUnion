@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/dp_32"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/dp_32"
+            android:layout_height="@dimen/dp_32"
+            android:src="@drawable/arrow_back"
+            android:scaleType="centerInside"
+            app:tint="@color/gray"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="详情"
+            android:textSize="26sp"
+            android:textColor="#3a4462"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/ll_main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:lineSpacingMultiplier="2"
+            android:breakStrategy="balanced">
+
+            <LinearLayout
+                android:id="@+id/ll_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="标题："
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="图片:"
+                    android:textSize="16sp"/>
+
+                <ImageView
+                    android:id="@+id/iv_notice_img"
+                    android:layout_width="0dp"
+                    android:layout_weight="7"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_sign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="签字:"
+                    android:textSize="16sp"/>
+
+                <FrameLayout
+                    android:id="@+id/fl_sign_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp">
+
+                    <ImageView
+                        android:id="@+id/iv_sign_img"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="gone"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_sign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="签字"
+                        android:textSize="16sp"
+                        app:backgroundTint="#2196F3"
+                        android:visibility="gone"/>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="内容："
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:breakStrategy="balanced"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

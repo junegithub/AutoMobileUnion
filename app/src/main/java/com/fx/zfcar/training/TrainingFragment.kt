@@ -12,6 +12,7 @@ import com.fx.zfcar.training.user.UserCenterActivity
 import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.databinding.FragmentTrainingBinding
+import com.fx.zfcar.training.notice.NoticeActivity
 
 class TrainingFragment : Fragment(), View.OnClickListener {
 
@@ -80,7 +81,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
         }
         when(v.id) {
             binding.trainingHomeRing.id -> {
-
+                startActivity(Intent(requireActivity(), NoticeActivity::class.java))
             }
             binding.trainingHomeUser.id -> {
                 startActivity(Intent(requireActivity(), UserCenterActivity::class.java))

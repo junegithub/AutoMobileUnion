@@ -2225,10 +2225,13 @@ data class SectionItem(val name: String)
 
 // 公告列表项数据模型
 data class NoticeItem(
-    val notice_id: String,
+    val id: String,
     val title: String,
     val content: String,
     val status: Int, // 0=未读，1=已读
+    val file: String, // 图片地址（空字符串表示无图片）
+    val issign: String, // 0=不需要签字，1=需要签字
+    val signimg: String, // 签字图片地址
     val type: Int    // 1/2/3 对应不同公告类型
 )
 
@@ -2237,11 +2240,6 @@ data class NoticeParams(
     var page: Int = 1,
     var index: Int = 0,
     var type: Int = 1
-)
-
-// 接口返回数据模型
-data class NoticeResponse(
-    val data: NoticeData
 )
 
 data class NoticeData(

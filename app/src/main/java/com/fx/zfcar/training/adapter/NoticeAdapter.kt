@@ -18,7 +18,7 @@ class NoticeAdapter(
     // DiffUtil优化列表刷新
     class DiffCallback : DiffUtil.ItemCallback<NoticeItem>() {
         override fun areItemsTheSame(oldItem: NoticeItem, newItem: NoticeItem): Boolean {
-            return oldItem.notice_id == newItem.notice_id
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: NoticeItem, newItem: NoticeItem): Boolean {
@@ -55,9 +55,7 @@ class NoticeAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemNoticeBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+            LayoutInflater.from(parent.context), parent, false
         )
         return ViewHolder(binding)
     }

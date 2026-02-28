@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:orientation="vertical">
 
     <!-- 顶部导航栏（对应u-navbar） -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/dp_32"
         android:layout_height="?attr/actionBarSize"
         android:background="#FFFFFF"
         android:elevation="2dp">
@@ -19,9 +19,9 @@
             android:id="@+id/iv_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:tint="@color/text_black"
             android:src="@drawable/arrow_back"
-            android:layout_marginLeft="16dp"/>
+            android:layout_marginStart="16dp"
+            app:tint="@color/text_black" />
 
         <!-- 标题（对应slot-wrap的h1） -->
         <TextView
@@ -35,7 +35,6 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- 分段选择器（对应u-subsection） -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
@@ -48,34 +47,23 @@
         app:tabIndicatorHeight="2dp"
         app:tabTextAppearance="@style/TabTextStyle"/>
 
-    <!-- 内容区域（对应app-main的content） -->
-    <LinearLayout
+    <!-- 公告列表-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_notice_list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingHorizontal="@dimen/dp_12"
-        android:paddingVertical="@dimen/dp_2"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:overScrollMode="never"/>
 
-        <!-- 公告列表（替代scroll-view，用RecyclerView更高效） -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_notice_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="never"/>
-
-        <!-- 加载更多提示（触底时显示） -->
-        <TextView
-            android:id="@+id/tv_load_more"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="没有更多消息了"
-            android:textSize="14sp"
-            android:textColor="#999999"
-            android:gravity="center"
-            android:padding="8dp"
-            android:visibility="gone"/>
-
-    </LinearLayout>
+    <!-- 加载更多提示（触底时显示） -->
+    <TextView
+        android:id="@+id/tv_load_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="没有更多消息了"
+        android:textSize="14sp"
+        android:textColor="#999999"
+        android:gravity="center"
+        android:padding="8dp"
+        android:visibility="gone"/>
 
 </LinearLayout>

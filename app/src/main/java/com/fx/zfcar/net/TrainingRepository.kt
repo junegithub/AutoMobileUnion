@@ -2,6 +2,7 @@ package com.fx.zfcar.net
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Query
 
 // Repository Layer
 class TrainingRepository(private val apiService: TrainingApiService) {
@@ -165,4 +166,7 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun logoff() = apiService.logoff()
 
     suspend fun getNoticeInfo(page: Int, index: Int, type: Int) = apiService.getNoticeInfo(page, index, type)
+    suspend fun readNotice(noticeId: String, signimg: String) = apiService.readNotice(noticeId, signimg)
+    suspend fun warningNotice(page: Int, index: Int, type: Int) = apiService.warningNotice(page, index, type)
+    suspend fun readWarningNotice(noticeId: String, signimg: String) = apiService.readWarningNotice(noticeId, signimg)
 }

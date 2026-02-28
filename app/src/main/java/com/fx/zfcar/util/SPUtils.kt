@@ -11,6 +11,7 @@ object SPUtils {
     private const val KEY_PASSWORD = "password"
     private const val KEY_REMEMBER = "remember_password"
     private const val KEY_AUTO_LOGIN = "auto_login"
+    private const val SP_KEY_NOTICE_ID = "noticeId"
 
     private fun getSP(): SharedPreferences {
         return MyApp.Companion.getAppContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
@@ -45,6 +46,26 @@ object SPUtils {
 
     fun getTrainingToken(): String {
         return getSP().getString(ApiConfig.SP_KEY_TRAINING_TOKEN, "") ?: ""
+    }
+
+    fun saveNoticeId(id: String?) {
+        getSP().edit().putString(SP_KEY_NOTICE_ID, id).apply()
+    }
+
+    fun get(key: String): String {
+        return getSP().getString(key, "") ?: ""
+    }
+
+    fun remove(key: String) {
+        getSP().edit().remove(key).apply()
+    }
+
+    fun save(key: String, content: String?) {
+        getSP().edit().putString(key, content).apply()
+    }
+
+    fun getNoticeId(): String {
+        return getSP().getString(SP_KEY_NOTICE_ID, "") ?: ""
     }
 
     // 获取账号

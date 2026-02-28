@@ -3,13 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="center"
-    android:paddingVertical="8dp"
-    android:background="#FFFFFF"
+    android:gravity="center_vertical"
+    android:padding="8dp"
     android:id="@+id/ll_notice_item">
 
     <!-- 图标+未读角标容器 -->
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -23,27 +22,23 @@
 
         <View
             android:id="@+id/v_unread_dot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/unread_dot_bg"
-            android:layout_alignTop="@id/iv_notice_icon"
-            android:layout_marginLeft="@dimen/dp_4"
-            android:visibility="gone"/>
+            android:layout_width="@dimen/dp_8"
+            android:layout_height="@dimen/dp_8"
+            android:background="@drawable/unread_dot_bg"/>
 
-    </RelativeLayout>
+    </FrameLayout>
 
     <!-- 标题+内容区域（对应detailSty） -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:orientation="vertical"
         android:paddingLeft="@dimen/dp_8">
 
         <!-- 公告标题 -->
         <TextView
             android:id="@+id/tv_notice_title"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textColor="#333333"
@@ -54,7 +49,7 @@
         <!-- 公告内容 -->
         <TextView
             android:id="@+id/tv_notice_content"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:textColor="#666666"

@@ -298,5 +298,15 @@ interface TrainingApiService {
 
     @GET("api/other/notice")
     suspend fun getNoticeInfo(@Query("page") page: Int, @Query("page") index: Int,
-                              @Query("type") type: Int): Response<TrainingBaseResponse<Any>>
+                              @Query("type") type: Int): Response<TrainingBaseResponse<NoticeData>>
+    @GET("api/other/readNotice")
+    suspend fun readNotice(@Query("notice_id") noticeId: String,
+                           @Query("signimg") signimg: String?): Response<TrainingBaseResponse<Any>>
+
+    @GET("api/other/warningNotice")
+    suspend fun warningNotice(@Query("page") page: Int, @Query("page") index: Int,
+                              @Query("type") type: Int): Response<TrainingBaseResponse<NoticeData>>
+    @GET("api/other/readWarningNotice")
+    suspend fun readWarningNotice(@Query("notice_id") noticeId: String,
+                                  @Query("signimg") signimg: String?): Response<TrainingBaseResponse<Any>>
 }

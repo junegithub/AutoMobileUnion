@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/dp_32"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/arrow_back"
+            app:tint="@color/gray"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="详情"
+            android:textSize="26sp"
+            android:textColor="#3a4462"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/ll_main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:lineSpacingMultiplier="2"
+            android:breakStrategy="balanced">
+
+            <LinearLayout
+                android:id="@+id/ll_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="标题："
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="图片:"
+                    android:textSize="16sp"/>
+
+                <ImageView
+                    android:id="@+id/iv_notice_img"
+                    android:layout_width="0dp"
+                    android:layout_weight="7"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="内容："
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:breakStrategy="balanced"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_sign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="签字:"
+                    android:textSize="16sp"/>
+
+                <FrameLayout
+                    android:id="@+id/fl_sign_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp">
+
+                    <ImageView
+                        android:id="@+id/iv_sign_img"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:visibility="gone"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_sign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="签字"
+                        android:textSize="16sp"
+                        app:backgroundTint="#2196F3"
+                        android:visibility="gone"/>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- 手写签字画板（默认隐藏） -->
+    <LinearLayout
+        android:id="@+id/ll_sign_board"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#F6F6F6"
+        android:visibility="gone">
+
+        <!-- 手写画板 -->
+        <com.fx.zfcar.training.notice.SignaturePad
+            android:id="@+id/signature_pad"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF"/>
+
+        <!-- 操作按钮栏 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingHorizontal="24dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_sign"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:text="确认"
+                android:textSize="15sp"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="#4281EA"
+                android:layout_marginRight="10dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_clear_sign"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:text="清除"
+                android:textSize="15sp"
+                android:textColor="#222222"
+                app:backgroundTint="#FFFFFF"
+                android:layout_marginLeft="10dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

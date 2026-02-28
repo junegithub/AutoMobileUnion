@@ -124,13 +124,6 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
         )
     }
 
-    fun uploadFile(filePath: MultipartBody.Part, stateFlow: MutableStateFlow<ApiState<UploadFileData>>) {
-        launchRequest(
-            block = { vehicleRepository.uploadFile(filePath) },
-            stateFlow
-        )
-    }
-
     // 安全培训专属登录
     fun userLogin(request: UserLoginRequest, stateFlow: MutableStateFlow<ApiState<UserLoginData>>) {
         launchRequest(

@@ -86,6 +86,9 @@
         <activity android:name=".training.user.UserCenterActivity" />
         <activity android:name=".training.user.ScanCodeActivity" />
         <activity android:name=".training.safetytraining.SafetyTrainingActivity" />
+        <activity android:name=".training.notice.NoticeActivity" />
+        <activity android:name=".training.notice.NoticeDetailActivity" />
+        <activity android:name=".training.notice.WarningDetailActivity" />
     </application>
 
 </manifest>
