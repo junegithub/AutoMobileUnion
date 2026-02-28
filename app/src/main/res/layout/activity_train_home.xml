@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F6F6F6">
+
+    <!-- 顶部导航栏 -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="培训中心"
+            android:textSize="20sp"
+            android:textColor="#333333"
+            android:layout_gravity="center"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- 子Tab（进行中/历史）- 根据type决定是否显示 -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_sub"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#FFFFFF"
+        android:visibility="gone"
+        app:tabIndicatorColor="#3DA4FF"
+        app:tabSelectedTextColor="#3DA4FF"
+        app:tabTextColor="#666666"/>
+
+    <!-- 主内容区域（直接使用RecyclerView，移除下拉刷新容器） -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_train_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp"/>
+
+    <!-- 加载更多底部视图 -->
+    <TextView
+        android:id="@+id/tv_load_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="上拉加载更多"
+        android:visibility="gone"
+        android:textSize="14sp"
+        android:textColor="#999999"/>
+
+    <!-- 空数据视图 -->
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:drawableTop="@drawable/ic_empty_data"
+        android:drawablePadding="@dimen/dp_16"
+        android:gravity="center_horizontal"
+        android:text="暂无相关数据"
+        android:textSize="16sp"
+        android:textColor="#999999"/>
+
+</LinearLayout>

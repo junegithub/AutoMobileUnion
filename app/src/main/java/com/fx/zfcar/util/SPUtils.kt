@@ -56,12 +56,20 @@ object SPUtils {
         return getSP().getString(key, "") ?: ""
     }
 
+    fun getInt(key: String): Int {
+        return getSP().getInt(key, 0)
+    }
+
     fun remove(key: String) {
         getSP().edit().remove(key).apply()
     }
 
     fun save(key: String, content: String?) {
         getSP().edit().putString(key, content).apply()
+    }
+
+    fun save(key: String, value: Int) {
+        getSP().edit().putInt(key, value).apply()
     }
 
     fun getNoticeId(): String {

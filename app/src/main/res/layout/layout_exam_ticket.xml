@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="495dp"
+    android:background="#fff">
+
+    <!-- 外层边框 -->
+    <View
+        android:layout_width="280dp"
+        android:layout_height="465dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/border_full"/>
+
+    <!-- 内部所有线条：完全还原你 Canvas 坐标 -->
+    <View android:id="@+id/line_h1" android:layout_width="215dp" android:layout_height="1dp" android:layout_marginLeft="10dp" android:layout_marginTop="45dp" android:background="#000"/>
+    <View android:id="@+id/line_h2" android:layout_width="215dp" android:layout_height="1dp" android:layout_marginLeft="10dp" android:layout_marginTop="75dp" android:background="#000"/>
+    <View android:id="@+id/line_h3" android:layout_width="280dp" android:layout_height="1dp" android:layout_marginLeft="10dp" android:layout_marginTop="105dp" android:background="#000"/>
+    <View android:id="@+id/line_h4" android:layout_width="280dp" android:layout_height="1dp" android:layout_marginLeft="10dp" android:layout_marginTop="135dp" android:background="#000"/>
+    <View android:id="@+id/line_h5" android:layout_width="280dp" android:layout_height="1dp" android:layout_marginLeft="10dp" android:layout_marginTop="165dp" android:background="#000"/>
+
+    <View android:id="@+id/line_v1" android:layout_width="1dp" android:layout_height="465dp" android:layout_marginLeft="80dp" android:layout_marginTop="15dp" android:background="#000"/>
+    <View android:id="@+id/line_v2" android:layout_width="1dp" android:layout_height="30dp" android:layout_marginLeft="140dp" android:layout_marginTop="15dp" android:background="#000"/>
+    <View android:id="@+id/line_v3" android:layout_width="1dp" android:layout_height="30dp" android:layout_marginLeft="180dp" android:layout_marginTop="15dp" android:background="#000"/>
+    <View android:id="@+id/line_v4" android:layout_width="1dp" android:layout_height="90dp" android:layout_marginLeft="225dp" android:layout_marginTop="15dp" android:background="#000"/>
+
+    <!-- 内容层 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingTop="15dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="15dp">
+
+        <!-- 第1行：姓名 性别 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="姓名："
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginLeft="5dp"/>
+
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="性别："
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginLeft="5dp"/>
+
+            <!-- 头像区域：225,15 开始 -->
+            <ImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:scaleType="centerCrop"/>
+        </LinearLayout>
+
+        <!-- 第2行：身份证 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="身份证号："
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_idno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+
+        <!-- 第3行：考试类型 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="考试类型："
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+
+        <!-- 第4行：考试时间 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="考试时间："
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+
+        <!-- 第5行：培训学校 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="培训学校："
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_school"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+
+        <!-- 注意事项 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="注意事项："
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_notice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:layout_marginTop="5dp"
+                android:lineSpacingExtra="6dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

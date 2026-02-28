@@ -172,15 +172,15 @@ interface TrainingApiService {
 
     @GET("api/training/meetinglist")
     suspend fun getMeetingList(
-        @Query("page") page: String,
-        @Query("status") status: String
+        @Query("page") page: Int,
+        @Query("status") status: Int
     ): Response<TrainingBaseResponse<MeetingListData>>
 
     @GET("api/training/meetingview")
     suspend fun getMeetingView(@Query("id") id: String): Response<TrainingBaseResponse<MeetingViewData>>
 
     @GET("api/training/subjectlist")
-    suspend fun getSubjectList(@Query("page") page: String): Response<TrainingBaseResponse<SubjectListData>>
+    suspend fun getSubjectList(@Query("page") page: Int): Response<TrainingBaseResponse<SubjectListData>>
 
     @GET("api/training/subjectorder")
     suspend fun subjectOrder(@Query("training_safetyplan_id") trainingSafetyPlanId: String): Response<TrainingBaseResponse<SubjectOrderData>>
@@ -235,6 +235,8 @@ interface TrainingApiService {
 
     @GET("api/question/orderisPay")
     suspend fun questionOrderPay(@Query("question_category_id") questionCategoryId: String): Response<TrainingBaseResponse<QuestionOrderPayData>>
+    @GET("api/user/payorder")
+    suspend fun checkSafe(@Query("training_safetyplan_id") training_safetyplan_id: String): Response<TrainingBaseResponse<CheckSafeData>>
 
     @POST("api/other/travelpost")
     suspend fun travelPost(@Body request: TravelPostRequest): Response<TrainingBaseResponse<TravelPostResponse>>
@@ -309,4 +311,17 @@ interface TrainingApiService {
     @GET("api/other/readWarningNotice")
     suspend fun readWarningNotice(@Query("notice_id") noticeId: String,
                                   @Query("signimg") signimg: String?): Response<TrainingBaseResponse<Any>>
+
+    @GET("api/user/examslist")
+    suspend fun getExamsList(
+        @Query("page") page: Int,
+        @Query("examTab") examTab: Int,
+        @Query("starttime") starttime: String,
+        @Query("endtime") endtime: String): Response<TrainingBaseResponse<ExamsListData>>
+
+    @GET("api/dailysafety/companyPay")
+    suspend fun companyPay(@Query("training_publicplan_id") training_publicplan_id: String): Response<TrainingBaseResponse<CompanyPayData>>
+
+    @POST("api/dailysafety/sing")
+    suspend fun postSignImg(@Body request: SafetySignRequest): Response<TrainingBaseResponse<PostSignImgData>>
 }

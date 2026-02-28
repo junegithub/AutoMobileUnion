@@ -2,6 +2,7 @@ package com.fx.zfcar.net
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.Query
 
 // Repository Layer
@@ -91,12 +92,12 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun createTwoOrder(type: String, method: String, questionCategoryId: Int) =
         apiService.createTwoOrder(type, method, questionCategoryId)
 
-    suspend fun getMeetingList(page: String, status: String) =
+    suspend fun getMeetingList(page: Int, status: Int) =
         apiService.getMeetingList(page, status)
 
     suspend fun getMeetingView(id: String) = apiService.getMeetingView(id)
 
-    suspend fun getSubjectList(page: String) = apiService.getSubjectList(page)
+    suspend fun getSubjectList(page: Int) = apiService.getSubjectList(page)
 
     suspend fun subjectOrder(trainingSafetyPlanId: String) =
         apiService.subjectOrder(trainingSafetyPlanId)
@@ -126,6 +127,9 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun questionOrderPay(questionCategoryId: String) =
         apiService.questionOrderPay(questionCategoryId)
+
+    suspend fun checkSafe(training_safetyplan_id: String) =
+        apiService.checkSafe(training_safetyplan_id)
 
     suspend fun travelPost(request: TravelPostRequest) = apiService.travelPost(request)
 
@@ -169,4 +173,9 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun readNotice(noticeId: String, signimg: String) = apiService.readNotice(noticeId, signimg)
     suspend fun warningNotice(page: Int, index: Int, type: Int) = apiService.warningNotice(page, index, type)
     suspend fun readWarningNotice(noticeId: String, signimg: String) = apiService.readWarningNotice(noticeId, signimg)
+
+    suspend fun getExamsList(page: Int, examTab: Int, starttime: String, endtime: String) = apiService.getExamsList(page, examTab, starttime, endtime)
+
+    suspend fun companyPay(training_publicplan_id: String) = apiService.companyPay(training_publicplan_id)
+    suspend fun postSignImg(request: SafetySignRequest) = apiService.postSignImg(request)
 }

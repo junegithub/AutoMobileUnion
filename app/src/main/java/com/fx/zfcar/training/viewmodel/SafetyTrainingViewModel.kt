@@ -7,21 +7,29 @@ import com.fx.zfcar.net.CoursewareListData
 import com.fx.zfcar.net.DailySafetyOrderData
 import com.fx.zfcar.net.EducationCertificate
 import com.fx.zfcar.net.EpidemicViewData
+import com.fx.zfcar.net.ExamsListData // 新增：在线测验列表
 import com.fx.zfcar.net.FaceData
+import com.fx.zfcar.net.MeetingListData // 新增：安全会议列表
 import com.fx.zfcar.net.OldSafetyListData
+import com.fx.zfcar.net.BeforeSubjectListData
 import com.fx.zfcar.net.SafeStudyData
 import com.fx.zfcar.net.SafetyListData
 import com.fx.zfcar.net.SignViewData
 import com.fx.zfcar.net.StudyDetailData
+import com.fx.zfcar.net.SubjectListData
 import com.fx.zfcar.net.TrainingOtherInfo
-import com.fx.zfcar.net.UploadFileData
 import com.fx.zfcar.net.UserInfoData
 import com.fx.zfcar.net.UserLoginData
 import com.fx.zfcar.net.UserLoginRequest
 import com.fx.zfcar.net.UserStudyProveListData
+import com.fx.zfcar.net.CheckSafeData // 新增：支付检查
+import com.fx.zfcar.net.CompanyPayData // 新增：企业支付
+import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
+import com.fx.zfcar.net.QuestionOrderPayData
+import com.fx.zfcar.net.SafetySignRequest
+import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 /**
@@ -63,10 +71,46 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
         )
     }
 
+    // 历史安全培训列表
     fun getOldSafetyList(page: Int,
-                      stateFlow: MutableStateFlow<ApiState<OldSafetyListData>>) {
+                         stateFlow: MutableStateFlow<ApiState<OldSafetyListData>>) {
         launchRequest(
             block = { vehicleRepository.getOldSafetyList(page) },
+            stateFlow
+        )
+    }
+
+    // 岗前培训列表
+    fun getBeforeList(stateFlow: MutableStateFlow<ApiState<BeforeSubjectListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getBeforeSubjectList() },
+            stateFlow
+        )
+    }
+
+    // 在线测验列表
+    fun getExamsList(page: Int, examTab: Int, starttime: String, endtime: String,
+                     stateFlow: MutableStateFlow<ApiState<ExamsListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getExamsList(page, examTab, starttime, endtime) },
+            stateFlow
+        )
+    }
+
+    // 安全会议列表
+    fun getMeetingList(page: Int, meetingType: Int,
+                       stateFlow: MutableStateFlow<ApiState<MeetingListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getMeetingList(page, meetingType) },
+            stateFlow
+        )
+    }
+
+    // 继续教育列表
+    fun getSubjectList(page: Int,
+                       stateFlow: MutableStateFlow<ApiState<SubjectListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getSubjectList(page) },
             stateFlow
         )
     }
@@ -76,6 +120,51 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                             stateFlow: MutableStateFlow<ApiState<DailySafetyOrderData>>) {
         launchRequest(
             block = { vehicleRepository.dailySafetyOrderPay(trainingPublicPlanId) },
+            stateFlow
+        )
+    }
+
+    // 检查安全培训支付状态
+    fun checkSafe(training_safetyplan_id: String,
+                  stateFlow: MutableStateFlow<ApiState<CheckSafeData>>) {
+        launchRequest(
+            block = { vehicleRepository.checkSafe(training_safetyplan_id) },
+            stateFlow
+        )
+    }
+
+    // 检查订单支付状态
+    fun orderIsPay(id: String,
+                   stateFlow: MutableStateFlow<ApiState<QuestionOrderPayData>>) {
+        launchRequest(
+            block = { vehicleRepository.questionOrderPay(id) },
+            stateFlow
+        )
+    }
+
+    // 继续教育支付检查
+    fun subjectPay(id: String,
+                   stateFlow: MutableStateFlow<ApiState<SubjectOrderData>>) {
+        launchRequest(
+            block = { vehicleRepository.subjectOrder(id) },
+            stateFlow
+        )
+    }
+
+    // 企业支付
+    fun companyPay(id: String,
+                   stateFlow: MutableStateFlow<ApiState<CompanyPayData>>) {
+        launchRequest(
+            block = { vehicleRepository.companyPay(id) },
+            stateFlow
+        )
+    }
+
+    // 提交签名图片
+    fun postSignImg(id: String, signfile: String,
+                    stateFlow: MutableStateFlow<ApiState<PostSignImgData>>) {
+        launchRequest(
+            block = { vehicleRepository.postSignImg(SafetySignRequest(id, signfile)) },
             stateFlow
         )
     }
@@ -158,18 +247,20 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     }
 
     fun getUserStudyProveList(month: String,
-                 stateFlow: MutableStateFlow<ApiState<UserStudyProveListData>>) {
+                              stateFlow: MutableStateFlow<ApiState<UserStudyProveListData>>) {
         launchRequest(
             block = { vehicleRepository.getUserStudyProveList(month) },
             stateFlow
         )
     }
+
     fun getEducationCertificate(stateFlow: MutableStateFlow<ApiState<List<EducationCertificate>>>) {
         launchRequest(
             block = { vehicleRepository.getEducationCertificate() },
             stateFlow
         )
     }
+
     fun getBeforeEducationCertificate(stateFlow: MutableStateFlow<ApiState<BeforeEducationCertificateData>>) {
         launchRequest(
             block = { vehicleRepository.getBeforeEducationCertificate() },

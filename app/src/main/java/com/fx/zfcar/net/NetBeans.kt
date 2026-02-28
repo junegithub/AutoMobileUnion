@@ -679,7 +679,7 @@ data class TrainingOtherInfo(
     val cardmun: String,
     val mobile: String,
     val type: String,
-    val category_id: Int,
+    val category_id: String,
     val avatar: String,
     val avtvartime: Long,
     val level: Int,
@@ -702,7 +702,7 @@ data class TrainingOtherInfo(
     val token: String,
     val status: String,
     val verification: String,
-    val yzstatus: String,
+    val yzstatus: Int,
     val stype: String,
     val car_id: Int,
     val carnum: String,
@@ -2245,4 +2245,116 @@ data class NoticeParams(
 data class NoticeData(
     val rows: List<NoticeItem>,
     val total: Int // 总页数
+)
+
+/**
+ * 培训列表项数据模型
+ */
+data class TrainItem(
+    val id: String = "",
+    val name: String = "",
+    val progress: Int = 0,
+    val time: String = "",
+    val status: String? = null,
+    val statusText: String = "",
+    val hasExam: Boolean = false,
+    val needAuth: Boolean = false,
+    val buttonType: String = "",
+    val number: String? = null,
+    val issign: String = "",
+    val imgurl: String? = null,
+    val training_exams_id: String = "",
+    val training_safetyplan_id: String = ""
+)
+
+data class SafetySignRequest (
+    val id: String = "",
+    val signfile: String = ""
+)
+
+data class PostSignImgData(
+    val signId: String = "",
+    val signUrl: String = "",
+    val status: Int = 0,
+    val msg: String = "",
+    val code: Int = 0,
+    val planId: String = "",
+    val createTime: String = ""
+)
+
+data class CompanyPayData(
+    val success: Boolean = false,
+    val orderNo: String = "",
+    val amount: String = "",
+    val payTime: String = "",
+    val msg: String = "",
+    val code: Int = 0,
+    val companyId: String = "",
+    val planId: String = ""
+)
+
+data class CheckSafeData(
+    val money: String = "",
+    val usualpaytype: String = "",
+    val trainingPublicplan: TrainingPublicPlan? = null,
+    val msg: String = "",
+    val code: Int = 0,
+    val payStatus: Int = 0
+)
+
+/**
+ * 订单支付状态检查数据模型（日常安全培训专用）
+ * 对应接口：orderIsPay
+ */
+data class OrderIsPayData(
+    val money: String = "",
+    val usualpaytype: String = "",
+    val trainingPublicplan: TrainingPublicPlan? = null,
+    val msg: String = "",
+    val code: Int = 0
+)
+
+/**
+ * 继续教育支付检查数据模型
+ * 对应接口：subjectPay
+ */
+data class SubjectPayData(
+    val money: String = "",
+    val usualpaytype: String = "",
+    val msg: String = "",
+    val code: Int = 0
+)
+
+data class ExamsListData(
+    val total: Int = 1,
+    val page: Int = 1,
+    val size: Int = 10,
+    val rows: List<ExamItem> = emptyList(),
+    val publicList: List<Any>? = null,
+    val msg: String = "",
+    val code: Int = 0
+)
+
+/**
+ * 在线测验项数据模型
+ */
+data class ExamItem(
+    val trainingExamsId: String = "",
+    val name: String = "",
+    val id: String = "",
+    val nickname: String = "",
+    val gender: String = "1",
+    val cardmun: String = "",
+    val category: String = "",
+    val starttime: String = "",
+    val school: String = "",
+    val avatar: String = "",
+    val status: Int = 0,
+    val progress: Int = 0
+)
+
+data class PayInfo(
+    val money: String = "",
+    val usualpaytype: String = "",
+    val training_publicplan: TrainingPublicPlan? = null
 )
