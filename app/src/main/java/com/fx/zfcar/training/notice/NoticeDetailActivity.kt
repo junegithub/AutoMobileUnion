@@ -47,7 +47,6 @@ class NoticeDetailActivity : AppCompatActivity() {
         handleSignCache()
     }
 
-    // 动态适配尺寸，替换vw/vh单位
     private fun initSizeAdapter() {
         binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener(object :
             ViewTreeObserver.OnGlobalLayoutListener {
@@ -92,7 +91,6 @@ class NoticeDetailActivity : AppCompatActivity() {
         })
     }
 
-    // 获取页面跳转参数
     private fun getIntentParams() {
         noticeId = intent.getStringExtra("noticeId") ?: ""
         if (noticeId.isNotEmpty()) {
@@ -100,7 +98,6 @@ class NoticeDetailActivity : AppCompatActivity() {
         }
     }
 
-    // 初始化页面数据
     private fun initData() {
         val noticeInfoJson = SPUtils.get("noticeInfo")
         if (noticeInfoJson.isEmpty()) {
@@ -174,7 +171,6 @@ class NoticeDetailActivity : AppCompatActivity() {
         }
     }
 
-    // 初始化点击事件监听
     private fun initListener() {
         PressEffectUtils.setCommonPressEffect(binding.ivBack)
         PressEffectUtils.setCommonPressEffect(binding.btnSign)
@@ -189,15 +185,14 @@ class NoticeDetailActivity : AppCompatActivity() {
 
         binding.btnSign.setOnClickListener {
             SPUtils.saveNoticeId(noticeId)
-//            val intent = Intent(this, WritePageActivity::class.java)
-//            intent.putExtra("from", "/pages/driveCompany/notice/detail")
-//            intent.putExtra("fill", "noticeSign")
-//            startActivity(intent)
+            val intent = Intent(this, SignatureActivity::class.java)
+            intent.putExtra("from", "NoticeDetailActivity")
+            intent.putExtra("fill", "noticeSign")
+            startActivity(intent)
             finish()
         }
     }
 
-    // 处理签字缓存逻辑
     private fun handleSignCache() {
         val signImg = SPUtils.get("noticeSign")
         signContent = "重签"
@@ -214,12 +209,10 @@ class NoticeDetailActivity : AppCompatActivity() {
         }, 3000)
     }
 
-    // 模拟公告已读接口请求
     private fun readNotice(noticeId: String, signimg: String = "") {
         noticeViewModel.readNotice(noticeId, signimg, noticeStateFlow)
     }
 
-    // 清理延迟任务，避免内存泄漏
     override fun onDestroy() {
         super.onDestroy()
         Handler(Looper.getMainLooper()).removeCallbacksAndMessages(null)

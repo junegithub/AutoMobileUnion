@@ -89,6 +89,7 @@
         <activity android:name=".training.notice.NoticeActivity" />
         <activity android:name=".training.notice.NoticeDetailActivity" />
         <activity android:name=".training.notice.WarningDetailActivity" />
+        <activity android:name=".training.notice.SignatureActivity" />
     </application>
 
 </manifest>

@@ -12,30 +12,42 @@ class SignaturePad @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // 画笔配置
+    // 画笔配置（匹配小程序的5rpx宽度、黑色、圆角笔触）
     private val paint = Paint().apply {
         color = Color.BLACK
         strokeWidth = 5f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
         style = Paint.Style.STROKE
+        isAntiAlias = true // 抗锯齿，让绘制更平滑
     }
 
-    // 路径和画布
+    // 绘制路径和画布
     private val path = Path()
-    private var lastX = 0f
-    private var lastY = 0f
     private val bitmap: Bitmap
     private val canvas: Canvas
+    private var hasSign = false // 标记是否有签名内容
+
+    // 触摸坐标
+    private var lastX = 0f
+    private var lastY = 0f
 
     init {
-        // 初始化画布
+        // 初始化画布（适配屏幕尺寸）
         val displayMetrics = resources.displayMetrics
         val width = displayMetrics.widthPixels
-        val height = displayMetrics.heightPixels / 2 // 画板高度为屏幕一半
+        val height = displayMetrics.heightPixels - dp2px(120) // 减去导航栏和按钮栏高度
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         canvas = Canvas(bitmap)
-        canvas.drawColor(Color.WHITE)
+        canvas.drawColor(Color.WHITE) // 白色背景
+    }
+
+    /**
+     * dp转px
+     */
+    private fun dp2px(dp: Int): Int {
+        val density = resources.displayMetrics.density
+        return (dp * density + 0.5f).toInt()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -47,10 +59,11 @@ class SignaturePad @JvmOverloads constructor(
                 path.moveTo(x, y)
                 lastX = x
                 lastY = y
+                hasSign = true
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
-                // 贝塞尔曲线实现平滑绘制
+                // 贝塞尔曲线实现平滑绘制（匹配小程序的quadraticCurveTo逻辑）
                 val dx = Math.abs(x - lastX)
                 val dy = Math.abs(y - lastY)
                 if (dx >= 3 || dy >= 3) {
@@ -60,14 +73,11 @@ class SignaturePad @JvmOverloads constructor(
                 }
             }
             MotionEvent.ACTION_UP -> {
-                path.lineTo(lastX, lastY)
                 canvas.drawPath(path, paint)
                 path.reset()
             }
-            else -> return false
         }
-
-        invalidate()
+        invalidate() // 重绘
         return true
     }
 
@@ -77,18 +87,27 @@ class SignaturePad @JvmOverloads constructor(
         canvas.drawPath(path, paint)
     }
 
-    // 清除签字
-    fun clear() {
+    /**
+     * 清除签名
+     */
+    fun clearSignature() {
         canvas.drawColor(Color.WHITE)
         path.reset()
+        hasSign = false
         invalidate()
     }
 
-    // 保存签字为Bitmap
+    /**
+     * 获取签名Bitmap
+     */
     fun getSignatureBitmap(): Bitmap {
-        // 绘制最后一笔
-        canvas.drawPath(path, paint)
+        canvas.drawPath(path, paint) // 绘制最后一笔
         path.reset()
         return bitmap.copy(Bitmap.Config.ARGB_8888, false)
     }
+
+    /**
+     * 判断是否有签名内容
+     */
+    fun hasSignature(): Boolean = hasSign
 }

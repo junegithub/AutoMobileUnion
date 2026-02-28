@@ -34,7 +34,6 @@ class NoticeActivity : AppCompatActivity() {
 
     private val noticeParams = NoticeParams()
 
-    // 公告列表数据
     private var noticeList = mutableListOf<NoticeItem>()
     private lateinit var noticeAdapter: NoticeAdapter
 
@@ -60,10 +59,8 @@ class NoticeActivity : AppCompatActivity() {
         sectionList.forEach {
             binding.tabLayout.addTab(binding.tabLayout.newTab().setText(it.name))
         }
-        // 默认选中第一个tab
         binding.tabLayout.getTabAt(noticeParams.index)?.select()
 
-        // 初始化RecyclerView
         initRecyclerView()
 
         lifecycleScope.launch {
@@ -89,9 +86,6 @@ class NoticeActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 初始化RecyclerView
-     */
     private fun initRecyclerView() {
         noticeAdapter = NoticeAdapter(noticeParams.type) { item ->
             handleItemClick(item)
@@ -117,17 +111,11 @@ class NoticeActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 初始化事件监听
-     */
     private fun initListener() {
-        // 返回按钮点击（对应goBack）
         binding.ivBack.setOnClickListener {
-            // 跳转到train/index（这里替换为实际的TabActivity）
-            finish() // 示例：返回上一页，实际需替换为switchTab逻辑
+            finish()
         }
 
-        // 分段选择器切换（对应sectionChange）
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val index = tab.position
@@ -143,9 +131,6 @@ class NoticeActivity : AppCompatActivity() {
         })
     }
 
-    /**
-     * 加载公告数据
-     */
     private fun loadInfo() {
         if (noticeParams.type == 3) {
             loadWarningNoticeRequest(noticeParams)
@@ -154,56 +139,37 @@ class NoticeActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 加载更多
-     */
     private fun loadMore() {
         if (noticeParams.page < totalPages) {
             noticeParams.page++
             loadInfo()
         } else {
-            // 显示“没有更多消息了”
             binding.tvLoadMore.visibility = View.VISIBLE
             showToast("没有更多消息了")
         }
     }
 
-    /**
-     * 处理列表项点击（对应goDetail/goDetails）
-     */
     private fun handleItemClick(item: NoticeItem) {
         if (noticeParams.type == 3) {
-            // 违章公告：跳转到warningDetail
             val intent = Intent(this, WarningDetailActivity::class.java)
             intent.putExtra("notice", Gson().toJson(item))
             startActivity(intent)
         } else {
-            // 企业/公文公告：跳转到detail
             SPUtils.remove("noticeSign")
             SPUtils.remove("noticeId")
             SPUtils.save("noticeInfo", Gson().toJson(item))
-            // 跳转详情页
+
             val intent = Intent(this, NoticeDetailActivity::class.java)
             intent.putExtra("noticeId", item.id)
             startActivity(intent)
         }
     }
 
-    /**
-     * 模拟公告接口请求（实际替换为真实接口）
-     */
     private fun loadNoticeInfoRequest(params: NoticeParams) {
         noticeViewModel.getNoticeInfo(params.page, params.index, params.type, noticeStateFlow)
     }
 
-    /**
-     * 模拟违章公告接口请求
-     */
     private fun loadWarningNoticeRequest(params: NoticeParams) {
         noticeViewModel.warningNotice(params.page, params.index, params.type, noticeStateFlow)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }

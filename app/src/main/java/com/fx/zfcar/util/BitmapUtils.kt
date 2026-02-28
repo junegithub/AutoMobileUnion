@@ -5,7 +5,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.ParcelFileDescriptor
+import com.fx.zfcar.training.user.showToast
+import java.io.File
 import java.io.FileDescriptor
+import java.io.FileOutputStream
 import java.io.IOException
 
 object BitmapUtils {
@@ -29,6 +32,21 @@ object BitmapUtils {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun saveBitmapToFile(context: Context, bitmap: Bitmap): File? {
+        return try {
+            val file = File(context.externalCacheDir, "signature_${System.currentTimeMillis()}.png")
+            val fos = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.flush()
+            fos.close()
+            file
+        } catch (e: IOException) {
+            e.printStackTrace()
+            context.showToast("图片保存失败")
+            null
         }
     }
 }
