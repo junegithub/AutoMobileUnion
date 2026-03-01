@@ -60,6 +60,10 @@ object SPUtils {
         return getSP().getInt(key, 0)
     }
 
+    fun getLong(key: String): Long {
+        return getSP().getLong(key, 0)
+    }
+
     fun remove(key: String) {
         getSP().edit().remove(key).apply()
     }
@@ -70,6 +74,10 @@ object SPUtils {
 
     fun save(key: String, value: Int) {
         getSP().edit().putInt(key, value).apply()
+    }
+
+    fun save(key: String, value: Long) {
+        getSP().edit().putLong(key, value).apply()
     }
 
     fun getNoticeId(): String {

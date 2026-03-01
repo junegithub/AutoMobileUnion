@@ -2251,20 +2251,18 @@ data class NoticeData(
  * 培训列表项数据模型
  */
 data class TrainItem(
-    val id: String = "",
-    val name: String = "",
-    val progress: Int = 0,
-    val time: String = "",
-    val status: String? = null,
-    val statusText: String = "",
-    val hasExam: Boolean = false,
-    val needAuth: Boolean = false,
-    val buttonType: String = "",
-    val number: String? = null,
-    val issign: String = "",
-    val imgurl: String? = null,
-    val training_exams_id: String = "",
-    val training_safetyplan_id: String = ""
+    val id: String,
+    val name: String,
+    val progress: Int,       // 学习进度
+    val studytype: Int,      // 学习状态 0-未开始 1-进行中
+    val joinexams: Int,      // 考试状态 0-未考 1-通过 2-未通过
+    val training_exams_id: String, // 考试ID
+    val jxstatus: Int,       // 继续教育状态 0-未认证 1-已认证
+    val paystatus: Int,      // 支付状态 0-未支付 1-已支付
+    val issign: String,      // 是否签字
+    val imgurl: String,      // 签字图片
+    val money: Float,        // 费用
+    val usualpaytype: String // 支付类型
 )
 
 data class SafetySignRequest (
@@ -2335,22 +2333,17 @@ data class ExamsListData(
     val code: Int = 0
 )
 
-/**
- * 在线测验项数据模型
- */
 data class ExamItem(
-    val trainingExamsId: String = "",
-    val name: String = "",
-    val id: String = "",
-    val nickname: String = "",
-    val gender: String = "1",
-    val cardmun: String = "",
-    val category: String = "",
-    val starttime: String = "",
-    val school: String = "",
-    val avatar: String = "",
-    val status: Int = 0,
-    val progress: Int = 0
+    val id: String,
+    val nickname: String,
+    val gender: String,
+    val cardmun: String,
+    val category: String,
+    val starttime: String,
+    val address: String,
+    val school: String,
+    val applytime: String,
+    val avatar: String       // 头像URL
 )
 
 data class PayInfo(
