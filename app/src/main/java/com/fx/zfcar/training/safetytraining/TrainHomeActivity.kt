@@ -23,7 +23,6 @@ import com.fx.zfcar.net.SubjectItem
 import com.fx.zfcar.net.SubjectListData
 import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.net.SubjectPayData
-import com.fx.zfcar.net.TrainItem
 import com.fx.zfcar.net.TrainingOtherInfo
 import com.fx.zfcar.training.adapter.TrainListAdapter
 import com.fx.zfcar.training.adapter.TrainListItem
@@ -64,6 +63,8 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
     private var meetingStatus = 0 // 安全培训：0-进行中 1-历史
     private var trainStatus = 0 // 会议子状态：0-进行中 1-历史
     private var category_id = ""
+    // 防抖点击（1秒内只响应一次）
+    private var lastClickTime = 0L
 
     // 分页参数
     private var currentPage = 1
@@ -414,7 +415,18 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
     }
 
     // ==================== 点击事件实现 ====================
+    /**
+     * 防抖点击处理
+     */
+    private fun isFastClick(): Boolean {
+        val currentTime = System.currentTimeMillis()
+        val interval = currentTime - lastClickTime
+        lastClickTime = currentTime
+        return interval < 1000
+    }
+
     override fun onStudyClick(item: TrainListItem, typeTag: String) {
+        if (isFastClick()) return
         // 检查是否需要签字
         if (typeTag == "daily") {
             val data = (item as TrainListItem.TypeSafeItem).data
