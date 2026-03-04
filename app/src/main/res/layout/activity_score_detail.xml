@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/gradient_blue_bg"
+    android:padding="0dp">
+
+    <!-- 标题栏（固定） -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/transparent"
+        android:elevation="0dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="成绩单"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:layout_gravity="center"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- 主内容区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_white_radius_30"
+            android:padding="24dp"
+            android:layout_marginTop="48dp">
+
+            <!-- 考试标题 -->
+            <TextView
+                android:id="@+id/tvExamTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textColor="@color/text_black"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingTop="32dp"
+                android:paddingBottom="16dp"/>
+
+            <!-- 得分 -->
+            <TextView
+                android:id="@+id/tvScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="48sp"
+                android:textColor="@color/red_ff445a"
+                android:layout_gravity="center"
+                android:paddingBottom="8dp"
+                android:background="@drawable/border_bottom_red"
+                android:paddingHorizontal="16dp"/>
+
+            <!-- 满分提示 -->
+            <TextView
+                android:id="@+id/tvFullScore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/gray_9ea8c5"
+                android:gravity="center"
+                android:paddingTop="8dp"
+                android:paddingBottom="24dp"/>
+
+            <!-- 分割线 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_e7ebf9"/>
+
+            <!-- 答题卡标题栏 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:justifyContent="space-between"
+                android:paddingVertical="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="答题卡"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_black"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <View
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:background="@drawable/bg_green_answer"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="答对"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_black"
+                        android:layout_marginHorizontal="8dp"/>
+
+                    <View
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:background="@drawable/bg_red_answer"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="答错"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_black"
+                        android:layout_marginLeft="8dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 答题卡网格 -->
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/flowAnswerCards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="24dp"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start"
+                app:alignItems="center"
+                app:gap="24dp"/>
+
+            <!-- 签名区域 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingBottom="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="签名"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_black"/>
+
+                <ImageView
+                    android:id="@+id/ivSign"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="16dp"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 遮罩层（题目详情） -->
+    <FrameLayout
+        android:id="@+id/maskLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_50"
+        android:visibility="gone"
+        android:clickable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center"
+            android:clickable="false">
+
+            <!-- 题目详情组件 -->
+            <com.fx.zfcar.training.base.ExamWidget
+                android:id="@+id/examWidgetDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="16dp"
+                android:layout_marginHorizontal="16dp"/>
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>

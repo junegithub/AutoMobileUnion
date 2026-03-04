@@ -128,6 +128,15 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.4.0")
     implementation("androidx.media3:media3-exoplayer-hls:1.4.0") // 如需播放 HLS 流
 
+    // CameraX 核心库
+    implementation("androidx.camera:camera-core:1.3.2")
+    implementation("androidx.camera:camera-camera2:1.3.2")
+// CameraX 预览
+    implementation("androidx.camera:camera-lifecycle:1.3.2")
+// CameraX 视图组件
+    implementation("androidx.camera:camera-view:1.3.2")
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

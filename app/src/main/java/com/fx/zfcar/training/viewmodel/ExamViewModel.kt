@@ -2,6 +2,7 @@ package com.fx.zfcar.training.viewmodel
 
 import com.fx.zfcar.net.AnswerData
 import com.fx.zfcar.net.AnswerRequest
+import com.fx.zfcar.net.ExamQuestion
 import com.fx.zfcar.net.ExamResultData
 import com.fx.zfcar.net.ExamViewData
 import com.fx.zfcar.net.QuestionListData
@@ -20,10 +21,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class ExamViewModel : TrainingBaseViewModel() {
 
     // 获取考试视图
-    fun getExamView(examId: String, trainingPublicPlanId: String,
+    fun getExamView(params: Map<String, String>,
                     stateFlow: MutableStateFlow<ApiState<ExamViewData>>) {
         launchRequest(
-            block = { vehicleRepository.getExamView(examId, trainingPublicPlanId) },
+            block = { vehicleRepository.getExamView(params) },
             stateFlow
         )
     }
@@ -37,10 +38,10 @@ class ExamViewModel : TrainingBaseViewModel() {
     }
 
     // 获取考试结果
-    fun getExamResult(examId: String, trainingPublicPlanId: String,
+    fun getExamResult(params: Map<String, String>,
                       stateFlow: MutableStateFlow<ApiState<ExamResultData>>) {
         launchRequest(
-            block = { vehicleRepository.getExamResult(examId, trainingPublicPlanId) },
+            block = { vehicleRepository.getExamResult(params) },
             stateFlow
         )
     }
@@ -84,6 +85,14 @@ class ExamViewModel : TrainingBaseViewModel() {
     fun getQuestionList(stateFlow: MutableStateFlow<ApiState<QuestionListData>>) {
         launchRequest(
             block = { vehicleRepository.getQuestionList() },
+            stateFlow
+        )
+    }
+
+    fun getQuestionView(params: Map<String, String>,
+                        stateFlow: MutableStateFlow<ApiState<ExamQuestion>>) {
+        launchRequest(
+            block = { vehicleRepository.getQuestionView(params) },
             stateFlow
         )
     }

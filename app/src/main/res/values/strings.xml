@@ -154,4 +154,23 @@
     <string name="dialog_logout_message">确定要退出登录吗？</string>
     <string name="dialog_confirm">确定</string>
     <string name="dialog_cancel">取消</string>
+
+    <string name="face_check_title">人脸识别</string>
+    <string name="face_check_hint">请正对屏幕，请勿遮挡面部</string>
+    <string name="btn_start_check">开始验证</string>
+    <string name="btn_take_photo">拍照</string>
+    <string name="btn_switch_camera">翻转摄像头</string>
+    <string name="btn_study_subject">去学习继续教育</string>
+    <string name="btn_study_daily">去学习日常培训</string>
+    <string name="btn_study_before">岗前</string>
+
+    <!-- 提示文案 -->
+    <string name="hint_permission_needed">需要相机和存储权限才能使用人脸识别功能</string>
+    <string name="hint_camera_failed">相机启动失败</string>
+    <string name="hint_photo_failed">拍照失败</string>
+    <string name="hint_recognizing">正在识别...</string>
+    <string name="hint_jump_next_lesson">即将为您跳转下一课</string>
+    <string name="hint_verify_success">认证成功</string>
+    <string name="hint_verify_failed">认证失败</string>
+    <string name="hint_upload_failed">上传失败</string>
 </resources>

@@ -24,9 +24,11 @@ import com.fx.zfcar.net.UserLoginRequest
 import com.fx.zfcar.net.UserStudyProveListData
 import com.fx.zfcar.net.CheckSafeData // 新增：支付检查
 import com.fx.zfcar.net.CompanyPayData // 新增：企业支付
+import com.fx.zfcar.net.OrderListData
 import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
 import com.fx.zfcar.net.QuestionOrderPayData
 import com.fx.zfcar.net.SafetySignRequest
+import com.fx.zfcar.net.SingPostRequest
 import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -188,7 +190,7 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     }
 
     // 签到提交
-    fun singPost(request: RequestBody, stateFlow: MutableStateFlow<ApiState<String>>) {
+    fun singPost(request: SingPostRequest, stateFlow: MutableStateFlow<ApiState<String>>) {
         launchRequest(
             block = { vehicleRepository.singPost(request) },
             stateFlow
@@ -272,6 +274,43 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
         launchRequest(
             block = { vehicleRepository.getStudySafetyList(month) },
             stateFlow
+        )
+    }
+
+    fun subjectFace(signfile: String, id: String, stateFlow: MutableStateFlow<ApiState<FaceData>>
+    ) {
+        launchRequest(
+            block = { vehicleRepository.subjectFace(signfile, id) },
+            stateFlow = stateFlow
+        )
+    }
+
+    fun beforeFace(
+        imgurl: String, trainingPublicPlanId: Int, type: String,
+        stateFlow: MutableStateFlow<ApiState<FaceData>>
+    ) {
+        launchRequest(
+            block = { vehicleRepository.beforeSubjectFace(imgurl, trainingPublicPlanId, type) },
+            stateFlow = stateFlow
+        )
+    }
+
+    fun newCheckFace(imgurl: String, trainingPublicPlanId: Int, type: String,
+        stateFlow: MutableStateFlow<ApiState<FaceData>>
+    ) {
+        launchRequest(
+            block = { vehicleRepository.newCheckFace(imgurl, trainingPublicPlanId, type) },
+            stateFlow = stateFlow
+        )
+    }
+
+    fun safetyAdd(
+        subjectId: String, trainingSafetyPlanId: Int, longtime: Int, imgurl: String,
+        stateFlow: MutableStateFlow<ApiState<FaceData>>
+    ) {
+        launchRequest(
+            block = { vehicleRepository.safetyAdd(subjectId, trainingSafetyPlanId, longtime, imgurl) },
+            stateFlow = stateFlow
         )
     }
 }

@@ -1,7 +1,6 @@
 package com.fx.zfcar.net
 
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -9,6 +8,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface TrainingApiService {
     // 安全培训相关API（/api/ 前缀及其他非车相关前缀）
@@ -74,8 +74,7 @@ interface TrainingApiService {
 
     @GET("api/user/safekspaperview")
     suspend fun getExamView(
-        @Query("exam_id") examId: String,
-        @Query("training_publicplan_id") trainingPublicPlanId: String
+        @QueryMap params: Map<String, String>
     ): Response<TrainingBaseResponse<ExamViewData>>
 
     @POST("api/user/newuplode")
@@ -86,17 +85,13 @@ interface TrainingApiService {
 
     @GET("safecankao")
     suspend fun getExamResult(
-        @Query("exam_id") examId: String,
-        @Query("training_publicplan_id") trainingPublicPlanId: String
+        @QueryMap params: Map<String, String>
     ): Response<TrainingBaseResponse<ExamResultData>>
 
     @GET("api/user/questionview")
     suspend fun getQuestionView(
-        @Query("exam_id") examId: String,
-        @Query("question_id") questionId: String,
-        @Query("uanswer") uanswer: String,
-        @Query("training_publicplan_id") trainingPublicPlanId: String
-    ): Response<TrainingBaseResponse<List<QuestionViewItem>>>
+        @QueryMap params: Map<String, String>
+    ): Response<TrainingBaseResponse<ExamQuestion>>
 
     @GET("api/before/creatOrder")
     suspend fun createOrder(
@@ -124,13 +119,20 @@ interface TrainingApiService {
         @Query("type") type: String
     ): Response<TrainingBaseResponse<FaceData>>
 
+    @GET("api/user/startplan")
+    suspend fun newCheckFace(
+        @Query("imgurl") imgurl: String,
+        @Query("training_publicplan_id") trainingPublicPlanId: Int,
+        @Query("type") type: String
+    ): Response<TrainingBaseResponse<FaceData>>
+
     @GET("api/user/safetyadd")
     suspend fun safetyAdd(
         @Header("subject_id") subjectId: String,
         @Header("training_safetyplan_id") trainingSafetyPlanId: Int,
         @Header("longtime") longtime: Int,
         @Header("imgurl") imgurl: String
-    ): Response<TrainingBaseResponse<String>>
+    ): Response<TrainingBaseResponse<FaceData>>
 
     @GET("api/before/subjectface")
     suspend fun beforeSubjectFace(
@@ -146,7 +148,7 @@ interface TrainingApiService {
     ): Response<TrainingBaseResponse<FaceData>>
 
     @POST("api/user/singpost")
-    suspend fun singPost(@Body request: RequestBody): Response<TrainingBaseResponse<String>>
+    suspend fun singPost(@Body request: SingPostRequest): Response<TrainingBaseResponse<String>>
 
     @GET("api/question/twoList")
     suspend fun getTwoList(@Query("user_category_id") userCategoryId: String): Response<TrainingBaseResponse<TwoListData>>

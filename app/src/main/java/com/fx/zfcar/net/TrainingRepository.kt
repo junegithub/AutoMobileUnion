@@ -4,6 +4,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.Query
+import kotlin.String
 
 // Repository Layer
 class TrainingRepository(private val apiService: TrainingApiService) {
@@ -41,18 +42,18 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun safeStudy(subjectId: String, trainingPublicPlanId: String, longtime: String) =
         apiService.safeStudy(subjectId, trainingPublicPlanId, longtime)
 
-    suspend fun getExamView(examId: String, trainingPublicPlanId: String) =
-        apiService.getExamView(examId, trainingPublicPlanId)
+    suspend fun getExamView(params: Map<String, String>) =
+        apiService.getExamView(params)
 
     suspend fun uploadFile(filePath: MultipartBody.Part) = apiService.uploadFile(filePath)
 
     suspend fun submitExam(request: SubmitExamRequest) = apiService.submitExam(request)
 
-    suspend fun getExamResult(examId: String, trainingPublicPlanId: String) =
-        apiService.getExamResult(examId, trainingPublicPlanId)
+    suspend fun getExamResult(params: Map<String, String>) =
+        apiService.getExamResult(params)
 
-    suspend fun getQuestionView(examId: String, questionId: String, uanswer: String, trainingPublicPlanId: String) =
-        apiService.getQuestionView(examId, questionId, uanswer, trainingPublicPlanId)
+    suspend fun getQuestionView(params: Map<String, String>) =
+        apiService.getQuestionView(params)
 
     suspend fun createOrder(money: String, trainingPublicPlanId: Int, type: String, method: String) =
         apiService.createOrder(money, trainingPublicPlanId, type, method)
@@ -65,6 +66,9 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun safeFace(imgurl: String, trainingPublicPlanId: Int, type: String) =
         apiService.safeFace(imgurl, trainingPublicPlanId, type)
 
+    suspend fun newCheckFace(imgurl: String, trainingPublicPlanId: Int, type: String) =
+        apiService.newCheckFace(imgurl, trainingPublicPlanId, type)
+
     suspend fun safetyAdd(subjectId: String, trainingSafetyPlanId: Int, longtime: Int, imgurl: String) =
         apiService.safetyAdd(subjectId, trainingSafetyPlanId, longtime, imgurl)
 
@@ -74,7 +78,7 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun subjectFace(signfile: String, id: String) =
         apiService.subjectFace(signfile, id)
 
-    suspend fun singPost(request: RequestBody) = apiService.singPost(request)
+    suspend fun singPost(request: SingPostRequest) = apiService.singPost(request)
 
     suspend fun getTwoList(userCategoryId: String) = apiService.getTwoList(userCategoryId)
 

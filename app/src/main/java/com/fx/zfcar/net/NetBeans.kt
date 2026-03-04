@@ -1157,7 +1157,7 @@ data class ExamViewData(
 data class ExamQuestion(
     val questionID: Int,
     val fldName: String,
-    val fldAnswer: String?,
+    var fldAnswer: String?,
     val questionType: Int,
     val QuestionOptionList: List<QuestionOption>
 )
@@ -1269,14 +1269,6 @@ data class ExamRow(
     val type_text: String
 )
 
-data class QuestionViewItem(
-    val questionID: Int,
-    val fldName: String,
-    val fldAnswer: String,
-    val questionType: Int,
-    val QuestionOptionList: List<QuestionOption>
-)
-
 data class OrderListData(
     val total: Int,
     val list: List<OrderItem>
@@ -1311,6 +1303,7 @@ data class FaceData(
     val issing: String,
     val training_exams_id: String,
     val score: String,
+    val nextsubject_id: Int,
     val face_list: FaceList?
 )
 
@@ -2350,4 +2343,10 @@ data class PayInfo(
     val money: String = "",
     val usualpaytype: String = "",
     val training_publicplan: TrainingPublicPlan? = null
+)
+
+data class SingPostRequest(
+    val signfile: String = "",
+    val id: String = "",
+    val type: String = ""
 )

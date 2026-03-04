@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <!-- 自定义导航栏 -->
+    <RelativeLayout
+        android:id="@+id/navBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/nav_bar_color"
+        android:paddingTop="@dimen/status_bar_height">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="@dimen/nav_icon_size"
+            android:layout_height="@dimen/nav_icon_size"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:src="@drawable/arrow_back" />
+
+        <!-- 标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/face_check_title"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/sp_18" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:layout_alignParentBottom="true"
+            android:background="#EEEEEE" />
+    </RelativeLayout>
+
+    <!-- 摄像头预览容器 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <!-- CameraX 专用的 PreviewView -->
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewView"
+            android:layout_width="@dimen/camera_size"
+            android:layout_height="@dimen/camera_size"
+            android:layout_centerInParent="true" />
+
+        <!-- 遮罩层 -->
+        <ImageView
+            android:id="@+id/ivMask"
+            android:layout_width="@dimen/camera_size"
+            android:layout_height="@dimen/camera_size"
+            android:layout_centerInParent="true"
+            android:src="@drawable/camera_mask"
+            android:scaleType="fitXY" />
+
+        <!-- 翻转摄像头按钮 -->
+        <TextView
+            android:id="@+id/tvSwitchCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/previewView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dp_10"
+            android:text="@string/btn_switch_camera"
+            android:textColor="@color/white"
+            android:background="@color/primary_blue"
+            android:padding="@dimen/dp_8"
+            android:visibility="gone"
+            android:clickable="true" />
+    </RelativeLayout>
+
+    <!-- 提示文字 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/face_check_hint"
+        android:textSize="@dimen/sp_15"
+        android:textColor="@color/text_black"
+        android:padding="@dimen/dp_10" />
+
+    <!-- 操作按钮 -->
+    <TextView
+        android:id="@+id/tvAction"
+        android:layout_width="@dimen/btn_width_335"
+        android:layout_height="@dimen/btn_height"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/dp_20"
+        android:background="@drawable/bg_btn_blue"
+        android:gravity="center"
+        android:text="@string/btn_start_check"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14" />
+
+    <!-- 测试账号快捷入口 -->
+    <LinearLayout
+        android:id="@+id/llTestEntry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_10"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnStudySubject"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_height"
+            android:text="@string/btn_study_subject"
+            android:background="@color/primary_blue"
+            android:textColor="@color/white"
+            android:layout_margin="@dimen/dp_5"/>
+
+        <Button
+            android:id="@+id/btnStudyDaily"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_height"
+            android:text="@string/btn_study_daily"
+            android:background="@color/primary_blue"
+            android:textColor="@color/white"
+            android:layout_margin="@dimen/dp_5"/>
+
+        <Button
+            android:id="@+id/btnStudyBefore"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_height"
+            android:text="@string/btn_study_before"
+            android:background="@color/primary_blue"
+            android:textColor="@color/white"
+            android:layout_margin="@dimen/dp_5"/>
+    </LinearLayout>
+</LinearLayout>

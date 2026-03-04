@@ -109,4 +109,14 @@
 
     <color name="orange">#FF9900</color>
     <color name="background_gray">#F6F7F8</color>
+
+    <!-- 状态栏/导航栏 -->
+    <color name="status_bar_color">#FFFFFF</color>
+    <color name="nav_bar_color">#FFFFFF</color>
+
+    <color name="red_ff445a">#FF445A</color>
+    <color name="gray_9ea8c5">#9EA8C5</color>
+    <color name="gray_e7ebf9">#E7EBF9</color>
+    <color name="black_50">#80000000</color>
+    <color name="green_17a83e">#17A83E</color>
 </resources>
