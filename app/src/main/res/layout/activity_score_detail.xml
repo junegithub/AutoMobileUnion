@@ -85,7 +85,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:justifyContent="space-between"
                 android:paddingVertical="24dp">
 
                 <TextView
@@ -136,8 +135,7 @@
                 android:paddingBottom="24dp"
                 app:flexWrap="wrap"
                 app:justifyContent="flex_start"
-                app:alignItems="center"
-                app:gap="24dp"/>
+                app:alignItems="center"/>
 
             <!-- 签名区域 -->
             <LinearLayout

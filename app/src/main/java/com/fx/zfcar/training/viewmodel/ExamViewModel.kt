@@ -2,6 +2,9 @@ package com.fx.zfcar.training.viewmodel
 
 import com.fx.zfcar.net.AnswerData
 import com.fx.zfcar.net.AnswerRequest
+import com.fx.zfcar.net.CoursewareViewData
+import com.fx.zfcar.net.EducationCertificate
+import com.fx.zfcar.net.EvaluateClassRequest
 import com.fx.zfcar.net.ExamQuestion
 import com.fx.zfcar.net.ExamResultData
 import com.fx.zfcar.net.ExamViewData
@@ -93,6 +96,21 @@ class ExamViewModel : TrainingBaseViewModel() {
                         stateFlow: MutableStateFlow<ApiState<ExamQuestion>>) {
         launchRequest(
             block = { vehicleRepository.getQuestionView(params) },
+            stateFlow
+        )
+    }
+
+    fun getCoursewareView(params: Map<String, String>,
+                        stateFlow: MutableStateFlow<ApiState<CoursewareViewData>>) {
+        launchRequest(
+            block = { vehicleRepository.getCoursewareView(params) },
+            stateFlow
+        )
+    }
+
+    fun evaluateClass(request: EvaluateClassRequest, stateFlow: MutableStateFlow<ApiState<Any>>) {
+        launchRequest(
+            block = { vehicleRepository.evaluateClass(request) },
             stateFlow
         )
     }

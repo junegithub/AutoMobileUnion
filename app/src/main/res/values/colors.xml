@@ -119,4 +119,9 @@
     <color name="gray_e7ebf9">#E7EBF9</color>
     <color name="black_50">#80000000</color>
     <color name="green_17a83e">#17A83E</color>
+
+    <color name="text_333">#333333</color>
+    <color name="text_666">#666666</color>
+    <color name="gray_dcdee0">#DCDEE0</color>
+    <color name="blue_3f83f7">#3F83F7</color>
 </resources>

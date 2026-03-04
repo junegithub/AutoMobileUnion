@@ -13,7 +13,7 @@
         android:textSize="16sp"
         android:textColor="@color/text_black"
         android:gravity="right"
-        android:marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"/>
 
     <!-- 题目内容 -->
     <TextView
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textColor="@color/text_black"
-        android:marginBottom="24dp"/>
+        android:layout_marginBottom="24dp"/>
 
     <!-- 选项组 -->
     <RadioGroup

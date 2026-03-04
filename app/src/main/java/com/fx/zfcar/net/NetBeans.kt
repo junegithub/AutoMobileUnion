@@ -2350,3 +2350,8 @@ data class SingPostRequest(
     val id: String = "",
     val type: String = ""
 )
+
+data class EvaluateClassRequest(
+    val subject_id: String = "",
+    val content: String = ""
+)

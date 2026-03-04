@@ -58,8 +58,7 @@ interface TrainingApiService {
 
     @GET("api/dailysafety/coursewareView")
     suspend fun getCoursewareView(
-        @Query("subject_id") subjectId: String,
-        @Query("training_publicplan_id") trainingPublicPlanId: String
+        @QueryMap params: Map<String, String>
     ): Response<TrainingBaseResponse<CoursewareViewData>>
 
     @GET("api/training/configtime")
@@ -128,10 +127,7 @@ interface TrainingApiService {
 
     @GET("api/user/safetyadd")
     suspend fun safetyAdd(
-        @Header("subject_id") subjectId: String,
-        @Header("training_safetyplan_id") trainingSafetyPlanId: Int,
-        @Header("longtime") longtime: Int,
-        @Header("imgurl") imgurl: String
+        @QueryMap params: Map<String, String>
     ): Response<TrainingBaseResponse<FaceData>>
 
     @GET("api/before/subjectface")
@@ -272,6 +268,9 @@ interface TrainingApiService {
 
     @GET("api/training/educationCertificate")
     suspend fun getEducationCertificate(): Response<TrainingBaseResponse<List<EducationCertificate>>>
+
+    @POST("api/training/evaluate")
+    suspend fun evaluateClass(@Body request: EvaluateClassRequest): Response<TrainingBaseResponse<Any>>
 
     @GET("api/before/educationCertificate")
     suspend fun getBeforeEducationCertificate(): Response<TrainingBaseResponse<BeforeEducationCertificateData>>

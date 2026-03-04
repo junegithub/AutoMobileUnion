@@ -24,7 +24,6 @@ import com.fx.zfcar.net.UserLoginRequest
 import com.fx.zfcar.net.UserStudyProveListData
 import com.fx.zfcar.net.CheckSafeData // 新增：支付检查
 import com.fx.zfcar.net.CompanyPayData // 新增：企业支付
-import com.fx.zfcar.net.OrderListData
 import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
 import com.fx.zfcar.net.QuestionOrderPayData
 import com.fx.zfcar.net.SafetySignRequest
@@ -304,12 +303,11 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
         )
     }
 
-    fun safetyAdd(
-        subjectId: String, trainingSafetyPlanId: Int, longtime: Int, imgurl: String,
+    fun safetyAdd(params: Map<String, String>,
         stateFlow: MutableStateFlow<ApiState<FaceData>>
     ) {
         launchRequest(
-            block = { vehicleRepository.safetyAdd(subjectId, trainingSafetyPlanId, longtime, imgurl) },
+            block = { vehicleRepository.safetyAdd(params) },
             stateFlow = stateFlow
         )
     }

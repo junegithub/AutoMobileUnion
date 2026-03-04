@@ -34,8 +34,8 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun getCoursewareList(page: String, trainingPublicPlanId: String) =
         apiService.getCoursewareList(page, trainingPublicPlanId)
 
-    suspend fun getCoursewareView(subjectId: String, trainingPublicPlanId: String) =
-        apiService.getCoursewareView(subjectId, trainingPublicPlanId)
+    suspend fun getCoursewareView(params: Map<String, String>) =
+        apiService.getCoursewareView(params)
 
     suspend fun getConfigTime() = apiService.getConfigTime()
 
@@ -69,8 +69,8 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun newCheckFace(imgurl: String, trainingPublicPlanId: Int, type: String) =
         apiService.newCheckFace(imgurl, trainingPublicPlanId, type)
 
-    suspend fun safetyAdd(subjectId: String, trainingSafetyPlanId: Int, longtime: Int, imgurl: String) =
-        apiService.safetyAdd(subjectId, trainingSafetyPlanId, longtime, imgurl)
+    suspend fun safetyAdd(params: Map<String, String>) =
+        apiService.safetyAdd(params)
 
     suspend fun beforeSubjectFace(imgurl: String, trainingPublicPlanId: Int, type: String) =
         apiService.beforeSubjectFace(imgurl, trainingPublicPlanId, type)
@@ -156,6 +156,7 @@ class TrainingRepository(private val apiService: TrainingApiService) {
         apiService.getUserStudyProveList(month)
 
     suspend fun getEducationCertificate() = apiService.getEducationCertificate()
+    suspend fun evaluateClass(request: EvaluateClassRequest) = apiService.evaluateClass(request)
 
     suspend fun getBeforeEducationCertificate() = apiService.getBeforeEducationCertificate()
 

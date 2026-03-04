@@ -113,19 +113,13 @@
     <!-- 基础尺寸 -->
     <dimen name="dp_1">1dp</dimen>
     <dimen name="dp_5">5dp</dimen>
-    <dimen name="dp_8">8dp</dimen>
     <dimen name="dp_10">10dp</dimen>
-    <dimen name="dp_16">16dp</dimen>
-    <dimen name="dp_20">20dp</dimen>
 
     <!-- 文字尺寸 -->
-    <dimen name="sp_14">14sp</dimen>
     <dimen name="sp_15">15sp</dimen>
-    <dimen name="sp_18">18sp</dimen>
 
     <!-- 组件尺寸 -->
     <dimen name="camera_size">350dp</dimen>
-    <dimen name="btn_height">40dp</dimen>
     <dimen name="btn_width_335">335dp</dimen>
     <dimen name="nav_icon_size">40dp</dimen>
 

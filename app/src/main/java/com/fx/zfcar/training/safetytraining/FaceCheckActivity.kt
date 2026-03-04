@@ -376,10 +376,10 @@ class FaceCheckActivity : AppCompatActivity() {
                                         startActivity(intent)
                                     }
                                 } else {
-                                    val intent = Intent(this@FaceCheckActivity, StudyDailyActivity::class.java)
-                                    intent.putExtra("safetyPlanId", params["safetyPlanId"])
-                                    intent.putExtra("name", params["name"])
-                                    startActivity(intent)
+//                                    val intent = Intent(this@FaceCheckActivity, StudyDailyActivity::class.java)
+//                                    intent.putExtra("safetyPlanId", params["safetyPlanId"])
+//                                    intent.putExtra("name", params["name"])
+//                                    startActivity(intent)
                                 }
                             }
                         }
@@ -415,12 +415,12 @@ class FaceCheckActivity : AppCompatActivity() {
                                 startActivity(intent)
                             }
                         } else {
-                            val intent = Intent(this@FaceCheckActivity, StudySubjectActivity::class.java)
-                            intent.putExtra("safetyPlanId", params["safetyPlanId"])
-                            intent.putExtra("name", params["name"])
-                            intent.putExtra("number", params["number"])
-                            intent.putExtra("type", "subject")
-                            startActivity(intent)
+//                            val intent = Intent(this@FaceCheckActivity, StudySubjectActivity::class.java)
+//                            intent.putExtra("safetyPlanId", params["safetyPlanId"])
+//                            intent.putExtra("name", params["name"])
+//                            intent.putExtra("number", params["number"])
+//                            intent.putExtra("type", "subject")
+//                            startActivity(intent)
                         }
                         finish()
                     }
@@ -464,12 +464,12 @@ class FaceCheckActivity : AppCompatActivity() {
                                     startActivity(intent)
                                 }
                             } else {
-                                val intent = Intent(this@FaceCheckActivity, StudyBeforeActivity::class.java)
-                                intent.putExtra("safetyPlanId", params["safetyPlanId"])
-                                intent.putExtra("name", params["name"])
-                                intent.putExtra("number", params["number"])
-                                intent.putExtra("type", "before")
-                                startActivity(intent)
+//                                val intent = Intent(this@FaceCheckActivity, StudyBeforeActivity::class.java)
+//                                intent.putExtra("safetyPlanId", params["safetyPlanId"])
+//                                intent.putExtra("name", params["name"])
+//                                intent.putExtra("number", params["number"])
+//                                intent.putExtra("type", "before")
+//                                startActivity(intent)
                             }
                         }
                         finish()
@@ -514,10 +514,10 @@ class FaceCheckActivity : AppCompatActivity() {
                         showToast(getString(R.string.hint_verify_success))
                         if (state.data?.nextsubject_id != 0) {
                             showToast(getString(R.string.hint_jump_next_lesson))
-                            val intent = Intent(this, StudyDailyActivity::class.java)
-                            intent.putExtra("safetyPlanId", params["safetyPlanId"])
-                            intent.putExtra("subjectId", state.data?.nextsubject_id)
-                            startActivity(intent)
+//                            val intent = Intent(this, StudyDailyActivity::class.java)
+//                            intent.putExtra("safetyPlanId", params["safetyPlanId"])
+//                            intent.putExtra("subjectId", state.data?.nextsubject_id)
+//                            startActivity(intent)
                         } else {
                             finish()
                         }
@@ -570,9 +570,17 @@ class FaceCheckActivity : AppCompatActivity() {
                 )
             }
             else -> {
+                val baseMap = mutableMapOf(
+                    "subject_id" to params["subjectId"],
+                    "training_safetyplan_id" to params["safetyPlanId"],
+                    "longtime" to params["longtime"],
+                    "imgurl" to imageUrl
+                )
+                if (params["pageScoll"].isNullOrEmpty().not()) {
+                    baseMap["pageScoll"] = params["pageScoll"] ?: ""
+                }
                 viewModel.safetyAdd(
-                    params["subjectId"]!!, params["safetyPlanId"]!!.toInt(),
-                    params["longtime"]!!.toInt(), imageUrl,
+                    baseMap as Map<String, String>,
                     safeAddCheckState
                 )
             }

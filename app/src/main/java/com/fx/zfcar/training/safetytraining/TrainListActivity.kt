@@ -231,8 +231,8 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                             category_id = state.data.category_id
                             // 检查认证状态
                             if (state.data.yzstatus != 1) {
-                                startActivity(Intent(this@TrainListActivity, AvatarActivity::class.java))
-                                finish()
+//                                startActivity(Intent(this@TrainListActivity, AvatarActivity::class.java))
+//                                finish()
                             }
                         }
                     }
@@ -443,7 +443,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
     override fun onExamClick(item: TrainListItem) {
         val data = (item as TrainListItem.TypeSafeItem).data
         // 跳考试页面
-        val intent = Intent(this, ExamActivity::class.java)
+        val intent = Intent(this, ExamManagerActivity::class.java)
         intent.putExtra("id", data.training_exams_id)
         intent.putExtra("name", data.name)
         intent.putExtra("type", if (currentType == 0) "daily" else "train")
@@ -453,20 +453,20 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
 
     override fun onAuthClick(item: SubjectItem) {
         // 跳认证页面
-        val intent = Intent(this, AuthActivity::class.java)
-        intent.putExtra("id", item.id)
-        intent.putExtra("name", item.name)
-        startActivity(intent)
+//        val intent = Intent(this, AuthActivity::class.java)
+//        intent.putExtra("id", item.id)
+//        intent.putExtra("name", item.name)
+//        startActivity(intent)
     }
 
     override fun onMeetingClick(item: MeetingItem) {
         // 跳会议页面
-        val intent = Intent(this, MeetingActivity::class.java)
-        intent.putExtra("id", item.id)
-        intent.putExtra("name", item.name)
-        intent.putExtra("address", item.address)
-        intent.putExtra("starttime", item.starttime)
-        intent.putExtra("status", item.studytype)
+//        val intent = Intent(this, MeetingActivity::class.java)
+//        intent.putExtra("id", item.id)
+//        intent.putExtra("name", item.name)
+//        intent.putExtra("address", item.address)
+//        intent.putExtra("starttime", item.starttime)
+//        intent.putExtra("status", item.studytype)
         startActivity(intent)
     }
 
@@ -491,7 +491,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
         }
 
         lifecycleScope.launch {
-            try {
+            /*try {
 
                 if (payResponse.code == 1) {
                     val payData = payResponse.data
@@ -521,7 +521,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                 }
             } catch (e: Exception) {
                 Toast.makeText(this@TrainListActivity, "支付检查失败:${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            }*/
         }
     }
 
@@ -541,13 +541,13 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
      * 跳转到支付页面
      */
     private fun gotoPayPage(id: String, name: String, payInfo: PayInfo, type: String) {
-        val intent = Intent(this, PayActivity::class.java)
-        intent.putExtra("name", name)
-        intent.putExtra("id", id)
-        intent.putExtra("money", payInfo.money)
-        intent.putExtra("type", type)
-        intent.putExtra("usualpaytype", payInfo.usualpaytype)
-        startActivity(intent)
+//        val intent = Intent(this, PayActivity::class.java)
+//        intent.putExtra("name", name)
+//        intent.putExtra("id", id)
+//        intent.putExtra("money", payInfo.money)
+//        intent.putExtra("type", type)
+//        intent.putExtra("usualpaytype", payInfo.usualpaytype)
+//        startActivity(intent)
     }
 
     /**

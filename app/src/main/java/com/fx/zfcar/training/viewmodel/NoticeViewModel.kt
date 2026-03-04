@@ -1,29 +1,10 @@
 package com.fx.zfcar.training.viewmodel
 
-import com.fx.zfcar.net.BeforeEducationCertificateData
-import com.fx.zfcar.net.CarNumSearchData
-import com.fx.zfcar.net.CompanyListData
-import com.fx.zfcar.net.CoursewareListData
-import com.fx.zfcar.net.DailySafetyOrderData
-import com.fx.zfcar.net.EducationCertificate
-import com.fx.zfcar.net.EpidemicViewData
-import com.fx.zfcar.net.FaceData
 import com.fx.zfcar.net.NoticeData
-import com.fx.zfcar.net.OldSafetyListData
-import com.fx.zfcar.net.SafeStudyData
-import com.fx.zfcar.net.SafetyListData
-import com.fx.zfcar.net.SignViewData
-import com.fx.zfcar.net.StudyDetailData
-import com.fx.zfcar.net.TrainingOtherInfo
 import com.fx.zfcar.net.UploadFileData
-import com.fx.zfcar.net.UserInfoData
-import com.fx.zfcar.net.UserLoginData
-import com.fx.zfcar.net.UserLoginRequest
-import com.fx.zfcar.net.UserStudyProveListData
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 
 /**
  * 安全培训相关ViewModel（课程、签到、人脸验证、培训计划等）
