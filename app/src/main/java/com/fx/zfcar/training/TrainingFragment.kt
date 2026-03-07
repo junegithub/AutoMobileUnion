@@ -291,14 +291,14 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                                 val signTime = DateUtil.timestamp2Date(data.signtime).substring(0, 4)
                                 if (signTime.toInt() < DateUtil.getCurrentYear()) {
                                     // 需要重新签署
-//                                    startActivity(Intent(requireContext(), DriverBookActivity::class.java))
+                                    startActivity(Intent(requireContext(), DriverBookActivity::class.java))
                                     return@let
                                 } else {
                                     signOne = true
                                 }
                             } else {
                                 // 未签署
-//                                startActivity(Intent(requireContext(), DriverBookActivity::class.java))
+                                startActivity(Intent(requireContext(), DriverBookActivity::class.java))
                                 return@let
                             }
                         }
@@ -472,7 +472,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     // 驾驶员责任书
     private fun driverBook() {
-//        startActivity(Intent(requireContext(), DriverBookActivity::class.java))
+        startActivity(Intent(requireContext(), DriverBookActivity::class.java))
     }
 
     // 驾驶员承诺书
