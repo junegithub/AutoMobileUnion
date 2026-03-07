@@ -6,27 +6,22 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#F6F6F6">
+        android:orientation="vertical">
 
         <!-- 顶部导航栏 -->
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize"
-            android:background="#FFFFFF"
-            android:elevation="2dp">
-
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="培训中心"
-                android:textSize="20sp"
-                android:textColor="#333333"
-                android:layout_gravity="center"/>
-
-        </androidx.appcompat.widget.Toolbar>
+            android:drawableStart="@drawable/arrow_back"
+            android:drawableTint="@color/black"
+            android:drawablePadding="@dimen/dp_8"
+            android:layout_marginStart="@dimen/dp_16"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/sp_24"
+            android:text="培训中心"
+            android:textSize="20sp"
+            android:textColor="#333333"/>
 
         <!-- 子Tab（进行中/历史）- 根据type决定是否显示 -->
         <com.google.android.material.tabs.TabLayout

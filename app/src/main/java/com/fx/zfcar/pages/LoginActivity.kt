@@ -30,6 +30,7 @@ import com.fx.zfcar.util.ProgressDialogUtils
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.fx.zfcar.databinding.ActivityLoginBinding
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -185,6 +186,7 @@ class LoginActivity : AppCompatActivity() {
 
                     is ApiState.Success -> {
                         MyApp.userInfo = uiState.data?.info
+                        SPUtils.save("carInfo", Gson().toJson(uiState.data))
                     }
 
                     is ApiState.Error -> {

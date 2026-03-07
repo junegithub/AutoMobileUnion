@@ -35,6 +35,7 @@ import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -110,7 +111,11 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
 
     private fun initView() {
         // 设置标题
-        supportActionBar?.title = pageTitle
+        binding.tvTitle.text = pageTitle
+        PressEffectUtils.setCommonPressEffect(binding.tvTitle)
+        binding.tvTitle.setOnClickListener {
+            finish()
+        }
 
         // 控制subTabLayout显示：仅会议类型（type=3）显示
         binding.subTabLayout.visibility = if (currentType == 3) View.VISIBLE else View.GONE
@@ -220,9 +225,9 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
      */
     private fun collectStateFlows() {
         lifecycleScope.launch {
-            otherUserInfoState.collect { state ->
+            otherUserInfoState.drop(1)
+            .collect { state ->
                 when(state) {
-                    is ApiState.Idle -> {}
                     is ApiState.Error -> {
                         showToast(state.msg)
                     }
@@ -236,50 +241,54 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                             }
                         }
                     }
-                    is ApiState.Loading -> {
-
-                    }
+                    else ->  {}
                 }
             }
         }
         // 收集安全培训列表结果
         lifecycleScope.launch {
-            safetyListState.collect { state ->
+            safetyListState.drop(1)
+            .collect { state ->
                 handleBaseListState(state)
             }
         }
 
         // 收集历史安全培训列表结果
         lifecycleScope.launch {
-            oldSafetyListState.collect { state ->
+            oldSafetyListState.drop(1)
+            .collect { state ->
                 handleBaseListState(state)
             }
         }
 
         // 收集岗前培训列表结果
         lifecycleScope.launch {
-            beforeListState.collect { state ->
+            beforeListState.drop(1)
+            .collect { state ->
                 handleBaseListState(state)
             }
         }
 
         // 收集安全会议列表结果
         lifecycleScope.launch {
-            meetingListState.collect { state ->
+            meetingListState.drop(1)
+            .collect { state ->
                 handleBaseListState(state)
             }
         }
 
         // 收集继续教育列表结果
         lifecycleScope.launch {
-            subjectListState.collect { state ->
+            subjectListState.drop(1)
+            .collect { state ->
                 handleBaseListState(state)
             }
         }
 
         // 收集支付检查结果
         lifecycleScope.launch {
-            checkSafeState.collect { state ->
+            checkSafeState.drop(1)
+            .collect { state ->
                 when (state) {
                     is ApiState.Success -> {
                         state.data?.let { handlePayCheckResult(state.data, "train") }
@@ -287,13 +296,14 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                     is ApiState.Error -> {
                         showToast("支付检查失败：${state.msg}")
                     }
-                    else -> {}
+                    else ->  {}
                 }
             }
         }
 
         lifecycleScope.launch {
-            orderIsPayState.collect { state ->
+            orderIsPayState.drop(1)
+            .collect { state ->
                 when (state) {
                     is ApiState.Success -> {
                         state.data?.let { handlePayCheckResult(state.data, "daily") }
@@ -301,14 +311,23 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                     is ApiState.Error -> {
                         showToast("订单支付检查失败：${state.msg}")
                     }
-                    else -> {}
+                    else ->  {}
                 }
             }
         }
 
         lifecycleScope.launch {
-            postSignImgState.collect { state ->
-                finish() // 无论成功失败都关闭页面
+            postSignImgState.drop(1)
+            .collect { state ->
+                when (state) {
+                    is ApiState.Success -> {
+                        finish() // 无论成功失败都关闭页面
+                    }
+                    is ApiState.Error -> {
+                        finish() // 无论成功失败都关闭页面
+                    }
+                    else ->  {}
+                }
             }
         }
     }
@@ -361,15 +380,17 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                 currentPage++
 
                 // 空数据
-                if (trainAdapter.itemCount == 0) {
+                if (trainDataList?.isEmpty() == true) {
                     binding.emptyView.visibility = View.VISIBLE
+                } else {
+                    binding.emptyView.visibility = View.GONE
                 }
             }
             is ApiState.Error -> {
                 showToast("加载失败：${state.msg}")
                 binding.tvLoadMore.text = "加载失败，上拉重试"
             }
-            else -> {}
+            else ->  {}
         }
     }
 

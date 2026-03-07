@@ -1,6 +1,7 @@
 package com.fx.zfcar.training.viewmodel
 
 import com.fx.zfcar.net.BeforeEducationCertificateData
+import com.fx.zfcar.net.BeforeExamInfoData
 import com.fx.zfcar.net.CarNumSearchData
 import com.fx.zfcar.net.CompanyListData
 import com.fx.zfcar.net.CoursewareListData
@@ -31,7 +32,6 @@ import com.fx.zfcar.net.SingPostRequest
 import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
-import okhttp3.RequestBody
 
 /**
  * 安全培训相关ViewModel（课程、签到、人脸验证、培训计划等）
@@ -309,6 +309,13 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
         launchRequest(
             block = { vehicleRepository.safetyAdd(params) },
             stateFlow = stateFlow
+        )
+    }
+
+    fun beforeExamInfo(stateFlow: MutableStateFlow<ApiState<BeforeExamInfoData>>) {
+        launchRequest(
+            block = { vehicleRepository.beforeExamInfo() },
+            stateFlow
         )
     }
 }

@@ -31,11 +31,28 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <ImageView
-                android:id="@+id/training_home_ring"
-                android:layout_width="@dimen/dp_32"
-                android:layout_height="@dimen/dp_32"
-                android:src="@drawable/ring"/>
+            <!-- 通知图标 -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/training_home_ring"
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:src="@drawable/ring"/>
+
+                <TextView
+                    android:id="@+id/badgeNotice"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/bg_circle"
+                    android:textColor="#FFFFFF"
+                    android:layout_gravity="end"
+                    android:textSize="10sp"
+                    android:gravity="center"
+                    android:visibility="gone"/>
+            </FrameLayout>
 
             <ImageView
                 android:id="@+id/training_home_user"
@@ -71,6 +88,7 @@
                     android:textSize="@dimen/sp_20"/>
 
                 <TextView
+                    android:id="@+id/tvMonth"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/dp_4"
@@ -404,6 +422,19 @@
                         android:drawableTop="@drawable/ic_device_training"
                         android:layout_marginTop="@dimen/dp_8"
                         android:text="@string/driver_duty"
+                        android:textSize="@dimen/sp_12"/>
+
+                    <TextView
+                        android:id="@+id/layoutYiqingSign"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:visibility="gone"
+                        android:gravity="center"
+                        android:drawablePadding="@dimen/dp_4"
+                        android:drawableTop="@drawable/ic_copy_url"
+                        android:layout_marginTop="@dimen/dp_8"
+                        android:text="@string/driver_promise"
                         android:textSize="@dimen/sp_12"/>
                 </GridLayout>
             </LinearLayout>

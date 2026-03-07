@@ -200,6 +200,10 @@ class TrainListAdapter() : BaseQuickAdapter<TrainListItem, RecyclerView.ViewHold
         }
     }
 
+    override fun getItemViewType(position: Int, list: List<TrainListItem>): Int {
+        return currentType
+    }
+
     // ==================== 创建ViewHolder（ViewBinding inflate） ====================
     override fun onCreateViewHolder(context: Context, parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)

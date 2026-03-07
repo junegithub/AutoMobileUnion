@@ -1494,7 +1494,7 @@ data class SubjectItem(
     val number: Int,
     val studytype: Int,
     val slongtime: String,
-    val progress: Int,
+    val progress: Double,
     val examtype: Int,
     val joinexams: Int,
     val jxstatus: String,
