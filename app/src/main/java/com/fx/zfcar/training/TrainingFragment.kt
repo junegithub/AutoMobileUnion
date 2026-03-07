@@ -467,7 +467,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     // 隐患排查
     private fun dangerCheck() {
-//        startActivity(Intent(requireContext(), DangerCheckActivity::class.java))
+        startActivity(Intent(requireContext(), DangerCheckActivity::class.java))
     }
 
     // 驾驶员责任书

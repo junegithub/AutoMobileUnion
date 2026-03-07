@@ -1964,7 +1964,7 @@ data class CarCheckPostRequest(
 
 data class DangerData(
     val total: Int,
-    val rows: List<Any>,
+    val rows: List<DangerCheckHistoryItem>,
     val allnum: Int,
     val dslist: DangerDetail
 )
@@ -2013,6 +2013,16 @@ data class DangerDetail(
     val shtime: String?,
     val singtime: String?,
     val check_admin: String?
+)
+
+data class DangerCheckHistoryItem(
+    // 核心字段 - 与接口字段映射（解决字段命名不一致问题）
+    val id: String,
+    val carNum: String,
+    val checkTime: String,
+    val checkStatus: String? = "未知", // 如：已完成/待整改/已整改
+    val checkPerson: String? = "",
+    val checkResult: String? = ""
 )
 
 data class DangerPostRequest(
