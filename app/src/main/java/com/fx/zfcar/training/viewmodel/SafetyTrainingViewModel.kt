@@ -25,6 +25,7 @@ import com.fx.zfcar.net.UserLoginRequest
 import com.fx.zfcar.net.UserStudyProveListData
 import com.fx.zfcar.net.CheckSafeData // 新增：支付检查
 import com.fx.zfcar.net.CompanyPayData // 新增：企业支付
+import com.fx.zfcar.net.MyJobListData
 import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
 import com.fx.zfcar.net.QuestionOrderPayData
 import com.fx.zfcar.net.SafetySignRequest
@@ -55,7 +56,7 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     }
 
     // 获取公司列表
-    fun getCompanyList(page: String?, type: String?,
+    fun getCompanyList(page: Int, type: Int,
                        stateFlow: MutableStateFlow<ApiState<CompanyListData>>) {
         launchRequest(
             block = { vehicleRepository.getCompanyList(page, type) },
@@ -315,6 +316,14 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     fun beforeExamInfo(stateFlow: MutableStateFlow<ApiState<BeforeExamInfoData>>) {
         launchRequest(
             block = { vehicleRepository.beforeExamInfo() },
+            stateFlow
+        )
+    }
+
+    fun getMyJobList(page: Int, type: Int,
+                     stateFlow: MutableStateFlow<ApiState<MyJobListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getMyJobList(page, type) },
             stateFlow
         )
     }

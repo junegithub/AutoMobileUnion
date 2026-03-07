@@ -976,7 +976,7 @@ data class TravelLogItem(
 
 data class CompanyListData(
     val total: Int,
-    val rows: CompanyListRow,
+    val rows: List<CompanyListRow>?,
     val allnum: Int
 )
 
@@ -2063,7 +2063,7 @@ data class DangerPostRequest(
 
 data class MyJobListData(
     val total: Int,
-    val rows: MyJobItem,
+    val rows: List<MyJobItem>?,
     val allnum: Int
 )
 

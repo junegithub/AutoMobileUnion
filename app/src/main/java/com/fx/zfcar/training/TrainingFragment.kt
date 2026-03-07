@@ -484,7 +484,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     // 招聘求职
     private fun job() {
-//        startActivity(Intent(requireContext(), JobActivity::class.java))
+        startActivity(Intent(requireContext(), JobsActivity::class.java))
     }
 
     // 跳转到培训首页

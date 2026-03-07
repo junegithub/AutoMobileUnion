@@ -32,8 +32,8 @@ interface TrainingApiService {
 
     @GET("api/job/companylist")
     suspend fun getCompanyList(
-        @Query("page") page: String?,
-        @Query("type") type: String?
+        @Query("page") page: Int,
+        @Query("type") type: Int
     ): Response<TrainingBaseResponse<CompanyListData>>
 
     @GET("api/user/safetylist")
@@ -292,8 +292,8 @@ interface TrainingApiService {
 
     @GET("api/job/myjoblist")
     suspend fun getMyJobList(
-        @Query("page") page: String,
-        @Query("type") type: String
+        @Query("page") page: Int,
+        @Query("type") type: Int
     ): Response<TrainingBaseResponse<MyJobListData>>
 
     @POST("api/user/logoff")

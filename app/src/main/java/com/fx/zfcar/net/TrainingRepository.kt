@@ -22,7 +22,7 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun getTravelLog() = apiService.getTravelLog()
 
-    suspend fun getCompanyList(page: String?, type: String?) = apiService.getCompanyList(page, type)
+    suspend fun getCompanyList(page: Int, type: Int) = apiService.getCompanyList(page, type)
 
     suspend fun getSafetyList(page: Int, type: Int) = apiService.getSafetyList(page, type)
 
@@ -170,7 +170,7 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun dangerPost(request: DangerPostRequest) = apiService.dangerPost(request)
 
-    suspend fun getMyJobList(page: String, type: String) = apiService.getMyJobList(page, type)
+    suspend fun getMyJobList(page: Int, type: Int) = apiService.getMyJobList(page, type)
 
     suspend fun logoff() = apiService.logoff()
 
