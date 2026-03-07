@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fx.zfcar.databinding.ItemDangerHistoryBinding
 import com.fx.zfcar.net.DangerCheckHistoryItem
+import com.fx.zfcar.util.PressEffectUtils
 
 class DangerCheckHistoryAdapter(
     private val onItemClick: (DangerCheckHistoryItem) -> Unit
@@ -20,6 +21,7 @@ class DangerCheckHistoryAdapter(
         private var currentItem: DangerCheckHistoryItem? = null
 
         init {
+            PressEffectUtils.setCommonPressEffect(itemView)
             itemView.setOnClickListener {
                 currentItem?.let { onItemClick(it) }
             }
@@ -27,8 +29,8 @@ class DangerCheckHistoryAdapter(
 
         fun bind(item: DangerCheckHistoryItem) {
             currentItem = item
-            binding.tvCarNum.text = item.carNum
-            binding.tvCheckTime.text = item.checkTime
+            binding.tvCarNum.text = item.carnum
+            binding.tvCheckTime.text = item.checktime
         }
     }
 

@@ -2016,13 +2016,56 @@ data class DangerDetail(
 )
 
 data class DangerCheckHistoryItem(
-    // 核心字段 - 与接口字段映射（解决字段命名不一致问题）
-    val id: String,
-    val carNum: String,
-    val checkTime: String,
-    val checkStatus: String? = "未知", // 如：已完成/待整改/已整改
-    val checkPerson: String? = "",
-    val checkResult: String? = ""
+    val id: String?,
+    val user_id: String?,
+    val name: String?,
+    val telphone: String?,
+    val checktime: String?,       // 示例中为 "2026-02-13"
+    val check_address: String?,
+    val carnum: String?,
+    val roadnum: String?,
+    val driver_name: String?,
+    val driver_tel: String?,
+    val driver_number: String?,
+
+    // 状态位默认值为 0，防止 null 导致崩溃
+    val lamp_status: Int = 0,
+    val retardation_status: Int = 0,
+    val warning_status: Int = 0,
+    val tyre_status: Int = 0,
+    val safety_status: Int = 0,
+    val check_status: Int = 0,
+    val procedures_status: Int = 0,
+    val other_status: Int = 0,
+
+    val content: String?,
+    val fileimg: String?,         // 逗号分隔的图片 URL
+    val dirversign_img: String?,  // 注意保持后端拼写 dirversign (少了一个 r)
+    val checksign_img: String?,
+
+    val admin_id: String?,        // 示例中为 0.0，用 String 兼容
+    val admin: String?,
+    val status: Int = 0,
+    val fbstaus: Int = 0,         // 保持后端拼写 fbstaus
+
+    // 图片详情字段
+    val before_left: String?,
+    val before_right: String?,
+    val after_left: String?,
+    val after_right: String?,
+    val dlimages: String?,
+    val tcimages: String?,
+    val driverimg: String?,
+    val qualification: String?,
+    val beidou: String?,
+    val beidou_ticket: String?,
+    val tripod: String?,
+    val fire: String?,
+
+    val meno: String?,
+    val shtime: String?,          // 示例中为 0.0
+    val singtime: String?,        // 示例中为 0.0
+    val check_admin: String?
 )
 
 data class DangerPostRequest(

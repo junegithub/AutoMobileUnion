@@ -13,6 +13,7 @@ import com.fx.zfcar.net.DangerData
 import com.fx.zfcar.net.DangerDetail
 import com.fx.zfcar.training.adapter.DangerCheckHistoryAdapter
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
+import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.gson.Gson
@@ -44,6 +45,8 @@ class DangerCheckActivity : AppCompatActivity() {
 
     // 初始化视图
     private fun initView() {
+        PressEffectUtils.setCommonPressEffect(binding.ivBack)
+        PressEffectUtils.setCommonPressEffect(binding.btnAdd)
 
         // 导航栏返回按钮
         binding.ivBack.setOnClickListener {
