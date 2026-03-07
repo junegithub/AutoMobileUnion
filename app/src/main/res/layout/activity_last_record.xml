@@ -9,7 +9,8 @@
     <!-- 顶部导航栏 -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/dp_24">
 
         <!-- 返回按钮 -->
         <ImageView
