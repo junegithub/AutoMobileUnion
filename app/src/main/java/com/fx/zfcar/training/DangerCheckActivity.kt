@@ -164,7 +164,7 @@ class DangerCheckActivity : AppCompatActivity() {
         }
 
         // 跳转到详情页
-//        val intent = Intent(this, DangerCheckDetailActivity::class.java)
-//        startActivity(intent)
+        val intent = Intent(this, DangerCheckDetailActivity::class.java)
+        startActivity(intent)
     }
 }

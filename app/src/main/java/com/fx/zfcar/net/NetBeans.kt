@@ -2082,50 +2082,109 @@ data class DangerCheckHistoryItem(
 }
 
 data class DangerPostRequest(
-    val id: Int,
-    val user_id: Int,
-    val name: String,
-    val telphone: String,
-    val checktime: String,
-    val check_address: String?,
-    val carnum: String?,
-    val roadnum: String?,
-    val driver_name: String,
-    val driver_tel: String,
-    val driver_number: String,
-    val lamp_status: String?,
-    val retardation_status: String?,
-    val warning_status: String?,
-    val tyre_status: String?,
-    val safety_status: String?,
-    val check_status: String?,
-    val procedures_status: String?,
-    val other_status: String?,
-    val content: String?,
-    val fileimg: String?,
-    val dirversign_img: String?,
-    val checksign_img: String?,
-    val admin_id: String?,
-    val admin: String?,
-    val status: String,
-    val fbstaus: String,
-    val before_left: String?,
-    val before_right: String?,
-    val after_left: String?,
-    val after_right: String?,
-    val dlimages: String,
-    val tcimages: String,
-    val driverimg: String?,
-    val qualification: String?,
-    val beidou: String?,
-    val beidou_ticket: String?,
-    val tripod: String?,
-    val fire: String?,
-    val meno: String?,
-    val shtime: String?,
-    val singtime: String?,
-    val check_admin: String?
-)
+    var id: Int = 0,
+    var user_id: Int = 0,
+    var name: String = "",
+    var telphone: String = "",
+    var checktime: String = "",
+    var check_address: String? = "",
+    var carnum: String? = "",
+    var roadnum: String? = "",
+    var driver_name: String = "",
+    var driver_tel: String = "",
+    var driver_number: String = "",
+    var lamp_status: String? = "",
+    var retardation_status: String? = "",
+    var warning_status: String? = "",
+    var tyre_status: String? = "",
+    var safety_status: String? = "",
+    var check_status: String? = "",
+    var procedures_status: String? = "",
+    var other_status: String? = "",
+    var content: String? = "",
+    var fileimg: String? = "",
+    var dirversign_img: String? = "",
+    var checksign_img: String? = "",
+    var admin_id: String? = "",
+    var admin: String? = "",
+    var status: String = "",
+    var fbstaus: String = "",
+    var before_left: String? = "",
+    var before_right: String? = "",
+    var after_left: String? = "",
+    var after_right: String? = "",
+    var dlimages: String = "",
+    var tcimages: String = "",
+    var driverimg: String? = "",
+    var qualification: String? = "",
+    var beidou: String? = "",
+    var beidou_ticket: String? = "",
+    var tripod: String? = "",
+    var fire: String? = "",
+    var meno: String? = "",
+    var shtime: String? = "",
+    var singtime: String? = "",
+    var check_admin: String? = ""
+) {
+    fun setAllNormal() {
+        lamp_status = "0"
+        retardation_status = "0"
+        warning_status = "0"
+        tyre_status = "0"
+        safety_status = "0"
+        check_status = "0"
+        procedures_status = "0"
+        other_status = "0"
+    }
+
+    // 清理空值字段（处理可空类型）
+    fun cleanEmptyFields() {
+        // 字符串可空字段处理
+        check_address = check_address?.takeIf { it.isNotBlank() } ?: ""
+        carnum = carnum?.takeIf { it.isNotBlank() } ?: ""
+        roadnum = roadnum?.takeIf { it.isNotBlank() } ?: ""
+        lamp_status = lamp_status?.takeIf { it.isNotBlank() } ?: ""
+        retardation_status = retardation_status?.takeIf { it.isNotBlank() } ?: ""
+        warning_status = warning_status?.takeIf { it.isNotBlank() } ?: ""
+        tyre_status = tyre_status?.takeIf { it.isNotBlank() } ?: ""
+        safety_status = safety_status?.takeIf { it.isNotBlank() } ?: ""
+        check_status = check_status?.takeIf { it.isNotBlank() } ?: ""
+        procedures_status = procedures_status?.takeIf { it.isNotBlank() } ?: ""
+        other_status = other_status?.takeIf { it.isNotBlank() } ?: ""
+        content = content?.takeIf { it.isNotBlank() } ?: ""
+        fileimg = fileimg?.takeIf { it.isNotBlank() } ?: ""
+        dirversign_img = dirversign_img?.takeIf { it.isNotBlank() } ?: ""
+        checksign_img = checksign_img?.takeIf { it.isNotBlank() } ?: ""
+        admin_id = admin_id?.takeIf { it.isNotBlank() } ?: ""
+        admin = admin?.takeIf { it.isNotBlank() } ?: ""
+        before_left = before_left?.takeIf { it.isNotBlank() } ?: ""
+        before_right = before_right?.takeIf { it.isNotBlank() } ?: ""
+        after_left = after_left?.takeIf { it.isNotBlank() } ?: ""
+        after_right = after_right?.takeIf { it.isNotBlank() } ?: ""
+        driverimg = driverimg?.takeIf { it.isNotBlank() } ?: ""
+        qualification = qualification?.takeIf { it.isNotBlank() } ?: ""
+        beidou = beidou?.takeIf { it.isNotBlank() } ?: ""
+        beidou_ticket = beidou_ticket?.takeIf { it.isNotBlank() } ?: ""
+        tripod = tripod?.takeIf { it.isNotBlank() } ?: ""
+        fire = fire?.takeIf { it.isNotBlank() } ?: ""
+        meno = meno?.takeIf { it.isNotBlank() } ?: ""
+        shtime = shtime?.takeIf { it.isNotBlank() } ?: ""
+        singtime = singtime?.takeIf { it.isNotBlank() } ?: ""
+        check_admin = check_admin?.takeIf { it.isNotBlank() } ?: ""
+
+        // 非空字符串字段处理
+        if (name.isBlank()) name = ""
+        if (telphone.isBlank()) telphone = ""
+        if (checktime.isBlank()) checktime = ""
+        if (driver_name.isBlank()) driver_name = ""
+        if (driver_tel.isBlank()) driver_tel = ""
+        if (driver_number.isBlank()) driver_number = ""
+        if (status.isBlank()) status = ""
+        if (fbstaus.isBlank()) fbstaus = ""
+        if (dlimages.isBlank()) dlimages = ""
+        if (tcimages.isBlank()) tcimages = ""
+    }
+}
 
 data class MyJobListData(
     val total: Int,

@@ -26,6 +26,7 @@ import com.fx.zfcar.net.UserStudyProveListData
 import com.fx.zfcar.net.CheckSafeData // 新增：支付检查
 import com.fx.zfcar.net.CompanyPayData // 新增：企业支付
 import com.fx.zfcar.net.DangerData
+import com.fx.zfcar.net.DangerPostRequest
 import com.fx.zfcar.net.EpidemicRequest
 import com.fx.zfcar.net.MyJobListData
 import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
@@ -340,6 +341,13 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     fun getDanger(stateFlow: MutableStateFlow<ApiState<DangerData>>) {
         launchRequest(
             block = { vehicleRepository.getDanger() },
+            stateFlow
+        )
+    }
+
+    fun dangerPost(request: DangerPostRequest, stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = { vehicleRepository.dangerPost(request) },
             stateFlow
         )
     }

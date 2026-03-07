@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.fx.zfcar.MyApp
+import com.fx.zfcar.car.viewmodel.CarInfoViewModel
 import com.fx.zfcar.training.user.UserCenterActivity
 import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.PressEffectUtils
@@ -19,6 +20,7 @@ import com.fx.zfcar.net.BeforeExamInfoData
 import com.fx.zfcar.net.EpidemicViewData
 import com.fx.zfcar.net.QuestionOrderPayData
 import com.fx.zfcar.net.SignViewData
+import com.fx.zfcar.net.TrainingOtherInfo
 import com.fx.zfcar.net.UserInfoData
 import com.fx.zfcar.pages.LoginActivity
 import com.fx.zfcar.training.notice.NoticeActivity
@@ -50,6 +52,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
     private var mTitle = ""
 
     private val trainingViewModel by viewModels<SafetyTrainingViewModel>()
+    private val otherUserInfoState = MutableStateFlow<ApiState<TrainingOtherInfo>>(ApiState.Idle)
     private var beforeExamStateFlow = MutableStateFlow<ApiState<BeforeExamInfoData>>(ApiState.Idle)
     private var safeUserStateFlow = MutableStateFlow<ApiState<UserInfoData>>(ApiState.Idle)
     private var driverBookStateFlow = MutableStateFlow<ApiState<SignViewData>>(ApiState.Idle)
@@ -247,6 +250,9 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                             SPUtils.save("userInfo", Gson().toJson(uiState.data.info))
                             SPUtils.save("companyInfo", Gson().toJson(uiState.data.category))
                         }
+
+                        // 获取车辆信息
+                        trainingViewModel.getUserOtherInfo(otherUserInfoState)
                     }
 
                     is ApiState.Error -> {
@@ -371,6 +377,19 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                         goToTrainHome(mType, mTitle)
                     }
                     is ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            otherUserInfoState.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Success -> {
+                        uiState.data?.let {
+                            SPUtils.save("carInfo", Gson().toJson(uiState.data))
+                        }
+                    }
+                    else -> {
                     }
                 }
             }
