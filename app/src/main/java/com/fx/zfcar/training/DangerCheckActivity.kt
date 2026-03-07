@@ -132,8 +132,8 @@ class DangerCheckActivity : AppCompatActivity() {
         SPUtils.save("hisItem", gson.toJson(item))
 
         // 跳转页面
-//        val intent = Intent(this, DangerHistoryRecordActivity::class.java)
-//        startActivity(intent)
+        val intent = Intent(this, DangerHistoryRecordActivity::class.java)
+        startActivity(intent)
     }
 
     // 跳转到新增/编辑详情页

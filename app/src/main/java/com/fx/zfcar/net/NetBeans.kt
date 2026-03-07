@@ -2066,7 +2066,20 @@ data class DangerCheckHistoryItem(
     val shtime: String?,          // 示例中为 0.0
     val singtime: String?,        // 示例中为 0.0
     val check_admin: String?
-)
+){
+    // 获取状态显示文本（0=正常，其他=异常）
+    fun getStatusText(status: Int): String {
+        return if (status == 0) "正常" else "异常"
+    }
+
+    // 分割图片列表
+    fun getFileImgList(): List<String> {
+        fileimg?.let {
+            return if (fileimg.isBlank()) emptyList() else fileimg.split(",").filter { it.isNotBlank() }
+        }
+        return emptyList()
+    }
+}
 
 data class DangerPostRequest(
     val id: Int,
