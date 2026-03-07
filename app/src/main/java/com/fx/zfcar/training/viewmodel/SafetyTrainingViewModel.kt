@@ -13,6 +13,7 @@ import com.fx.zfcar.net.FaceData
 import com.fx.zfcar.net.MeetingListData // 新增：安全会议列表
 import com.fx.zfcar.net.OldSafetyListData
 import com.fx.zfcar.net.BeforeSubjectListData
+import com.fx.zfcar.net.CarCheckData
 import com.fx.zfcar.net.SafeStudyData
 import com.fx.zfcar.net.SafetyListData
 import com.fx.zfcar.net.SignViewData
@@ -348,6 +349,13 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     fun dangerPost(request: DangerPostRequest, stateFlow: MutableStateFlow<ApiState<String>>) {
         launchRequest(
             block = { vehicleRepository.dangerPost(request) },
+            stateFlow
+        )
+    }
+
+    fun getCarCheck(stateFlow: MutableStateFlow<ApiState<CarCheckData>>) {
+        launchRequest(
+            block = { vehicleRepository.getCarCheck() },
             stateFlow
         )
     }

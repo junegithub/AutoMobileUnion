@@ -98,6 +98,7 @@
         <activity android:name=".training.DangerCheckActivity" />
         <activity android:name=".training.DangerHistoryRecordActivity" />
         <activity android:name=".training.DangerCheckDetailActivity" />
+        <activity android:name=".training.CarSafetyCheckActivity" />
 
         <activity android:name=".training.notice.NoticeActivity" />
         <activity android:name=".training.notice.NoticeDetailActivity" />

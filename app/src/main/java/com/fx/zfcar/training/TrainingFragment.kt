@@ -481,7 +481,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     // 车辆安全检查
     private fun driveCheck() {
-//        startActivity(Intent(requireContext(), DriveCheckActivity::class.java))
+        startActivity(Intent(requireContext(), CarSafetyCheckActivity::class.java))
     }
 
     // 隐患排查

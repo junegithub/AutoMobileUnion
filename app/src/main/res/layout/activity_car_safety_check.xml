@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/dp_24"
+        android:background="#FFFFFF">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="16dp"
+            android:layout_gravity="center_vertical"
+            android:tint="@color/black"
+            android:src="@drawable/arrow_back" />
+
+        <!-- 标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="车辆安全检查"
+            android:textColor="#3A4462"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- 主内容区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 上一次提交记录 -->
+            <LinearLayout
+                android:id="@+id/layout_last_record"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="上一次提交记录"
+                    android:textSize="20sp" />
+
+                <!-- 最近记录卡片 -->
+                <FrameLayout
+                    android:id="@+id/card_last_record"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:background="@drawable/card_bg_blue_light"
+                    android:elevation="2dp">
+
+                    <!-- 背景图 -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/car_bg"
+                        android:layout_gravity="bottom"/>
+
+                    <!-- 日期和车牌号 -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_gravity="center">
+
+                        <TextView
+                            android:id="@+id/tv_last_record_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#333333"
+                            android:textSize="21sp"
+                            android:layout_marginTop="8dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_last_record_carnum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#666666"
+                            android:textSize="18sp"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+                </FrameLayout>
+            </LinearLayout>
+
+            <!-- 新增检查卡片 -->
+            <FrameLayout
+                android:id="@+id/card_add_new"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="@drawable/card_bg_blue"
+                android:layout_marginTop="@dimen/dp_16"
+                android:elevation="2dp">
+
+                <!-- 背景图 -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/car_bg"
+                    android:layout_gravity="bottom"/>
+
+                <!-- 新增检查图标和文字 -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/addicon"
+                        android:layout_gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="新增检查"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"/>
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
