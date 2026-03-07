@@ -2355,3 +2355,7 @@ data class EvaluateClassRequest(
     val subject_id: String = "",
     val content: String = ""
 )
+
+data class EpidemicRequest(
+    val epidemicfile: String = ""
+)

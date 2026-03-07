@@ -20,6 +20,8 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun epidemicView() = apiService.epidemicView()
 
+    suspend fun epidemicPost(request: EpidemicRequest) = apiService.epidemicPost(request)
+
     suspend fun getTravelLog() = apiService.getTravelLog()
 
     suspend fun getCompanyList(page: Int, type: Int) = apiService.getCompanyList(page, type)

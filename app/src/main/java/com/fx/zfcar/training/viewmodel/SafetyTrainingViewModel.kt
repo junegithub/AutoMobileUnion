@@ -25,6 +25,7 @@ import com.fx.zfcar.net.UserLoginRequest
 import com.fx.zfcar.net.UserStudyProveListData
 import com.fx.zfcar.net.CheckSafeData // 新增：支付检查
 import com.fx.zfcar.net.CompanyPayData // 新增：企业支付
+import com.fx.zfcar.net.EpidemicRequest
 import com.fx.zfcar.net.MyJobListData
 import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
 import com.fx.zfcar.net.QuestionOrderPayData
@@ -51,6 +52,13 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     fun epidemicView(stateFlow: MutableStateFlow<ApiState<EpidemicViewData>>) {
         launchRequest(
             block = { vehicleRepository.epidemicView() },
+            stateFlow
+        )
+    }
+
+    fun epidemicPost(epidemicfile: String, stateFlow: MutableStateFlow<ApiState<Any>>) {
+        launchRequest(
+            block = { vehicleRepository.epidemicPost(EpidemicRequest(epidemicfile)) },
             stateFlow
         )
     }

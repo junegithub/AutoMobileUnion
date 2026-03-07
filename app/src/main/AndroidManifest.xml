@@ -93,6 +93,7 @@
         <activity android:name=".training.safetytraining.ExamManagerActivity" />
 
         <activity android:name=".training.JobsActivity" />
+        <activity android:name=".training.YiqingSignActivity" />
 
         <activity android:name=".training.notice.NoticeActivity" />
         <activity android:name=".training.notice.NoticeDetailActivity" />

@@ -333,11 +333,11 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                                 val signTime = uiState.data.epidemictime.take(4).toInt()
                                 if (signTime < DateUtil.getCurrentYear()) {
                                     // 需要重新签署
-//                                    startActivity(Intent(requireContext(), YiqingSignActivity::class.java))
+                                    startActivity(Intent(requireContext(), YiqingSignActivity::class.java))
                                 }
                             } else {
                                 // 未签署
-//                                startActivity(Intent(requireContext(), YiqingSignActivity::class.java))
+                                startActivity(Intent(requireContext(), YiqingSignActivity::class.java))
                             }
                         }
                     }
@@ -477,9 +477,9 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     // 驾驶员承诺书
     private fun yiqing() {
-//        val intent = Intent(requireContext(), YiqingSignActivity::class.java)
-//        intent.putExtra("name", name)
-//        startActivity(intent)
+        val intent = Intent(requireContext(), YiqingSignActivity::class.java)
+        intent.putExtra("name", name)
+        startActivity(intent)
     }
 
     // 招聘求职

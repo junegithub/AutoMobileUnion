@@ -27,6 +27,9 @@ interface TrainingApiService {
     @GET("api/user/epidemicview")
     suspend fun epidemicView(): Response<TrainingBaseResponse<EpidemicViewData>>
 
+    @POST("api/user/epidemicpost")
+    suspend fun epidemicPost(@Body request: EpidemicRequest): Response<TrainingBaseResponse<Any>>
+
     @GET("api/other/travellog")
     suspend fun getTravelLog(): Response<TrainingBaseResponse<TravelLogData>>
 
