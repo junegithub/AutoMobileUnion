@@ -118,7 +118,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
         }
 
         // 控制subTabLayout显示：仅会议类型（type=3）显示
-        binding.subTabLayout.visibility = if (currentType == 3) View.VISIBLE else View.GONE
+        binding.subTabLayout.visibility = if (currentType == 0 || currentType == 3) View.VISIBLE else View.GONE
 
         // 初始化会议子Tab
         if (currentType == 0 || currentType == 3) {
@@ -130,7 +130,11 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                             trainDataList?.clear()
                             trainAdapter.updateDynamicType(trainStatus)
                         }
-                        3 -> meetingStatus = tab.position // 安全会议切换进行中/历史
+                        3 -> { // 安全会议切换进行中/历史
+                            meetingStatus = tab.position
+                            trainDataList?.clear()
+                            trainAdapter.updateDynamicType(meetingStatus)
+                        }
                     }
                     resetPageAndLoad()
                 }

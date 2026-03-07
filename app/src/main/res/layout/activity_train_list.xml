@@ -30,9 +30,24 @@
             android:layout_height="40dp"
             android:background="#FFFFFF"
             android:visibility="gone"
-            app:tabIndicatorColor="#3DA4FF"
-            app:tabSelectedTextColor="#3DA4FF"
-            app:tabTextColor="#666666"/>
+            app:tabIndicatorColor="#2F67FF"
+            app:tabIndicatorHeight="2dp"
+            app:tabMode="fixed"
+            app:tabPaddingStart="0dp"
+            app:tabPaddingEnd="0dp"
+            app:tabSelectedTextColor="#2F67FF"
+            app:tabTextColor="@color/black"
+            app:tabTextAppearance="@style/TabTextStyle">
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="进行中" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="历史" />
+        </com.google.android.material.tabs.TabLayout>
 
         <!-- 主内容区域（直接使用RecyclerView，移除下拉刷新容器） -->
         <androidx.recyclerview.widget.RecyclerView
