@@ -1,7 +1,5 @@
 package com.fx.zfcar.training
 
-import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +9,8 @@ import com.fx.zfcar.databinding.ActivityDangerHistoryRecordBinding
 import com.fx.zfcar.net.CategoryDetail
 import com.fx.zfcar.net.DangerCheckHistoryItem
 import com.fx.zfcar.training.adapter.DangerCheckImageAdapter
+import com.fx.zfcar.util.PressEffectUtils
+import com.fx.zfcar.util.SPUtils
 import com.google.gson.Gson
 
 class DangerHistoryRecordActivity : AppCompatActivity() {
@@ -22,8 +22,6 @@ class DangerHistoryRecordActivity : AppCompatActivity() {
     private lateinit var companyName: String
     private lateinit var imageAdapter: DangerCheckImageAdapter
 
-    // SharedPreferences
-    private lateinit var sp: SharedPreferences
     private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,15 +37,9 @@ class DangerHistoryRecordActivity : AppCompatActivity() {
 
     // 初始化视图
     private fun initView() {
-        // 初始化 SharedPreferences
-        sp = getSharedPreferences("AppStorage", MODE_PRIVATE)
-
+        PressEffectUtils.setCommonPressEffect(binding.ivBack)
         // 导航栏返回按钮
         binding.ivBack.setOnClickListener {
-            // 返回隐患排查首页
-            val intent = Intent(this, DangerCheckActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            startActivity(intent)
             finish()
         }
 
@@ -63,16 +55,16 @@ class DangerHistoryRecordActivity : AppCompatActivity() {
     // 加载本地存储数据
     private fun loadLocalData() {
         // 读取历史记录项
-        val hisItemJson = sp.getString("hisItem", "")
-        if (hisItemJson.isNullOrBlank()) {
+        val hisItemJson = SPUtils.get("hisItem")
+        if (hisItemJson.isEmpty()) {
             finish() // 无数据返回上一页
             return
         }
         historyItem = gson.fromJson(hisItemJson, DangerCheckHistoryItem::class.java)
 
         // 读取公司信息
-        val companyInfoJson = sp.getString("companyInfo", "")
-        companyName = if (companyInfoJson.isNullOrBlank()) {
+        val companyInfoJson = SPUtils.get("companyInfo")
+        companyName = if (companyInfoJson.isEmpty()) {
             "-"
         } else {
             val companyInfo = gson.fromJson(companyInfoJson, CategoryDetail::class.java)

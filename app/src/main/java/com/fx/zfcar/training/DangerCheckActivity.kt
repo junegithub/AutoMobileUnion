@@ -47,6 +47,7 @@ class DangerCheckActivity : AppCompatActivity() {
     private fun initView() {
         PressEffectUtils.setCommonPressEffect(binding.ivBack)
         PressEffectUtils.setCommonPressEffect(binding.btnAdd)
+        PressEffectUtils.setCommonPressEffect(binding.layoutIngCheck)
 
         // 导航栏返回按钮
         binding.ivBack.setOnClickListener {
