@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <!-- 顶部导航栏 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:tint="@color/black"
+            android:src="@drawable/arrow_back" />
+
+        <!-- 标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="上一次提交记录"
+            android:textColor="#3A4462"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- 主内容滚动区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 基础信息区域 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 车牌号 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:paddingVertical="16dp"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:text="车牌号"
+                        android:textColor="#666666"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_carnum"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:gravity="end"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- 检查日期 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="16dp"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:text="检查日期"
+                        android:textColor="#666666"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_updatetime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:gravity="end"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- 检查时间显示-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="16dp"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:text="检查时间"
+                        android:textColor="#666666"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_check_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:gravity="end"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- 检查单位 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="16dp"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:text="检查单位"
+                        android:textColor="#666666"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_company"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:gravity="end"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- 检查人 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="16dp"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:text="检查人"
+                        android:textColor="#666666"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:gravity="end"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 证件检查状态 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_car_certificate"
+                app:title="证件检查状态"
+                app:status_key="car_certificate_status"
+                app:image_key="car_certificate_fileimg"/>
+
+            <!-- 人员证件检查 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_people_certificate"
+                app:title="人员证件检查"
+                app:status_key="people_certificate_status"
+                app:image_key="people_certificate_fileimg"/>
+
+            <!-- 车辆保险检查 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_insure"
+                app:title="车辆保险检查"
+                app:status_key="insure_status"
+                app:image_key="insure_fileimg"/>
+
+            <!-- 在应急器材检查前新增车辆状态检查项 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_car_status"
+                app:title="车辆状态检查"
+                app:status_key="car_status"
+                app:image_key="car_fileimg"/>
+
+            <!-- 应急器材检查 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_urgent"
+                app:title="应急器材检查"
+                app:status_key="urgent_status"
+                app:image_key="urgent_fileimg"/>
+
+            <!-- 标识标志检查 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_sign"
+                app:title="标识标志检查"
+                app:status_key="sign_status"
+                app:image_key="sign_fileimg"/>
+
+            <!-- 罐体检查 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_canbody"
+                app:title="罐体检查"
+                app:status_key="canbody_status"
+                app:image_key="canbody_fileimg"/>
+
+            <!-- 紧急切断阀 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_cutoff"
+                app:title="紧急切断阀"
+                app:status_key="cutoff_status"
+                app:image_key="cutoff_fileimg"/>
+
+            <!-- 导静电检查 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_static"
+                app:title="导静电检查"
+                app:status_key="static_status"
+                app:image_key="static_fileimg"/>
+
+            <!-- 运单检查 -->
+            <include layout="@layout/item_check_with_photos"
+                android:id="@+id/item_waybill"
+                app:title="运单检查"
+                app:status_key="waybill_status"
+                app:image_key="waybill_fileimg"/>
+
+            <!-- 存在问题 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="存在问题"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"/>
+
+            <!-- 处理意见 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="处理意见"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_idea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"/>
+
+            <!-- 检查人签名 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="检查人签名"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:id="@+id/iv_checksign_img"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:adjustViewBounds="true"/>
+
+            <!-- 车辆负责人签名 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="车辆负责人签名"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:id="@+id/iv_dirversign_img"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="32dp"
+                android:adjustViewBounds="true"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

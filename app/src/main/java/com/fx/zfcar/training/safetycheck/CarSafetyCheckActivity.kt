@@ -1,4 +1,4 @@
-package com.fx.zfcar.training
+package com.fx.zfcar.training.safetycheck
 
 import android.content.Intent
 import android.os.Bundle
@@ -55,7 +55,7 @@ class CarSafetyCheckActivity : AppCompatActivity() {
                                 // 显示上次记录区域
                                 binding.layoutLastRecord.visibility = View.VISIBLE
                                 // 设置日期和车牌号
-                                binding.tvLastRecordDate.text = DateUtil.timestamp2Date(state.data.rows.updatetime * 1000)
+                                binding.tvLastRecordDate.text = DateUtil.timestamp2Date(state.data.rows.updatetime * 1000L)
                                 binding.tvLastRecordCarnum.text = state.data.rows.carnum
                                 carCheckDetail = state.data.rows
                             }
@@ -100,8 +100,8 @@ class CarSafetyCheckActivity : AppCompatActivity() {
         SPUtils.save("carCheckRecord", gson.toJson(record))
 
         // 跳转页面
-//        val intent = Intent(this, LastRecordActivity::class.java)
-//        startActivity(intent)
+        val intent = Intent(this, LastRecordActivity::class.java)
+        startActivity(intent)
     }
 
     // 跳转到检查流程页面

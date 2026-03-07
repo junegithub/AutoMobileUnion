@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.fx.zfcar.MyApp
-import com.fx.zfcar.car.viewmodel.CarInfoViewModel
 import com.fx.zfcar.training.user.UserCenterActivity
 import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.PressEffectUtils
@@ -23,7 +22,9 @@ import com.fx.zfcar.net.SignViewData
 import com.fx.zfcar.net.TrainingOtherInfo
 import com.fx.zfcar.net.UserInfoData
 import com.fx.zfcar.pages.LoginActivity
+import com.fx.zfcar.training.dangercheck.DangerCheckActivity
 import com.fx.zfcar.training.notice.NoticeActivity
+import com.fx.zfcar.training.safetycheck.CarSafetyCheckActivity
 import com.fx.zfcar.training.safetytraining.TrainListActivity
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel

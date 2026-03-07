@@ -1,4 +1,4 @@
-package com.fx.zfcar.training
+package com.fx.zfcar.training.dangercheck
 
 import android.content.Intent
 import android.os.Bundle

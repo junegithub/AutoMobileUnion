@@ -95,10 +95,13 @@
         <activity android:name=".training.JobsActivity" />
         <activity android:name=".training.YiqingSignActivity" />
         <activity android:name=".training.DriverBookActivity" />
-        <activity android:name=".training.DangerCheckActivity" />
-        <activity android:name=".training.DangerHistoryRecordActivity" />
-        <activity android:name=".training.DangerCheckDetailActivity" />
-        <activity android:name=".training.CarSafetyCheckActivity" />
+
+        <activity android:name=".training.dangercheck.DangerCheckActivity" />
+        <activity android:name=".training.dangercheck.DangerHistoryRecordActivity" />
+        <activity android:name=".training.dangercheck.DangerCheckDetailActivity" />
+
+        <activity android:name=".training.safetycheck.CarSafetyCheckActivity" />
+        <activity android:name=".training.safetycheck.LastRecordActivity" />
 
         <activity android:name=".training.notice.NoticeActivity" />
         <activity android:name=".training.notice.NoticeDetailActivity" />

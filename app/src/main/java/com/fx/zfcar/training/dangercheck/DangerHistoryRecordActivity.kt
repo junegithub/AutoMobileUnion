@@ -1,8 +1,9 @@
-package com.fx.zfcar.training
+package com.fx.zfcar.training.dangercheck
 
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.fx.zfcar.databinding.ActivityDangerHistoryRecordBinding
@@ -117,7 +118,7 @@ class DangerHistoryRecordActivity : AppCompatActivity() {
     }
 
     // 加载图片（封装Glide加载逻辑）
-    private fun loadImage(imgUrl: String, imageView: androidx.appcompat.widget.AppCompatImageView) {
+    private fun loadImage(imgUrl: String, imageView: AppCompatImageView) {
         if (imgUrl.isNotBlank()) {
             Glide.with(this)
                 .load(imgUrl)

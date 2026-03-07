@@ -1,5 +1,6 @@
-package com.fx.zfcar.training
+package com.fx.zfcar.training.dangercheck
 
+import android.R
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
@@ -26,6 +27,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DangerCheckDetailActivity : AppCompatActivity() {
@@ -384,11 +386,11 @@ class DangerCheckDetailActivity : AppCompatActivity() {
 
     // 更新状态按钮样式
     private fun updateStatusButton(normalBtn: Button, abnormalBtn: Button, status: String) {
-        val green = resources.getColor(android.R.color.holo_green_light)
-        val red = resources.getColor(android.R.color.holo_red_light)
-        val gray = resources.getColor(android.R.color.darker_gray)
-        val white = resources.getColor(android.R.color.white)
-        val black = resources.getColor(android.R.color.black)
+        val green = resources.getColor(R.color.holo_green_light)
+        val red = resources.getColor(R.color.holo_red_light)
+        val gray = resources.getColor(R.color.darker_gray)
+        val white = resources.getColor(R.color.white)
+        val black = resources.getColor(R.color.black)
 
         when (status) {
             "0" -> {
@@ -590,7 +592,7 @@ class DangerCheckDetailActivity : AppCompatActivity() {
 
     // 获取当前日期
     private fun getCurrentDate(): String {
-        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return sdf.format(Date())
     }
 

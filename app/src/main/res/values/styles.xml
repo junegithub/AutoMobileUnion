@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
+    <declare-styleable name="CheckItem">
+        <attr name="title" format="string"/>
+        <attr name="status_key" format="string"/>
+        <attr name="image_key" format="string"/>
+    </declare-styleable>
+
     <style name="Theme.AmapBottomTabDemo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
