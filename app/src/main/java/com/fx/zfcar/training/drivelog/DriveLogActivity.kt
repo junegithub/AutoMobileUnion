@@ -1,5 +1,6 @@
 package com.fx.zfcar.training.drivelog
 
+import android.content.Intent
 import android.view.View
 import androidx.activity.viewModels
 import com.fx.zfcar.training.adapter.DriveLogDraftAdapter
@@ -331,9 +332,8 @@ class DriveLogActivity : AppCompatActivity() {
      * 跳转到上一次记录详情
      */
     private fun goToLastRecordDetail(lastRecord: TravelLogItem) {
-        SPUtils.save(KEY_LAST_RECORD, lastRecord.toString())
-
-//        startActivity(Intent(this, LastRecordActivity::class.java))
+        SPUtils.save(KEY_LAST_RECORD, Gson().toJson(lastRecord))
+        startActivity(Intent(this, LastDriveLogRecordActivity::class.java))
     }
 
     /**

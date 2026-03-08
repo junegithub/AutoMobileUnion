@@ -104,6 +104,7 @@
         <activity android:name=".training.safetycheck.CarCheckStageActivity" />
 
         <activity android:name=".training.drivelog.DriveLogActivity" />
+        <activity android:name=".training.drivelog.LastDriveLogRecordActivity" />
 
         <activity android:name=".training.notice.NoticeActivity" />
         <activity android:name=".training.notice.NoticeDetailActivity" />
