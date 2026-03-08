@@ -1931,37 +1931,6 @@ data class CarCheckDetail(
     val updatetime: Int
 )
 
-data class CarCheckPostRequest(
-    val carnum: String,
-    val name: String,
-    val checktime: String,
-    val company: String,
-    val car_certificate_status: String,
-    val car_certificate_fileimg: String,
-    val people_certificate_status: String,
-    val people_certificate_fileimg: String,
-    val insure_status: String,
-    val insure_fileimg: String,
-    val car_status: String,
-    val car_fileimg: String,
-    val urgent_status: String,
-    val urgent_fileimg: String,
-    val sign_status: String,
-    val sign_fileimg: String,
-    val canbody_status: String,
-    val canbody_fileimg: String,
-    val cutoff_status: String,
-    val cutoff_fileimg: String,
-    val static_status: String,
-    val static_fileimg: String,
-    val waybill_status: String,
-    val waybill_fileimg: String,
-    val question: String,
-    val idea: String,
-    val checksign_img: String,
-    val dirversign_img: String
-)
-
 data class DangerData(
     val total: Int,
     val rows: List<DangerCheckHistoryItem>,

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <!-- 顶部导航栏 -->
+    <FrameLayout
+        android:layout_marginTop="@dimen/dp_24"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:tint="@color/black"
+            android:src="@drawable/arrow_back" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="车辆安全检查(1/7)"
+            android:textColor="#3A4462"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- 进度条 -->
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        app:indicatorColor="#2979FF"
+        app:trackColor="#E0E0E0"
+        android:max="100"/>
+
+    <!-- 主内容区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 步骤1：基础信息 -->
+            <include
+                android:id="@+id/layout_stage1"
+                layout="@layout/layout_stage1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- 步骤2：证件/保险检查 -->
+            <include
+                android:id="@+id/layout_stage2"
+                layout="@layout/layout_stage2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- 步骤3：车辆/应急/标识检查 -->
+            <include
+                android:id="@+id/layout_stage3"
+                layout="@layout/layout_stage3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- 步骤4：罐体/切断阀/静电/运单检查 -->
+            <include
+                android:id="@+id/layout_stage4"
+                layout="@layout/layout_stage4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- 步骤5：问题和意见 -->
+            <include
+                android:id="@+id/layout_stage5"
+                layout="@layout/layout_stage5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- 步骤6：检查人签名 -->
+            <include
+                android:id="@+id/layout_stage6"
+                layout="@layout/layout_stage6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- 步骤7：负责人签名 -->
+            <include
+                android:id="@+id/layout_stage7"
+                layout="@layout/layout_stage7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 底部按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_prev"
+            android:layout_width="120dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/blue"
+            android:text="上一步"
+            android:textSize="16sp"
+            app:backgroundTint="#FFFFFF"
+            app:strokeColor="#2979FF"
+            app:strokeWidth="1dp"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_next"
+            android:layout_width="120dp"
+            android:layout_height="48dp"
+            android:text="下一步"
+            android:textSize="16sp"
+            app:backgroundTint="#2979FF" />
+    </LinearLayout>
+
+</LinearLayout>

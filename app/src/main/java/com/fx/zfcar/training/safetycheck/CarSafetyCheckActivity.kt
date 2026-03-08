@@ -106,7 +106,7 @@ class CarSafetyCheckActivity : AppCompatActivity() {
 
     // 跳转到检查流程页面
     private fun goToCheckStage() {
-//        val intent = Intent(this, CheckStageActivity::class.java)
-//        startActivity(intent)
+        val intent = Intent(this, CarCheckStageActivity::class.java)
+        startActivity(intent)
     }
 }

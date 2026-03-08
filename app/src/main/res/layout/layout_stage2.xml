@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- 车辆证件检查 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="车辆证件检查 *（最多添加9张照片）"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <!-- 合格/不合格选择 -->
+        <RadioGroup
+            android:id="@+id/rg_car_certi"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="#DCDFE6"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <RadioButton
+                android:id="@+id/rb_car_certi_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:buttonTint="#2979FF"
+                android:text="合格"
+                android:textSize="16sp"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/rb_car_certi_no"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="24dp"
+                android:buttonTint="#2979FF"
+                android:text="不合格"
+                android:textSize="16sp" />
+        </RadioGroup>
+
+        <!-- 图片展示 + 添加按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <!-- 图片列表（RecyclerView） -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_car_certi_imgs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="8dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"/>
+
+            <!-- 添加图片按钮 -->
+            <ImageView
+                android:id="@+id/btn_add_car_certi"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_dashed_border"
+                android:src="@drawable/ic_plus"
+                android:scaleType="center"
+                android:padding="20dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 人员证件检查 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="人员证件检查 *（最多添加9张照片）"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <RadioGroup
+            android:id="@+id/rg_people_certi"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="#DCDFE6"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <RadioButton
+                android:id="@+id/rb_people_certi_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:buttonTint="#2979FF"
+                android:text="合格"
+                android:textSize="16sp"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/rb_people_certi_no"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="24dp"
+                android:buttonTint="#2979FF"
+                android:text="不合格"
+                android:textSize="16sp" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_people_certi_imgs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="8dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"/>
+
+            <ImageView
+                android:id="@+id/btn_add_people_certi"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_dashed_border"
+                android:src="@drawable/ic_plus"
+                android:scaleType="center"
+                android:padding="20dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 车辆保险检查 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="车辆保险检查 *（最多添加9张照片）"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <RadioGroup
+            android:id="@+id/rg_insure"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="#DCDFE6"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <RadioButton
+                android:id="@+id/rb_insure_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:buttonTint="#2979FF"
+                android:text="合格"
+                android:textSize="16sp"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/rb_insure_no"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="24dp"
+                android:buttonTint="#2979FF"
+                android:text="不合格"
+                android:textSize="16sp" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_insure_imgs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="8dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"/>
+
+            <ImageView
+                android:id="@+id/btn_add_insure"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_dashed_border"
+                android:src="@drawable/ic_plus"
+                android:scaleType="center"
+                android:padding="20dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

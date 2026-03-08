@@ -10,6 +10,7 @@ import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.view.View
 import com.fx.zfcar.training.user.showToast
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileOutputStream
@@ -150,5 +151,13 @@ object BitmapUtils {
     fun saveViewToImage(context: Context, view: View): String? {
         val bitmap = viewToBitmap(view) ?: return null
         return saveBitmapToCamera(context, bitmap)
+    }
+
+    // 添加Bitmap转Base64方法
+    fun bitmapToBase64(bitmap: Bitmap): String {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, outputStream)
+        val byteArray = outputStream.toByteArray()
+        return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
     }
 }
