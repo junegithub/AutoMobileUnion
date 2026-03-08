@@ -87,7 +87,6 @@
         <activity android:name=".training.user.UserCenterActivity" />
         <activity android:name=".training.user.ScanCodeActivity" />
 
-        <activity android:name=".training.safetytraining.SafetyTrainingActivity" />
         <activity android:name=".training.safetytraining.TrainListActivity" />
         <activity android:name=".training.safetytraining.ScoreDetailActivity" />
         <activity android:name=".training.safetytraining.ExamManagerActivity" />
@@ -103,6 +102,8 @@
         <activity android:name=".training.safetycheck.CarSafetyCheckActivity" />
         <activity android:name=".training.safetycheck.LastRecordActivity" />
         <activity android:name=".training.safetycheck.CarCheckStageActivity" />
+
+        <activity android:name=".training.drivelog.DriveLogActivity" />
 
         <activity android:name=".training.notice.NoticeActivity" />
         <activity android:name=".training.notice.NoticeDetailActivity" />

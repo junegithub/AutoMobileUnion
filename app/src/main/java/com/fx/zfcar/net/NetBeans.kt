@@ -937,42 +937,6 @@ data class EpidemicViewData(
     val areacode: String
 )
 
-data class TravelLogData(
-    val rows: String?,
-    val list: List<TravelLogItem>
-)
-
-data class TravelLogItem(
-    val id: Int,
-    val car_id: Int,
-    val driver_name: String,
-    val addtime: String,
-    val carnum: String,
-    val user_id: Int,
-    val type: Int,
-    val copilot_name: String,
-    val weather: String,
-    val temperature: String,
-    val load: String,
-    val real_load: String,
-    val goods_name: String,
-    val gotime: String,
-    val gettime: Int,
-    val start_address: String,
-    val end_address: String,
-    val mileage: String,
-    val sresult: Int,
-    val groad: String,
-    val gresult: String,
-    val stopresult: String,
-    val stopaddress: String,
-    val stoptime: String,
-    val eresult: Int,
-    val dsingimg: String,
-    val staus: String,
-    val updatetime: String,
-    val ysingimg: String
-)
 
 data class CompanyListData(
     val total: Int,
