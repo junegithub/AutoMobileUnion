@@ -74,10 +74,6 @@ object DialogUtils {
             Html.fromHtml(AssetFileReader.readTxtFile(context, "privacy.html"), Html.FROM_HTML_MODE_COMPACT), "确定")
     }
 
-    fun showAttendRecordsDlg() {
-
-    }
-
     /**
      * 显示日期时间选择弹窗
      */

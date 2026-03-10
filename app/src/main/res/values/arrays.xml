@@ -6,4 +6,9 @@
         <item>疲劳驾驶</item>
         <item>其他</item>
     </string-array>
+
+    <string-array name="goods_types">
+        <item>危险品</item>
+        <item>普通货物</item>
+    </string-array>
 </resources>

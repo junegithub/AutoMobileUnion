@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/dp_24"
+    android:background="@color/white">
+
+    <!-- 标题栏 -->
+    <include
+        android:id="@+id/layout_title"
+        layout="@layout/fragment_title" />
+
+    <!-- 进度条区域 -->
+    <ProgressBar
+        android:id="@+id/lineProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_margin="@dimen/dp_16"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:progress="15"
+        android:max="100"
+        android:progressTint="@color/blue_2979ff"/>
+
+    <!-- 内容区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 步骤1：基本信息 -->
+            <LinearLayout
+                android:id="@+id/layoutStage1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="12dp"
+                android:elevation="2dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="基本信息"
+                    android:textSize="18sp"
+                    android:textColor="@color/gray_333"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- 表单行样式统一 -->
+                <include layout="@layout/form_row_date"
+                    android:id="@+id/row_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:id="@+id/tvCarnumLabel"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:text="车牌号："
+                        android:textSize="16sp"
+                        android:textColor="@color/gray_333"
+                        android:gravity="center_vertical"/>
+
+                    <EditText
+                        android:id="@+id/etCarnum"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toRightOf="@id/tvCarnumLabel"
+                        android:layout_toLeftOf="@id/btnSearchCarNum"
+                        android:layout_marginLeft="8dp"
+                        android:background="@null"
+                        android:hint="请输入车牌号"
+                        android:textSize="16sp"
+                        android:maxLines="1"
+                        android:gravity="center_vertical"/>
+
+                    <Button
+                        android:id="@+id/btnSearchCarNum"
+                        android:layout_width="60dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:text="搜索"
+                        android:textSize="14sp"
+                        android:background="@color/blue_2979ff"
+                        android:textColor="@color/white"
+                        android:padding="0dp"/>
+                </RelativeLayout>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_driver_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- 货物类型选择 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:id="@+id/tvGoodsTypeLabel"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:text="货物类型："
+                        android:textSize="16sp"
+                        android:textColor="@color/gray_333"
+                        android:gravity="center_vertical"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerGoodsType"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toRightOf="@id/tvGoodsTypeLabel"
+                        android:layout_marginLeft="8dp"
+                        android:background="@null"
+                        android:entries="@array/goods_types"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_arrow_down"
+                        android:layout_marginRight="8dp"/>
+                </RelativeLayout>
+
+                <!-- 押运员/副驾驶姓名 -->
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_copilot_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- 普通货物副驾驶 -->
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_normal_copilot"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"
+                    android:visibility="gone"/>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_weather"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_temperature"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_load"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_real_load"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_goods_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_date"
+                    android:id="@+id/row_gotime"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_date"
+                    android:id="@+id/row_gettime"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_start_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_end_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_mileage"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"/>
+
+            </LinearLayout>
+
+            <!-- 步骤2：行车前检查 -->
+            <LinearLayout
+                android:id="@+id/layoutStage2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white"
+                android:layout_marginBottom="12dp"
+                android:elevation="2dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="行车前检查"
+                    android:textSize="18sp"
+                    android:textColor="@color/gray_333"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="行车前安全员车辆检查事项*"
+                    android:textSize="16sp"
+                    android:textColor="@color/gray_666"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="请逐一检查并勾选所有事项"
+                    android:textSize="18sp"
+                    android:textColor="@color/gray_999"/>
+
+                <!-- 检查项列表 -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBeforeItems"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <!-- 一键检查按钮 -->
+                <Button
+                    android:id="@+id/btnAllCheck2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="一键检查"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/blue_2979ff"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"/>
+
+                <!-- 检查结果 -->
+                <include layout="@layout/form_row_selector"
+                    android:id="@+id/row_before_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"/>
+
+            </LinearLayout>
+
+            <!-- 步骤3：行车中检查 -->
+            <LinearLayout
+                android:id="@+id/layoutStage3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white"
+                android:layout_marginBottom="12dp"
+                android:elevation="2dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="行车中"
+                    android:textSize="18sp"
+                    android:textColor="@color/gray_333"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="严格按照规定的路线行驶，禁止超速行驶，疲劳驾驶行驶，超载超限行驶，做好出车前、行车中、收车后的检查，根据天气情况谨慎驾驶，杜绝事故的发生，行车日志记录要真实全面。"
+                    android:textSize="14sp"
+                    android:textColor="@color/gray_333"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="行车中安全员车辆检查事项 *"
+                    android:textSize="14sp"
+                    android:textColor="@color/gray_333"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="请逐一检查并勾选所有事项"
+                    android:textSize="14sp"
+                    android:textColor="@color/gray_999"/>
+
+                <!-- 检查项列表 -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDrivingItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- 一键检查按钮 -->
+                <Button
+                    android:id="@+id/btnAllCheck3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="一键检查"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/blue_2979ff"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"/>
+
+                <!-- 道路情况 -->
+                <include layout="@layout/form_row_selector"
+                    android:id="@+id/row_road_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- 检查结果 -->
+                <include layout="@layout/form_row_selector"
+                    android:id="@+id/row_driving_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- 中途停车信息 -->
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_stop_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_edittext"
+                    android:id="@+id/row_stop_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <include layout="@layout/form_row_date"
+                    android:id="@+id/row_stop_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"/>
+
+            </LinearLayout>
+
+            <!-- 步骤4：收车后检查 -->
+            <LinearLayout
+                android:id="@+id/layoutStage4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white"
+                android:layout_marginBottom="12dp"
+                android:elevation="2dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="收车后"
+                    android:textSize="18sp"
+                    android:textColor="@color/gray_333"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="收车后车辆检查事项 *"
+                    android:textSize="16sp"
+                    android:textColor="@color/gray_333"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="请逐一检查并勾选所有事项"
+                    android:textSize="16sp"
+                    android:textColor="@color/gray_999"/>
+
+                <!-- 检查项列表 -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvEndItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_16"/>
+
+                <!-- 一键检查按钮 -->
+                <Button
+                    android:id="@+id/btnAllCheck4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:layout_gravity="center_horizontal"
+                    android:text="一键检查"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/blue_2979ff"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"/>
+
+                <!-- 检查结果 -->
+                <include layout="@layout/form_row_selector"
+                    android:id="@+id/row_end_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"/>
+
+            </LinearLayout>
+
+            <!-- 步骤5：驾驶员签名 -->
+            <LinearLayout
+                android:id="@+id/layoutStage5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"
+                android:elevation="2dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="驾驶员签名"
+                    android:textSize="18sp"
+                    android:textColor="@color/gray_333"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- 签名图片 -->
+                <ImageView
+                    android:id="@+id/ivDriverSign"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone"
+                    android:scaleType="fitCenter"
+                    android:background="@color/gray_f5"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- 签名区域 -->
+                <LinearLayout
+                    android:id="@+id/layoutDriverSignature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.fx.zfcar.training.notice.SignaturePad
+                        android:id="@+id/handwritingView"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:background="@drawable/signature_border"
+                        android:layout_marginBottom="16dp"/>
+
+                    <Button
+                        android:id="@+id/btnRetDraw"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="重写"
+                        android:layout_gravity="center"
+                        android:background="@drawable/btn_bg_blue_r8"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- 步骤6：副驾驶签名 -->
+            <LinearLayout
+                android:id="@+id/layoutStage6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"
+                android:elevation="2dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="副驾驶/押运员签名"
+                    android:textSize="18sp"
+                    android:textColor="@color/gray_333"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- 签名图片 -->
+                <ImageView
+                    android:id="@+id/ivCopilotSign"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone"
+                    android:scaleType="fitCenter"
+                    android:background="@color/gray_f5"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- 签名区域 -->
+                <LinearLayout
+                    android:id="@+id/layoutCopilotSignature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.fx.zfcar.training.notice.SignaturePad
+                        android:id="@+id/handwritingView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:background="@drawable/signature_border"
+                        android:layout_marginBottom="16dp"/>
+
+                    <Button
+                        android:id="@+id/btnRetDraw2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="重写"
+                        android:layout_gravity="center"
+                        android:background="@color/blue_2979ff"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 下一步按钮 -->
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/blue_2979ff"
+        android:text="下一步"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:elevation="4dp"/>
+
+</LinearLayout>

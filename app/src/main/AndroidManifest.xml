@@ -105,6 +105,7 @@
 
         <activity android:name=".training.drivelog.DriveLogActivity" />
         <activity android:name=".training.drivelog.LastDriveLogRecordActivity" />
+        <activity android:name=".training.drivelog.DriveLogStageActivity" />
 
         <activity android:name=".training.notice.NoticeActivity" />
         <activity android:name=".training.notice.NoticeDetailActivity" />

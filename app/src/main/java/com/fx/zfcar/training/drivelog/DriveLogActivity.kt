@@ -340,7 +340,7 @@ class DriveLogActivity : AppCompatActivity() {
      * 跳转到新增日志页面
      */
     private fun goToDriveStage() {
-//        startActivity(Intent(this, DriveStageActivity::class.java))
+        startActivity(Intent(this, DriveLogStageActivity::class.java))
     }
 
     /**
