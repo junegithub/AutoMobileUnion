@@ -70,7 +70,7 @@ class DriveLogModel {
             if (!carInfo.isNullOrEmpty()) {
                 Pair(0, "默认车牌号") // 解析车辆信息
             } else {
-                Pair(0, "鲁Y88888")
+                Pair(0, "")
             }
         }
 

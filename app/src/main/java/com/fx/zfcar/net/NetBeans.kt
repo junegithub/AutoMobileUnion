@@ -1789,7 +1789,12 @@ data class CarNumSearchData(
     val total: Int,
     val rows: List<CarNumSearchItem>,
     val allnum: Int
-)
+){
+    // 计算总页数（默认每页10条）
+    fun calculateTotalPage(pageSize: Int = 10): Int {
+        return if (pageSize == 0) 0 else (total + pageSize - 1) / pageSize
+    }
+}
 
 data class CarNumSearchItem(
     val id: Int,

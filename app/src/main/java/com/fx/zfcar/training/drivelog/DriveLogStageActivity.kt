@@ -283,6 +283,7 @@ class DriveLogStageActivity : AppCompatActivity() {
                     is ApiState.Success -> {
                         ProgressDialogUtils.dismiss()
                         showToast("提交成功")
+                        finish()
                     }
 
                     is ApiState.Error -> {
@@ -430,8 +431,8 @@ class DriveLogStageActivity : AppCompatActivity() {
         // 搜索车牌号
         PressEffectUtils.setCommonPressEffect(binding.btnSearchCarNum)
         binding.btnSearchCarNum.setOnClickListener {
-//            val intent = Intent(this, SearchCarNumActivity::class.java)
-//            startActivityForResult(intent, 1001)
+            val intent = Intent(this, CarSearchActivity::class.java)
+            startActivityForResult(intent, 1001)
         }
 
         // 货物类型选择

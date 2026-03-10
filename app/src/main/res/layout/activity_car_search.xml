@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/dp_24"
+    android:background="@color/white">
+
+    <!-- 标题栏 -->
+    <include
+        android:id="@+id/layout_title"
+        layout="@layout/fragment_title" />
+
+    <!-- 主内容区域 -->
+    <!-- 搜索栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_margin="16dp">
+
+        <EditText
+            android:id="@+id/etCarNum"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="6"
+            android:background="@drawable/edittext_border"
+            android:hint="请输入车牌号"
+            android:textSize="14sp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:maxLines="1"/>
+
+        <Button
+            android:id="@+id/btnSearch"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="3"
+            android:background="@color/blue_0873D0"
+            android:text="搜索"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:layout_marginLeft="16dp"/>
+    </LinearLayout>
+
+    <!-- 结果列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCars"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:background="@color/white"/>
+
+    <!-- 加载更多提示 -->
+    <TextView
+        android:id="@+id/tvLoadMore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="没有更多数据了"
+        android:textSize="14sp"
+        android:textColor="@color/gray_666"
+        android:gravity="center"
+        android:padding="8dp"
+        android:visibility="gone"/>
+
+</LinearLayout>
