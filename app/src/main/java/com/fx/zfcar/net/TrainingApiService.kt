@@ -5,6 +5,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
@@ -79,6 +80,7 @@ interface TrainingApiService {
         @QueryMap params: Map<String, String>
     ): Response<TrainingBaseResponse<ExamViewData>>
 
+    @Multipart
     @POST("api/user/newuplode")
     suspend fun uploadFile(@Part filePath: MultipartBody.Part): Response<TrainingBaseResponse<UploadFileData>>
 
@@ -240,7 +242,7 @@ interface TrainingApiService {
     suspend fun checkSafe(@Query("training_safetyplan_id") training_safetyplan_id: String): Response<TrainingBaseResponse<CheckSafeData>>
 
     @POST("api/other/travelpost")
-    suspend fun travelPost(@Body request: TravelPostRequest): Response<TrainingBaseResponse<TravelPostResponse>>
+    suspend fun travelPost(@Body request: TravelPostRequest): Response<TrainingBaseResponse<Int>>
 
     @GET("api/other/travedel")
     suspend fun travelDel(@Query("id") id: String): Response<TrainingBaseResponse<Int>>

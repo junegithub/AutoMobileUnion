@@ -43,7 +43,7 @@ class DriveLogStageActivity : AppCompatActivity() {
     private val viewModel = DriveLogModel()
 
     private val driveLogViewModel by viewModels<TravelViewModel>()
-    private var postLogStateFlow = MutableStateFlow<ApiState<TravelPostResponse>>(ApiState.Idle)
+    private var postLogStateFlow = MutableStateFlow<ApiState<Int>>(ApiState.Idle)
     private val noticeViewModel by viewModels<NoticeViewModel>()
     private var uploadStateFlow = MutableStateFlow<ApiState<UploadFileData>>(ApiState.Idle)
 
@@ -301,6 +301,7 @@ class DriveLogStageActivity : AppCompatActivity() {
      * 更新步骤显示
      */
     private fun updateStageVisibility(stage: Int) {
+        println("June updateStageVisibility ${stage}")
         // 隐藏所有步骤
         binding.layoutStage1.visibility = View.GONE
         binding.layoutStage2.visibility = View.GONE
@@ -484,13 +485,17 @@ class DriveLogStageActivity : AppCompatActivity() {
         PressEffectUtils.setCommonPressEffect(binding.btnNext)
         binding.btnNext.setOnClickListener {
             if (viewModel.goNext()) {
+                println("June goNext:${viewModel.stage.value}")
                 // 签名处理
-                if (viewModel.stage.value == 6) {
+                if (viewModel.stage.value == 7) {
+                    // 副驾签名步骤
+                    isCopilotSign = false
+                    subCanvas()
                     // 最后一步，提交表单
                     saveFormData()
-                } else if (viewModel.stage.value == 5) {
-                    isCopilotSign = false
+                } else if (viewModel.stage.value == 6) {
                     // 驾驶员签名步骤
+                    isCopilotSign = true
                     subCanvas()
                 }
             }

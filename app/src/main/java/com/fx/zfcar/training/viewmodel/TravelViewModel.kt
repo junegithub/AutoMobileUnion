@@ -2,7 +2,6 @@ package com.fx.zfcar.training.viewmodel
 
 import com.fx.zfcar.net.TravelLogData
 import com.fx.zfcar.net.TravelPostRequest
-import com.fx.zfcar.net.TravelPostResponse
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -13,7 +12,7 @@ class TravelViewModel : TrainingBaseViewModel() {
 
     // 行程上报
     fun travelPost(request: TravelPostRequest,
-                   stateFlow: MutableStateFlow<ApiState<TravelPostResponse>>) {
+                   stateFlow: MutableStateFlow<ApiState<Int>>) {
         launchRequest(
             block = { vehicleRepository.travelPost(request) },
             stateFlow
