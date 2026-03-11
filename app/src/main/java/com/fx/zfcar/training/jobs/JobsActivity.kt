@@ -1,5 +1,6 @@
-package com.fx.zfcar.training
+package com.fx.zfcar.training.jobs
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -280,7 +281,7 @@ class JobsActivity : AppCompatActivity() {
 
     // 发布信息
     private fun release() {
-//        startActivity(Intent(this, JobReleaseActivity::class.java))
+        startActivity(Intent(this, PublishJobActivity::class.java))
     }
 
     // 详情跳转（区分不同类型）

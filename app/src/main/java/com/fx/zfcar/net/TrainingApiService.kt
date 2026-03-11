@@ -301,6 +301,9 @@ interface TrainingApiService {
         @Query("type") type: Int
     ): Response<TrainingBaseResponse<MyJobListData>>
 
+    @POST("api/job/jobadd")
+    suspend fun jobAdd(@Body request: JobAddRequest): Response<TrainingBaseResponse<Any>>
+
     @POST("api/user/logoff")
     suspend fun logoff(): Response<TrainingBaseResponse<Any>>
 

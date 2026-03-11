@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fx.zfcar.databinding.ItemJonInfoBinding
-import com.fx.zfcar.training.InfoListItem
+import com.fx.zfcar.training.jobs.InfoListItem
 
 class JobInfoAdapter(
     private val data: List<InfoListItem>,

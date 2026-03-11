@@ -2145,6 +2145,18 @@ data class MyJobItem(
     val backcard: String
 )
 
+// 发布职位请求参数
+data class JobAddRequest(
+    val title: String,
+    val content: String,
+    val nickname: String,
+    val mobile: String,
+    val frontcard: String,
+    val backcard: String,
+    val driverimages: String,
+    val qualification: String
+)
+
 data class CarUserInfo(
     val info: CarUser?
 )

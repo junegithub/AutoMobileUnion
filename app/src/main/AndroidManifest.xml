@@ -91,7 +91,9 @@
         <activity android:name=".training.safetytraining.ScoreDetailActivity" />
         <activity android:name=".training.safetytraining.ExamManagerActivity" />
 
-        <activity android:name=".training.JobsActivity" />
+        <activity android:name=".training.jobs.JobsActivity" />
+        <activity android:name=".training.jobs.PublishJobActivity" />
+
         <activity android:name=".training.YiqingSignActivity" />
         <activity android:name=".training.DriverBookActivity" />
 

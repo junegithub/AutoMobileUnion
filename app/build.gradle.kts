@@ -137,6 +137,9 @@ dependencies {
     implementation("androidx.camera:camera-view:1.3.2")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
 
+    // 图片选择库（推荐PictureSelector，功能更全）
+    implementation("io.github.lucksiege:pictureselector:v3.11.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

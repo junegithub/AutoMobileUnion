@@ -24,6 +24,7 @@ import com.fx.zfcar.net.UserInfoData
 import com.fx.zfcar.pages.LoginActivity
 import com.fx.zfcar.training.dangercheck.DangerCheckActivity
 import com.fx.zfcar.training.drivelog.DriveLogActivity
+import com.fx.zfcar.training.jobs.JobsActivity
 import com.fx.zfcar.training.notice.NoticeActivity
 import com.fx.zfcar.training.safetycheck.CarSafetyCheckActivity
 import com.fx.zfcar.training.safetytraining.TrainListActivity

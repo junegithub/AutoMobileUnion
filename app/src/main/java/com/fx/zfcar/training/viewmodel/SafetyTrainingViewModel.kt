@@ -29,6 +29,7 @@ import com.fx.zfcar.net.CompanyPayData // 新增：企业支付
 import com.fx.zfcar.net.DangerData
 import com.fx.zfcar.net.DangerPostRequest
 import com.fx.zfcar.net.EpidemicRequest
+import com.fx.zfcar.net.JobAddRequest
 import com.fx.zfcar.net.MyJobListData
 import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
 import com.fx.zfcar.net.QuestionOrderPayData
@@ -335,6 +336,14 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                      stateFlow: MutableStateFlow<ApiState<MyJobListData>>) {
         launchRequest(
             block = { vehicleRepository.getMyJobList(page, type) },
+            stateFlow
+        )
+    }
+
+    fun jobAdd(request: JobAddRequest,
+                     stateFlow: MutableStateFlow<ApiState<Any>>) {
+        launchRequest(
+            block = { vehicleRepository.jobAdd(request) },
             stateFlow
         )
     }

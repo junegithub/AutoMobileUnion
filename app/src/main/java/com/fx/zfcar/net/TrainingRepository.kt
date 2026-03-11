@@ -174,6 +174,8 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun getMyJobList(page: Int, type: Int) = apiService.getMyJobList(page, type)
 
+    suspend fun jobAdd(request: JobAddRequest) = apiService.jobAdd(request)
+
     suspend fun logoff() = apiService.logoff()
 
     suspend fun getNoticeInfo(page: Int, index: Int, type: Int) = apiService.getNoticeInfo(page, index, type)
