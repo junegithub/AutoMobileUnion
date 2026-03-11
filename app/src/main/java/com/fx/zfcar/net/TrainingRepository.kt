@@ -26,6 +26,8 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun getCompanyList(page: Int, type: Int) = apiService.getCompanyList(page, type)
 
+    suspend fun getJobView(jobid: Int) = apiService.getJobView(jobid)
+
     suspend fun getSafetyList(page: Int, type: Int) = apiService.getSafetyList(page, type)
 
     suspend fun dailySafetyOrderPay(trainingPublicPlanId: String?) =

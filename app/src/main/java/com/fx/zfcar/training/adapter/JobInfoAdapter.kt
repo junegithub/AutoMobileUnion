@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fx.zfcar.databinding.ItemJonInfoBinding
 import com.fx.zfcar.training.jobs.InfoListItem
+import com.fx.zfcar.util.PressEffectUtils
 
 class JobInfoAdapter(
     private val data: List<InfoListItem>,
@@ -62,6 +63,7 @@ class JobInfoAdapter(
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val item = data[position]
         holder.bind(item)
+        PressEffectUtils.setCommonPressEffect(holder.itemView)
         holder.itemView.setOnClickListener {
             onItemClick(item)
         }

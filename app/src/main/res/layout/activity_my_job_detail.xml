@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/dp_24"
+    android:background="#FFFFFF">
+
+    <!-- 顶部导航栏 -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/back_button_size"
+            android:layout_height="@dimen/back_button_size"
+            android:layout_gravity="start"
+            android:padding="@dimen/back_button_padding"
+            app:tint="@color/black"
+            android:src="@drawable/arrow_back" />
+
+        <!-- 标题 -->
+        <TextView
+            android:id="@+id/tv_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="详情"
+            android:textColor="#3a4462"
+            android:textSize="@dimen/text_size_toolbar"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- 主内容区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/padding_horizontal"
+        android:paddingRight="@dimen/padding_horizontal"
+        android:paddingTop="@dimen/padding_vertical"
+        android:paddingBottom="@dimen/padding_vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 姓名 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/padding_bottom_item">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="姓名："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_nickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+            <!-- 手机号 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/padding_bottom_item">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="手机号："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_mobile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+            <!-- 职位名称 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/padding_right_job_title"
+                android:paddingBottom="@dimen/padding_bottom_item">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="职位名称："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_job_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+            <!-- 职位内容 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/padding_bottom_item">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="职位内容："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000"
+                    android:maxLines="100"
+                    android:scrollHorizontally="false" />
+
+            </LinearLayout>
+
+            <!-- 申请时间 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/padding_bottom_item">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="申请时间："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_createtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+            <!-- 图片展示区域 -->
+            <!-- 身份证正面 -->
+            <ImageView
+                android:id="@+id/iv_frontcard"
+                android:layout_width="@dimen/image_size"
+                android:layout_height="@dimen/image_size"
+                android:layout_marginTop="@dimen/dp_16"
+                android:layout_marginBottom="@dimen/margin_bottom_image"
+                android:scaleType="centerCrop"
+                android:background="#F5F5F5"
+                android:src="@drawable/ic_image_placeholder" />
+
+            <!-- 身份证反面 -->
+            <ImageView
+                android:id="@+id/iv_backcard"
+                android:layout_width="@dimen/image_size"
+                android:layout_height="@dimen/image_size"
+                android:layout_marginBottom="@dimen/margin_bottom_image"
+                android:scaleType="centerCrop"
+                android:background="#F5F5F5"
+                android:src="@drawable/ic_image_placeholder" />
+
+            <!-- 驾驶证 -->
+            <ImageView
+                android:id="@+id/iv_driverimages"
+                android:layout_width="@dimen/image_size"
+                android:layout_height="@dimen/image_size"
+                android:layout_marginBottom="@dimen/margin_bottom_image"
+                android:scaleType="centerCrop"
+                android:background="#F5F5F5"
+                android:src="@drawable/ic_image_placeholder" />
+
+            <!-- 资格证 -->
+            <ImageView
+                android:id="@+id/iv_qualification"
+                android:layout_width="@dimen/image_size"
+                android:layout_height="@dimen/image_size"
+                android:layout_marginBottom="@dimen/margin_bottom_image"
+                android:scaleType="centerCrop"
+                android:background="#F5F5F5"
+                android:src="@drawable/ic_image_placeholder" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

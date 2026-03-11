@@ -40,6 +40,9 @@ interface TrainingApiService {
         @Query("type") type: Int
     ): Response<TrainingBaseResponse<CompanyListData>>
 
+    @GET("api/job/jobview")
+    fun getJobView(@Query("jobid") jobid: Int): Response<TrainingBaseResponse<JobViewData>>
+
     @GET("api/user/safetylist")
     suspend fun getSafetyList(
         @Query("page") page: Int,

@@ -2145,6 +2145,14 @@ data class MyJobItem(
     val backcard: String
 )
 
+data class JobViewData(
+    val title: String,
+    val content: String,
+    val company: String,
+    val starttime: String?,
+    val endtime: String?
+)
+
 // 发布职位请求参数
 data class JobAddRequest(
     val title: String,

@@ -125,4 +125,28 @@
 
     <!-- 状态栏高度（动态适配） -->
     <dimen name="status_bar_height">24dp</dimen>
+
+    <dimen name="padding_horizontal">36dp</dimen>    <!-- 10vw = 36dp (360dp宽度) -->
+    <dimen name="padding_vertical">18dp</dimen>      <!-- 2vh = 18dp (900dp高度) -->
+    <dimen name="padding_right_job_title">29dp</dimen><!-- 8vw = 29dp -->
+    <dimen name="padding_bottom_item">9dp</dimen>    <!-- 1vh = 9dp -->
+    <dimen name="margin_top_images">16dp</dimen>     <!-- 图片区域上边距 -->
+    <dimen name="margin_right_image">16dp</dimen>    <!-- 图片右侧间距 -->
+    <dimen name="margin_bottom_image">16dp</dimen>   <!-- 图片底部间距 -->
+
+    <!-- 字体大小 -->
+    <dimen name="text_size_toolbar">26sp</dimen>     <!-- 标题栏文字 -->
+    <dimen name="text_size_content">16sp</dimen>     <!-- 内容文字 -->
+
+    <!-- 控件尺寸 -->
+    <dimen name="image_size">100dp</dimen>           <!-- 图片尺寸 (200rpx) -->
+    <dimen name="back_button_size">40dp</dimen>      <!-- 返回按钮尺寸 -->
+    <dimen name="back_button_padding">10dp</dimen>   <!-- 返回按钮内边距 -->
+
+    <!-- 内容宽度 -->
+    <dimen name="content_width">288dp</dimen>        <!-- 80vw = 288dp -->
+
+    <!-- 字体大小 -->
+    <dimen name="text_size_title">26sp</dimen>       <!-- 52rpx -->
+    <dimen name="line_height_content">32sp</dimen>
 </resources>

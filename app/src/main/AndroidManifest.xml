@@ -93,6 +93,8 @@
 
         <activity android:name=".training.jobs.JobsActivity" />
         <activity android:name=".training.jobs.PublishJobActivity" />
+        <activity android:name=".training.jobs.MyJobDetailActivity" />
+        <activity android:name=".training.jobs.JobDetailCompanyActivity" />
 
         <activity android:name=".training.YiqingSignActivity" />
         <activity android:name=".training.DriverBookActivity" />

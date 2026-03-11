@@ -286,21 +286,16 @@ class JobsActivity : AppCompatActivity() {
 
     // 详情跳转（区分不同类型）
     private fun detail(item: InfoListItem) {
-        val intent = when (item) {
+        when (item) {
             is InfoListItem.CompanyItem -> {
                 // 信息广场详情
-//                Intent(this, JobDetailActivity::class.java).apply {
-//                    putExtra("data", Gson().toJson(item.data))
-//                }
+                JobDetailCompanyActivity.start(this, item.data)
             }
             is InfoListItem.JobItem -> {
                 // 我的信息详情
-//                Intent(this, JobMyDetailActivity::class.java).apply {
-//                    putExtra("data", Gson().toJson(item.data))
-//                }
+                MyJobDetailActivity.start(this, item.data)
             }
         }
-//        startActivity(intent)
     }
 
     private fun goBack() {

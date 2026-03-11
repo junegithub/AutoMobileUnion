@@ -30,6 +30,7 @@ import com.fx.zfcar.net.DangerData
 import com.fx.zfcar.net.DangerPostRequest
 import com.fx.zfcar.net.EpidemicRequest
 import com.fx.zfcar.net.JobAddRequest
+import com.fx.zfcar.net.JobViewData
 import com.fx.zfcar.net.MyJobListData
 import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
 import com.fx.zfcar.net.QuestionOrderPayData
@@ -72,6 +73,14 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                        stateFlow: MutableStateFlow<ApiState<CompanyListData>>) {
         launchRequest(
             block = { vehicleRepository.getCompanyList(page, type) },
+            stateFlow
+        )
+    }
+
+    fun getJobView(jobid: Int,
+                       stateFlow: MutableStateFlow<ApiState<JobViewData>>) {
+        launchRequest(
+            block = { vehicleRepository.getJobView(jobid) },
             stateFlow
         )
     }

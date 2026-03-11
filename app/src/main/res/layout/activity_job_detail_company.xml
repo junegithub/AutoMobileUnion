@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/dp_24"
+    android:background="#FFFFFF">
+
+    <!-- 顶部导航栏（对应u-navbar） -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="start"
+            android:padding="10dp"
+            android:src="@drawable/arrow_back"
+            app:tint="@color/black" />
+
+        <!-- 标题 -->
+        <TextView
+            android:id="@+id/tv_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="详情"
+            android:textColor="#3a4462"
+            android:textSize="@dimen/text_size_title"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- 主内容区域（对应app-main） -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/padding_horizontal"
+        android:paddingRight="@dimen/padding_horizontal"
+        android:paddingTop="@dimen/padding_vertical"
+        android:paddingBottom="@dimen/padding_vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:lineSpacingExtra="@dimen/line_height_content">
+
+            <!-- 职位名称 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/padding_right_job_title"
+                android:paddingBottom="@dimen/dp_10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="职位名称："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+            <!-- 职位内容 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="职位内容："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000"
+                    android:maxLines="100"
+                    android:scrollHorizontally="false" />
+
+            </LinearLayout>
+
+            <!-- 所属机构 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="所属机构："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_company"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+            <!-- 开始时间 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="开始时间："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_starttime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+            <!-- 结束时间 -->
+            <LinearLayout
+                android:layout_width="@dimen/content_width"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="结束时间："
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tv_endtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_content"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
