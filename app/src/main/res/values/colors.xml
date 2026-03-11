@@ -132,4 +132,9 @@
     <color name="blue_3DA3FF">#3DA3FF</color>
     <color name="success_green">#00C853</color>
     <color name="error_red">#FF3B30</color>
+
+    <color name="exam_primary">#3da4ff</color>
+    <color name="exam_gray">#999999</color>
+    <color name="exam_light_gray">#F0F0F0</color>
+    <color name="exam_border_gray">#DCDCDC</color>
 </resources>

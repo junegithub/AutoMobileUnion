@@ -149,4 +149,13 @@
     <!-- 字体大小 -->
     <dimen name="text_size_title">26sp</dimen>       <!-- 52rpx -->
     <dimen name="line_height_content">32sp</dimen>
+
+    <dimen name="exam_item_padding_horizontal">20dp</dimen>    <!-- 40rpx -->
+    <dimen name="exam_item_margin_vertical">10dp</dimen>      <!-- 20rpx -->
+    <dimen name="exam_title_text_size">17sp</dimen>           <!-- 35rpx -->
+    <dimen name="exam_option_text_size">15sp</dimen>          <!-- 30rpx -->
+    <dimen name="exam_button_height">35dp</dimen>             <!-- 70rpx -->
+    <dimen name="exam_index_box_size">28dp</dimen>            <!-- 56rpx -->
+    <dimen name="exam_index_box_mask_size">31dp</dimen>       <!-- 63rpx -->
+    <dimen name="exam_textarea_height">100dp</dimen>          <!-- 200rpx -->
 </resources>

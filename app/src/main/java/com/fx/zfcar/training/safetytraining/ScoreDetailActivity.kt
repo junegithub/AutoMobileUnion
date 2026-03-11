@@ -87,11 +87,10 @@ class ScoreDetailActivity : AppCompatActivity() {
 
         // 初始化ExamWidget（隐藏按钮）
         binding.examWidgetDetail.apply {
-            setShowIndexText(false)
-            setNumBoxShow(false)
-            // 隐藏提交/下一题按钮（通过反射或修改ExamWidget添加隐藏按钮的方法）
-            btnNext().visibility = View.GONE
-            btnSubmit().visibility = View.GONE
+            showButton = false
+            showIndexText = true
+            numBoxType = 0
+            numBoxShow = false
         }
     }
 
@@ -154,8 +153,8 @@ class ScoreDetailActivity : AppCompatActivity() {
                                 currentQuestionDetail = state.data
 
                                 // 更新ExamWidget
-                                binding.examWidgetDetail.setDataList(listOf(state.data))
-                                binding.examWidgetDetail.setIndex(0)
+                                binding.examWidgetDetail.dataList = listOf(state.data)
+                                binding.examWidgetDetail.index = 0
 
                                 // 显示遮罩层
                                 showQuestionDetail()

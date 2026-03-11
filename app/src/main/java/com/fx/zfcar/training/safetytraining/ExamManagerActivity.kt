@@ -14,6 +14,8 @@ import com.fx.zfcar.net.ExamQuestion
 import com.fx.zfcar.net.ExamResultData
 import com.fx.zfcar.net.ExamViewData
 import com.fx.zfcar.training.base.ExamWidget
+import com.fx.zfcar.training.base.SelectData
+import com.fx.zfcar.training.base.SelectFinishData
 import com.fx.zfcar.training.notice.SignatureActivity
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.ExamViewModel
@@ -118,7 +120,7 @@ class ExamManagerActivity : AppCompatActivity() {
                                 questionList = state.data.questions.toMutableList()
 
                                 // 更新考试组件数据
-                                binding.examWidget.setDataList(questionList)
+                                binding.examWidget.dataList = questionList
 
                                 // 更新标题
                                 supportActionBar?.title = "总进度1/${questionList.size}"
@@ -188,21 +190,31 @@ class ExamManagerActivity : AppCompatActivity() {
     // 初始化考试组件
     private fun initExamWidget() {
         binding.examWidget.apply {
-            setShowIndexText(showIndexText)
-            setNumBoxType(1)
-            setNumBoxShow(numBoxShow)
+            showButton = true
+            finishText = "提交试卷"
+            lastText = "上一题"
+            nextText = "下一题"
+            indexText = "题目导航"
+            showIndexText = false
+            numBoxType = 1
+            numBoxShow = false
 
-            // 设置交互监听
-            setOnExamInteractionListener(object : ExamWidget.OnExamInteractionListener {
-                override fun onSelect(answer: String, questionId: String) {
+            // 设置试题数据
+            dataList = questionList // 你的QuestionModel列表
+
+            // 设置回调监听
+            setOnExamListener(object : ExamWidget.OnExamListener {
+                override fun onSelect(data: SelectData) {
                     // 选择答案回调
                 }
 
-                override fun onSelectFinish(newIndex: Int, totalCount: Int) {
-                    supportActionBar?.title = "总进度${newIndex + 1}/$totalCount"
+                override fun onSelectFinish(data: SelectFinishData) {
+                    // 切换题目回调
+                    supportActionBar?.title = "总进度${data.newItem.index + 1}/${data.newItem.total}"
                 }
 
                 override fun onFinish(questions: List<ExamQuestion>) {
+                    // 完成答题回调
                     showSubmitConfirmDialog(questions)
                 }
             })
