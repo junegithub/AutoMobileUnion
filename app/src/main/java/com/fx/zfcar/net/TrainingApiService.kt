@@ -90,7 +90,7 @@ interface TrainingApiService {
     @POST("api/user/safekspost")
     suspend fun submitExam(@Body request: SubmitExamRequest): Response<TrainingBaseResponse<String>>
 
-    @GET("safecankao")
+    @GET("api/user/safecankao")
     suspend fun getExamResult(
         @QueryMap params: Map<String, String>
     ): Response<TrainingBaseResponse<ExamResultData>>

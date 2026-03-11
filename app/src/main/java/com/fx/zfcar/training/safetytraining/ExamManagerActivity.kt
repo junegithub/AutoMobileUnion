@@ -31,8 +31,8 @@ class ExamManagerActivity : AppCompatActivity() {
     private val viewModel by viewModels<ExamViewModel>()
 
     // 页面参数
-    private var id: String = ""
-    private var trainingSafetyPlanId: String = ""
+    private var id = 0
+    private var trainingSafetyPlanId = 0
     private var type: String = ""
 
     // 页面状态
@@ -90,7 +90,7 @@ class ExamManagerActivity : AppCompatActivity() {
                             isAnswer = true
                             score = state.data.info.score
                             isPass = state.data.passtype
-                            id = state.data.row.id.toString()
+                            id = state.data.row.id
                             // 更新UI
                             updateUIState()
                             supportActionBar?.title = "考试管理"
@@ -148,8 +148,8 @@ class ExamManagerActivity : AppCompatActivity() {
     // 获取页面参数
     private fun getIntentParams() {
         intent?.let {
-            id = it.getStringExtra("id") ?: ""
-            trainingSafetyPlanId = it.getStringExtra("training_safetyplan_id") ?: ""
+            id = it.getIntExtra("id", 0)
+            trainingSafetyPlanId = it.getIntExtra("training_safetyplan_id", 0)
             type = it.getStringExtra("type") ?: ""
         }
     }
@@ -259,20 +259,24 @@ class ExamManagerActivity : AppCompatActivity() {
     private fun buildRequestParams(): Map<String, String> {
         return when (type) {
             "subject" -> mapOf(
-                "exam_id" to id,
-                "subject_id" to trainingSafetyPlanId
+                "exam_id" to id.toString(),
+                "subject_id" to trainingSafetyPlanId.toString(),
+                "type" to type
             )
             "daily" -> mapOf(
-                "exam_id" to id,
-                "training_publicplan_id" to trainingSafetyPlanId
+                "exam_id" to id.toString(),
+                "training_publicplan_id" to trainingSafetyPlanId.toString(),
+                "type" to type
             )
             "before" -> mapOf(
-                "exam_id" to id,
-                "training_before_id" to trainingSafetyPlanId
+                "exam_id" to id.toString(),
+                "training_before_id" to trainingSafetyPlanId.toString(),
+                "type" to type
             )
             else -> mapOf(
-                "exam_id" to id,
-                "training_safetyplan_id" to trainingSafetyPlanId
+                "exam_id" to id.toString(),
+                "training_safetyplan_id" to trainingSafetyPlanId.toString(),
+                "type" to type
             )
         }
     }

@@ -27,6 +27,7 @@ import com.fx.zfcar.training.drivelog.DriveLogActivity
 import com.fx.zfcar.training.jobs.JobsActivity
 import com.fx.zfcar.training.notice.NoticeActivity
 import com.fx.zfcar.training.safetycheck.CarSafetyCheckActivity
+import com.fx.zfcar.training.safetytraining.ExamManagerActivity
 import com.fx.zfcar.training.safetytraining.TrainListActivity
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
@@ -215,12 +216,11 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                     is ApiState.Success -> {
                         uiState.data?.let {
                             examInfo = uiState.data
-//                            val intent = Intent(requireContext(), TrainTestActivity::class.java)
-//                            intent.putExtra("id", examInfo.exams_id)
-//                            intent.putExtra("name", examInfo.name)
-//                            intent.putExtra("type", "before")
-//                            intent.putExtra("training_safetyplan_id", examInfo.training_before_id)
-//                            startActivity(intent)
+                            val intent = Intent(requireContext(), ExamManagerActivity::class.java)
+                            intent.putExtra("id", examInfo.exams_id)
+                            intent.putExtra("type", "before")
+                            intent.putExtra("training_safetyplan_id", examInfo.training_before_id)
+                            startActivity(intent)
                         }
                     }
 
