@@ -32,8 +32,8 @@ class ScoreDetailActivity : AppCompatActivity() {
     private val viewModel by viewModels<ExamViewModel>()
 
     // 页面参数
-    private var id: String = ""
-    private var trainingSafetyPlanId: String = ""
+    private var id = 0
+    private var trainingSafetyPlanId = 0
     private var type: String = ""
 
     private val _scoreDetailFlow = MutableStateFlow<ApiState<ExamResultData>>(ApiState.Idle)
@@ -67,8 +67,8 @@ class ScoreDetailActivity : AppCompatActivity() {
     // 获取页面参数
     private fun getIntentParams() {
         intent?.let {
-            id = it.getStringExtra("id") ?: ""
-            trainingSafetyPlanId = it.getStringExtra("training_safetyplan_id") ?: ""
+            id = it.getIntExtra("id", 0)
+            trainingSafetyPlanId = it.getIntExtra("training_safetyplan_id", 0)
             type = it.getStringExtra("type") ?: ""
         }
     }
@@ -181,8 +181,8 @@ class ScoreDetailActivity : AppCompatActivity() {
                 text = "${index + 1}"
                 textSize = 20f
                 gravity = Gravity.CENTER
-                width = 70.dp
-                height = 70.dp
+                width = 40.dp
+                height = 40.dp
                 layoutParams = FlexboxLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
@@ -190,6 +190,8 @@ class ScoreDetailActivity : AppCompatActivity() {
                     // 每5个元素清除右边距（可选，根据需求调整）
                     if ((index + 1) % 5 == 0) {
                         marginEnd = 0
+                    } else {
+                        marginEnd = 10.dp
                     }
                 }
 
@@ -243,20 +245,24 @@ class ScoreDetailActivity : AppCompatActivity() {
     private fun buildScoreDetailParams(): Map<String, String> {
         return when (type) {
             "subject" -> mapOf(
-                "exam_id" to id,
-                "subject_id" to trainingSafetyPlanId
+                "exam_id" to id.toString(),
+                "subject_id" to trainingSafetyPlanId.toString(),
+                "type" to type
             )
             "daily" -> mapOf(
-                "exam_id" to id,
-                "training_publicplan_id" to trainingSafetyPlanId
+                "exam_id" to id.toString(),
+                "training_publicplan_id" to trainingSafetyPlanId.toString(),
+                "type" to type
             )
             "before" -> mapOf(
-                "exam_id" to id,
-                "training_before_id" to trainingSafetyPlanId
+                "exam_id" to id.toString(),
+                "training_before_id" to trainingSafetyPlanId.toString(),
+                "type" to type
             )
             else -> mapOf(
-                "exam_id" to id,
-                "training_safetyplan_id" to trainingSafetyPlanId
+                "exam_id" to id.toString(),
+                "training_safetyplan_id" to trainingSafetyPlanId.toString(),
+                "type" to type
             )
         }
     }
@@ -265,28 +271,28 @@ class ScoreDetailActivity : AppCompatActivity() {
     private fun buildQuestionDetailParams(questionId: String, userAnswer: String): Map<String, String> {
         return when (type) {
             "daily" -> mapOf(
-                "exam_id" to id,
+                "exam_id" to id.toString(),
                 "question_id" to questionId,
                 "uanswer" to userAnswer,
-                "training_publicplan_id" to trainingSafetyPlanId
+                "training_publicplan_id" to trainingSafetyPlanId.toString()
             )
             "before" -> mapOf(
-                "exam_id" to id,
+                "exam_id" to id.toString(),
                 "question_id" to questionId,
                 "uanswer" to userAnswer,
-                "training_before_id" to trainingSafetyPlanId
+                "training_before_id" to trainingSafetyPlanId.toString()
             )
             "subject" -> mapOf(
-                "exam_id" to id,
+                "exam_id" to id.toString(),
                 "question_id" to questionId,
                 "uanswer" to userAnswer,
-                "subject_id" to trainingSafetyPlanId
+                "subject_id" to trainingSafetyPlanId.toString()
             )
             else -> mapOf(
-                "exam_id" to id,
+                "exam_id" to id.toString(),
                 "question_id" to questionId,
                 "uanswer" to userAnswer,
-                "training_safetyplan_id" to trainingSafetyPlanId
+                "training_safetyplan_id" to trainingSafetyPlanId.toString()
             )
         }
     }

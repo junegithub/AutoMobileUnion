@@ -168,7 +168,7 @@ class ExamManagerActivity : AppCompatActivity() {
         binding.btnCheckTest.setOnClickListener {
             val intent = Intent(this, ScoreDetailActivity::class.java).apply {
                 putExtra("id", id)
-                putExtra("type", type)
+                putExtra("type", this@ExamManagerActivity.type)
                 putExtra("training_safetyplan_id", trainingSafetyPlanId)
             }
             startActivity(intent)

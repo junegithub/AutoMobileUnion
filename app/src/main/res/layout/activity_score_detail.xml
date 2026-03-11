@@ -5,14 +5,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/gradient_blue_bg"
-    android:padding="0dp">
+    android:paddingTop="@dimen/dp_24">
 
     <!-- 标题栏（固定） -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/transparent"
         android:elevation="0dp">
 
         <TextView
@@ -20,14 +19,13 @@
             android:layout_height="wrap_content"
             android:text="成绩单"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            android:layout_gravity="center"/>
+            android:textSize="22sp"/>
     </androidx.appcompat.widget.Toolbar>
 
     <!-- 主内容区域 -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="16dp"
         android:fillViewport="true">
 
@@ -36,8 +34,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/bg_white_radius_30"
-            android:padding="24dp"
-            android:layout_marginTop="48dp">
+            android:padding="24dp">
 
             <!-- 考试标题 -->
             <TextView
@@ -81,10 +78,9 @@
                 android:background="@color/gray_e7ebf9"/>
 
             <!-- 答题卡标题栏 -->
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:paddingVertical="24dp">
 
                 <TextView
@@ -99,6 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:layout_gravity="center_vertical|end"
                     android:gravity="center_vertical">
 
                     <View
@@ -125,7 +122,7 @@
                         android:textColor="@color/text_black"
                         android:layout_marginLeft="8dp"/>
                 </LinearLayout>
-            </LinearLayout>
+            </FrameLayout>
 
             <!-- 答题卡网格 -->
             <com.google.android.flexbox.FlexboxLayout
@@ -134,16 +131,16 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="24dp"
                 app:flexWrap="wrap"
-                app:justifyContent="flex_start"
+                app:justifyContent="space_between"
                 app:alignItems="center"/>
 
             <!-- 签名区域 -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingBottom="24dp">
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
