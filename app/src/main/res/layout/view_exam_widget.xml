@@ -81,6 +81,10 @@
                 android:gravity="center"
                 android:layout_marginVertical="@dimen/exam_item_margin_vertical">
 
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
                 <!-- 上一题按钮 -->
                 <Button
                     android:id="@+id/btn_last"
@@ -99,17 +103,18 @@
                     android:text="下一题"
                     android:textSize="14sp"
                     android:visibility="gone"/>
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <!-- 题号文字 -->
                 <TextView
                     android:id="@+id/tv_index_text"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
                     android:text="题号"
                     android:textColor="@color/gray"
-                    android:clickable="true"
                     android:visibility="visible"/>
             </LinearLayout>
 
