@@ -155,10 +155,10 @@ interface TrainingApiService {
     suspend fun singPost(@Body request: SingPostRequest): Response<TrainingBaseResponse<String>>
 
     @GET("api/question/twoList")
-    suspend fun getTwoList(@Query("user_category_id") userCategoryId: String): Response<TrainingBaseResponse<TwoListData>>
+    suspend fun getTwoList(@QueryMap params: Map<String, String>): Response<TrainingBaseResponse<TwoListData>>
 
     @GET("api/question/twoOrderisPay")
-    suspend fun twoOrderPay(@Query("question_category_id") questionCategoryId: String): Response<TrainingBaseResponse<TwoOrderPayData>>
+    suspend fun twoOrderPay(@QueryMap params: Map<String, String>): Response<TrainingBaseResponse<TwoOrderPayData>>
 
     @GET("api/question/selectTwoQuestionList")
     suspend fun selectTwoQuestionList(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectTwoQuestionListData>>
@@ -171,9 +171,12 @@ interface TrainingApiService {
 
     @GET("api/question/creatTwoOrder")
     suspend fun createTwoOrder(
-        @Query("type") type: String,
-        @Query("method") method: String,
-        @Query("question_category_id") questionCategoryId: Int
+        @QueryMap params: Map<String, String>
+    ): Response<TrainingBaseResponse<String>>
+
+    @GET("api/question/creatOrder")
+    suspend fun createQuestionOrder(
+        @QueryMap params: Map<String, String>
     ): Response<TrainingBaseResponse<String>>
 
     @GET("api/training/meetinglist")

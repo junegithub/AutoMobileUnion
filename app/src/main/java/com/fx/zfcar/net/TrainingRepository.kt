@@ -84,9 +84,9 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun singPost(request: SingPostRequest) = apiService.singPost(request)
 
-    suspend fun getTwoList(userCategoryId: String) = apiService.getTwoList(userCategoryId)
+    suspend fun getTwoList(params: Map<String, String>) = apiService.getTwoList(params)
 
-    suspend fun twoOrderPay(questionCategoryId: String) = apiService.twoOrderPay(questionCategoryId)
+    suspend fun twoOrderPay(params: Map<String, String>) = apiService.twoOrderPay(params)
 
     suspend fun selectTwoQuestionList(userExamId: String) =
         apiService.selectTwoQuestionList(userExamId)
@@ -97,8 +97,11 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun updateTwoQuestion(request: UpdateTwoQuestionRequest) =
         apiService.updateTwoQuestion(request)
 
-    suspend fun createTwoOrder(type: String, method: String, questionCategoryId: Int) =
-        apiService.createTwoOrder(type, method, questionCategoryId)
+    suspend fun createTwoOrder(params: Map<String, String>) =
+        apiService.createTwoOrder(params)
+
+    suspend fun createQuestionOrder(params: Map<String, String>) =
+        apiService.createQuestionOrder(params)
 
     suspend fun getMeetingList(page: Int, status: Int) =
         apiService.getMeetingList(page, status)

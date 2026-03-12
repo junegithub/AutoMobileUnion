@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.fx.zfcar.R
+import com.fx.zfcar.net.WxPayParams
+import com.fx.zfcar.training.exam.toPayReq
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.util.Constant
 import com.fx.zfcar.viewmodel.ApiState
@@ -150,5 +152,9 @@ class WeChatShareHelper(private val context: Context,
             e.printStackTrace()
             null
         }
+    }
+
+    fun goPay(payParams: WxPayParams) {
+        wxApi.sendReq(payParams.toPayReq())
     }
 }

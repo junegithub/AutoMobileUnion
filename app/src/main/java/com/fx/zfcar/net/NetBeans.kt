@@ -1,5 +1,6 @@
 package com.fx.zfcar.net
 
+import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -1286,15 +1287,8 @@ data class TwoListData(
 )
 
 data class CategoryList(
-    val `107`: CategoryListItem
-)
-
-data class CategoryListItem(
-    val category_name: String,
-    val question_count: Int,
-    val answer_count: Int,
-    val user_exam_id: Int,
-    val money: Int
+    val `107`: QuestionCategoryDetail,
+    val `106`: QuestionCategoryDetail
 )
 
 data class TwoOrderPayData(
@@ -1642,7 +1636,7 @@ data class QuestionListData(
     val question_count: Int,
     val answer_count: Int,
     val user_exam_id: Int,
-    val category_list: QuestionCategoryList
+    val category_list: List<QuestionCategoryDetail>
 )
 
 data class QuestionCategoryList(
@@ -2441,4 +2435,34 @@ data class EvaluateClassRequest(
 
 data class EpidemicRequest(
     val epidemicfile: String = ""
+)
+
+data class WxPayParams(
+// 微信开放平台应用ID
+    @SerializedName("appid")
+    val appId: String,
+
+    // 微信支付商户号
+    @SerializedName("partnerid")
+    val partnerId: String,
+
+    // 预支付交易会话ID
+    @SerializedName("prepayid")
+    val prepayId: String,
+
+    // 时间戳（字符串类型，与JSON保持一致）
+    @SerializedName("timestamp")
+    val timeStamp: String,
+
+    // 随机字符串
+    @SerializedName("noncestr")
+    val nonceStr: String,
+
+    // 扩展字段（固定值Sign=WXPay）
+    @SerializedName("package")
+    val packageValue: String,
+
+    // 签名
+    @SerializedName("sign")
+    val sign: String
 )

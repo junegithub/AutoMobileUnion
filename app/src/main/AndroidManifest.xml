@@ -54,7 +54,14 @@
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- scheme必须是你的微信AppId，小写，无多余字符 -->
+                <data android:scheme="${WX_APPID}" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".pages.MainActivity"
@@ -98,6 +105,8 @@
 
         <activity android:name=".training.YiqingSignActivity" />
         <activity android:name=".training.DriverBookActivity" />
+
+        <activity android:name=".training.exam.ExamPracticeActivity" />
 
         <activity android:name=".training.dangercheck.DangerCheckActivity" />
         <activity android:name=".training.dangercheck.DangerHistoryRecordActivity" />

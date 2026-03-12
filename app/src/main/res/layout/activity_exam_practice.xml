@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!-- 顶部导航栏 -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_marginTop="@dimen/dp_24"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:id="@+id/ll_role_switch">
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16"
+                    android:paddingRight="@dimen/padding_1vw"/>
+
+                <ImageView
+                    android:id="@+id/iv_arrow_down"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_down"
+                    android:visibility="gone"/>
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- 主内容区域 -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/padding_1vh">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 分项练习区域 -->
+                <LinearLayout
+                    android:id="@+id/ll_sort_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_2vw"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/dp_8">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="分项练习"
+                        android:textSize="@dimen/text_40"
+                        android:textColor="@color/black"/>
+
+                    <!-- 分类列表 -->
+                    <LinearLayout
+                        android:id="@+id/ll_category_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_16"
+                        android:orientation="vertical"/>
+                </LinearLayout>
+
+                <!-- 空数据提示 -->
+                <LinearLayout
+                    android:id="@+id/ll_no_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_80vh"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="数据为空"
+                        android:textSize="@dimen/text_36"
+                        android:textColor="@color/gray"/>
+                </LinearLayout>
+
+                <!-- 顶部提示条 (占位) -->
+                <LinearLayout
+                    android:id="@+id/ll_top_tips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"/>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- 角色选择弹窗 (BottomSheetDialog) -->
+    <FrameLayout
+        android:id="@+id/fl_role_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone"/>
+
+    <!-- 付费确认弹窗 (自定义Dialog) -->
+    <FrameLayout
+        android:id="@+id/fl_pay_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_48"
+            android:layout_marginEnd="@dimen/dp_48"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="@dimen/dp_24"
+            android:id="@+id/ll_pay_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="从业资格考试真题需个人付费，"
+                android:textSize="@dimen/text_36"/>
+
+            <TextView
+                android:id="@+id/tv_pay_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="您当前余额0元，需付费0元/类"
+                android:textSize="@dimen/text_36"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_16">
+
+                <Button
+                    android:id="@+id/btn_pay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="付费"
+                    android:backgroundTint="@color/blue_0873D0"/>
+
+                <Button
+                    android:id="@+id/btn_cancel_pay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="取消"
+                    android:backgroundTint="@color/gray"/>
+            </FrameLayout>
+        </LinearLayout>
+    </FrameLayout>
+</FrameLayout>

@@ -14,7 +14,10 @@ import com.fx.zfcar.net.StartAnswerRequest
 import com.fx.zfcar.net.StartTwoAnswerData
 import com.fx.zfcar.net.StartTwoAnswerRequest
 import com.fx.zfcar.net.SubmitExamRequest
+import com.fx.zfcar.net.TwoListData
+import com.fx.zfcar.net.TwoOrderPayData
 import com.fx.zfcar.net.UpdateTwoQuestionRequest
+import com.fx.zfcar.net.WxPayParams
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -92,6 +95,13 @@ class ExamViewModel : TrainingBaseViewModel() {
         )
     }
 
+    fun getTwoList(params: Map<String, String>, stateFlow: MutableStateFlow<ApiState<TwoListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getTwoList(params) },
+            stateFlow
+        )
+    }
+
     fun getQuestionView(params: Map<String, String>,
                         stateFlow: MutableStateFlow<ApiState<ExamQuestion>>) {
         launchRequest(
@@ -111,6 +121,27 @@ class ExamViewModel : TrainingBaseViewModel() {
     fun evaluateClass(request: EvaluateClassRequest, stateFlow: MutableStateFlow<ApiState<Any>>) {
         launchRequest(
             block = { vehicleRepository.evaluateClass(request) },
+            stateFlow
+        )
+    }
+
+    fun twoOrderPay(params: Map<String, String>, stateFlow: MutableStateFlow<ApiState<TwoOrderPayData>>) {
+        launchRequest(
+            block = { vehicleRepository.twoOrderPay(params) },
+            stateFlow
+        )
+    }
+
+    fun createTwoOrder(params: Map<String, String>, stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = { vehicleRepository.createTwoOrder(params) },
+            stateFlow
+        )
+    }
+
+    fun createQuestionOrder(params: Map<String, String>, stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = { vehicleRepository.createQuestionOrder(params) },
             stateFlow
         )
     }

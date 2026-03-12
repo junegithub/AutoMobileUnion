@@ -36,6 +36,7 @@
     <color name="transparent">#00000000</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="error">#FF0000</color>
+    <color name="success">#00C800</color>
 
     <color name="blue_main">#2F80ED</color>       <!-- 标题栏/按钮主色 -->
     <color name="yellow_plate">#F5C841</color>    <!-- 车牌号背景 -->

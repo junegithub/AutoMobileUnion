@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# 微信SDK混淆规则
+-keep class com.tencent.mm.opensdk.** {*;}
+-keep class com.tencent.wxop.** {*;}
+-keep class com.tencent.mm.sdk.** {*;}
+# 保留回调Activity不被混淆
+-keep class com.fx.zfcar.wxapi.WXPayEntryActivity {*;}

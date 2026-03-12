@@ -24,6 +24,7 @@ import com.fx.zfcar.net.UserInfoData
 import com.fx.zfcar.pages.LoginActivity
 import com.fx.zfcar.training.dangercheck.DangerCheckActivity
 import com.fx.zfcar.training.drivelog.DriveLogActivity
+import com.fx.zfcar.training.exam.ExamPracticeActivity
 import com.fx.zfcar.training.jobs.JobsActivity
 import com.fx.zfcar.training.notice.NoticeActivity
 import com.fx.zfcar.training.safetycheck.CarSafetyCheckActivity
@@ -465,11 +466,11 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     // 考试入口
     private fun question(data: String) {
-//        val intent = Intent(requireContext(), TestBaseActivity::class.java)
-//        if (data == "twoList") {
-//            intent.putExtra("from", data)
-//        }
-//        startActivity(intent)
+        val intent = Intent(requireContext(), ExamPracticeActivity::class.java)
+        if (data == "twoList") {
+            intent.putExtra("from", data)
+        }
+        startActivity(intent)
     }
 
     // 获取岗前考试信息
