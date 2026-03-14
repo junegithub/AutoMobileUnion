@@ -160,7 +160,9 @@
     <dimen name="exam_textarea_height">100dp</dimen>          <!-- 200rpx -->
 
     <!-- 文本尺寸 -->
+    <dimen name="text_26">13sp</dimen>
     <dimen name="text_32">16sp</dimen>  <!-- 32rpx -->
+    <dimen name="text_34">17sp</dimen>  <!-- 34rpx -->
     <dimen name="text_36">18sp</dimen>  <!-- 36rpx -->
     <dimen name="text_40">20sp</dimen>  <!-- 40rpx -->
 
@@ -170,6 +172,7 @@
     <dimen name="padding_1vw">3dp</dimen>   <!-- 1vw 估算值 -->
     <dimen name="padding_2vw">6dp</dimen>   <!-- 2vw 估算值 -->
     <dimen name="padding_3vw">9dp</dimen>   <!-- 3vw 估算值 -->
+    <dimen name="padding_3vh">12dp</dimen>
 
     <!-- 高度 -->
     <dimen name="height_20vh">120dp</dimen> <!-- 20vh 估算值 -->
@@ -177,4 +180,7 @@
 
     <!-- 弹窗宽度 -->
     <dimen name="width_60vw">240dp</dimen>  <!-- 60vw 估算值 -->
+    <dimen name="width_80vw">240dp</dimen>
+    <dimen name="padding_4vw">12dp</dimen>
+    <dimen name="width_15vw">45dp</dimen>
 </resources>

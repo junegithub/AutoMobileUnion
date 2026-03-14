@@ -1306,11 +1306,11 @@ data class QuestionCategory(
 )
 
 data class SelectTwoQuestionListData(
-    val question_count: Int,
-    val answer_count: Int,
-    val right_count: Int,
-    val wrong_count: Int,
-    val question_list: QuestionList
+    val question_count: Int = 0,
+    val answer_count: Int = 0,
+    val right_count: Int = 0,
+    val wrong_count: Int = 0,
+    val question_list: List<QuestionItem>
 )
 
 data class QuestionList(
@@ -1318,8 +1318,8 @@ data class QuestionList(
 )
 
 data class QuestionItem(
-    val question_id: Int,
-    val is_right: String
+    val question_id: Int  = 0,
+    val is_right: String = ""
 )
 
 data class StartTwoAnswerRequest(
@@ -1724,31 +1724,31 @@ data class StartAnswerRequest(
 )
 
 data class StartAnswerData(
-    val user_exam_id: Int,
-    val question_count: Int,
-    val right_count: Int,
-    val wrong_count: Int,
-    val answer_count: Int,
+    val user_exam_id: Int = 0,
+    val question_count: Int = 0,
+    val right_count: Int = 0,
+    val wrong_count: Int = 0,
+    val answer_count: Int = 0,
     val question: StartAnswerQuestion
 )
 
 data class StartAnswerQuestion(
-    val id: Int,
-    val admin_id: Int,
-    val type: String,
-    val category_id: Int,
-    val question: String,
-    val selectdata: List<QuestionOption>,
-    val selectnumber: Int,
-    val answer: String,
-    val describe: String,
-    val level: String,
-    val status: String,
-    val createtime: Int,
-    val updatetime: Int,
-    val deletetime: String?,
-    val annex: String,
-    val stype: Int
+    val id: Int = 0,
+    val admin_id: Int = 0,
+    val type: String = "",
+    val category_id: Int = 0,
+    val question: String = "",
+    val selectdata: List<QuestionOption> = emptyList(),
+    val selectnumber: Int = 0,
+    val answer: String = "",
+    val describe: String = "",
+    val level: String = "",
+    val status: String = "",
+    val createtime: Int = 0,
+    val updatetime: Int = 0,
+    val deletetime: String? = "",
+    val annex: String = "",
+    val stype: Int = 0
 )
 
 data class SelectQuestionListData(

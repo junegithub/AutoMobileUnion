@@ -3,12 +3,12 @@ package com.fx.zfcar.training.viewmodel
 import com.fx.zfcar.net.AnswerData
 import com.fx.zfcar.net.AnswerRequest
 import com.fx.zfcar.net.CoursewareViewData
-import com.fx.zfcar.net.EducationCertificate
 import com.fx.zfcar.net.EvaluateClassRequest
 import com.fx.zfcar.net.ExamQuestion
 import com.fx.zfcar.net.ExamResultData
 import com.fx.zfcar.net.ExamViewData
 import com.fx.zfcar.net.QuestionListData
+import com.fx.zfcar.net.SelectQuestionListData
 import com.fx.zfcar.net.StartAnswerData
 import com.fx.zfcar.net.StartAnswerRequest
 import com.fx.zfcar.net.StartTwoAnswerData
@@ -17,7 +17,6 @@ import com.fx.zfcar.net.SubmitExamRequest
 import com.fx.zfcar.net.TwoListData
 import com.fx.zfcar.net.TwoOrderPayData
 import com.fx.zfcar.net.UpdateTwoQuestionRequest
-import com.fx.zfcar.net.WxPayParams
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -69,9 +68,16 @@ class ExamViewModel : TrainingBaseViewModel() {
         )
     }
 
+    fun twoAnswer(request: AnswerRequest, stateFlow: MutableStateFlow<ApiState<AnswerData>>) {
+        launchRequest(
+            block = { vehicleRepository.twoAnswer(request) },
+            stateFlow
+        )
+    }
+
     // 二类答题-开始
     fun startTwoAnswer(request: StartTwoAnswerRequest,
-                       stateFlow: MutableStateFlow<ApiState<StartTwoAnswerData>>) {
+                       stateFlow: MutableStateFlow<ApiState<StartAnswerData>>) {
         launchRequest(
             block = { vehicleRepository.startTwoAnswer(request) },
             stateFlow
@@ -83,6 +89,14 @@ class ExamViewModel : TrainingBaseViewModel() {
                           stateFlow: MutableStateFlow<ApiState<String>>) {
         launchRequest(
             block = { vehicleRepository.updateTwoQuestion(request) },
+            stateFlow
+        )
+    }
+
+    fun updateQuestion(request: UpdateTwoQuestionRequest,
+                          stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = { vehicleRepository.updateQuestion(request) },
             stateFlow
         )
     }
@@ -142,6 +156,20 @@ class ExamViewModel : TrainingBaseViewModel() {
     fun createQuestionOrder(params: Map<String, String>, stateFlow: MutableStateFlow<ApiState<String>>) {
         launchRequest(
             block = { vehicleRepository.createQuestionOrder(params) },
+            stateFlow
+        )
+    }
+
+    fun selectQuestion(userExamId: String, stateFlow: MutableStateFlow<ApiState<SelectQuestionListData>>) {
+        launchRequest(
+            block = { vehicleRepository.selectQuestion(userExamId) },
+            stateFlow
+        )
+    }
+
+    fun selectTwoQuestion(userExamId: String, stateFlow: MutableStateFlow<ApiState<SelectQuestionListData>>) {
+        launchRequest(
+            block = { vehicleRepository.selectTwoQuestion(userExamId) },
             stateFlow
         )
     }

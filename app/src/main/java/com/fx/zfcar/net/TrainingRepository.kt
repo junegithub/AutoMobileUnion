@@ -91,11 +91,17 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun selectTwoQuestionList(userExamId: String) =
         apiService.selectTwoQuestionList(userExamId)
 
+    suspend fun selectTwoQuestion(userExamId: String) =
+        apiService.selectTwoQuestion(userExamId)
+
     suspend fun startTwoAnswer(request: StartTwoAnswerRequest) =
         apiService.startTwoAnswer(request)
 
     suspend fun updateTwoQuestion(request: UpdateTwoQuestionRequest) =
         apiService.updateTwoQuestion(request)
+
+    suspend fun updateQuestion(request: UpdateTwoQuestionRequest) =
+        apiService.updateQuestion(request)
 
     suspend fun createTwoOrder(params: Map<String, String>) =
         apiService.createTwoOrder(params)
@@ -151,7 +157,12 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun selectQuestionList(userExamId: String) =
         apiService.selectQuestionList(userExamId)
 
+    suspend fun selectQuestion(userExamId: String) =
+        apiService.selectQuestion(userExamId)
+
     suspend fun answer(request: AnswerRequest) = apiService.answer(request)
+
+    suspend fun twoAnswer(request: AnswerRequest) = apiService.twoAnswer(request)
 
     suspend fun carnumSearch(carnum: String, page: String) =
         apiService.carnumSearch(carnum, page)

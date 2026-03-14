@@ -163,11 +163,17 @@ interface TrainingApiService {
     @GET("api/question/selectTwoQuestionList")
     suspend fun selectTwoQuestionList(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectTwoQuestionListData>>
 
+    @GET("api/question/selectTwoQuestion")
+    suspend fun selectTwoQuestion(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectQuestionListData>>
+
     @POST("api/question/startTwoAnswer")
-    suspend fun startTwoAnswer(@Body request: StartTwoAnswerRequest): Response<TrainingBaseResponse<StartTwoAnswerData>>
+    suspend fun startTwoAnswer(@Body request: StartTwoAnswerRequest): Response<TrainingBaseResponse<StartAnswerData>>
 
     @POST("api/question/updateTwoQuestion")
     suspend fun updateTwoQuestion(@Body request: UpdateTwoQuestionRequest): Response<TrainingBaseResponse<String>>
+
+    @POST("api/question/updateQuestion")
+    suspend fun updateQuestion(@Body request: UpdateTwoQuestionRequest): Response<TrainingBaseResponse<String>>
 
     @GET("api/question/creatTwoOrder")
     suspend fun createTwoOrder(
@@ -259,8 +265,14 @@ interface TrainingApiService {
     @GET("api/question/selectQuestionList")
     suspend fun selectQuestionList(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectQuestionListData>>
 
+    @GET("api/question/selectQuestion")
+    suspend fun selectQuestion(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectQuestionListData>>
+
     @POST("api/question/answer")
     suspend fun answer(@Body request: AnswerRequest): Response<TrainingBaseResponse<AnswerData>>
+
+    @POST("api/question/twoAnswer")
+    suspend fun twoAnswer(@Body request: AnswerRequest): Response<TrainingBaseResponse<AnswerData>>
 
     @GET("api/other/carnumSearch")
     suspend fun carnumSearch(

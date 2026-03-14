@@ -138,4 +138,11 @@
     <color name="exam_gray">#999999</color>
     <color name="exam_light_gray">#F0F0F0</color>
     <color name="exam_border_gray">#DCDCDC</color>
+
+    <color name="primary">#2A82E4</color>
+    <color name="primary_light">#C0DEFF</color>
+    <color name="error_bg">#FFDCDC</color>
+
+    <color name="success_bg">#B0E8CF</color>
+    <color name="success_border">#00874B</color>
 </resources>

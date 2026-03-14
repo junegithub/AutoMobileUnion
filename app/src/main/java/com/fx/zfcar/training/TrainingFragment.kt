@@ -163,7 +163,6 @@ class TrainingFragment : Fragment(), View.OnClickListener {
             }
             binding.trainingHomeLearn.id -> {
                 study(0, "安全培训")
-//                startActivity(Intent(requireActivity(), SafetyTrainingActivity::class.java))
             }
             binding.trainingHomeExamPast.id -> {
                 study(5, "两类人员真题")

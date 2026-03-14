@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_question_num_item"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="第1题"
+    android:textSize="@dimen/text_34"
+    android:background="@drawable/item_question_bg"
+    android:padding="@dimen/dp_12"
+    android:gravity="center"
+    android:layout_margin="@dimen/padding_1vh"/>

@@ -107,6 +107,7 @@
         <activity android:name=".training.DriverBookActivity" />
 
         <activity android:name=".training.exam.ExamPracticeActivity" />
+        <activity android:name=".training.exam.AnswerQuestionActivity" />
 
         <activity android:name=".training.dangercheck.DangerCheckActivity" />
         <activity android:name=".training.dangercheck.DangerHistoryRecordActivity" />

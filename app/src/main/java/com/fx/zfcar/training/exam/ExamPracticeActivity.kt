@@ -500,12 +500,12 @@ class ExamPracticeActivity : AppCompatActivity() {
         hidePayDialog()
 
         try {
-//            val intent = Intent(this, AnswerQuestionActivity::class.java).apply {
-//                putExtra("question_category_id", data.question_category_id)
-//                putExtra("user_exam_id", data.user_exam_id)
-//                putExtra("user_category_id", roleId)
-//                putExtra("from", from)
-//            }
+            val intent = Intent(this, AnswerQuestionActivity::class.java).apply {
+                putExtra("question_category_id", data?.question_category_id)
+                putExtra("user_exam_id", data?.user_exam_id)
+                putExtra("user_category_id", roleId)
+                putExtra("from", from)
+            }
 
             startActivity(intent)
             finish()
