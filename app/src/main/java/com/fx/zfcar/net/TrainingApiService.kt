@@ -101,20 +101,19 @@ interface TrainingApiService {
     ): Response<TrainingBaseResponse<ExamQuestion>>
 
     @GET("api/before/creatOrder")
-    suspend fun createOrder(
-        @Query("money") money: String,
-        @Query("training_publicplan_id") trainingPublicPlanId: Int,
-        @Query("type") type: String,
-        @Query("method") method: String
-    ): Response<TrainingBaseResponse<String>>
+    suspend fun trainPersonPay(
+        @QueryMap params: Map<String, String>
+    ): Response<TrainingBaseResponse<PayOrderData>>
 
     @GET("api/dailysafety/yearPay")
     suspend fun yearPay(
-        @Query("code") code: Int,
-        @Query("type") type: String,
-        @Query("method") method: String,
-        @Query("year_id") yearId: Int
-    ): Response<TrainingBaseResponse<String>>
+        @QueryMap params: Map<String, Any>
+    ): Response<TrainingBaseResponse<PayOrderData>>
+
+    @POST("api/dailysafety/creatOrder")
+    suspend fun creatPayOrder(
+        @Body params: Map<String, Any>
+    ): Response<TrainingBaseResponse<PayOrderData>>
 
     @GET("api/training/orderlist")
     suspend fun getOrderList(@Query("page") page: String): Response<TrainingBaseResponse<OrderListData>>
@@ -348,6 +347,9 @@ interface TrainingApiService {
 
     @GET("api/dailysafety/companyPay")
     suspend fun companyPay(@Query("training_publicplan_id") training_publicplan_id: String): Response<TrainingBaseResponse<CompanyPayData>>
+
+    @GET("api/before/companyPay")
+    suspend fun trainCompanyPay(): Response<TrainingBaseResponse<Any>>
 
     @POST("api/dailysafety/sing")
     suspend fun postSignImg(@Body request: SafetySignRequest): Response<TrainingBaseResponse<PostSignImgData>>

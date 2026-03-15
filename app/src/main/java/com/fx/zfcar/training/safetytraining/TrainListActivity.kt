@@ -24,6 +24,7 @@ import com.fx.zfcar.net.SubjectListData
 import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.net.SubjectPayData
 import com.fx.zfcar.net.TrainingOtherInfo
+import com.fx.zfcar.training.PayDetailActivity
 import com.fx.zfcar.training.adapter.TrainListAdapter
 import com.fx.zfcar.training.adapter.TrainListItem
 import com.fx.zfcar.training.notice.SignatureActivity
@@ -515,14 +516,14 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
             "before" -> handlePayCheckResult(Any(), typeTag)
         }
 
-        lifecycleScope.launch {
-            /*try {
+        /*lifecycleScope.launch {
+            try {
 
                 if (payResponse.code == 1) {
                     val payData = payResponse.data
                     if (payData != null) {
                         // 需要支付
-                        val intent = Intent(this@TrainListActivity, PayActivity::class.java)
+                        val intent = Intent(this@TrainListActivity, PayDetailActivity::class.java)
                         intent.putExtra("name", item.name)
                         intent.putExtra("id", item.id)
                         intent.putExtra("money", payData.money)
@@ -541,13 +542,13 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                         intent.putExtra("faceType", "start")
                         startActivity(intent)
                     } else {
-                        Toast.makeText(this@TrainListActivity, payResponse.msg, Toast.LENGTH_SHORT).show()
+                        showToast(payResponse.msg)
                     }
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@TrainListActivity, "支付检查失败:${e.message}", Toast.LENGTH_SHORT).show()
-            }*/
-        }
+                showToast("支付检查失败:${e.message}")
+            }
+        }*/
     }
 
     // 跳签字页面
@@ -566,13 +567,13 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
      * 跳转到支付页面
      */
     private fun gotoPayPage(id: String, name: String, payInfo: PayInfo, type: String) {
-//        val intent = Intent(this, PayActivity::class.java)
-//        intent.putExtra("name", name)
-//        intent.putExtra("id", id)
-//        intent.putExtra("money", payInfo.money)
-//        intent.putExtra("type", type)
-//        intent.putExtra("usualpaytype", payInfo.usualpaytype)
-//        startActivity(intent)
+        val intent = Intent(this, PayDetailActivity::class.java)
+        intent.putExtra("name", name)
+        intent.putExtra("id", id)
+        intent.putExtra("money", payInfo.money)
+        intent.putExtra("type", type)
+        intent.putExtra("usualpaytype", payInfo.usualpaytype)
+        startActivity(intent)
     }
 
     /**

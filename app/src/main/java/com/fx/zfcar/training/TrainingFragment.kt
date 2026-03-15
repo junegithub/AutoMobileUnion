@@ -368,11 +368,11 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
                     is ApiState.Success -> {
                         // 需要支付
-//                        val intent = Intent(requireContext(), TrainPayActivity::class.java)
-//                        intent.putExtra("payName", "岗前培训")
-//                        intent.putExtra("payNum", uiState.data?.money ?: "10")
-//                        intent.putExtra("usualpaytype", usualpaytype)
-//                        startActivity(intent)
+                        val intent = Intent(requireContext(), PayDetailActivity::class.java)
+                        intent.putExtra("payName", "岗前培训")
+                        intent.putExtra("payNum", uiState.data?.money ?: "10")
+                        intent.putExtra("usualpaytype", usualpaytype)
+                        startActivity(intent)
                     }
 
                     is ApiState.Error -> {

@@ -16,6 +16,10 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import org.greenrobot.eventbus.EventBus
 
 class WXEntryActivity : Activity(), IWXAPIEventHandler {
+    companion object {
+        // 支付结果回调接口
+        var payResultCallback: ((Boolean, String) -> Unit)? = null
+    }
     // 微信API实例
     private lateinit var wxApi: IWXAPI
 
@@ -39,6 +43,21 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
     // 微信响应回调（分享结果）
     override fun onResp(resp: BaseResp?) {
         if (resp?.type == ConstantsAPI.COMMAND_PAY_BY_WX) {
+            val result = when (resp.errCode) {
+                BaseResp.ErrCode.ERR_OK -> {
+                    "支付成功" to true
+                }
+                BaseResp.ErrCode.ERR_USER_CANCEL -> {
+                    "用户取消支付" to false
+                }
+                else -> {
+                    "支付失败：${resp.errStr}" to false
+                }
+            }
+
+            // 回调结果
+            payResultCallback?.invoke(result.second, result.first)
+
             handlePayResult(resp as PayResp)
         }
         when (resp?.errCode) {
@@ -104,6 +123,12 @@ class WXEntryActivity : Activity(), IWXAPIEventHandler {
 
         // 关闭回调页面
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 清空回调，防止内存泄漏
+        payResultCallback = null
     }
 
     /**

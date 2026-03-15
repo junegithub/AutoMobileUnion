@@ -94,6 +94,8 @@
         <activity android:name=".training.user.UserCenterActivity" />
         <activity android:name=".training.user.ScanCodeActivity" />
 
+        <activity android:name=".training.PayDetailActivity" />
+
         <activity android:name=".training.safetytraining.TrainListActivity" />
         <activity android:name=".training.safetytraining.ScoreDetailActivity" />
         <activity android:name=".training.safetytraining.ExamManagerActivity" />

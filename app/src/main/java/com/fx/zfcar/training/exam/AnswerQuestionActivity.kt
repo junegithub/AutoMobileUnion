@@ -15,13 +15,13 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.fx.zfcar.R
 import com.fx.zfcar.databinding.ActivityAnswerQuestionBinding
+import com.fx.zfcar.databinding.BsdQuestionListBinding
 import com.fx.zfcar.databinding.ItemOptionBinding
 import com.fx.zfcar.databinding.ItemQuestionNumBinding
 import com.fx.zfcar.net.AnswerData
 import com.fx.zfcar.net.AnswerOption
 import com.fx.zfcar.net.AnswerRequest
 import com.fx.zfcar.net.QuestionItem
-import com.fx.zfcar.net.QuestionOption
 import com.fx.zfcar.net.SelectTwoQuestionListData
 import com.fx.zfcar.net.StartAnswerData
 import com.fx.zfcar.net.StartAnswerQuestion
@@ -74,6 +74,10 @@ class AnswerQuestionActivity : AppCompatActivity() {
     private var user_category_id = ""
     private var question_id = 0
 
+    private lateinit var bottomSheetDialog: BottomSheetDialog
+    private lateinit var bsdQuestionListBinding: BsdQuestionListBinding
+
+
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,6 +103,7 @@ class AnswerQuestionActivity : AppCompatActivity() {
         initListeners()
         observeStates()
         initData()
+        initBottomSheetDialog()
     }
 
     /**
@@ -527,7 +532,7 @@ class AnswerQuestionActivity : AppCompatActivity() {
 
         // 关闭弹窗
         selectMoreShow = false
-        (binding.bsdQuestionList as? BottomSheetDialog)?.dismiss()
+        bottomSheetDialog.dismiss()
     }
 
     /**
@@ -584,15 +589,32 @@ class AnswerQuestionActivity : AppCompatActivity() {
      * 更新题目列表弹窗
      */
     private fun updateQuestionListDialog(questionList: List<QuestionItem>) {
-        val gridView = GridView(this)
-        gridView.numColumns = 3
-        gridView.verticalSpacing = resources.getDimensionPixelSize(R.dimen.padding_1vh)
-        gridView.horizontalSpacing = resources.getDimensionPixelSize(R.dimen.padding_2vw)
-
         val adapter = QuestionNumAdapter(questionList)
-        gridView.adapter = adapter
+        bsdQuestionListBinding.gvQuestionList.adapter = adapter
+        showQuestionListBottomSheet()
+    }
 
-        (binding.bsdQuestionList as? BottomSheetDialog)?.setContentView(gridView)
+    /**
+     * 初始化BottomSheetDialog
+     */
+    private fun initBottomSheetDialog() {
+        bottomSheetDialog = BottomSheetDialog(this)
+
+        bsdQuestionListBinding = BsdQuestionListBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(bsdQuestionListBinding.root)
+
+        // 初始化GridView数据
+        bsdQuestionListBinding.gvQuestionList.numColumns = 3
+        bsdQuestionListBinding.gvQuestionList.verticalSpacing = resources.getDimensionPixelSize(R.dimen.padding_1vh)
+        bsdQuestionListBinding.gvQuestionList.horizontalSpacing = resources.getDimensionPixelSize(R.dimen.padding_2vw)
+    }
+
+    /**
+     * 显示题目列表BottomSheet
+     */
+    private fun showQuestionListBottomSheet() {
+        // 显示BottomSheet
+        bottomSheetDialog.show()
     }
 
     /**

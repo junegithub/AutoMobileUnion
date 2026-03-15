@@ -2472,3 +2472,17 @@ data class WxPayParams(
     @SerializedName("sign")
     val sign: String
 )
+
+/**
+ * 支付订单数据
+ */
+data class PayOrderData(
+    val timeStamp: String?,
+    val nonceStr: String?,
+    @SerializedName("package")
+    val packageValue: String?,
+    val signType: String?,
+    val paySign: String?,
+    val partnerId: String?,
+    val prepayId: String?
+)

@@ -165,6 +165,7 @@
     <dimen name="text_34">17sp</dimen>  <!-- 34rpx -->
     <dimen name="text_36">18sp</dimen>  <!-- 36rpx -->
     <dimen name="text_40">20sp</dimen>  <!-- 40rpx -->
+    <dimen name="text_28">14sp</dimen>
 
     <!-- 间距 -->
     <dimen name="padding_1vh">4dp</dimen>   <!-- 1vh 估算值 -->

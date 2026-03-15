@@ -44,12 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="@dimen/padding_1vh"
-                android:borderTop="true"
-                android:borderBottom="true"
-                android:borderColor="@color/gray"
-                android:borderWidth="1px"
-                android:orientation="horizontal"
-                android:justifyContent="space-between">
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tv_question_num"
@@ -123,10 +118,7 @@
                             android:background="@color/error_bg"
                             android:gravity="center"
                             android:padding="@dimen/dp_4"
-                            android:layout_marginRight="@dimen/padding_2vw"
-                            android:borderWidth="1px"
-                            android:borderColor="@color/error_red"
-                            android:borderRadius="4dp"/>
+                            android:layout_marginRight="@dimen/padding_2vw"/>
 
                         <TextView
                             android:id="@+id/tv_question_text"
@@ -153,16 +145,12 @@
                         android:orientation="vertical"
                         android:visibility="gone"
                         android:layout_marginTop="@dimen/padding_2vh"
-                        android:paddingTop="@dimen/padding_2vh"
-                        android:borderTop="true"
-                        android:borderColor="@color/black"
-                        android:borderWidth="1px">
+                        android:paddingTop="@dimen/padding_2vh">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:justifyContent="space-between">
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -203,35 +191,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 题目列表弹窗 -->
-    <com.google.android.material.bottomsheet.BottomSheetDialog
-        android:id="@+id/bsd_question_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="@dimen/padding_4vw">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="题目列表"
-                android:textSize="@dimen/text_36"
-                android:paddingBottom="@dimen/padding_2vh"/>
-
-            <GridView
-                android:id="@+id/gv_question_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:numColumns="3"
-                android:verticalSpacing="@dimen/padding_1vh"
-                android:horizontalSpacing="@dimen/padding_2vw"/>
-        </LinearLayout>
-    </com.google.android.material.bottomsheet.BottomSheetDialog>
-
     <!-- 遮罩层 -->
     <View
         android:id="@+id/v_mask"
@@ -240,9 +199,4 @@
         android:background="#80000000"
         android:visibility="visible"/>
 
-    <!-- Toast提示（占位） -->
-    <com.google.android.material.snackbar.Snackbar
-        android:id="@+id/snackbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 </LinearLayout>

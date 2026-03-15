@@ -145,4 +145,5 @@
 
     <color name="success_bg">#B0E8CF</color>
     <color name="success_border">#00874B</color>
+    <color name="text_primary">#394462</color>
 </resources>

@@ -241,4 +241,25 @@
         <!-- 文字颜色随选中态变化 -->
         <item name="android:textColor">@color/selector_quick_time_text</item>
     </style>
+
+    <!-- 支付按钮样式 -->
+    <style name="PayButtonStyle">
+        <item name="android:layout_width">300dp</item>
+        <item name="android:layout_height">@dimen/btn_height</item>
+        <item name="android:textSize">@dimen/text_32</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/btn_pay_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">@dimen/dp_10</item>
+    </style>
+
+    <!-- 输入框样式 -->
+    <style name="InputStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:background">@drawable/input_bg</item>
+        <item name="android:padding">@dimen/dp_20</item>
+        <item name="android:textSize">@dimen/text_28</item>
+        <item name="android:textColorHint">@color/text_gray</item>
+    </style>
 </resources>

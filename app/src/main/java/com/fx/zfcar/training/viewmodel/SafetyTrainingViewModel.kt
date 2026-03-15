@@ -32,6 +32,7 @@ import com.fx.zfcar.net.EpidemicRequest
 import com.fx.zfcar.net.JobAddRequest
 import com.fx.zfcar.net.JobViewData
 import com.fx.zfcar.net.MyJobListData
+import com.fx.zfcar.net.PayOrderData
 import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
 import com.fx.zfcar.net.QuestionOrderPayData
 import com.fx.zfcar.net.SafetySignRequest
@@ -179,6 +180,13 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                    stateFlow: MutableStateFlow<ApiState<CompanyPayData>>) {
         launchRequest(
             block = { vehicleRepository.companyPay(id) },
+            stateFlow
+        )
+    }
+
+    fun trainCompanyPay(stateFlow: MutableStateFlow<ApiState<Any>>) {
+        launchRequest(
+            block = { vehicleRepository.trainCompanyPay() },
             stateFlow
         )
     }
@@ -374,6 +382,30 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     fun getCarCheck(stateFlow: MutableStateFlow<ApiState<CarCheckData>>) {
         launchRequest(
             block = { vehicleRepository.getCarCheck() },
+            stateFlow
+        )
+    }
+
+    fun yearPay(params: Map<String, Any>,
+                stateFlow: MutableStateFlow<ApiState<PayOrderData>>) {
+        launchRequest(
+            block = { vehicleRepository.yearPay(params) },
+            stateFlow
+        )
+    }
+
+    fun trainPersonPay(params: Map<String, String>,
+                    stateFlow: MutableStateFlow<ApiState<PayOrderData>>) {
+        launchRequest(
+            block = { vehicleRepository.trainPersonPay(params) },
+            stateFlow
+        )
+    }
+
+    fun creatPayOrder(params: Map<String, String>,
+                      stateFlow: MutableStateFlow<ApiState<PayOrderData>>) {
+        launchRequest(
+            block = { vehicleRepository.creatPayOrder(params) },
             stateFlow
         )
     }

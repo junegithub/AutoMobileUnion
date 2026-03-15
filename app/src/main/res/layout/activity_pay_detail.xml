@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/dp_40"
+    android:background="@color/white">
+
+    <!-- 顶部导航栏 -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="支付详情"
+            android:textSize="@dimen/text_32"
+            android:textColor="@color/text_primary"
+            android:layout_gravity="center"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- 支付记录跳转 -->
+    <TextView
+        android:id="@+id/tv_pay_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="支付记录"
+        android:textColor="@color/primary"
+        android:textSize="@dimen/text_28"
+        android:gravity="end"
+        android:padding="@dimen/dp_10"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <!-- 加载中视图 -->
+    <FrameLayout
+        android:id="@+id/loadingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@android:color/white">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="处理中..."
+            android:layout_gravity="center_horizontal|center_vertical|bottom"
+            android:layout_marginTop="@dimen/dp_20"/>
+    </FrameLayout>
+
+    <!-- 主内容卡片 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_bg"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/dp_16"
+        android:elevation="8dp">
+
+        <!-- 名称标签 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="名称"
+            android:textSize="@dimen/text_28"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="@dimen/dp_16"/>
+
+        <!-- 名称输入框 -->
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            style="@style/InputStyle"
+            android:enabled="false"
+            android:hint=""
+            android:layout_marginBottom="@dimen/dp_16"/>
+
+        <!-- 支付金额标签 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="支付金额"
+            android:textSize="@dimen/text_28"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="@dimen/dp_16"/>
+
+        <!-- 支付金额输入框 -->
+        <EditText
+            android:id="@+id/et_money"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            style="@style/InputStyle"
+            android:enabled="false"
+            android:hint=""
+            android:layout_marginBottom="@dimen/dp_16"/>
+
+        <!-- 按钮区域 -->
+        <LinearLayout
+            android:id="@+id/ll_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- 立即支付按钮 -->
+            <Button
+                android:id="@+id/btn_pay_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/PayButtonStyle"
+                android:text="立即支付"
+                android:visibility="gone"/>
+
+            <!-- 年度支付按钮 -->
+            <Button
+                android:id="@+id/btn_year_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/PayButtonStyle"
+                android:text="年度支付"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
