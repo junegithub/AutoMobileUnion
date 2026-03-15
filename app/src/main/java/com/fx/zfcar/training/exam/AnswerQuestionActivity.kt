@@ -18,17 +18,15 @@ import com.fx.zfcar.databinding.ActivityAnswerQuestionBinding
 import com.fx.zfcar.databinding.ItemOptionBinding
 import com.fx.zfcar.databinding.ItemQuestionNumBinding
 import com.fx.zfcar.net.AnswerData
+import com.fx.zfcar.net.AnswerOption
 import com.fx.zfcar.net.AnswerRequest
 import com.fx.zfcar.net.QuestionItem
-import com.fx.zfcar.net.QuestionListData
 import com.fx.zfcar.net.QuestionOption
-import com.fx.zfcar.net.SelectQuestionListData
 import com.fx.zfcar.net.SelectTwoQuestionListData
 import com.fx.zfcar.net.StartAnswerData
 import com.fx.zfcar.net.StartAnswerQuestion
 import com.fx.zfcar.net.StartAnswerRequest
 import com.fx.zfcar.net.StartTwoAnswerRequest
-import com.fx.zfcar.net.TwoListData
 import com.fx.zfcar.net.UpdateTwoQuestionRequest
 import com.fx.zfcar.training.viewmodel.ExamViewModel
 import com.fx.zfcar.viewmodel.ApiState
@@ -46,15 +44,15 @@ class AnswerQuestionActivity : AppCompatActivity() {
     private val viewModel by viewModels<ExamViewModel>()
 
     private val startAnswerStateFlow = MutableStateFlow<ApiState<StartAnswerData>>(ApiState.Idle)
-    private val questionListStateFlow = MutableStateFlow<ApiState<QuestionListData>>(ApiState.Idle)
+    private val questionListStateFlow = MutableStateFlow<ApiState<SelectTwoQuestionListData>>(ApiState.Idle)
     private val answerStateFlow = MutableStateFlow<ApiState<AnswerData>>(ApiState.Idle)
     private val updateQuestionStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
 
     private val startTwoAnswerStateFlow = MutableStateFlow<ApiState<StartAnswerData>>(ApiState.Idle)
-    private val twoQuestionListStateFlow = MutableStateFlow<ApiState<TwoListData>>(ApiState.Idle)
+    private val twoQuestionListStateFlow = MutableStateFlow<ApiState<SelectTwoQuestionListData>>(ApiState.Idle)
     private val answerTwoStateFlow = MutableStateFlow<ApiState<AnswerData>>(ApiState.Idle)
     private val updateTwoQuestionStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
-    private val selectTwoQuestionStateFlow = MutableStateFlow<ApiState<SelectQuestionListData>>(ApiState.Idle)
+    private val selectTwoQuestionStateFlow = MutableStateFlow<ApiState<StartAnswerData>>(ApiState.Idle)
     // 数据
     private var activeNum = ""
     private var selectMoreShow = false
@@ -360,7 +358,7 @@ class AnswerQuestionActivity : AppCompatActivity() {
         binding.tvQuestionText.text = data.question.question
 
         // 更新选项列表
-        updateOptionsList(data.question.selectdata)
+        updateOptionsList(data.question.selectdata, questionType)
 
         // 更新解析区域
         binding.tvCorrectAnswer.text = "正确答案:${data.question.answer}"
@@ -373,16 +371,18 @@ class AnswerQuestionActivity : AppCompatActivity() {
     /**
      * 更新选项列表
      */
-    private fun updateOptionsList(options: List<QuestionOption>) {
+    private fun updateOptionsList(options: List<AnswerOption>, type: Int) {
         binding.llOptions.removeAllViews()
 
         options.forEach { option ->
+            option.type = type
+
             val optionBinding = ItemOptionBinding.inflate(layoutInflater)
-            optionBinding.tvOptionKey.text = "${option.fldOptionIndex}."
-            optionBinding.tvOptionValue.text = option.fldOptionText
+            optionBinding.tvOptionKey.text = "${option.key}."
+            optionBinding.tvOptionValue.text = option.value
 
             // 设置选项背景
-            updateOptionBackground(optionBinding.root, option.fldOptionIndex)
+            updateOptionBackground(optionBinding.root, option.key)
 
             // 选项点击事件
             optionBinding.root.setOnClickListener {
@@ -473,8 +473,8 @@ class AnswerQuestionActivity : AppCompatActivity() {
             for (i in 0 until binding.llOptions.childCount) {
                 val view = binding.llOptions.getChildAt(i)
                 val keyTv = view.findViewById<TextView>(R.id.tv_option_key)
-                if (keyTv.text.toString().startsWith(option.fldOptionIndex)) {
-                    updateOptionBackground(view, option.fldOptionIndex)
+                if (keyTv.text.toString().startsWith(option.key)) {
+                    updateOptionBackground(view, option.key)
                     break
                 }
             }
@@ -558,10 +558,9 @@ class AnswerQuestionActivity : AppCompatActivity() {
     private fun getExamNumInfo() {
 
         if (from == "twoList") {
-            val params = mapOf("user_exam_id" to resData.user_exam_id.toString())
-            viewModel.getTwoList(params, twoQuestionListStateFlow)
+            viewModel.selectTwoQuestionList(resData.user_exam_id.toString(), twoQuestionListStateFlow)
         } else {
-            viewModel.getQuestionList(questionListStateFlow)
+            viewModel.selectQuestionList(resData.user_exam_id.toString(), questionListStateFlow)
         }
     }
 
@@ -619,22 +618,22 @@ class AnswerQuestionActivity : AppCompatActivity() {
         // 更新选项背景
         resData.question.selectdata.forEachIndexed { index, option ->
             val view = binding.llOptions.getChildAt(index)
-            view?.let { updateOptionBackground(it, option.fldOptionIndex) }
+            view?.let { updateOptionBackground(it, option.key) }
         }
     }
 
     /**
      * 选择答案
      */
-    private fun selectAns(data: QuestionOption) {
+    private fun selectAns(data: AnswerOption) {
         if (resultShow) return
 
-        if (activeKeyArr.contains(data.fldOptionIndex)) {
+        if (activeKeyArr.contains(data.key)) {
             // 取消选择
-            activeKeyArr.remove(data.fldOptionIndex)
+            activeKeyArr.remove(data.key)
         } else {
             // 添加选择
-            activeKeyArr.add(data.fldOptionIndex)
+            activeKeyArr.add(data.key)
             activeKeyArr = activeKeyArr.distinct().toMutableList()
         }
 
@@ -642,20 +641,20 @@ class AnswerQuestionActivity : AppCompatActivity() {
         for (i in 0 until binding.llOptions.childCount) {
             val view = binding.llOptions.getChildAt(i)
             val keyTv = view.findViewById<TextView>(R.id.tv_option_key)
-            if (keyTv.text.toString().startsWith(data.fldOptionIndex)) {
-                updateOptionBackground(view, data.fldOptionIndex)
+            if (keyTv.text.toString().startsWith(data.key)) {
+                updateOptionBackground(view, data.key)
                 break
             }
         }
 
         // 处理不同题型
         when (data.type) {
-            "2" -> {
+            2 -> {
                 // 多选题
                 buttonBottomShow = activeKeyArr.isNotEmpty()
                 binding.btnSubmit.visibility = if (buttonBottomShow) View.VISIBLE else View.GONE
             }
-            "1", "3" -> {
+            1, 3 -> {
                 // 单选题/判断题
                 resultShow = true
                 binding.llAnswerAnalysis.visibility = View.VISIBLE

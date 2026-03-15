@@ -1310,7 +1310,7 @@ data class SelectTwoQuestionListData(
     val answer_count: Int = 0,
     val right_count: Int = 0,
     val wrong_count: Int = 0,
-    val question_list: List<QuestionItem>
+    val question_list: List<QuestionItem> = emptyList()
 )
 
 data class QuestionList(
@@ -1738,7 +1738,7 @@ data class StartAnswerQuestion(
     val type: String = "",
     val category_id: Int = 0,
     val question: String = "",
-    val selectdata: List<QuestionOption> = emptyList(),
+    val selectdata: List<AnswerOption> = emptyList(),
     val selectnumber: Int = 0,
     val answer: String = "",
     val describe: String = "",
@@ -1749,6 +1749,12 @@ data class StartAnswerQuestion(
     val deletetime: String? = "",
     val annex: String = "",
     val stype: Int = 0
+)
+
+data class AnswerOption(
+    var type: Int,
+    val key: String,
+    val value: String
 )
 
 data class SelectQuestionListData(

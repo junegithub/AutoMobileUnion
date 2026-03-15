@@ -9,6 +9,7 @@ import com.fx.zfcar.net.ExamResultData
 import com.fx.zfcar.net.ExamViewData
 import com.fx.zfcar.net.QuestionListData
 import com.fx.zfcar.net.SelectQuestionListData
+import com.fx.zfcar.net.SelectTwoQuestionListData
 import com.fx.zfcar.net.StartAnswerData
 import com.fx.zfcar.net.StartAnswerRequest
 import com.fx.zfcar.net.StartTwoAnswerData
@@ -109,6 +110,20 @@ class ExamViewModel : TrainingBaseViewModel() {
         )
     }
 
+    fun selectQuestionList(userExamId: String, stateFlow: MutableStateFlow<ApiState<SelectTwoQuestionListData>>) {
+        launchRequest(
+            block = { vehicleRepository.selectQuestionList(userExamId) },
+            stateFlow
+        )
+    }
+
+    fun selectTwoQuestionList(userExamId: String, stateFlow: MutableStateFlow<ApiState<SelectTwoQuestionListData>>) {
+        launchRequest(
+            block = { vehicleRepository.selectTwoQuestionList(userExamId) },
+            stateFlow
+        )
+    }
+
     fun getTwoList(params: Map<String, String>, stateFlow: MutableStateFlow<ApiState<TwoListData>>) {
         launchRequest(
             block = { vehicleRepository.getTwoList(params) },
@@ -167,7 +182,7 @@ class ExamViewModel : TrainingBaseViewModel() {
         )
     }
 
-    fun selectTwoQuestion(userExamId: String, stateFlow: MutableStateFlow<ApiState<SelectQuestionListData>>) {
+    fun selectTwoQuestion(userExamId: String, stateFlow: MutableStateFlow<ApiState<StartAnswerData>>) {
         launchRequest(
             block = { vehicleRepository.selectTwoQuestion(userExamId) },
             stateFlow

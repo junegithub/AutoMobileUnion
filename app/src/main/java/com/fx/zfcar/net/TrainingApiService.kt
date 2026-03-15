@@ -164,7 +164,7 @@ interface TrainingApiService {
     suspend fun selectTwoQuestionList(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectTwoQuestionListData>>
 
     @GET("api/question/selectTwoQuestion")
-    suspend fun selectTwoQuestion(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectQuestionListData>>
+    suspend fun selectTwoQuestion(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<StartAnswerData>>
 
     @POST("api/question/startTwoAnswer")
     suspend fun startTwoAnswer(@Body request: StartTwoAnswerRequest): Response<TrainingBaseResponse<StartAnswerData>>
@@ -263,7 +263,7 @@ interface TrainingApiService {
     suspend fun startAnswer(@Body request: StartAnswerRequest): Response<TrainingBaseResponse<StartAnswerData>>
 
     @GET("api/question/selectQuestionList")
-    suspend fun selectQuestionList(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectQuestionListData>>
+    suspend fun selectQuestionList(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectTwoQuestionListData>>
 
     @GET("api/question/selectQuestion")
     suspend fun selectQuestion(@Query("user_exam_id") userExamId: String): Response<TrainingBaseResponse<SelectQuestionListData>>
