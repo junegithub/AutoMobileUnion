@@ -1,5 +1,6 @@
 package com.fx.zfcar.training.viewmodel
 
+import com.fx.zfcar.net.AuthRequest
 import com.fx.zfcar.net.BeforeEducationCertificateData
 import com.fx.zfcar.net.BeforeExamInfoData
 import com.fx.zfcar.net.CarNumSearchData
@@ -415,6 +416,14 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                       stateFlow: MutableStateFlow<ApiState<OrderListData>>) {
         launchRequest(
             block = { vehicleRepository.getOrderList(page) },
+            stateFlow
+        )
+    }
+
+    fun submitAuthentication(request: AuthRequest,
+                     stateFlow: MutableStateFlow<ApiState<Any>>) {
+        launchRequest(
+            block = { vehicleRepository.authentication(request) },
             stateFlow
         )
     }

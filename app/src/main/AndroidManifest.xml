@@ -91,6 +91,8 @@
         <activity android:name=".car.VideoPlaybackActivity" />
         <activity android:name=".car.RealTimeMonitorActivity" />
 
+        <activity android:name=".training.AuthenticationActivity" />
+
         <activity android:name=".training.user.UserCenterActivity" />
         <activity android:name=".training.user.ScanCodeActivity" />
 

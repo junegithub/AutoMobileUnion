@@ -142,6 +142,9 @@ dependencies {
     // 图片选择库（推荐PictureSelector，功能更全）
     implementation("io.github.lucksiege:pictureselector:v3.11.1")
 
+    // 权限处理
+    implementation("com.guolindev.permissionx:permissionx:1.8.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -208,4 +208,6 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun creatPayOrder(params: Map<String, String>) =
         apiService.creatPayOrder(params)
+
+    suspend fun authentication(request: AuthRequest) = apiService.authentication(request)
 }

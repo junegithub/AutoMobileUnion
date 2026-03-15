@@ -100,7 +100,7 @@ object DialogUtils {
 
     fun showDatePickerDlg(context: Context, defaultTime: Long, listener: ((Long) -> Unit)? = null) {
         val pickerDialog = CardDatePickerDialog.builder(context)
-            // 设置显示的时间单位：年、月、日、时、分、秒
+            // 设置显示的时间单位：年、月、日
             .setDisplayType(mutableListOf(
                 DateTimeConfig.YEAR,
                 DateTimeConfig.MONTH,

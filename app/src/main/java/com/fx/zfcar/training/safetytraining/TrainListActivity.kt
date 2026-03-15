@@ -24,6 +24,7 @@ import com.fx.zfcar.net.SubjectListData
 import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.net.SubjectPayData
 import com.fx.zfcar.net.TrainingOtherInfo
+import com.fx.zfcar.training.AuthenticationActivity
 import com.fx.zfcar.training.pay.PayDetailActivity
 import com.fx.zfcar.training.adapter.TrainListAdapter
 import com.fx.zfcar.training.adapter.TrainListItem
@@ -73,6 +74,8 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
     private var totalPage = 1
     // 标记是否正在加载
     private var isLoading = false
+
+    private var checkPayItem: TrainListItem? = null
 
     // 支付状态常量
     companion object {
@@ -299,7 +302,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                         state.data?.let { handlePayCheckResult(state.data, "train") }
                     }
                     is ApiState.Error -> {
-                        showToast("支付检查失败：${state.msg}")
+                        handlePayErrorResult(state.msg, "train")
                     }
                     else ->  {}
                 }
@@ -314,7 +317,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                         state.data?.let { handlePayCheckResult(state.data, "daily") }
                     }
                     is ApiState.Error -> {
-                        showToast("订单支付检查失败：${state.msg}")
+                        handlePayErrorResult(state.msg, "daily")
                     }
                     else ->  {}
                 }
@@ -334,6 +337,23 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                     else ->  {}
                 }
             }
+        }
+
+        lifecycleScope.launch {
+            subjectPayState.drop(1)
+                .collect { state ->
+                    when (state) {
+                        is ApiState.Success -> {
+                            state.data?.let {
+                                handlePayCheckResult(state.data, "subject")
+                            }
+                        }
+                        is ApiState.Error -> {
+                            handlePayErrorResult(state.msg, "subject")
+                        }
+                        else ->  {}
+                    }
+                }
         }
     }
 
@@ -419,8 +439,9 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
             else -> PayInfo()
         }
 
-        val itemId = SPUtils.get("tempTrainItemId")
-        val itemName = SPUtils.get("tempTrainItemName")
+        val itemId = getItemId(type)
+
+        val itemName = getItemName(type)
 
         if (type == "before") {
             // 岗前培训直接跳人脸识别
@@ -436,6 +457,74 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
             else -> {
                 // 无需支付，跳人脸识别
                 gotoFaceCheck(itemId, itemName, type)
+            }
+        }
+    }
+
+    private fun getItemId(type: String): String {
+        // 参数空值校验
+        if (type.isBlank()) {
+            return SPUtils.get("tempTrainItemId")
+        }
+
+        val id = when (type) {
+            "train", "daily" -> {
+                val safeItem = checkPayItem as? TrainListItem.TypeSafeItem
+                safeItem?.data?.id?.toString()
+            }
+            "subject" -> {
+                val continueItem = checkPayItem as? TrainListItem.TypeContinueItem
+                continueItem?.data?.id?.toString()
+            }
+            "before" -> {
+                val preJobItem = checkPayItem as? TrainListItem.TypePreJobItem
+                preJobItem?.data?.id?.toString()
+            }
+            else -> {
+                null
+            }
+        }
+
+        // 最终兜底处理
+        val finalId = id ?: SPUtils.get("tempTrainItemId")
+        return finalId
+    }
+
+    private fun getItemName(type: String): String {
+        if (type.isBlank()) {
+            return SPUtils.get("tempTrainItemName")
+        }
+
+        val name = when (type) {
+            "train", "daily" -> {
+                val safeItem = checkPayItem as? TrainListItem.TypeSafeItem
+                safeItem?.data?.name
+            }
+            "subject" -> {
+                val continueItem = checkPayItem as? TrainListItem.TypeContinueItem
+                continueItem?.data?.name
+            }
+            "before" -> {
+                val preJobItem = checkPayItem as? TrainListItem.TypePreJobItem
+                preJobItem?.data?.name
+            }
+            else -> {
+                null
+            }
+        }
+
+        // 最终兜底处理
+        val finalName = name ?: SPUtils.get("tempTrainItemName")
+        return finalName
+    }
+
+    private fun handlePayErrorResult(msg: String, type: String) {
+        if (msg != "不需要支付") {
+            showToast(msg)
+        } else {
+
+            checkPayItem?.let {
+                gotoFaceCheck(getItemId(type), getItemName(type), type)
             }
         }
     }
@@ -479,10 +568,10 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
 
     override fun onAuthClick(item: SubjectItem) {
         // 跳认证页面
-//        val intent = Intent(this, AuthActivity::class.java)
-//        intent.putExtra("id", item.id)
-//        intent.putExtra("name", item.name)
-//        startActivity(intent)
+        val intent = Intent(this, AuthenticationActivity::class.java)
+        intent.putExtra("id", item.id)
+        intent.putExtra("name", item.name)
+        startActivity(intent)
     }
 
     override fun onMeetingClick(item: MeetingItem) {
@@ -502,6 +591,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
      * @param type 类型标识（daily/subject）
      */
     private fun checkPay(item: TrainListItem, typeTag: String) {
+        checkPayItem = item
         when (typeTag) {
             "train" -> {
                 trainingViewModel.checkSafe((item as TrainListItem.TypeSafeItem).data.id.toString(),
@@ -515,40 +605,6 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
             }
             "before" -> handlePayCheckResult(Any(), typeTag)
         }
-
-        /*lifecycleScope.launch {
-            try {
-
-                if (payResponse.code == 1) {
-                    val payData = payResponse.data
-                    if (payData != null) {
-                        // 需要支付
-                        val intent = Intent(this@TrainListActivity, PayDetailActivity::class.java)
-                        intent.putExtra("name", item.name)
-                        intent.putExtra("id", item.id)
-                        intent.putExtra("money", payData.money)
-                        intent.putExtra("type", typeTag)
-                        intent.putExtra("usualpaytype", payData.usualpaytype)
-                        startActivity(intent)
-                    }
-                } else {
-                    if (payResponse.msg == "不需要支付") {
-                        // 跳人脸识别
-                        val intent = Intent(this@TrainListActivity, FaceCheckActivity::class.java)
-                        intent.putExtra("safetyPlanId", item.id)
-                        intent.putExtra("name", item.name)
-                        intent.putExtra("number", item.number)
-                        intent.putExtra("type", typeTag)
-                        intent.putExtra("faceType", "start")
-                        startActivity(intent)
-                    } else {
-                        showToast(payResponse.msg)
-                    }
-                }
-            } catch (e: Exception) {
-                showToast("支付检查失败:${e.message}")
-            }
-        }*/
     }
 
     // 跳签字页面

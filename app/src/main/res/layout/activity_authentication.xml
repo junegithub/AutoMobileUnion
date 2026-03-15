@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5"
+    android:padding="20dp">
+
+    <!-- 顶部标题栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="认证"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 主内容区 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="20dp"
+            android:layout_marginTop="20dp"
+            android:elevation="8dp"
+            android:radius="14dp">
+
+            <!-- 身份证正面照片上传 -->
+            <RelativeLayout
+                android:id="@+id/rl_card_img"
+                android:layout_width="match_parent"
+                android:layout_height="210dp"
+                android:layout_marginBottom="15dp"
+                android:background="#F5F5F5"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_card_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_card_img_placeholder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ps_ic_camera"
+                        android:tint="#3DA4FF"/>
+
+                    <TextView
+                        android:id="@+id/tv_card_img_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="身份证正面照片（必填）"
+                        android:textSize="14sp"
+                        android:textColor="#394462"
+                        android:layout_marginTop="14dp"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- 身份证反面照片上传 -->
+            <RelativeLayout
+                android:id="@+id/rl_car_img"
+                android:layout_width="match_parent"
+                android:layout_height="210dp"
+                android:layout_marginBottom="15dp"
+                android:background="#F5F5F5"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_car_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_car_img_placeholder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ps_ic_camera"
+                        android:tint="#3DA4FF"/>
+
+                    <TextView
+                        android:id="@+id/tv_car_img_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="身份证反面照片（必填）"
+                        android:textSize="14sp"
+                        android:textColor="#394462"
+                        android:layout_marginTop="14dp"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- 初领日期 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*"
+                    android:textColor="#FF445A"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="初领日期"
+                    android:textSize="14sp"
+                    android:textColor="#394462"
+                    android:layout_marginLeft="2dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_register_time"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#F4F5FA"
+                android:padding="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_register_time"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="请选择初领日期"
+                    android:textColorHint="#D7D8DB"
+                    android:textSize="14sp"
+                    android:focusable="false"/>
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_arrow_down"
+                    android:tint="#D7D8DB"/>
+            </LinearLayout>
+
+            <!-- 领证日期 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*"
+                    android:textColor="#FF445A"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="领证日期"
+                    android:textSize="14sp"
+                    android:textColor="#394462"
+                    android:layout_marginLeft="2dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_overtime"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#F4F5FA"
+                android:padding="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_overtime"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="请选择领证日期"
+                    android:textColorHint="#D7D8DB"
+                    android:textSize="14sp"
+                    android:focusable="false"/>
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_arrow_down"
+                    android:tint="#D7D8DB"/>
+            </LinearLayout>
+
+            <!-- 资格证有效年限 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*"
+                    android:textColor="#FF445A"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="资格证有效年限"
+                    android:textSize="14sp"
+                    android:textColor="#394462"
+                    android:layout_marginLeft="2dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#F4F5FA"
+                android:padding="10dp"
+                android:layout_marginBottom="20dp">
+
+                <EditText
+                    android:id="@+id/et_join_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:hint="请输入资格证有效年限"
+                    android:textColorHint="#D7D8DB"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <!-- 确认按钮 -->
+            <Button
+                android:id="@+id/btn_submit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="确 认"
+                android:textSize="16sp"
+                android:background="#3DA4FF"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="40dp"
+                android:elevation="4dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

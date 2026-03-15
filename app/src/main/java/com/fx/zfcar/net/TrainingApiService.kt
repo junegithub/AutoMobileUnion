@@ -294,6 +294,9 @@ interface TrainingApiService {
     @POST("api/training/evaluate")
     suspend fun evaluateClass(@Body request: EvaluateClassRequest): Response<TrainingBaseResponse<Any>>
 
+    @POST("api/training/subinfo")
+    suspend fun authentication(@Body request: AuthRequest): Response<TrainingBaseResponse<Any>>
+
     @GET("api/before/educationCertificate")
     suspend fun getBeforeEducationCertificate(): Response<TrainingBaseResponse<BeforeEducationCertificateData>>
 

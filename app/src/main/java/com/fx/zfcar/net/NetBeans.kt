@@ -2486,3 +2486,11 @@ data class PayOrderData(
     val partnerId: String?,
     val prepayId: String?
 )
+
+data class AuthRequest(
+    val cardimg: String,
+    val backcardimg: String,
+    val fristpracticetime: String,
+    val practicetime: String,
+    val year: String
+)
