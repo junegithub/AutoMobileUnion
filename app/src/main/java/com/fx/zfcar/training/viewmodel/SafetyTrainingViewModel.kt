@@ -32,6 +32,7 @@ import com.fx.zfcar.net.EpidemicRequest
 import com.fx.zfcar.net.JobAddRequest
 import com.fx.zfcar.net.JobViewData
 import com.fx.zfcar.net.MyJobListData
+import com.fx.zfcar.net.OrderListData
 import com.fx.zfcar.net.PayOrderData
 import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
 import com.fx.zfcar.net.QuestionOrderPayData
@@ -406,6 +407,14 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                       stateFlow: MutableStateFlow<ApiState<PayOrderData>>) {
         launchRequest(
             block = { vehicleRepository.creatPayOrder(params) },
+            stateFlow
+        )
+    }
+
+    fun getOrderList(page: Int,
+                      stateFlow: MutableStateFlow<ApiState<OrderListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getOrderList(page) },
             stateFlow
         )
     }

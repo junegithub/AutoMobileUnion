@@ -27,6 +27,7 @@ import com.fx.zfcar.training.drivelog.DriveLogActivity
 import com.fx.zfcar.training.exam.ExamPracticeActivity
 import com.fx.zfcar.training.jobs.JobsActivity
 import com.fx.zfcar.training.notice.NoticeActivity
+import com.fx.zfcar.training.pay.PayDetailActivity
 import com.fx.zfcar.training.safetycheck.CarSafetyCheckActivity
 import com.fx.zfcar.training.safetytraining.ExamManagerActivity
 import com.fx.zfcar.training.safetytraining.TrainListActivity

@@ -116,7 +116,7 @@ interface TrainingApiService {
     ): Response<TrainingBaseResponse<PayOrderData>>
 
     @GET("api/training/orderlist")
-    suspend fun getOrderList(@Query("page") page: String): Response<TrainingBaseResponse<OrderListData>>
+    suspend fun getOrderList(@Query("page") page: Int): Response<TrainingBaseResponse<OrderListData>>
 
     @GET("api/dailysafety/safeFace")
     suspend fun safeFace(

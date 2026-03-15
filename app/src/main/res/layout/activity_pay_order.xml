@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- 顶部导航栏 -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="支付订单"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:src="@drawable/arrow_back"
+            android:tint="@color/black"
+            android:layout_gravity="start"
+            android:padding="8dp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- 订单列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_order_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="20dp"/>
+
+    <!-- 加载更多布局 -->
+    <TextView
+        android:id="@+id/tv_load_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="上拉加载更多"
+        android:textSize="14sp"
+        android:textColor="@color/text_gray"
+        android:gravity="center"
+        android:padding="15dp"
+        android:visibility="visible"/>
+
+    <!-- 空数据提示 -->
+    <LinearLayout
+        android:id="@+id/ll_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="50dp">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_empty_data"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="数据为空"
+            android:textSize="14sp"
+            android:textColor="@color/text_gray"
+            android:layout_marginTop="10dp"/>
+    </LinearLayout>
+
+</LinearLayout>

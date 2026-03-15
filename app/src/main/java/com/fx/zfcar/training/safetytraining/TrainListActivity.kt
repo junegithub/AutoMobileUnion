@@ -24,7 +24,7 @@ import com.fx.zfcar.net.SubjectListData
 import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.net.SubjectPayData
 import com.fx.zfcar.net.TrainingOtherInfo
-import com.fx.zfcar.training.PayDetailActivity
+import com.fx.zfcar.training.pay.PayDetailActivity
 import com.fx.zfcar.training.adapter.TrainListAdapter
 import com.fx.zfcar.training.adapter.TrainListItem
 import com.fx.zfcar.training.notice.SignatureActivity

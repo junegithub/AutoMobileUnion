@@ -1,5 +1,6 @@
-package com.fx.zfcar.training
+package com.fx.zfcar.training.pay
 
+import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -155,8 +156,8 @@ class PayDetailActivity : AppCompatActivity() {
 
         // 支付记录点击
         binding.tvPayHistory.setOnClickListener {
-//            val intent = Intent(this, PayListActivity::class.java)
-//            startActivity(intent)
+            val intent = Intent(this, PayOrderActivity::class.java)
+            startActivity(intent)
         }
 
         // 立即支付按钮
@@ -249,7 +250,7 @@ class PayDetailActivity : AppCompatActivity() {
     private fun showPayMethodDialog(isYearPay: Boolean) {
         val dialog = AlertDialog.Builder(this)
             .setTitle("选择支付方式")
-            .setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, payMethods)) { _, which ->
+            .setAdapter(ArrayAdapter(this, R.layout.simple_list_item_1, payMethods)) { _, which ->
                 if (isYearPay) {
                     // 年度支付
                     yearAllPay(which)

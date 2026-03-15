@@ -146,4 +146,8 @@
     <color name="success_bg">#B0E8CF</color>
     <color name="success_border">#00874B</color>
     <color name="text_primary">#394462</color>
+
+    <color name="color_3DA4FF">#3DA4FF</color>
+    <color name="color_study_ing">#FF5A6D</color> <!-- 未支付红色 -->
+    <color name="color_study_now">#17A83E</color> <!-- 已支付绿色 -->
 </resources>

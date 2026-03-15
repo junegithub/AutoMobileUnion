@@ -65,7 +65,7 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun yearPay(params: Map<String, Any>) =
         apiService.yearPay(params)
 
-    suspend fun getOrderList(page: String) = apiService.getOrderList(page)
+    suspend fun getOrderList(page: Int) = apiService.getOrderList(page)
 
     suspend fun safeFace(imgurl: String, trainingPublicPlanId: Int, type: String) =
         apiService.safeFace(imgurl, trainingPublicPlanId, type)
