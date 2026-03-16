@@ -1430,7 +1430,12 @@ data class MeetingViewData(
     val othercongtent: String?,
     val meettype: String,
     val studytype: Int,
-    val signfile: List<Any>
+    val signfile: List<SignFile>
+)
+
+data class SignFile(
+    val type: String,          // 0-签名，1-拍照
+    val imgurl: String         // 文件URL
 )
 
 data class SubjectListData(

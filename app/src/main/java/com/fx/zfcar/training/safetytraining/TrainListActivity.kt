@@ -25,6 +25,7 @@ import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.net.SubjectPayData
 import com.fx.zfcar.net.TrainingOtherInfo
 import com.fx.zfcar.training.AuthenticationActivity
+import com.fx.zfcar.training.MeetingDetailActivity
 import com.fx.zfcar.training.pay.PayDetailActivity
 import com.fx.zfcar.training.adapter.TrainListAdapter
 import com.fx.zfcar.training.adapter.TrainListItem
@@ -576,12 +577,12 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
 
     override fun onMeetingClick(item: MeetingItem) {
         // 跳会议页面
-//        val intent = Intent(this, MeetingActivity::class.java)
-//        intent.putExtra("id", item.id)
-//        intent.putExtra("name", item.name)
-//        intent.putExtra("address", item.address)
-//        intent.putExtra("starttime", item.starttime)
-//        intent.putExtra("status", item.studytype)
+        val intent = Intent(this, MeetingDetailActivity::class.java)
+        intent.putExtra("id", item.id)
+        intent.putExtra("name", item.name)
+        intent.putExtra("address", item.address)
+        intent.putExtra("starttime", item.starttime)
+        intent.putExtra("status", item.studytype)
         startActivity(intent)
     }
 

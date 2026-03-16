@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <!-- 顶部标题栏 -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="会议详情"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:layout_gravity="center"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- 滚动内容区 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 会议主题 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="会议主题"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/tv_meeting_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:padding="10dp"
+                android:background="#FFFFFF"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- 会议时间 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="会议时间"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/tv_meeting_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:padding="10dp"
+                android:background="#FFFFFF"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- 会议地址 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="会议地址"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/tv_meeting_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:padding="10dp"
+                android:background="#FFFFFF"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- 会议内容 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="会议内容"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/tv_meeting_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"/>
+            </androidx.core.widget.NestedScrollView>
+
+            <!-- 会议附件 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="会议附件"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+
+            <LinearLayout
+                android:id="@+id/ll_attachments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- 会议签名区域 -->
+            <LinearLayout
+                android:id="@+id/ll_sign_area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="会议签名"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <!-- 签名画板 -->
+                <FrameLayout
+                    android:id="@+id/fl_sign_pad"
+                    android:layout_width="match_parent"
+                    android:layout_height="175dp"
+                    android:background="#FFFFFF"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="visible">
+
+                    <com.github.gcacace.signaturepad.views.SignaturePad
+                        android:id="@+id/signature_pad"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#FFFFFF"/>
+                </FrameLayout>
+
+                <!-- 已签名图片 -->
+                <ImageView
+                    android:id="@+id/iv_sign_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="175dp"
+                    android:background="#FFFFFF"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"/>
+
+                <!-- 签名按钮 -->
+                <LinearLayout
+                    android:id="@+id/ll_sign_buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="20dp">
+
+                    <Button
+                        android:id="@+id/btn_reset_sign"
+                        android:layout_width="120dp"
+                        android:layout_height="40dp"
+                        android:text="重写"
+                        android:textSize="15sp"
+                        android:textColor="#666666"
+                        android:background="#EEEEEE"/>
+
+                    <Button
+                        android:id="@+id/btn_save_sign"
+                        android:layout_width="120dp"
+                        android:layout_height="40dp"
+                        android:text="保存"
+                        android:textSize="15sp"
+                        android:textColor="#FFFFFF"
+                        android:background="#008EF6"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 会议拍照区域 -->
+            <LinearLayout
+                android:id="@+id/ll_photo_area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="会议拍照"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <!-- 拍照按钮 -->
+                <Button
+                    android:id="@+id/btn_take_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="拍照"
+                    android:textSize="15sp"
+                    android:textColor="#FFFFFF"
+                    android:background="#3DA4FF"
+                    android:layout_marginBottom="10dp"/>
+
+                <!-- 已拍照片 -->
+                <ImageView
+                    android:id="@+id/iv_photo_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

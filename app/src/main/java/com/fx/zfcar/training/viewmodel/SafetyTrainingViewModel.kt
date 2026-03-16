@@ -32,6 +32,7 @@ import com.fx.zfcar.net.DangerPostRequest
 import com.fx.zfcar.net.EpidemicRequest
 import com.fx.zfcar.net.JobAddRequest
 import com.fx.zfcar.net.JobViewData
+import com.fx.zfcar.net.MeetingViewData
 import com.fx.zfcar.net.MyJobListData
 import com.fx.zfcar.net.OrderListData
 import com.fx.zfcar.net.PayOrderData
@@ -424,6 +425,14 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                      stateFlow: MutableStateFlow<ApiState<Any>>) {
         launchRequest(
             block = { vehicleRepository.authentication(request) },
+            stateFlow
+        )
+    }
+
+    fun getMeetingView(id: String,
+                             stateFlow: MutableStateFlow<ApiState<MeetingViewData>>) {
+        launchRequest(
+            block = { vehicleRepository.getMeetingView(id) },
             stateFlow
         )
     }

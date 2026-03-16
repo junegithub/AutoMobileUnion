@@ -145,6 +145,9 @@ dependencies {
     // 权限处理
     implementation("com.guolindev.permissionx:permissionx:1.8.1")
 
+    implementation("org.jsoup:jsoup:1.17.2")
+    implementation("com.github.gcacace:signature-pad:1.3.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
