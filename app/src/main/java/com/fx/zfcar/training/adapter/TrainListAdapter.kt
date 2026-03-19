@@ -19,6 +19,7 @@ import com.fx.zfcar.net.BeforeSubjectItem
 import com.fx.zfcar.net.OldSafetyPlan
 import com.fx.zfcar.net.SafetyPlan
 import com.fx.zfcar.net.SubjectItem
+import com.fx.zfcar.util.PressEffectUtils
 
 sealed class TrainListItem {
     data class TypeSafeItem(val data: SafetyPlan) : TrainListItem()
@@ -96,9 +97,11 @@ class TrainListAdapter() : BaseQuickAdapter<TrainListItem, RecyclerView.ViewHold
             }
 
             // 点击事件
+            PressEffectUtils.setCommonPressEffect(binding.tvStudy)
             binding.tvStudy.setOnClickListener {
                 onItemClickListener?.onStudyClick(item, "daily")
             }
+            PressEffectUtils.setCommonPressEffect(binding.tvExam)
             binding.tvExam.setOnClickListener {
                 onItemClickListener?.onExamClick(item)
             }
@@ -121,6 +124,7 @@ class TrainListAdapter() : BaseQuickAdapter<TrainListItem, RecyclerView.ViewHold
             }
 
             // 点击事件：直接跳人脸识别
+            PressEffectUtils.setCommonPressEffect(binding.tvStudy)
             binding.tvStudy.setOnClickListener {
                 onItemClickListener?.onStudyClick(item, "before")
             }
@@ -143,6 +147,7 @@ class TrainListAdapter() : BaseQuickAdapter<TrainListItem, RecyclerView.ViewHold
             )
 
             // 点击事件
+            PressEffectUtils.setCommonPressEffect(binding.root)
             binding.root.setOnClickListener {
                 onItemClickListener?.onMeetingClick(data)
             }
@@ -175,6 +180,7 @@ class TrainListAdapter() : BaseQuickAdapter<TrainListItem, RecyclerView.ViewHold
             if (data.jxstatus == "0") {
                 binding.tvAuth.visibility = View.VISIBLE
                 binding.tvStudy.visibility = View.GONE
+                PressEffectUtils.setCommonPressEffect(binding.tvAuth)
                 binding.tvAuth.setOnClickListener {
                     onItemClickListener?.onAuthClick(data)
                 }
@@ -193,6 +199,7 @@ class TrainListAdapter() : BaseQuickAdapter<TrainListItem, RecyclerView.ViewHold
                     if (data.paystatus == 1) R.drawable.bg_btn_green else R.drawable.bg_btn_gray
                 )
 
+                PressEffectUtils.setCommonPressEffect(binding.tvStudy)
                 binding.tvStudy.setOnClickListener {
                     onItemClickListener?.onStudyClick(item, "subject")
                 }

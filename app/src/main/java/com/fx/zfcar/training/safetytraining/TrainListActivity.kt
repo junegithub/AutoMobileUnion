@@ -245,8 +245,8 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                             category_id = state.data.category_id
                             // 检查认证状态
                             if (state.data.yzstatus != 1) {
-//                                startActivity(Intent(this@TrainListActivity, AvatarActivity::class.java))
-//                                finish()
+                                startActivity(Intent(this@TrainListActivity, UserCenterActivity::class.java))
+                                finish()
                             }
                         }
                     }

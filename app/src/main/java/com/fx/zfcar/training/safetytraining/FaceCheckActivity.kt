@@ -609,7 +609,7 @@ class FaceCheckActivity : AppCompatActivity() {
         SPUtils.save("dailyId", id)
 
         val intent = Intent(this, SignatureActivity::class.java)
-        intent.putExtra("from", "/pages/train/trainList/daily")
+        intent.putExtra("from", "trainListDaily")
         intent.putExtra("fill", "dailySign")
         startActivity(intent)
         finish()
