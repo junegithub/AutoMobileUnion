@@ -159,9 +159,11 @@ class ExamManagerActivity : AppCompatActivity() {
     // 初始化视图
     private fun initView() {
         // 设置标题栏
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.title = "考试管理"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.titleLayout.tvTitle.text = "考试管理"
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        binding.titleLayout.tvTitle.setOnClickListener {
+            finish()
+        }
 
         PressEffectUtils.setCommonPressEffect(binding.btnCheckTest)
         PressEffectUtils.setCommonPressEffect(binding.btnGoTest)

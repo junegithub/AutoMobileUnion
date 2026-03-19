@@ -16,6 +16,7 @@ import com.fx.zfcar.net.UploadFileData
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
+import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ToastUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.github.gcacace.signaturepad.views.SignaturePad
@@ -65,6 +66,11 @@ class MeetingDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMeetingDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.titleLayout.tvTitle.text = "会议详情"
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        binding.titleLayout.tvTitle.setOnClickListener {
+            finish()
+        }
 
         meetingId = intent.getIntExtra("id", 0)
         initSignaturePad()
@@ -102,6 +108,9 @@ class MeetingDetailActivity : AppCompatActivity() {
      */
     private fun initListeners() {
         // 重写签名
+        PressEffectUtils.setCommonPressEffect(binding.btnResetSign)
+        PressEffectUtils.setCommonPressEffect(binding.btnSaveSign)
+        PressEffectUtils.setCommonPressEffect(binding.btnTakePhoto)
         binding.btnResetSign.setOnClickListener {
             binding.signaturePad.clear()
             hasSign = false
@@ -118,11 +127,6 @@ class MeetingDetailActivity : AppCompatActivity() {
         // 拍照按钮
         binding.btnTakePhoto.setOnClickListener {
             takePhoto()
-        }
-
-        // 返回按钮
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
         }
     }
 

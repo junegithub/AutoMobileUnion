@@ -153,6 +153,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
         binding.rvTrainList.layoutManager = LinearLayoutManager(this)
         trainAdapter.setCurrentType(currentType)
         trainAdapter.submitList(trainDataList)
+        trainAdapter.onItemClickListener = this
 
         // 仅保留上拉加载更多（移除下拉刷新）
         binding.rvTrainList.addOnScrollListener(object : RecyclerView.OnScrollListener() {

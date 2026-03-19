@@ -6,11 +6,9 @@
     android:paddingTop="@dimen/dp_24">
 
     <!-- 标题栏 -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"/>
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/fragment_title" />
 
     <!-- 考试结果区域 -->
     <LinearLayout

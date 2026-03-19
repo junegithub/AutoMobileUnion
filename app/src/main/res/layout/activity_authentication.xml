@@ -4,23 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F5F5F5"
-    android:padding="20dp">
+    android:paddingTop="@dimen/dp_24">
 
     <!-- 顶部标题栏 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:gravity="center"
-        android:background="#FFFFFF">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="认证"
-            android:textSize="18sp"
-            android:textColor="#000000"
-            android:textStyle="bold"/>
-    </LinearLayout>
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/fragment_title" />
 
     <!-- 主内容区 -->
     <ScrollView

@@ -18,6 +18,7 @@ import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.DialogUtils
+import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ToastUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.luck.picture.lib.basic.PictureSelector
@@ -69,6 +70,12 @@ class AuthenticationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthenticationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.titleLayout.tvTitle.text = "认证"
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        binding.titleLayout.tvTitle.setOnClickListener {
+            finish()
+        }
 
         // 获取页面传参
         id = intent.getStringExtra("id")
