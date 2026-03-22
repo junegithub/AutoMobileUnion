@@ -150,4 +150,7 @@
     <color name="color_3DA4FF">#3DA4FF</color>
     <color name="color_study_ing">#FF5A6D</color> <!-- 未支付红色 -->
     <color name="color_study_now">#17A83E</color> <!-- 已支付绿色 -->
+
+    <color name="study_fail">#FF5A6D</color>
+    <color name="study_success">#17A83E</color>
 </resources>

@@ -1,5 +1,6 @@
 package com.fx.zfcar.training.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -90,9 +91,9 @@ class StudyDetailsFragment : BaseUserFragment() {
             )
         }
         studyAdapter = StudyDetailAdapter(requireActivity()) { itemId ->
-//            val intent = Intent(this, StudyRecordActivity::class.java)
-//            intent.putExtra("id", blockId)
-//            startActivity(intent)
+            val intent = Intent(requireActivity(), StudyRecordActivity::class.java)
+            intent.putExtra("id", itemId)
+            startActivity(intent)
         }
 
 

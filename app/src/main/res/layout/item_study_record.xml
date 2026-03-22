@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:padding="24dp"
+    android:layout_marginBottom="20dp"
+    android:elevation="8dp"
+    android:radius="20dp">
+
+    <!-- 课件名称 -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textColor="#000000"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- 学习时间 -->
+    <TextView
+        android:id="@+id/tv_study_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#3DA4FF"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- 日期 -->
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- 状态 -->
+    <TextView
+        android:id="@+id/tv_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"/>
+
+</LinearLayout>

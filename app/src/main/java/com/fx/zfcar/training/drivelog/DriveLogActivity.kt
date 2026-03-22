@@ -317,7 +317,7 @@ class DriveLogActivity : AppCompatActivity() {
         SPUtils.save(KEY_DRAFT, Gson().toJson(draft)) // 实际项目建议用Gson转JSON
 
         // 跳转到编辑页面
-//        startActivity(Intent(this, DriveStageActivity::class.java))
+        startActivity(Intent(this, DriveLogStageActivity::class.java))
     }
 
     /**

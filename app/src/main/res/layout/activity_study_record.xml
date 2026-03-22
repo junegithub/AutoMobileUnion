@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/dp_24"
+    android:background="#F5F5F5">
+
+    <!-- 顶部导航栏 + 搜索框 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
+        android:padding="10dp"
+        android:gravity="center_vertical">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/arrow_back"
+            android:layout_marginRight="10dp"
+            app:tint="@color/black" />
+
+        <!-- 搜索框 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="请输入课件名称">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 搜索按钮 -->
+        <TextView
+            android:id="@+id/tv_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="搜索"
+            android:textColor="#3DA4FF"
+            android:textSize="16sp"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
+
+    <!-- 学习记录列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_study_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="20dp"/>
+
+    <!-- 加载更多提示 -->
+    <TextView
+        android:id="@+id/tv_load_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="上拉加载更多"
+        android:textSize="14sp"
+        android:textColor="#999999"
+        android:gravity="center"
+        android:padding="15dp"
+        android:visibility="visible"/>
+
+    <!-- 空数据提示 -->
+    <LinearLayout
+        android:id="@+id/ll_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_empty_data"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="数据为空"
+            android:textSize="14sp"
+            android:textColor="#999999"
+            android:layout_marginTop="10dp"/>
+    </LinearLayout>
+
+</LinearLayout>

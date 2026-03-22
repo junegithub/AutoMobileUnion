@@ -2499,3 +2499,20 @@ data class AuthRequest(
     val practicetime: String,
     val year: String
 )
+
+data class StudyListData(
+    val total: Int,
+    val rows: List<StudyRecord>
+)
+
+/**
+ * 学习记录实体
+ */
+data class StudyRecord(
+    val id: String,
+    val title: String,
+    val longtime: String,
+    var studytime: String = "",
+    val time: String,
+    val state: Int
+)

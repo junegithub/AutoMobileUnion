@@ -40,6 +40,7 @@ import com.fx.zfcar.net.PostSignImgData // 新增：提交签名
 import com.fx.zfcar.net.QuestionOrderPayData
 import com.fx.zfcar.net.SafetySignRequest
 import com.fx.zfcar.net.SingPostRequest
+import com.fx.zfcar.net.StudyListData
 import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -305,6 +306,14 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     fun getStudySafetyList(month: String, stateFlow: MutableStateFlow<ApiState<StudyDetailData>>) {
         launchRequest(
             block = { vehicleRepository.getStudySafetyList(month) },
+            stateFlow
+        )
+    }
+
+    fun getStudyList(searchname: String, training_safetyplan_id: String, page: Int,
+                     stateFlow: MutableStateFlow<ApiState<StudyListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getStudyList(searchname, training_safetyplan_id, page) },
             stateFlow
         )
     }

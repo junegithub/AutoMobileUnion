@@ -15,6 +15,7 @@ import com.fx.zfcar.net.CompanyPayData
 import com.fx.zfcar.net.PayOrderData
 import com.fx.zfcar.net.UserInfoData
 import com.fx.zfcar.training.safetytraining.FaceCheckActivity
+import com.fx.zfcar.training.safetytraining.TrainListActivity
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.PayUtils
 import com.fx.zfcar.viewmodel.ApiState
@@ -538,11 +539,11 @@ class PayDetailActivity : AppCompatActivity() {
             is ApiState.Success -> {
                 hideLoading()
                 showToast("企业支付成功")
-//                val intent = Intent(this, TrainHomeActivity::class.java).apply {
-//                    putExtra("type", "1")
-//                    putExtra("title", "岗前培训")
-//                }
-//                startActivity(intent)
+                val intent = Intent(this, TrainListActivity::class.java).apply {
+                    putExtra("type", "1")
+                    putExtra("title", "岗前培训")
+                }
+                startActivity(intent)
                 finish()
             }
             is ApiState.Error -> {
@@ -569,11 +570,11 @@ class PayDetailActivity : AppCompatActivity() {
                     PayUtils.callWeChatPay(this, state.data) { isSuccess, msg ->
                         if (isSuccess) {
                             showToast("支付成功")
-//                        val intent = Intent(this, TrainHomeActivity::class.java).apply {
-//                            putExtra("type", "1")
-//                            putExtra("title", "岗前培训")
-//                        }
-//                        startActivity(intent)
+                        val intent = Intent(this, TrainListActivity::class.java).apply {
+                            putExtra("type", "1")
+                            putExtra("title", "岗前培训")
+                        }
+                        startActivity(intent)
                             finish()
                         } else {
                             showToast(msg)

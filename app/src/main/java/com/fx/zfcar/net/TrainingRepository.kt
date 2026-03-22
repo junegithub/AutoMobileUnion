@@ -180,6 +180,8 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun getStudySafetyList(month: String) = apiService.getStudySafetyList(month)
 
+    suspend fun getStudyList(searchname: String, training_safetyplan_id: String, page: Int) = apiService.getStudyList(searchname, training_safetyplan_id, page)
+
     suspend fun getCarCheck() = apiService.getCarCheck()
 
     suspend fun carCheckPost(request: CarCheckPostRequest) = apiService.carCheckPost(request)

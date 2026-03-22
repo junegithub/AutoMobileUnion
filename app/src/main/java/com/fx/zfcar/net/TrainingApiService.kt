@@ -303,6 +303,11 @@ interface TrainingApiService {
     @GET("api/user/studysafetylist")
     suspend fun getStudySafetyList(@Query("month") month: String): Response<TrainingBaseResponse<StudyDetailData>>
 
+    @GET("api/user/studylist")
+    suspend fun getStudyList(@Query("searchname") searchname: String,
+                                   @Query("training_safetyplan_id") training_safetyplan_id: String,
+                                   @Query("page") page: Int): Response<TrainingBaseResponse<StudyListData>>
+
     @GET("api/other/carcheck")
     suspend fun getCarCheck(): Response<TrainingBaseResponse<CarCheckData>>
 
