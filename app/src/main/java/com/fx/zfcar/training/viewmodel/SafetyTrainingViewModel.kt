@@ -3,7 +3,6 @@ package com.fx.zfcar.training.viewmodel
 import com.fx.zfcar.net.AuthRequest
 import com.fx.zfcar.net.BeforeEducationCertificateData
 import com.fx.zfcar.net.BeforeExamInfoData
-import com.fx.zfcar.net.BeforeSubCoursewareListData
 import com.fx.zfcar.net.CarNumSearchData
 import com.fx.zfcar.net.CompanyListData
 import com.fx.zfcar.net.CoursewareListData
@@ -42,6 +41,7 @@ import com.fx.zfcar.net.QuestionOrderPayData
 import com.fx.zfcar.net.SafetySignRequest
 import com.fx.zfcar.net.SingPostRequest
 import com.fx.zfcar.net.StudyListData
+import com.fx.zfcar.net.SubCoursewareListData
 import com.fx.zfcar.net.SubjectOrderData
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -466,9 +466,17 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     }
 
     fun getBeforeSubCoursewareList(page: String, trainingSafetyPlanId: String, number: String,
-                                   stateFlow: MutableStateFlow<ApiState<BeforeSubCoursewareListData>>) {
+                                   stateFlow: MutableStateFlow<ApiState<SubCoursewareListData>>) {
         launchRequest(
             block = { vehicleRepository.getBeforeSubCoursewareList(page, trainingSafetyPlanId, number) },
+            stateFlow
+        )
+    }
+
+    fun getSubCoursewareList(page: String, trainingSafetyPlanId: String, number: String,
+                                   stateFlow: MutableStateFlow<ApiState<SubCoursewareListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getSubCoursewareList(page, trainingSafetyPlanId, number) },
             stateFlow
         )
     }

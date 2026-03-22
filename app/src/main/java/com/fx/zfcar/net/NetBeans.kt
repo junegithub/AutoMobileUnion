@@ -1099,7 +1099,9 @@ data class CoursewareItem(
     val studytype: Int,
     val progress: Int,
     val studytime: Int,
-    val type_text: String
+    val type_text: String,
+    var time: String = "", // 格式化后的总时长
+    var studytime_text: String = "" // 格式化后的已学习时长
 )
 
 data class CoursewareViewData(

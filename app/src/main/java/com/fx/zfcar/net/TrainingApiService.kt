@@ -224,7 +224,7 @@ interface TrainingApiService {
         @Query("page") page: String,
         @Query("training_safetyplan_id") trainingSafetyPlanId: String,
         @Query("number") number: String
-    ): Response<TrainingBaseResponse<BeforeSubCoursewareListData>>
+    ): Response<TrainingBaseResponse<SubCoursewareListData>>
 
     @GET("api/before/coursewareview")
     suspend fun getBeforeCoursewareView(

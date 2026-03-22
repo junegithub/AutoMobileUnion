@@ -2,6 +2,7 @@ package com.fx.zfcar.training.safetytraining
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.view.View
@@ -10,14 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fx.zfcar.R
-import com.fx.zfcar.databinding.ActivityTrainCourseBinding
-import com.fx.zfcar.net.BeforeCoursewareItem
-import com.fx.zfcar.net.BeforePlanDetail
-import com.fx.zfcar.net.BeforeSubCoursewareListData
+import com.fx.zfcar.databinding.ActivityTrainCourseListBinding
+import com.fx.zfcar.net.CoursewareItem
+import com.fx.zfcar.net.SubCoursewareListData
+import com.fx.zfcar.net.SubjectPlanDetail
 import com.fx.zfcar.training.adapter.TrainCourseAdapter
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
-import com.fx.zfcar.util.DateUtil
+import com.fx.zfcar.util.DateUtil.secondToDate
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,20 +27,24 @@ import kotlinx.coroutines.launch
 import kotlin.getValue
 
 /**
- * 培训课程列表页面
+ * 培训课程列表页面（支持before/subject两种类型）
+ * 核心功能：
+ * 1. 两种课程类型切换（before/subject）
+ * 2. 下拉刷新、上拉加载更多
  * 3. 培训概览展示（总课时、学习进度）
  * 4. 课程状态展示、开始学习跳转
- * 5. 签到处理、定时重启逻辑
+ * 5. 定时重启、存储管理
  */
-class TrainCourseActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityTrainCourseBinding
+class TrainCourseListActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityTrainCourseListBinding
     private val viewModel by viewModels<SafetyTrainingViewModel>()
     private lateinit var courseAdapter: TrainCourseAdapter
 
     // 页面参数
     private var name: String = ""
     private var id: String = ""
-    private var fromUrl: String = ""
+    private var number: String = ""
+    private var type: String = "" // before/subject
 
     // 分页参数
     private var page = 1
@@ -52,21 +57,21 @@ class TrainCourseActivity : AppCompatActivity() {
     private var loadMoreState = LoadMoreState.LOAD_MORE
 
     // 数据缓存
-    private val courseList = mutableListOf<BeforeCoursewareItem>()
-    private var trainAbout: BeforePlanDetail? = null
+    private val courseList = mutableListOf<CoursewareItem>()
+    private var trainAbout: SubjectPlanDetail? = null
 
     // StateFlow状态管理
-    private val courseListState = MutableStateFlow<ApiState<BeforeSubCoursewareListData>>(ApiState.Loading)
-    private val signState = MutableStateFlow<ApiState<Boolean>>(ApiState.Loading)
+    private val courseListState = MutableStateFlow<ApiState<SubCoursewareListData>>(ApiState.Loading)
     private val timeConfigState = MutableStateFlow<ApiState<Int>>(ApiState.Loading)
 
     // 定时器
-    private var timer5: android.os.CountDownTimer? = null
+    private var timer5: CountDownTimer? = null
     private val handler = Handler(Looper.getMainLooper())
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityTrainCourseBinding.inflate(layoutInflater)
+        binding = ActivityTrainCourseListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // 获取页面参数
@@ -84,9 +89,6 @@ class TrainCourseActivity : AppCompatActivity() {
         // 监听状态变化
         observeStates()
 
-        // 处理从签字页面返回的逻辑
-        handleSignReturn()
-
         // 初始化课程列表
         loadCourseList()
     }
@@ -96,32 +98,33 @@ class TrainCourseActivity : AppCompatActivity() {
      */
     private fun getIntentParams() {
         intent?.apply {
-            fromUrl = getStringExtra("fromUrl") ?: ""
             name = getStringExtra("name") ?: ""
             id = getStringExtra("id") ?: ""
+            number = getStringExtra("number") ?: ""
+            type = getStringExtra("type") ?: ""
         }
 
-        // 从SharedPreferences获取参数（签字返回场景）
-        if (fromUrl == "sign") {
-            name = SPUtils.get("beforeName")
-            id = SPUtils.get("id")
-        } else {
-            // 保存页面滚动位置
-            SPUtils.save("pageScoll", 0)
-        }
+        // 保存页面滚动位置
+        SPUtils.save("pageScoll", 0)
     }
 
     /**
      * 初始化RecyclerView
      */
     private fun initRecyclerView() {
-        courseAdapter = TrainCourseAdapter(this) { course ->
-            // 开始学习点击事件
-            startStudy(course)
-        }
+        courseAdapter = TrainCourseAdapter(
+            context = this,
+            type = type,
+            trainAboutId = id,
+            number = number,
+            onStartStudy = { course ->
+                // 开始学习点击事件
+                startStudy(course)
+            }
+        )
 
         binding.rvCourseList.apply {
-            layoutManager = LinearLayoutManager(this@TrainCourseActivity)
+            layoutManager = LinearLayoutManager(this@TrainCourseListActivity)
             adapter = courseAdapter
 
             // 上拉加载更多监听
@@ -187,29 +190,6 @@ class TrainCourseActivity : AppCompatActivity() {
             }
         }
 
-        // 监听签到状态
-        lifecycleScope.launch {
-            signState.collectLatest { apiState ->
-                when (apiState) {
-                    is ApiState.Success -> {
-                        if (apiState.data == false) {
-                            finish()
-                        } else {
-                            // 检查是否需要跳转到考试页面
-                            checkExamRedirect()
-                        }
-                    }
-
-                    is ApiState.Error -> {
-                        showToast(apiState.msg)
-                        finish()
-                    }
-
-                    else -> {}
-                }
-            }
-        }
-
         // 监听时间配置状态
         lifecycleScope.launch {
             timeConfigState.collectLatest { apiState ->
@@ -230,17 +210,6 @@ class TrainCourseActivity : AppCompatActivity() {
     }
 
     /**
-     * 处理从签字页面返回的逻辑
-     */
-    private fun handleSignReturn() {
-        if (fromUrl == "sign") {
-            // 提交签到
-            val signFile = SPUtils.get("beforeSign")
-            viewModel.postBeforeSign(id, signFile, signState)
-        }
-    }
-
-    /**
      * 加载课程列表
      */
     private fun loadCourseList(isLoadMore: Boolean = false) {
@@ -249,7 +218,11 @@ class TrainCourseActivity : AppCompatActivity() {
             updateLoadMoreText()
         }
 
-        viewModel.getBeforeSubCoursewareList(page.toString(), id, "", courseListState)
+        if (type == "before") {
+            viewModel.getBeforeSubCoursewareList(page.toString(), id, number, courseListState)
+        } else {
+            viewModel.getSubCoursewareList(page.toString(), id, number, courseListState)
+        }
     }
 
     /**
@@ -270,15 +243,12 @@ class TrainCourseActivity : AppCompatActivity() {
     /**
      * 处理课程列表加载成功
      */
-    private fun handleCourseListSuccess(data: BeforeSubCoursewareListData) {
+    private fun handleCourseListSuccess(data: SubCoursewareListData) {
         binding.swipeRefreshLayout.isRefreshing = false
 
         // 更新培训概览
         trainAbout = data.row
         updateTrainAboutUI()
-
-        // 保存是否需要签字
-        SPUtils.save("needBeforeSign", data.row.issign)
 
         // 更新分页信息
         totalPage = data.total
@@ -286,8 +256,8 @@ class TrainCourseActivity : AppCompatActivity() {
         if (data.list.isNotEmpty()) {
             // 格式化时长并添加数据
             val formattedList = data.list.map { course ->
-                course.time = DateUtil.secondToDate(course.longtime)
-                course.studytime_text = DateUtil.secondToDate(course.studytime)
+                course.time = secondToDate(course.longtime.toInt())
+                course.studytime_text = secondToDate(course.studytime.toInt())
                 course
             }
 
@@ -374,30 +344,18 @@ class TrainCourseActivity : AppCompatActivity() {
     /**
      * 开始学习跳转
      */
-    private fun startStudy(course: BeforeCoursewareItem) {
+    private fun startStudy(course: CoursewareItem) {
         val intent = Intent(this, CourseDetailActivity::class.java).apply {
-            putExtra("safetyPlanId", id)
+            putExtra("safetyPlanId", trainAbout?.id ?: id)
             putExtra("subjectId", course.id)
             putExtra("name", course.name)
-            // 可添加next参数逻辑
+
+            // 根据类型添加不同参数
+            if (type == "subject") {
+                putExtra("number", number)
+            }
         }
         startActivity(intent)
-    }
-
-    /**
-     * 检查考试跳转
-     */
-    private fun checkExamRedirect() {
-        val beforeExamsId = SPUtils.getInt("beforeExamsId")
-        if (beforeExamsId > 0) {
-            val intent = Intent(this, ExamManagerActivity::class.java).apply {
-                putExtra("id", beforeExamsId.toString())
-                putExtra("type", "before")
-                putExtra("training_safetyplan_id", id)
-                putExtra("name", SPUtils.get("beforeName"))
-            }
-            startActivity(intent)
-        }
     }
 
     /**
@@ -414,13 +372,14 @@ class TrainCourseActivity : AppCompatActivity() {
     private fun setupAutoRestartTimer(delayMillis: Long) {
         timer5?.cancel()
 
-        timer5 = object : android.os.CountDownTimer(delayMillis, 1000) {
+        timer5 = object : CountDownTimer(delayMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
 
             override fun onFinish() {
                 // 清空存储并重启应用
                 SPUtils.clear()
-                // 重启应用逻辑
+
+                // 重启应用
                 val intent = packageManager.getLaunchIntentForPackage(packageName)
                 intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)

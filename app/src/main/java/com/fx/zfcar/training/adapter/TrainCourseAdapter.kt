@@ -8,15 +8,19 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fx.zfcar.R
 import com.fx.zfcar.databinding.ItemTrainCourseBinding
-import com.fx.zfcar.net.BeforeCoursewareItem
+import com.fx.zfcar.net.CoursewareItem
 
 /**
  * 培训课程列表适配器
+ * 支持before/subject两种类型课程展示
  */
 class TrainCourseAdapter(
     private val context: Context,
-    private val onStartStudy: (BeforeCoursewareItem) -> Unit
-) : ListAdapter<BeforeCoursewareItem, TrainCourseAdapter.CourseViewHolder>(CourseDiffCallback()) {
+    private val type: String,
+    private val trainAboutId: String,
+    private val number: String,
+    private val onStartStudy: (CoursewareItem) -> Unit
+) : ListAdapter<CoursewareItem, TrainCourseAdapter.CourseViewHolder>(CourseDiffCallback()) {
 
     inner class CourseViewHolder(val binding: ItemTrainCourseBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -30,19 +34,22 @@ class TrainCourseAdapter(
             }
         }
 
-        fun bind(course: BeforeCoursewareItem) {
+        fun bind(course: CoursewareItem) {
+            // 设置课程类型和时间
             binding.tvCourseType.text = "${course.type_text}    ${course.time}"
+
+            // 设置课程名称
             binding.tvCourseName.text = course.name
 
             // 设置学习状态
             when (course.studytype) {
                 0 -> {
-                    // 未学习
+                    // 未学习 - 红色
                     binding.tvStudyStatus.text = "未学习"
                     binding.tvStudyStatus.setTextColor(context.resources.getColor(R.color.red, null))
                 }
                 1 -> {
-                    // 已学习
+                    // 已学习 - 绿色
                     val statusText = if (course.time == course.studytime_text) {
                         "已完成"
                     } else {
@@ -75,12 +82,12 @@ class TrainCourseAdapter(
     /**
      * 数据差异回调
      */
-    class CourseDiffCallback : DiffUtil.ItemCallback<BeforeCoursewareItem>() {
-        override fun areItemsTheSame(oldItem: BeforeCoursewareItem, newItem: BeforeCoursewareItem): Boolean {
+    class CourseDiffCallback : DiffUtil.ItemCallback<CoursewareItem>() {
+        override fun areItemsTheSame(oldItem: CoursewareItem, newItem: CoursewareItem): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: BeforeCoursewareItem, newItem: BeforeCoursewareItem): Boolean {
+        override fun areContentsTheSame(oldItem: CoursewareItem, newItem: CoursewareItem): Boolean {
             return oldItem == newItem
         }
     }
