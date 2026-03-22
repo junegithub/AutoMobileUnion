@@ -361,4 +361,7 @@ interface TrainingApiService {
 
     @POST("api/dailysafety/sing")
     suspend fun postSignImg(@Body request: SafetySignRequest): Response<TrainingBaseResponse<PostSignImgData>>
+
+    @POST("api/before/sing")
+    suspend fun postBeforeSign(@Body request: SafetySignRequest): Response<TrainingBaseResponse<Boolean>>
 }

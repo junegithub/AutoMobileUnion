@@ -464,12 +464,12 @@ class FaceCheckActivity : AppCompatActivity() {
                                     startActivity(intent)
                                 }
                             } else {
-//                                val intent = Intent(this@FaceCheckActivity, StudyBeforeActivity::class.java)
-//                                intent.putExtra("safetyPlanId", params["safetyPlanId"])
-//                                intent.putExtra("name", params["name"])
-//                                intent.putExtra("number", params["number"])
-//                                intent.putExtra("type", "before")
-//                                startActivity(intent)
+                                val intent = Intent(this@FaceCheckActivity, TrainCourseActivity::class.java)
+                                intent.putExtra("id", params["safetyPlanId"])
+                                intent.putExtra("name", params["name"])
+                                intent.putExtra("number", params["number"])
+                                intent.putExtra("type", "before")
+                                startActivity(intent)
                             }
                         }
                         finish()

@@ -3,6 +3,7 @@ package com.fx.zfcar.training.viewmodel
 import com.fx.zfcar.net.AuthRequest
 import com.fx.zfcar.net.BeforeEducationCertificateData
 import com.fx.zfcar.net.BeforeExamInfoData
+import com.fx.zfcar.net.BeforeSubCoursewareListData
 import com.fx.zfcar.net.CarNumSearchData
 import com.fx.zfcar.net.CompanyListData
 import com.fx.zfcar.net.CoursewareListData
@@ -200,6 +201,17 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                     stateFlow: MutableStateFlow<ApiState<PostSignImgData>>) {
         launchRequest(
             block = { vehicleRepository.postSignImg(SafetySignRequest(id, signfile)) },
+            stateFlow
+        )
+    }
+
+    /**
+     * 提交课前签到
+     */
+    fun postBeforeSign(id: String, signfile: String,
+                    stateFlow: MutableStateFlow<ApiState<Boolean>>) {
+        launchRequest(
+            block = { vehicleRepository.postBeforeSign(SafetySignRequest(id, signfile)) },
             stateFlow
         )
     }
@@ -442,6 +454,21 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                              stateFlow: MutableStateFlow<ApiState<MeetingViewData>>) {
         launchRequest(
             block = { vehicleRepository.getMeetingView(id) },
+            stateFlow
+        )
+    }
+
+    fun getConfigTime(stateFlow: MutableStateFlow<ApiState<Int>>) {
+        launchRequest(
+            block = { vehicleRepository.getConfigTime() },
+            stateFlow
+        )
+    }
+
+    fun getBeforeSubCoursewareList(page: String, trainingSafetyPlanId: String, number: String,
+                                   stateFlow: MutableStateFlow<ApiState<BeforeSubCoursewareListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getBeforeSubCoursewareList(page, trainingSafetyPlanId, number) },
             stateFlow
         )
     }

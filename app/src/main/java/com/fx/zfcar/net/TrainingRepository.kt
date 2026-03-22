@@ -207,6 +207,7 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun trainCompanyPay() = apiService.trainCompanyPay()
     suspend fun postSignImg(request: SafetySignRequest) = apiService.postSignImg(request)
+    suspend fun postBeforeSign(request: SafetySignRequest) = apiService.postBeforeSign(request)
 
     suspend fun creatPayOrder(params: Map<String, String>) =
         apiService.creatPayOrder(params)

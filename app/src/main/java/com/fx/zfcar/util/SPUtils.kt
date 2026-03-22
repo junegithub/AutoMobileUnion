@@ -103,4 +103,8 @@ object SPUtils {
     fun isAutoLogin(): Boolean {
         return getSP().getBoolean(KEY_AUTO_LOGIN, true)
     }
+
+    fun clear() {
+        getSP().edit().clear().apply()
+    }
 }

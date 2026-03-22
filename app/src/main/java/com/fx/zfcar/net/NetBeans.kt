@@ -1582,7 +1582,9 @@ data class BeforeCoursewareItem(
     val studytype: Int,
     val progress: Int,
     val studytime: Int,
-    val type_text: String
+    val type_text: String,
+    var time: String = "", // 格式化后的总时长
+    var studytime_text: String = "" // 格式化后的已学习时长
 )
 
 data class BeforePlanDetail(
@@ -2515,4 +2517,10 @@ data class StudyRecord(
     var studytime: String = "",
     val time: String,
     val state: Int
+)
+
+data class CourseListRequest(
+    val page: Int,
+    val training_safetyplan_id: String,
+    val number: String = ""
 )
