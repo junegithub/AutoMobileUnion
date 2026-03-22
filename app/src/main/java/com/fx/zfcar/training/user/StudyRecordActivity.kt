@@ -12,6 +12,7 @@ import com.fx.zfcar.net.StudyListData
 import com.fx.zfcar.net.StudyRecord
 import com.fx.zfcar.training.adapter.StudyRecordAdapter
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
+import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.drop
@@ -207,7 +208,7 @@ class StudyRecordActivity : AppCompatActivity() {
 
         // 格式化时长并添加数据
         val formattedList = data.rows.map { record ->
-            record.studytime = secondToDate(record.longtime.toInt())
+            record.studytime = DateUtil.secondToDate(record.longtime.toInt())
             record
         }
 
@@ -254,25 +255,6 @@ class StudyRecordActivity : AppCompatActivity() {
         // 空数据处理
         if (studyList.isEmpty()) {
             binding.llEmptyView.visibility = View.VISIBLE
-        }
-    }
-
-    /**
-     * 秒数转时分秒
-     */
-    private fun secondToDate(seconds: Int): String {
-        val h = seconds / 3600
-        val m = (seconds % 3600) / 60
-        val s = seconds % 60
-
-        val hStr = if (h < 10) "0$h" else h.toString()
-        val mStr = if (m < 10) "0$m" else m.toString()
-        val sStr = if (s < 10) "0$s" else s.toString()
-
-        return when {
-            h > 0 -> "${hStr}小时${mStr}分${sStr}秒"
-            m > 0 -> "${mStr}分${sStr}秒"
-            else -> "${sStr}秒"
         }
     }
 }

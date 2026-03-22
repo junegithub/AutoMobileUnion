@@ -21,6 +21,7 @@ import com.fx.zfcar.databinding.LayoutStage7Binding
 import com.fx.zfcar.net.CarCheckForm
 import com.fx.zfcar.net.CheckStage
 import com.fx.zfcar.training.adapter.ImageAdapter
+import com.fx.zfcar.training.drivelog.CarSearchActivity
 import com.fx.zfcar.util.BitmapUtils
 import kotlinx.coroutines.launch
 import java.util.*
@@ -172,8 +173,8 @@ class CarCheckStageActivity : AppCompatActivity() {
         // 步骤1：车牌号搜索
         stage1Binding.btnSearchCar.setOnClickListener {
             // 实际项目替换为车牌号搜索页面
-//            val intent = Intent(this, CarSearchActivity::class.java)
-//            startActivityForResult(intent, REQUEST_CODE_CAR_SEARCH)
+            val intent = Intent(this, CarSearchActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE_CAR_SEARCH)
         }
 
         // 步骤1：输入框监听

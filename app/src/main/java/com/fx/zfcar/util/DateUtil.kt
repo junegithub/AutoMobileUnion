@@ -176,4 +176,16 @@ object DateUtil {
             -1L
         }
     }
+
+    fun secondToDate(seconds: Int): String {
+        val h = seconds / 3600
+        val m = (seconds % 3600) / 60
+        val s = seconds % 60
+
+        return when {
+            h > 0 -> String.format("%02d小时%02d分%02d秒", h, m, s)
+            m > 0 -> String.format("%02d分%02d秒", m, s)
+            else -> String.format("%02d秒", s)
+        }
+    }
 }

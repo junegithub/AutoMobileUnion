@@ -15,6 +15,7 @@ import com.fx.zfcar.databinding.ActivityDangerCheckDetailBinding
 import com.fx.zfcar.net.DangerPostRequest
 import com.fx.zfcar.net.TrainingOtherInfo
 import com.fx.zfcar.net.UserInfoDetail
+import com.fx.zfcar.training.drivelog.CarSearchActivity
 import com.fx.zfcar.training.notice.SignatureActivity
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
@@ -31,7 +32,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DangerCheckDetailActivity : AppCompatActivity() {
-    // 视图绑定
+
+    private val REQUEST_CODE_CAR_SEARCH = 1001
+
     private lateinit var binding: ActivityDangerCheckDetailBinding
 
     // ViewModel
@@ -424,9 +427,8 @@ class DangerCheckDetailActivity : AppCompatActivity() {
         // 2. 车牌号搜索
         binding.btnSearchCarNum.setOnClickListener {
             saveTempForm()
-//            val intent = Intent(this, SearchCarNumActivity::class.java)
-//            intent.putExtra("from", "/pages/driveCompany/dangerCheck/detail/detail")
-//            startActivity(intent)
+            val intent = Intent(this, CarSearchActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE_CAR_SEARCH)
         }
 
         // 3. 一键正常
@@ -600,7 +602,7 @@ class DangerCheckDetailActivity : AppCompatActivity() {
     private fun goToSignPage(type: String) {
         saveTempForm()
         val intent = Intent(this, SignatureActivity::class.java)
-        intent.putExtra("from", "/pages/driveCompany/dangerCheck/detail/detail")
+        intent.putExtra("from", "dangerCheckDetail")
         intent.putExtra("fill", type)
         startActivity(intent)
     }
@@ -703,6 +705,19 @@ class DangerCheckDetailActivity : AppCompatActivity() {
             photoNum = photosMap.keys.count { photosMap[it]?.isNotEmpty() == true }
             binding.tvPhotoNum.text = "请上传照片$photoNum/12"
             updateFormPhotos(photosMap)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode != RESULT_OK) return
+
+        when (requestCode) {
+            REQUEST_CODE_CAR_SEARCH -> {
+                val carNum = data?.getStringExtra("carnum") ?: ""
+                binding.etCarNum.setText(carNum)
+            }
         }
     }
 }

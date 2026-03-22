@@ -4,12 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -28,8 +23,10 @@ import com.fx.zfcar.net.CoursewareViewData
 import com.fx.zfcar.net.EvaluateClassRequest
 import com.fx.zfcar.net.FaceData
 import com.fx.zfcar.net.TrainingPublicPlan
+import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.ExamViewModel
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
+import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -515,7 +512,7 @@ class CourseDetailActivity : AppCompatActivity() {
                             }
                             time++
                             hasStudyTime = time
-                            binding.tvStudyTime.text = "已学习:${secondToDate(time)}"
+                            binding.tvStudyTime.text = "已学习:${DateUtil.secondToDate(time)}"
                         }
                     }
                 }, 0, 1000)
@@ -666,7 +663,7 @@ class CourseDetailActivity : AppCompatActivity() {
             binding.tvStudyTime.text = if (hasStudyTime == alltime) {
                 "已完成"
             } else {
-                "已学习:${secondToDate(hasStudyTime)}"
+                "已学习:${DateUtil.secondToDate(hasStudyTime)}"
             }
 
             // 处理视频
@@ -706,8 +703,8 @@ class CourseDetailActivity : AppCompatActivity() {
             // 处理其他课程列表
 //            val formattedCourses = courseData.otherlist.map { course ->
 //                course.copy(
-//                    time = secondToDate(course.longtime),
-//                    studytimeText = secondToDate(course.studytime)
+//                    time = DateUtil.secondToDate(course.longtime),
+//                    studytimeText = DateUtil.secondToDate(course.studytime)
 //                )
 //            }
 //            initOtherCourseList(formattedCourses)
@@ -780,23 +777,6 @@ class CourseDetailActivity : AppCompatActivity() {
         )
     }
 
-    // 工具方法
-    private fun secondToDate(seconds: Int): String {
-        val h = seconds / 3600
-        val m = (seconds % 3600) / 60
-        val s = seconds % 60
-
-        return when {
-            h > 0 -> String.format("%02d小时%02d分%02d秒", h, m, s)
-            m > 0 -> String.format("%02d分%02d秒", m, s)
-            else -> String.format("%02d秒", s)
-        }
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
     // 播放器管理
     private fun releasePlayer() {
         player?.let {
@@ -836,7 +816,7 @@ class CourseDetailActivity : AppCompatActivity() {
             binding.tvStudyTime.text = if (hasStudyTime == alltime) {
                 "已完成"
             } else {
-                "已学习:${secondToDate(hasStudyTime)}"
+                "已学习:${DateUtil.secondToDate(hasStudyTime)}"
             }
 
             // 计算本次学习时长
