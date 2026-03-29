@@ -19,6 +19,7 @@ import com.fx.zfcar.net.ApiConfig
 import com.fx.zfcar.net.FaceData
 import com.fx.zfcar.net.SingPostRequest
 import com.fx.zfcar.net.UploadFileData
+import com.fx.zfcar.net.UserInfoDetail
 import com.fx.zfcar.training.CameraXManager
 import com.fx.zfcar.training.notice.SignatureActivity
 import com.fx.zfcar.training.user.showToast
@@ -26,6 +27,7 @@ import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,7 +51,6 @@ class FaceCheckActivity : AppCompatActivity() {
     // 页面参数
     private lateinit var params: HashMap<String, String>
     private var isTestAccount = false
-    private val token by lazy { SPUtils.get("trainToken") }
 
     private val _uploadImageState = MutableStateFlow<ApiState<UploadFileData>>(ApiState.Idle)
     val uploadImageState: StateFlow<ApiState<UploadFileData>> = _uploadImageState.asStateFlow()
@@ -119,14 +120,17 @@ class FaceCheckActivity : AppCompatActivity() {
      * 检查测试账号（safe/cece）
      */
     private fun checkTestAccount() {
-        /*val userInfo = SPUtils.getUserInfo(this)
-        val username = userInfo["username"]
-        isTestAccount = username == "safe" || username == "cece"
+        val userJson = SPUtils.get("userInfo")
+        if (userJson.isNotEmpty()) {
+            val user = Gson().fromJson(userJson, UserInfoDetail::class.java)
+            val username = user.username
+            isTestAccount = username == "safe" || username == "cece"
 
-        if (isTestAccount) {
-            binding.llTestEntry.visibility = View.VISIBLE
-            initTestEntryClick()
-        }*/
+            if (isTestAccount) {
+                binding.llTestEntry.visibility = View.VISIBLE
+                initTestEntryClick()
+            }
+        }
     }
 
     /**
@@ -134,8 +138,8 @@ class FaceCheckActivity : AppCompatActivity() {
      */
     private fun initTestEntryClick() {
         // 继续教育
-        /*binding.btnStudySubject.setOnClickListener {
-            val intent = Intent(this, StudySubjectActivity::class.java)
+        binding.btnStudySubject.setOnClickListener {
+            val intent = Intent(this, TrainCourseListActivity::class.java)
             intent.putExtra("safetyPlanId", params["safetyPlanId"])
             intent.putExtra("name", params["name"])
             intent.putExtra("number", params["number"])
@@ -146,7 +150,7 @@ class FaceCheckActivity : AppCompatActivity() {
 
         // 日常培训
         binding.btnStudyDaily.setOnClickListener {
-            val intent = Intent(this, StudyDailyActivity::class.java)
+            val intent = Intent(this, DailyTrainListActivity::class.java)
             intent.putExtra("safetyPlanId", params["safetyPlanId"])
             intent.putExtra("name", params["name"])
             startActivity(intent)
@@ -155,14 +159,14 @@ class FaceCheckActivity : AppCompatActivity() {
 
         // 岗前培训
         binding.btnStudyBefore.setOnClickListener {
-            val intent = Intent(this, StudyBeforeActivity::class.java)
+            val intent = Intent(this, TrainCourseListActivity::class.java)
             intent.putExtra("safetyPlanId", params["safetyPlanId"])
             intent.putExtra("name", params["name"])
             intent.putExtra("number", params["number"])
             intent.putExtra("type", "before")
             startActivity(intent)
             finish()
-        }*/
+        }
     }
 
     /**
@@ -376,10 +380,11 @@ class FaceCheckActivity : AppCompatActivity() {
                                         startActivity(intent)
                                     }
                                 } else {
-//                                    val intent = Intent(this@FaceCheckActivity, StudyDailyActivity::class.java)
-//                                    intent.putExtra("safetyPlanId", params["safetyPlanId"])
-//                                    intent.putExtra("name", params["name"])
-//                                    startActivity(intent)
+                                    val intent = Intent(this@FaceCheckActivity,
+                                        DailyTrainListActivity::class.java)
+                                    intent.putExtra("safetyPlanId", params["safetyPlanId"])
+                                    intent.putExtra("name", params["name"])
+                                    startActivity(intent)
                                 }
                             }
                         }
@@ -514,10 +519,10 @@ class FaceCheckActivity : AppCompatActivity() {
                         showToast(getString(R.string.hint_verify_success))
                         if (state.data?.nextsubject_id != 0) {
                             showToast(getString(R.string.hint_jump_next_lesson))
-//                            val intent = Intent(this, StudyDailyActivity::class.java)
-//                            intent.putExtra("safetyPlanId", params["safetyPlanId"])
-//                            intent.putExtra("subjectId", state.data?.nextsubject_id)
-//                            startActivity(intent)
+                            val intent = Intent(this@FaceCheckActivity, DailyTrainListActivity::class.java)
+                            intent.putExtra("safetyPlanId", params["safetyPlanId"])
+                            intent.putExtra("subjectId", state.data?.nextsubject_id)
+                            startActivity(intent)
                         } else {
                             finish()
                         }

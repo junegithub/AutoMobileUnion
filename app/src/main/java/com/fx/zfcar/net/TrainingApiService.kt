@@ -63,6 +63,12 @@ interface TrainingApiService {
         @Query("training_publicplan_id") trainingPublicPlanId: String
     ): Response<TrainingBaseResponse<CoursewareListData>>
 
+    @GET("api/user/coursewareList")
+    suspend fun getUserCoursewareList(
+        @Query("page") page: String,
+        @Query("training_publicplan_id") trainingPublicPlanId: String
+    ): Response<TrainingBaseResponse<UserCoursewareListData>>
+
     @GET("api/dailysafety/coursewareView")
     suspend fun getCoursewareView(
         @QueryMap params: Map<String, String>

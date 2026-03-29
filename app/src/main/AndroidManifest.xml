@@ -104,6 +104,8 @@
         <activity android:name=".training.safetytraining.TrainListActivity" />
         <activity android:name=".training.safetytraining.ScoreDetailActivity" />
         <activity android:name=".training.safetytraining.ExamManagerActivity" />
+        <activity android:name=".training.safetytraining.DailyTrainListActivity" />
+        <activity android:name=".training.safetytraining.TrainCourseListActivity" />
 
         <activity android:name=".training.jobs.JobsActivity" />
         <activity android:name=".training.jobs.PublishJobActivity" />

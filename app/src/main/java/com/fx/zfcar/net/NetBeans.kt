@@ -1070,6 +1070,18 @@ data class OldSafetyPlan(
     val joinexams: Int
 )
 
+data class UserCoursewareListData(
+    val total: Int,
+    val list: List<CoursewareItem>,
+    val row: TrainAbout
+)
+
+data class TrainAbout(
+    val id: Int,
+    val ksnum: Int,
+    val progress: Int
+)
+
 data class CoursewareListData(
     val total: Int,
     val list: List<CoursewareItem>,

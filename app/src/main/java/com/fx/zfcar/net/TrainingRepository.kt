@@ -38,6 +38,9 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun getCoursewareList(page: String, trainingPublicPlanId: String) =
         apiService.getCoursewareList(page, trainingPublicPlanId)
 
+    suspend fun getUserCoursewareList(page: String, trainingPublicPlanId: String) =
+        apiService.getUserCoursewareList(page, trainingPublicPlanId)
+
     suspend fun getCoursewareView(params: Map<String, String>) =
         apiService.getCoursewareView(params)
 

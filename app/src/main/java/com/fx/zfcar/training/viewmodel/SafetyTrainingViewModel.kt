@@ -43,6 +43,7 @@ import com.fx.zfcar.net.SingPostRequest
 import com.fx.zfcar.net.StudyListData
 import com.fx.zfcar.net.SubCoursewareListData
 import com.fx.zfcar.net.SubjectOrderData
+import com.fx.zfcar.net.UserCoursewareListData
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -247,6 +248,14 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
                           stateFlow: MutableStateFlow<ApiState<CoursewareListData>>) {
         launchRequest(
             block = { vehicleRepository.getCoursewareList(page, trainingPublicPlanId) },
+            stateFlow
+        )
+    }
+
+    fun getUserCoursewareList(page: String, trainingPublicPlanId: String,
+                          stateFlow: MutableStateFlow<ApiState<UserCoursewareListData>>) {
+        launchRequest(
+            block = { vehicleRepository.getUserCoursewareList(page, trainingPublicPlanId) },
             stateFlow
         )
     }
