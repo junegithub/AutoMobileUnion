@@ -17,6 +17,7 @@ import com.fx.zfcar.net.TrainingPublicPlan
 import com.fx.zfcar.training.adapter.DailyCourseAdapter
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
+import com.fx.zfcar.util.DateUtil.secondToDate
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,12 +71,12 @@ class DailyTrainListActivity : AppCompatActivity() {
 
     private fun initAdapter() {
         adapter = DailyCourseAdapter(this) { item ->
-//            val intent = Intent(this@DailyTrainListActivity, DailyTrainActivity::class.java)
-//            intent.putExtra("safetyPlanId", trainAbout?.id.toString())
-//            intent.putExtra("subjectId", item.id.toString())
-//            intent.putExtra("name", item.name)
-//            intent.putExtra("content", item.content)
-//            startActivity(intent)
+            val intent = Intent(this@DailyTrainListActivity, StudyDetailActivity::class.java)
+            intent.putExtra("safetyPlanId", trainAbout?.id.toString())
+            intent.putExtra("subjectId", item.id.toString())
+            intent.putExtra("name", item.name)
+            intent.putExtra("content", item.content)
+            startActivity(intent)
         }
         binding.recycler.layoutManager = LinearLayoutManager(this)
         binding.recycler.adapter = adapter
@@ -186,17 +187,6 @@ class DailyTrainListActivity : AppCompatActivity() {
         val total = list.sumOf { it.longtime }
         val study = list.sumOf { it.studytime }
         return if (total == 0) 0 else (study * 100 / total)
-    }
-
-    private fun secondToDate(s: Int): String {
-        val h = s / 3600
-        val m = (s % 3600) / 60
-        val ss = s % 60
-        return when {
-            h > 0 -> "%02d小时%02d分%02d秒".format(h, m, ss)
-            m > 0 -> "%02d分%02d秒".format(m, ss)
-            else -> "%02d秒".format(ss)
-        }
     }
 
     fun stopTime(view: View) {
