@@ -47,6 +47,7 @@ import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.util.Constant
 import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.PressEffectUtils
+import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.android.material.tabs.TabLayout
 import com.tencent.mm.opensdk.openapi.IWXAPI
@@ -55,6 +56,7 @@ import com.fx.zfcar.R
 import com.fx.zfcar.car.base.WeChatShareHelper
 import com.fx.zfcar.databinding.FragmentMapBinding
 import com.tencent.mm.opensdk.utils.Log
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -107,6 +109,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     private var locationClient: AMapLocationClient? = null
 
     private var requestFromOtherPage: Boolean = false
+    private var lastLoginState: Boolean? = null
 
     private lateinit var labelAdapter: LabelAdapter
 
@@ -557,6 +560,72 @@ class CarFragment : Fragment(), AMapLocationListener {
         carInfoViewModel.getSearchHistory(searListStateFlow)
     }
 
+    private fun restoreLoginStateFromCache() {
+        val token = SPUtils.getToken()
+        if (token.isNotEmpty()) {
+            MyApp.isLogin = true
+            if (MyApp.userInfo == null) {
+                val cachedCarInfo = SPUtils.get("carInfo")
+                if (cachedCarInfo.isNotEmpty()) {
+                    runCatching {
+                        Gson().fromJson(cachedCarInfo, com.fx.zfcar.net.CarUserInfo::class.java)?.info
+                    }.getOrNull()?.let { cachedUser ->
+                        MyApp.userInfo = cachedUser
+                    }
+                }
+            }
+        } else {
+            MyApp.isLogin = false
+            MyApp.userInfo = null
+        }
+    }
+
+    private fun resetCarPageState() {
+        requestFromOtherPage = false
+        currentCar = null
+        currentRealTimeAddress = null
+        binding.rootCarDetail.root.visibility = View.GONE
+        binding.rootCarDetail.rootMore.root.visibility = View.GONE
+        binding.rootCarDetail.rootCarLocation.root.visibility = View.VISIBLE
+        clearAllOverlays(aMap)
+    }
+
+    private fun restoreMapPresentation() {
+        if (markerList.isEmpty()) {
+            addCarMarkers()
+        }
+        val selectedCarNum = currentCar?.carnum
+        if (binding.rootCarDetail.root.visibility == View.VISIBLE && !selectedCarNum.isNullOrEmpty()) {
+            val selectedMarker = markerList.find { it.title == selectedCarNum }
+            if (selectedMarker != null) {
+                showSingleMarker(selectedMarker)
+                return
+            }
+        }
+        showAllMarkers()
+        if (!requestFromOtherPage) {
+            zoomToAllCars()
+        }
+    }
+
+    private fun syncCarPageState(forceReload: Boolean = false) {
+        val isLoggedIn = MyApp.isLogin == true
+        updateViewLoginState()
+        if (!isLoggedIn) {
+            resetCarPageState()
+            lastLoginState = false
+            return
+        }
+
+        val needReload = forceReload || carList.isNullOrEmpty() || markerList.isEmpty()
+        if (needReload) {
+            loadCarStatus()
+        } else {
+            restoreMapPresentation()
+        }
+        lastLoginState = true
+    }
+
     private fun updateViewLoginState() {
         if (MyApp.isLogin == true) {
             binding.tvUnlogin.setImageResource(R.drawable.user_avatar)
@@ -864,6 +933,9 @@ class CarFragment : Fragment(), AMapLocationListener {
     override fun onResume() {
         super.onResume()
         binding.mapView.onResume()
+        restoreLoginStateFromCache()
+        val loginChanged = lastLoginState != (MyApp.isLogin == true)
+        syncCarPageState(forceReload = loginChanged)
     }
 
     override fun onPause() {
@@ -894,8 +966,8 @@ class CarFragment : Fragment(), AMapLocationListener {
     fun onMessageEvent(event: EventData) {
         when (event.eventType) {
             EventData.EVENT_LOGIN -> {
-                updateViewLoginState()
-                loadCarStatus()
+                restoreLoginStateFromCache()
+                syncCarPageState(forceReload = true)
             }
             EventData.EVENT_CAR_DETAIL -> {
                 val vehicleInfo = event.data as BaseCarInfo
