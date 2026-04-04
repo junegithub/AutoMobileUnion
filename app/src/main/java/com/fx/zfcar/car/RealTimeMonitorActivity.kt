@@ -1,6 +1,7 @@
 package com.fx.zfcar.car
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,10 +23,12 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.fx.zfcar.car.adapter.VideoChannelAdapter
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
+import com.fx.zfcar.car.status.DeviceStatusActivity
 import com.fx.zfcar.databinding.ActivityRealTimeMonitorBinding
 import com.fx.zfcar.databinding.DialogPtzControlBinding
 import com.fx.zfcar.net.VideoChannel
 import com.fx.zfcar.net.VideoInfoData
+import com.fx.zfcar.training.drivelog.CarSearchActivity
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
@@ -56,6 +60,7 @@ class RealTimeMonitorActivity : AppCompatActivity() {
     private var version = 0
     private var wayNums = mutableListOf<VideoChannel>()
     private var srcArr = mutableListOf<String>()
+    private val loadedChannels = mutableSetOf<Int>()
 
     // 视频播放器列表（使用 Media3 ExoPlayer）
     private val exoPlayers = mutableListOf<ExoPlayer>()
@@ -66,6 +71,28 @@ class RealTimeMonitorActivity : AppCompatActivity() {
 
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
     private val videoInfoStateFlow = MutableStateFlow<ApiState<VideoInfoData>>(ApiState.Idle)
+    private val carSearchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val data = result.data ?: return@registerForActivityResult
+        if (result.resultCode != RESULT_OK) {
+            return@registerForActivityResult
+        }
+
+        val selectedCarNum = data.getStringExtra("carNum").orEmpty()
+        val selectedCarId = data.getStringExtra("carId").orEmpty()
+        if (selectedCarNum.isBlank() || selectedCarId.isBlank()) {
+            return@registerForActivityResult
+        }
+
+        carNum = selectedCarNum
+        carId = selectedCarId
+        binding.tvCarNum.text = carNum
+        videoAdapter.activeNum = 0
+        videoAdapter.tabShow = true
+        wayNums.clear()
+        videoAdapter.updateData(emptyList())
+        releasePlayers()
+        getVideoInfo()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,6 +108,7 @@ class RealTimeMonitorActivity : AppCompatActivity() {
         initWebViews()
         // 初始化云台控制弹窗
         initPtzDialog()
+        observeVideoInfo()
         // 获取视频信息
         getVideoInfo()
     }
@@ -90,7 +118,9 @@ class RealTimeMonitorActivity : AppCompatActivity() {
      */
     private fun getIntentParams() {
         carNum = intent.getStringExtra(KEY_CAR_NUM) ?: ""
-        carId = intent.getStringExtra(KEY_CAR_ID) ?: ""
+        carId = intent.getStringExtra(KEY_CAR_ID)
+            ?: intent.getIntExtra(KEY_CAR_ID, 0).takeIf { it > 0 }?.toString()
+            .orEmpty()
         videoCar = intent.getBooleanExtra(KEY_CAR_VIDEO, false)
         online = intent.getBooleanExtra(KEY_CAR_ONLINE, false)
 
@@ -145,10 +175,11 @@ class RealTimeMonitorActivity : AppCompatActivity() {
 
         // 车辆选择
         binding.llSelectCar.setOnClickListener {
-//            val intent = Intent(this, CarSearchActivity::class.java)
-//            intent.putExtra("carNum", carNum)
-//            intent.putExtra("type", "videoList")
-//            startActivity(intent)
+            val intent = Intent(this, CarSearchActivity::class.java).apply {
+                putExtra("carNum", carNum)
+                putExtra("type", "videoList")
+            }
+            carSearchLauncher.launch(intent)
         }
 
         // 打开对讲
@@ -158,8 +189,7 @@ class RealTimeMonitorActivity : AppCompatActivity() {
 
         // 车辆状态
         binding.llCarStatus.setOnClickListener {
-            // 跳转到车辆状态页面
-            finish()
+            startActivity(Intent(this, DeviceStatusActivity::class.java))
         }
 
         // 云台控制
@@ -264,19 +294,21 @@ class RealTimeMonitorActivity : AppCompatActivity() {
     /**
      * 获取视频信息
      */
-    private fun getVideoInfo() {
+    private fun observeVideoInfo() {
         lifecycleScope.launch {
-            videoInfoStateFlow.collect {state ->
+            videoInfoStateFlow.collect { state ->
                 when (state) {
                     is ApiState.Loading -> {
                         // 加载中：显示进度条，隐藏其他视图
                     }
                     is ApiState.Success -> {
                         state.data?.let {
-                            sim = state.data.sim ?: ""
+                            sim = state.data.sim.orEmpty().let { raw ->
+                                raw.takeIf { it.isNotBlank() }?.let { "0$it" }.orEmpty()
+                            }
                             version = if (state.data.version == 2019) 1 else 0
                             wayNums.clear()
-                            wayNums.addAll(it.waynums ?: emptyList())
+                            wayNums.addAll(it.waynums.orEmpty())
 
                             // 更新视频列表
                             videoAdapter.updateData(wayNums)
@@ -297,8 +329,15 @@ class RealTimeMonitorActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
-        carInfoViewModel.getVideoInfo(carId.toInt(), videoInfoStateFlow)
+    private fun getVideoInfo() {
+        val currentCarId = carId.toIntOrNull()
+        if (currentCarId == null || currentCarId <= 0) {
+            showToast("车辆信息异常")
+            return
+        }
+        carInfoViewModel.getVideoInfo(currentCarId, videoInfoStateFlow)
     }
 
     /**
@@ -316,6 +355,7 @@ class RealTimeMonitorActivity : AppCompatActivity() {
 
         // 清空之前的视频流
         srcArr.clear()
+        loadedChannels.clear()
         releasePlayers()
 
         // 执行JS调用获取视频流
@@ -327,6 +367,10 @@ class RealTimeMonitorActivity : AppCompatActivity() {
      */
     private fun evalJs() {
         val newSim = sim.toLongOrNull() ?: 0
+        if (newSim <= 0L) {
+            showToast("设备视频参数异常")
+            return
+        }
         wayNums.forEachIndexed { index, wayNum ->
             if (index < webViews.size) {
                 val jsCode = "Connect($newSim,${wayNum.wayNumCode},1,0,'www.ezbeidou.com',17001,0);"
@@ -339,6 +383,9 @@ class RealTimeMonitorActivity : AppCompatActivity() {
      * 接收WebView消息并播放视频（Media3 版本）
      */
     private fun handleWebMessage(channel: Int, videoUrl: String) {
+        if (!loadedChannels.add(channel)) {
+            return
+        }
         srcArr.add(videoUrl)
 
         // 创建 Media3 ExoPlayer 实例（最新API）
@@ -408,6 +455,9 @@ class RealTimeMonitorActivity : AppCompatActivity() {
             player.release()       // 释放资源
         }
         exoPlayers.clear()
+        if (::videoAdapter.isInitialized) {
+            videoAdapter.clearPlayers()
+        }
     }
 
     /**

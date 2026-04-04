@@ -24,7 +24,10 @@ class VideoChannelAdapter(
 
         init {
             binding.root.setOnClickListener {
-                onItemClick(adapterPosition)
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onItemClick(position)
+                }
             }
 
             // 配置 PlayerView（隐藏控制栏，对应原代码的 controls 属性）
@@ -55,6 +58,11 @@ class VideoChannelAdapter(
     fun setPlayer(position: Int, player: ExoPlayer) {
         playerMap[position] = player
         notifyItemChanged(position)
+    }
+
+    fun clearPlayers() {
+        playerMap.clear()
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
