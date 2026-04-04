@@ -56,6 +56,11 @@
     <string name="operation_analysis">运营分析</string>
     <string name="vehicle_operation">当前车辆运营情况</string>
     <string name="alarm_distribution">报警分布情况</string>
+    <string name="analysis_empty">暂无分析数据</string>
+    <string name="analysis_load_failed">数据加载失败</string>
+    <string name="retry">重新加载</string>
+    <string name="analysis_vehicle_summary">共 %1$d 辆车</string>
+    <string name="analysis_alarm_summary">共 %1$d 次报警</string>
 
     <!-- 车辆运营图例 -->
     <string name="arrears">欠费</string>
