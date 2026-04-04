@@ -14,6 +14,7 @@ import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.BitmapUtils
+import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ProgressDialogUtils
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,9 +67,11 @@ class YiqingSignActivity : AppCompatActivity() {
 
     // 初始化视图
     private fun initView() {
+        binding.titleLayout.tvTitle.text = "驾驶员承诺书"
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
 
         // 返回按钮
-        binding.ivBack.setOnClickListener { finish() }
+        binding.titleLayout.tvTitle.setOnClickListener { finish() }
 
         // 重写按钮
         binding.btnRedraw.setOnClickListener {

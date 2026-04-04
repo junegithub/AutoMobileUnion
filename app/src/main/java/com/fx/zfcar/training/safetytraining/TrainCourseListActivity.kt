@@ -19,6 +19,7 @@ import com.fx.zfcar.training.adapter.TrainCourseAdapter
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.DateUtil.secondToDate
+import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,7 +79,9 @@ class TrainCourseListActivity : AppCompatActivity() {
         getIntentParams()
 
         // 设置标题
-        binding.tvTitle.text = name
+        binding.titleLayout.tvTitle.text = name
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        binding.titleLayout.tvTitle.setOnClickListener { finish() }
 
         // 初始化列表
         initRecyclerView()

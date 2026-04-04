@@ -6,32 +6,9 @@
     android:background="@color/bg_white"
     android:orientation="vertical">
 
-    <!-- 标题栏 -->
-    <FrameLayout
-        android:id="@+id/iv_back"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/title_bar_height"
-        android:layout_marginTop="@dimen/dp_32"
-        android:padding="@dimen/padding_10">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:scaleType="centerInside"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/arrow_back"
-            app:tint="@color/black" /> <!-- 自行添加返回箭头图标 -->
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="30dp"
-            android:textColor="@color/text_black"
-            android:textSize="@dimen/text_title"
-            android:textStyle="bold" />
-    </FrameLayout>
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/fragment_title" />
 
     <!-- 报警列表 -->
     <androidx.recyclerview.widget.RecyclerView

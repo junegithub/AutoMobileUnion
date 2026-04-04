@@ -16,6 +16,7 @@ import com.fx.zfcar.net.SectionItem
 import com.fx.zfcar.training.adapter.NoticeAdapter
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.NoticeViewModel
+import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.android.material.tabs.TabLayout
@@ -56,6 +57,8 @@ class NoticeActivity : AppCompatActivity() {
      * 初始化视图
      */
     private fun initView() {
+        binding.titleLayout.tvTitle.text = "消息公告"
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
         sectionList.forEach {
             binding.tabLayout.addTab(binding.tabLayout.newTab().setText(it.name))
         }
@@ -112,7 +115,7 @@ class NoticeActivity : AppCompatActivity() {
     }
 
     private fun initListener() {
-        binding.ivBack.setOnClickListener {
+        binding.titleLayout.tvTitle.setOnClickListener {
             finish()
         }
 

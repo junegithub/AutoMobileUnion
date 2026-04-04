@@ -51,8 +51,9 @@ class OperationAnalysisActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        PressEffectUtils.setCommonPressEffect(binding.ivBack)
-        binding.ivBack.setOnClickListener { finish() }
+        binding.titleLayout.tvTitle.text = getString(R.string.operation_analysis)
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        binding.titleLayout.tvTitle.setOnClickListener { finish() }
 
         PressEffectUtils.setCommonPressEffect(binding.tvRetry)
         binding.tvRetry.setOnClickListener { requestDashboardInfo() }

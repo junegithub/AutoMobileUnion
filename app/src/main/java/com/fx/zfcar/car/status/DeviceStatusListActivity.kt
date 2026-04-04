@@ -56,7 +56,7 @@ class DeviceStatusListActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        binding.title.text = intent.getStringExtra(KEY_CAR_STATUS_TITLE)
+        binding.titleLayout.tvTitle.text = intent.getStringExtra(KEY_CAR_STATUS_TITLE)
         // 初始化RecyclerView
         statusAdapter = StatusAdapter()
         statusAdapter.submitList(statusList)
@@ -133,8 +133,8 @@ class DeviceStatusListActivity : AppCompatActivity() {
 
 
     private fun initListener() {
-        PressEffectUtils.setCommonPressEffect(binding.ivBack)
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
         // 返回按钮点击
-        binding.ivBack.setOnClickListener { finish() }
+        binding.titleLayout.tvTitle.setOnClickListener { finish() }
     }
 }

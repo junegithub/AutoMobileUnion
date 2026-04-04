@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fx.zfcar.car.adapter.ExpireCarAdapter
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
+import com.fx.zfcar.databinding.ActivityExpireCarBinding
 import com.fx.zfcar.net.CarExpireItem
 import com.fx.zfcar.net.CarExpireResponse
 import com.fx.zfcar.training.user.showToast
+import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.android.material.tabs.TabLayout
-import com.fx.zfcar.databinding.ActivityExpireCarBinding
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -82,8 +83,9 @@ class ExpireCarActivity : AppCompatActivity() {
 
         loadCarList()
 
-        // 4. 返回按钮点击
-        binding.ivBack.setOnClickListener { finish() }
+        binding.titleLayout.tvTitle.text = "到期"
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        binding.titleLayout.tvTitle.setOnClickListener { finish() }
     }
 
     /**

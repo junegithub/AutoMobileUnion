@@ -162,11 +162,11 @@ class DeviceAlarmActivity : AppCompatActivity() {
     }
 
     private fun initListener() {
-        PressEffectUtils.setCommonPressEffect(binding.ivBack)
+        binding.titleLayout.tvTitle.text = getString(R.string.device_alarm)
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
         PressEffectUtils.setCommonPressEffect(binding.tvDateRange)
         PressEffectUtils.setCommonPressEffect(binding.spinnerAlarmType)
-        // 返回按钮点击
-        binding.ivBack.setOnClickListener { finish() }
+        binding.titleLayout.tvTitle.setOnClickListener { finish() }
 
         // 日期选择弹窗（MaterialDatePicker实现范围选择）
         binding.tvDateRange.setOnClickListener {

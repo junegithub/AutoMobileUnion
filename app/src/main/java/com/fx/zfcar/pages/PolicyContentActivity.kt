@@ -31,8 +31,6 @@ class PolicyContentActivity : AppCompatActivity() {
         binding = ActivityPolicyContentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.ivBack.setOnClickListener { finish() }
-
         val policyType = intent.getStringExtra(EXTRA_POLICY_TYPE) ?: TYPE_PRIVACY
         val (title, fileName) = if (policyType == TYPE_TERMS) {
             getString(R.string.service_terms) to "terms.txt"
@@ -40,7 +38,8 @@ class PolicyContentActivity : AppCompatActivity() {
             getString(R.string.privacy_policy) to "privacy.html"
         }
 
-        binding.tvTitle.text = title
+        binding.titleLayout.tvTitle.text = title
+        binding.titleLayout.tvTitle.setOnClickListener { finish() }
         renderContent(fileName)
     }
 

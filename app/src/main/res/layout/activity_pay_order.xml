@@ -5,30 +5,9 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <!-- 顶部导航栏 -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/white">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="支付订单"
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            android:layout_gravity="center"/>
-
-        <ImageView
-            android:id="@+id/iv_back"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:src="@drawable/arrow_back"
-            android:tint="@color/black"
-            android:layout_gravity="start"
-            android:padding="8dp"/>
-    </androidx.appcompat.widget.Toolbar>
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/fragment_title" />
 
     <!-- 订单列表 -->
     <androidx.recyclerview.widget.RecyclerView

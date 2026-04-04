@@ -116,9 +116,9 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
 
     private fun initView() {
         // 设置标题
-        binding.tvTitle.text = pageTitle
-        PressEffectUtils.setCommonPressEffect(binding.tvTitle)
-        binding.tvTitle.setOnClickListener {
+        binding.titleLayout.tvTitle.text = pageTitle
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        binding.titleLayout.tvTitle.setOnClickListener {
             finish()
         }
 

@@ -5,35 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- 顶部导航栏（对应u-navbar） -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/dp_32"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#FFFFFF"
-        android:elevation="2dp">
-
-        <!-- 返回按钮 -->
-        <ImageView
-            android:id="@+id/iv_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/arrow_back"
-            android:layout_marginStart="16dp"
-            app:tint="@color/text_black" />
-
-        <!-- 标题（对应slot-wrap的h1） -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="消息公告"
-            android:textSize="26sp"
-            android:textColor="#3a4462"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
-
-    </androidx.appcompat.widget.Toolbar>
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/fragment_title" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"

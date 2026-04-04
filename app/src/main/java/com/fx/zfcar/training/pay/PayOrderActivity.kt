@@ -110,8 +110,9 @@ class PayOrderActivity : AppCompatActivity() {
      * 初始化事件监听（ViewBinding）
      */
     private fun initListener() {
-        PressEffectUtils.setCommonPressEffect(binding.ivBack)
-        binding.ivBack.setOnClickListener {
+        binding.titleLayout.tvTitle.text = "支付订单"
+        PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        binding.titleLayout.tvTitle.setOnClickListener {
             finish()
         }
     }
