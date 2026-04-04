@@ -196,6 +196,11 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
     private fun resetPageAndLoad() {
         currentPage = 1
         totalPage = 1
+        isLoading = false
+        trainDataList?.clear()
+        trainAdapter.submitList(emptyList())
+        binding.emptyView.visibility = View.GONE
+        binding.tvLoadMore.visibility = View.GONE
         loadData()
     }
 
@@ -373,38 +378,39 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
             }
             is ApiState.Success -> {
                 binding.tvLoadMore.visibility = View.GONE
-                binding.emptyView.visibility = if (trainAdapter.itemCount == 0) View.VISIBLE else View.GONE
 
                 val data = state.data
-                var dataList: List<TrainListItem>? = emptyList()
+                var dataList: List<TrainListItem> = emptyList()
                 when (data) {
                     is SafetyListData -> {
                         totalPage = data.total
-                        dataList = data?.publicList?.map { TrainListItem.TypeSafeItem(it) }
+                        dataList = data.publicList.map { TrainListItem.TypeSafeItem(it) }
                     }
                     is OldSafetyListData -> {
                         totalPage = data.total
-                        dataList = data?.rows?.map { TrainListItem.TypeSafeOldItem(it) }
+                        dataList = data.rows.map { TrainListItem.TypeSafeOldItem(it) }
                     }
                     is BeforeSubjectListData -> {
                         totalPage = data.total
-                        dataList = data?.rows?.map { TrainListItem.TypePreJobItem(it) }
+                        dataList = data.rows.map { TrainListItem.TypePreJobItem(it) }
                     }
                     is MeetingListData -> {
                         totalPage = data.total
-                        dataList = data?.rows?.map { TrainListItem.TypeMeetingItem(it) }
+                        dataList = data.rows.map { TrainListItem.TypeMeetingItem(it) }
                     }
                     is SubjectListData -> {
                         totalPage = data.total
-                        dataList = data?.rows?.map { TrainListItem.TypeContinueItem(it) }
+                        dataList = data.rows.map { TrainListItem.TypeContinueItem(it) }
                     }
                     else -> {
                         totalPage = 1
                     }
                 }
-                trainDataList?.addAll(dataList!!)
-                trainAdapter.notifyDataSetChanged()
-                currentPage++
+                if (currentPage == 1) {
+                    trainDataList?.clear()
+                }
+                trainDataList?.addAll(dataList)
+                trainAdapter.submitList(trainDataList?.toList().orEmpty())
 
                 // 空数据
                 if (trainDataList?.isEmpty() == true) {
@@ -414,6 +420,10 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                 }
             }
             is ApiState.Error -> {
+                if (currentPage > 1) {
+                    currentPage--
+                }
+                isLoading = false
                 showToast("加载失败：${state.msg}")
                 binding.tvLoadMore.text = "加载失败，上拉重试"
             }

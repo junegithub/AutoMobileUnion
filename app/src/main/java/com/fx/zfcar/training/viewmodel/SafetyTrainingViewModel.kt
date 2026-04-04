@@ -441,18 +441,42 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
         )
     }
 
+    fun yearPayAlipay(params: Map<String, Any>,
+                      stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = { vehicleRepository.yearPayAlipay(params) },
+            stateFlow
+        )
+    }
+
     fun trainPersonPay(params: Map<String, String>,
-                    stateFlow: MutableStateFlow<ApiState<PayOrderData>>) {
+                       stateFlow: MutableStateFlow<ApiState<PayOrderData>>) {
         launchRequest(
             block = { vehicleRepository.trainPersonPay(params) },
             stateFlow
         )
     }
 
-    fun creatPayOrder(params: Map<String, String>,
+    fun trainPersonPayAlipay(params: Map<String, String>,
+                             stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = { vehicleRepository.trainPersonPayAlipay(params) },
+            stateFlow
+        )
+    }
+
+    fun creatPayOrder(params: Map<String, Any>,
                       stateFlow: MutableStateFlow<ApiState<PayOrderData>>) {
         launchRequest(
             block = { vehicleRepository.creatPayOrder(params) },
+            stateFlow
+        )
+    }
+
+    fun creatPayOrderAlipay(params: Map<String, Any>,
+                            stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = { vehicleRepository.creatPayOrderAlipay(params) },
             stateFlow
         )
     }

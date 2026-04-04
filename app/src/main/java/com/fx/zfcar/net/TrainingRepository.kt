@@ -67,8 +67,20 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun trainPersonPay(params: Map<String, String>) =
         apiService.trainPersonPay(params)
 
+    suspend fun trainPersonPayAlipay(params: Map<String, String>) =
+        apiService.trainPersonPayAlipay(params)
+
     suspend fun yearPay(params: Map<String, Any>) =
         apiService.yearPay(params)
+
+    suspend fun yearPayAlipay(params: Map<String, Any>) =
+        apiService.yearPayAlipay(params)
+
+    suspend fun creatPayOrder(params: Map<String, Any>) =
+        apiService.creatPayOrder(params)
+
+    suspend fun creatPayOrderAlipay(params: Map<String, Any>) =
+        apiService.creatPayOrderAlipay(params)
 
     suspend fun getOrderList(page: Int) = apiService.getOrderList(page)
 
@@ -213,9 +225,6 @@ class TrainingRepository(private val apiService: TrainingApiService) {
     suspend fun trainCompanyPay() = apiService.trainCompanyPay()
     suspend fun postSignImg(request: SafetySignRequest) = apiService.postSignImg(request)
     suspend fun postBeforeSign(request: SafetySignRequest) = apiService.postBeforeSign(request)
-
-    suspend fun creatPayOrder(params: Map<String, String>) =
-        apiService.creatPayOrder(params)
 
     suspend fun authentication(request: AuthRequest) = apiService.authentication(request)
 }

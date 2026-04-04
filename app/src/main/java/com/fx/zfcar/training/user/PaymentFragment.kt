@@ -30,10 +30,9 @@ class PaymentFragment : BaseUserFragment() {
     private val trainingViewModel by viewModels<SafetyTrainingViewModel>()
     private var safeUserStateFlow = MutableStateFlow<ApiState<UserInfoData>>(ApiState.Idle)
     private var yearPayStateFlow = MutableStateFlow<ApiState<PayOrderData>>(ApiState.Idle)
-    private val gson = Gson()
+    private var yearPayAlipayStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
     private val payMethods = arrayOf("支付宝支付", "微信支付")
     private var yearId: Int = 0
-    private var currentPayMethod: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,7 +94,7 @@ class PaymentFragment : BaseUserFragment() {
 
                     is ApiState.Success -> {
                         val payData = uiState.data
-                        if (payData != null && currentPayMethod == "wechat") {
+                        if (payData != null) {
                             PayUtils.callWeChatPay(requireActivity(), payData) { isSuccess, msg ->
                                 if (isSuccess) {
                                     context?.showToast("年度支付成功")
@@ -113,6 +112,38 @@ class PaymentFragment : BaseUserFragment() {
                         yearPayStateFlow.value = ApiState.Idle
                     }
 
+                    is ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            yearPayAlipayStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                    }
+                    is ApiState.Success -> {
+                        val orderInfo = uiState.data
+                        if (!orderInfo.isNullOrBlank()) {
+                            PayUtils.callAlipay(requireActivity(), orderInfo) { isSuccess, msg ->
+                                if (isSuccess) {
+                                    context?.showToast("年度支付成功")
+                                    activity?.onBackPressed()
+                                } else {
+                                    context?.showToast(msg)
+                                }
+                                yearPayAlipayStateFlow.value = ApiState.Idle
+                            }
+                        } else {
+                            context?.showToast("支付失败：缺少支付宝订单信息")
+                            yearPayAlipayStateFlow.value = ApiState.Idle
+                        }
+                    }
+                    is ApiState.Error -> {
+                        context?.showToast("支付失败：${uiState.msg}")
+                        yearPayAlipayStateFlow.value = ApiState.Idle
+                    }
                     is ApiState.Idle -> {
                     }
                 }
@@ -138,7 +169,6 @@ class PaymentFragment : BaseUserFragment() {
 
     private fun yearAllPay(which: Int) {
         if (which == 1) {
-            currentPayMethod = "wechat"
             PayUtils.getWeChatLoginCode(requireActivity()) { code ->
                 val params = mapOf(
                     "code" to code,
@@ -149,22 +179,12 @@ class PaymentFragment : BaseUserFragment() {
                 trainingViewModel.yearPay(params, yearPayStateFlow)
             }
         } else if (which == 0) {
-            currentPayMethod = "alipay"
             val params = mapOf(
                 "type" to "alipay",
                 "method" to "app",
                 "year_id" to yearId
             )
-            trainingViewModel.yearPay(params, yearPayStateFlow)
-            PayUtils.callAlipay(requireActivity(), gson.toJson(params)) { isSuccess, msg ->
-                if (isSuccess) {
-                    context?.showToast("年度支付成功")
-                    activity?.onBackPressed()
-                } else {
-                    context?.showToast(msg)
-                }
-                yearPayStateFlow.value = ApiState.Idle
-            }
+            trainingViewModel.yearPayAlipay(params, yearPayAlipayStateFlow)
         }
     }
 }

@@ -116,15 +116,30 @@ interface TrainingApiService {
         @QueryMap params: Map<String, String>
     ): Response<TrainingBaseResponse<PayOrderData>>
 
+    @GET("api/before/creatOrder")
+    suspend fun trainPersonPayAlipay(
+        @QueryMap params: Map<String, String>
+    ): Response<TrainingBaseResponse<String>>
+
     @GET("api/dailysafety/yearPay")
     suspend fun yearPay(
         @QueryMap params: Map<String, Any>
     ): Response<TrainingBaseResponse<PayOrderData>>
 
+    @GET("api/dailysafety/yearPay")
+    suspend fun yearPayAlipay(
+        @QueryMap params: Map<String, Any>
+    ): Response<TrainingBaseResponse<String>>
+
     @POST("api/dailysafety/creatOrder")
     suspend fun creatPayOrder(
         @Body params: Map<String, Any>
     ): Response<TrainingBaseResponse<PayOrderData>>
+
+    @POST("api/dailysafety/creatOrder")
+    suspend fun creatPayOrderAlipay(
+        @Body params: Map<String, Any>
+    ): Response<TrainingBaseResponse<String>>
 
     @GET("api/training/orderlist")
     suspend fun getOrderList(@Query("page") page: Int): Response<TrainingBaseResponse<OrderListData>>

@@ -58,6 +58,7 @@ class MeetingDetailActivity : AppCompatActivity() {
     private var hasPhoto: Boolean = false
     private var signImg: String = ""
     private var photoImg: String = ""
+    private var pendingPreviewPath: String? = null
 
     // 会议详情数据
     private lateinit var meetingDetail: MeetingViewData
@@ -164,14 +165,17 @@ class MeetingDetailActivity : AppCompatActivity() {
                         is ApiState.Success -> {
                             if(state.data != null) {
                                 val imageUrl = ApiConfig.BASE_URL_TRAINING + state.data.url
+                                applyUploadedPreview(uploadSignType)
                                 submitSignInfo(imageUrl, uploadSignType)
                             } else {
+                                pendingPreviewPath = null
                                 ToastUtils.showToast(
                                     this@MeetingDetailActivity, "上传失败"
                                 )
                             }
                         }
                         is ApiState.Error -> {
+                            pendingPreviewPath = null
                             showToast("图片上传失败：${state.msg}")
                         }
                         else -> {}
@@ -213,6 +217,8 @@ class MeetingDetailActivity : AppCompatActivity() {
      * 更新会议详情UI
      */
     private fun updateUIWithMeetingData() {
+        resetSignPhotoState()
+
         // 设置基本信息
         binding.tvMeetingName.text = meetingDetail.name
         binding.tvMeetingTime.text = meetingDetail.starttime
@@ -268,6 +274,48 @@ class MeetingDetailActivity : AppCompatActivity() {
         }
     }
 
+    private fun resetSignPhotoState() {
+        hasSign = false
+        hasPhoto = false
+        signImg = ""
+        photoImg = ""
+        pendingPreviewPath = null
+
+        binding.llSignArea.visibility = View.GONE
+        binding.llPhotoArea.visibility = View.GONE
+        binding.flSignPad.visibility = View.VISIBLE
+        binding.llSignButtons.visibility = View.VISIBLE
+        binding.ivSignImage.visibility = View.GONE
+        binding.btnTakePhoto.visibility = View.VISIBLE
+        binding.ivPhotoImage.visibility = View.GONE
+        binding.signaturePad.clear()
+        binding.btnSaveSign.isEnabled = false
+    }
+
+    private fun applyUploadedPreview(type: String) {
+        val previewPath = pendingPreviewPath ?: return
+        when (type) {
+            "0" -> {
+                hasSign = true
+                binding.flSignPad.visibility = View.GONE
+                binding.llSignButtons.visibility = View.GONE
+                binding.ivSignImage.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(previewPath)
+                    .into(binding.ivSignImage)
+            }
+            "1" -> {
+                hasPhoto = true
+                binding.btnTakePhoto.visibility = View.GONE
+                binding.ivPhotoImage.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(previewPath)
+                    .into(binding.ivPhotoImage)
+            }
+        }
+        pendingPreviewPath = null
+    }
+
     /**
      * 加载会议附件图片
      */
@@ -308,21 +356,11 @@ class MeetingDetailActivity : AppCompatActivity() {
                 val signFile = saveBitmapToFile(signatureBitmap)
 
                 // 上传签名图片
+                pendingPreviewPath = signFile.absolutePath
                 uploadImage(signFile, "0")
-
-                withContext(Dispatchers.Main) {
-                    hasSign = true
-                    binding.flSignPad.visibility = View.GONE
-                    binding.llSignButtons.visibility = View.GONE
-                    binding.ivSignImage.visibility = View.VISIBLE
-
-                    // 显示签名图片
-                    Glide.with(this@MeetingDetailActivity)
-                        .load(signFile)
-                        .into(binding.ivSignImage)
-                }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    pendingPreviewPath = null
                     showToast("保存签名失败：${e.message}")
                 }
                 e.printStackTrace()
@@ -350,16 +388,8 @@ class MeetingDetailActivity : AppCompatActivity() {
                                     val media = result[0]
                                     val photoPath = getImagePath(media)
                                     photoPath?.let {
+                                        pendingPreviewPath = it
                                         uploadImage(File(it), "1")
-
-                                        // 更新UI
-                                        hasPhoto = true
-                                        photoImg = it
-                                        binding.btnTakePhoto.visibility = View.GONE
-                                        binding.ivPhotoImage.visibility = View.VISIBLE
-                                        Glide.with(this@MeetingDetailActivity)
-                                            .load(it)
-                                            .into(binding.ivPhotoImage)
                                     }
                                 }
                             }

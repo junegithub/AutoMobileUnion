@@ -43,10 +43,14 @@ class PayDetailActivity : AppCompatActivity() {
     // 创建订单状态
     private val _createOrderState = MutableStateFlow<ApiState<PayOrderData>>(ApiState.Idle)
     val createOrderState = _createOrderState.asStateFlow()
+    private val _createOrderAlipayState = MutableStateFlow<ApiState<String>>(ApiState.Idle)
+    val createOrderAlipayState = _createOrderAlipayState.asStateFlow()
 
     // 年度支付状态
     private val _yearPayState = MutableStateFlow<ApiState<PayOrderData>>(ApiState.Idle)
     val yearPayState = _yearPayState.asStateFlow()
+    private val _yearPayAlipayState = MutableStateFlow<ApiState<String>>(ApiState.Idle)
+    val yearPayAlipayState = _yearPayAlipayState.asStateFlow()
 
     // 培训企业支付状态
     private val _trainCompanyPayState = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
@@ -55,6 +59,8 @@ class PayDetailActivity : AppCompatActivity() {
     // 培训个人支付状态
     private val _trainPersonPayState = MutableStateFlow<ApiState<PayOrderData>>(ApiState.Idle)
     val trainPersonPayState = _trainPersonPayState.asStateFlow()
+    private val _trainPersonPayAlipayState = MutableStateFlow<ApiState<String>>(ApiState.Idle)
+    val trainPersonPayAlipayState = _trainPersonPayAlipayState.asStateFlow()
 
     // 企业支付状态
     private val _companyPayState = MutableStateFlow<ApiState<CompanyPayData>>(ApiState.Idle)
@@ -71,6 +77,7 @@ class PayDetailActivity : AppCompatActivity() {
     private var dailyYear = false
     private var usualpaytype = "0" // 0 个人 1 企业
     private var isuserpay = "0" // 0 允许立即支付 1 不允许
+    private var currentPayMethod = ""
 
     // 工具类
     private val gson = Gson()
@@ -190,10 +197,22 @@ class PayDetailActivity : AppCompatActivity() {
             }
         }
 
+        lifecycleScope.launch {
+            createOrderAlipayState.collect { state ->
+                handleCreateOrderAlipayState(state)
+            }
+        }
+
         // 监听年度支付状态
         lifecycleScope.launch {
             yearPayState.collect { state ->
                 handleYearPayState(state)
+            }
+        }
+
+        lifecycleScope.launch {
+            yearPayAlipayState.collect { state ->
+                handleYearPayAlipayState(state)
             }
         }
 
@@ -208,6 +227,12 @@ class PayDetailActivity : AppCompatActivity() {
         lifecycleScope.launch {
             trainPersonPayState.collect { state ->
                 handleTrainPersonPayState(state)
+            }
+        }
+
+        lifecycleScope.launch {
+            trainPersonPayAlipayState.collect { state ->
+                handleTrainPersonPayAlipayState(state)
             }
         }
 
@@ -322,62 +347,48 @@ class PayDetailActivity : AppCompatActivity() {
      */
     private fun bindPickerChange(which: Int) {
         if (which == 1) {
+            currentPayMethod = "wechat"
             // 微信支付
-            val params = if (!historyShow) {
-                // 岗前培训
-                mapOf(
-                    "type" to "wechat",
-                    "method" to "app"
-                )
-            } else {
-                // 日常培训
-                mapOf(
-                    "money" to String.format("%.2f", money),
-                    "training_publicplan_id" to id,
-                    "type" to "wechat",
-                    "method" to "app"
-                )
-            }
-
             if (!historyShow) {
-                safetyTrainingViewModel.trainPersonPay(params, _trainPersonPayState)
+                PayUtils.getWeChatLoginCode(this) { code ->
+                    val params = mapOf(
+                        "code" to code,
+                        "type" to "wechat",
+                        "method" to "app"
+                    )
+                    safetyTrainingViewModel.trainPersonPay(params, _trainPersonPayState)
+                }
             } else {
-                safetyTrainingViewModel.creatPayOrder(params, _createOrderState)
+                PayUtils.getWeChatLoginCode(this) { code ->
+                    val params = mapOf(
+                        "money" to String.format("%.2f", money),
+                        "training_publicplan_id" to id,
+                        "code" to code,
+                        "type" to "wechat",
+                        "method" to "app"
+                    )
+                    safetyTrainingViewModel.creatPayOrder(params, _createOrderState)
+                }
             }
         } else if (which == 0) {
+            currentPayMethod = "alipay"
             // 支付宝支付
-            val params = if (!historyShow) {
+            if (!historyShow) {
                 // 岗前培训
-                mapOf(
+                val params = mapOf(
                     "type" to "alipay",
                     "method" to "app"
                 )
+                safetyTrainingViewModel.trainPersonPayAlipay(params, _trainPersonPayAlipayState)
             } else {
                 // 日常培训
-                mapOf(
+                val params = mapOf(
                     "money" to String.format("%.2f", money),
                     "training_safetyplan_id" to id,
                     "type" to "alipay",
                     "method" to "app"
                 )
-            }
-
-            if (!historyShow) {
-                safetyTrainingViewModel.trainPersonPay(params, _trainPersonPayState)
-            } else {
-                safetyTrainingViewModel.creatPayOrder(params, _createOrderState)
-
-                // 调起支付宝支付
-                PayUtils.callAlipay(this@PayDetailActivity, gson.toJson(params)) { isSuccess, msg ->
-                    if (isSuccess) {
-                        showToast("支付宝支付成功")
-                        onBackPressed()
-                    } else {
-                        showToast(msg)
-                    }
-                    // 重置状态
-                    _createOrderState.update { ApiState.Idle }
-                }
+                safetyTrainingViewModel.creatPayOrderAlipay(params, _createOrderAlipayState)
             }
         }
     }
@@ -387,6 +398,7 @@ class PayDetailActivity : AppCompatActivity() {
      */
     private fun yearAllPay(which: Int) {
         if (which == 1) {
+            currentPayMethod = "wechat"
             // 微信年度支付
             PayUtils.getWeChatLoginCode(this) { code ->
                 val params = mapOf(
@@ -399,6 +411,7 @@ class PayDetailActivity : AppCompatActivity() {
                 safetyTrainingViewModel.yearPay(params, _yearPayState)
             }
         } else if (which == 0) {
+            currentPayMethod = "alipay"
             // 支付宝年度支付
             val params = mapOf(
                 "type" to "alipay",
@@ -406,19 +419,7 @@ class PayDetailActivity : AppCompatActivity() {
                 "year_id" to id.toInt()
             )
 
-            safetyTrainingViewModel.yearPay(params, _yearPayState)
-
-            // 调起支付宝支付
-            PayUtils.callAlipay(this@PayDetailActivity, gson.toJson(params)) { isSuccess, msg ->
-                if (isSuccess) {
-                    showToast("年度支付成功")
-                    onBackPressed()
-                } else {
-                    showToast(msg)
-                }
-                // 重置状态
-                _yearPayState.update { ApiState.Idle }
-            }
+            safetyTrainingViewModel.yearPayAlipay(params, _yearPayAlipayState)
         }
     }
 
@@ -494,6 +495,39 @@ class PayDetailActivity : AppCompatActivity() {
         }
     }
 
+    private fun handleCreateOrderAlipayState(state: ApiState<String>) {
+        when (state) {
+            is ApiState.Loading -> showLoading()
+            is ApiState.Success -> {
+                hideLoading()
+                val orderInfo = state.data
+                if (!orderInfo.isNullOrBlank()) {
+                    PayUtils.callAlipay(this, orderInfo) { isSuccess, msg ->
+                        if (isSuccess) {
+                            showToast("支付宝支付成功")
+                            onBackPressed()
+                        } else {
+                            showToast(msg)
+                            if (msg.contains("取消")) {
+                                showCancelDialog()
+                            }
+                        }
+                        _createOrderAlipayState.update { ApiState.Idle }
+                    }
+                } else {
+                    showToast("支付失败：缺少支付宝订单信息")
+                    _createOrderAlipayState.update { ApiState.Idle }
+                }
+            }
+            is ApiState.Error -> {
+                hideLoading()
+                showToast(state.msg)
+                _createOrderAlipayState.update { ApiState.Idle }
+            }
+            ApiState.Idle -> {}
+        }
+    }
+
     /**
      * 处理年度支付状态
      */
@@ -523,6 +557,36 @@ class PayDetailActivity : AppCompatActivity() {
                 showToast(state.msg)
                 // 重置状态
                 _yearPayState.update { ApiState.Idle }
+            }
+            ApiState.Idle -> {}
+        }
+    }
+
+    private fun handleYearPayAlipayState(state: ApiState<String>) {
+        when (state) {
+            is ApiState.Loading -> showLoading()
+            is ApiState.Success -> {
+                hideLoading()
+                val orderInfo = state.data
+                if (!orderInfo.isNullOrBlank()) {
+                    PayUtils.callAlipay(this, orderInfo) { isSuccess, msg ->
+                        if (isSuccess) {
+                            showToast("年度支付成功")
+                            finish()
+                        } else {
+                            showToast(msg)
+                        }
+                        _yearPayAlipayState.update { ApiState.Idle }
+                    }
+                } else {
+                    showToast("支付失败：缺少支付宝订单信息")
+                    _yearPayAlipayState.update { ApiState.Idle }
+                }
+            }
+            is ApiState.Error -> {
+                hideLoading()
+                showToast(state.msg)
+                _yearPayAlipayState.update { ApiState.Idle }
             }
             ApiState.Idle -> {}
         }
@@ -592,6 +656,44 @@ class PayDetailActivity : AppCompatActivity() {
                 showToast(state.msg)
                 // 重置状态
                 _trainPersonPayState.update { ApiState.Idle }
+            }
+            ApiState.Idle -> {}
+        }
+    }
+
+    private fun handleTrainPersonPayAlipayState(state: ApiState<String>) {
+        when (state) {
+            is ApiState.Loading -> showLoading()
+            is ApiState.Success -> {
+                hideLoading()
+                val orderInfo = state.data
+                if (!orderInfo.isNullOrBlank()) {
+                    PayUtils.callAlipay(this, orderInfo) { isSuccess, msg ->
+                        if (isSuccess) {
+                            showToast("支付成功")
+                            val intent = Intent(this, TrainListActivity::class.java).apply {
+                                putExtra("type", "1")
+                                putExtra("title", "岗前培训")
+                            }
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            showToast(msg)
+                            if (msg.contains("取消")) {
+                                showCancelDialog()
+                            }
+                        }
+                        _trainPersonPayAlipayState.update { ApiState.Idle }
+                    }
+                } else {
+                    showToast("支付失败：缺少支付宝订单信息")
+                    _trainPersonPayAlipayState.update { ApiState.Idle }
+                }
+            }
+            is ApiState.Error -> {
+                hideLoading()
+                showToast(state.msg)
+                _trainPersonPayAlipayState.update { ApiState.Idle }
             }
             ApiState.Idle -> {}
         }
@@ -677,9 +779,12 @@ class PayDetailActivity : AppCompatActivity() {
     private fun resetAllStates() {
         _userInfoState.update { ApiState.Idle }
         _createOrderState.update { ApiState.Idle }
+        _createOrderAlipayState.update { ApiState.Idle }
         _yearPayState.update { ApiState.Idle }
+        _yearPayAlipayState.update { ApiState.Idle }
         _trainCompanyPayState.update { ApiState.Idle }
         _trainPersonPayState.update { ApiState.Idle }
+        _trainPersonPayAlipayState.update { ApiState.Idle }
         _companyPayState.update { ApiState.Idle }
     }
 

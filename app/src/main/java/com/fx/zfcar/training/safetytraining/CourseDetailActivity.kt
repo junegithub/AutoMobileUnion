@@ -60,6 +60,7 @@ class CourseDetailActivity : AppCompatActivity() {
     private var courseInfo: CoursewareItem? = null
     private var trainAbout: TrainingPublicPlan? = null
     private var hasStudyTime = 0 // 已学习时长（秒）
+    private var initialStudyTime = 0 // 进入页面时后端返回的已学习时长
     private var videoRealTime = 0 // 视频实时播放进度
     private var videotime = 0 // 初始播放位置
     private var alltime = 0 // 总时长
@@ -71,6 +72,7 @@ class CourseDetailActivity : AppCompatActivity() {
     private var pageScoll = 0 // 滚动位置
     private var evaluateInput = ""
     private var eveluateShow = false // 评价弹窗显示标记
+    private var studyReported = false
 
     // 定时器（完整实现原逻辑）
     private var timer1: Timer? = null
@@ -649,12 +651,15 @@ class CourseDetailActivity : AppCompatActivity() {
             alltime = courseData.courrow.longtime
 
             // 处理学习时长
+            initialStudyTime = courseData.longtime
             hasStudyTime = courseData.longtime
             videotime = if (hasStudyTime == alltime) {
                 0 // 已完成则重置
             } else {
                 courseData.longtime
             }
+            videoRealTime = videotime
+            studyReported = false
 
             // 更新UI
             binding.tvCourseName.text = courseData.courrow.name
@@ -760,6 +765,8 @@ class CourseDetailActivity : AppCompatActivity() {
     }
 
     private fun checkFace() {
+        if (studyReported) return
+        studyReported = true
         val params = mutableMapOf(
             "subject_id" to subjectId,
             "training_safetyplan_id" to safetyPlanId,
@@ -812,7 +819,7 @@ class CourseDetailActivity : AppCompatActivity() {
             clickNumber++
 
             // 更新已学习时长
-            hasStudyTime = currentTime
+            hasStudyTime = (initialStudyTime + currentTime - videotime).coerceAtLeast(initialStudyTime)
             binding.tvStudyTime.text = if (hasStudyTime == alltime) {
                 "已完成"
             } else {
@@ -893,7 +900,7 @@ class CourseDetailActivity : AppCompatActivity() {
         cancelAllTimers()
         saveScrollPosition()
 
-        if (!ischeckface) {
+        if (!ischeckface && !isFinishing) {
             checkFace()
         }
 

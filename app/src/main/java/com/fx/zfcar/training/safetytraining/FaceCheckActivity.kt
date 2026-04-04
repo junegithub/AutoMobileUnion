@@ -470,7 +470,7 @@ class FaceCheckActivity : AppCompatActivity() {
                                 }
                             } else {
                                 val intent = Intent(this@FaceCheckActivity, TrainCourseListActivity::class.java)
-                                intent.putExtra("id", params["safetyPlanId"])
+                                intent.putExtra("safetyPlanId", params["safetyPlanId"])
                                 intent.putExtra("name", params["name"])
                                 intent.putExtra("number", params["number"])
                                 intent.putExtra("type", "before")
@@ -519,9 +519,10 @@ class FaceCheckActivity : AppCompatActivity() {
                         showToast(getString(R.string.hint_verify_success))
                         if (state.data?.nextsubject_id != 0) {
                             showToast(getString(R.string.hint_jump_next_lesson))
-                            val intent = Intent(this@FaceCheckActivity, DailyTrainListActivity::class.java)
+                            val intent = Intent(this@FaceCheckActivity, CourseDetailActivity::class.java)
                             intent.putExtra("safetyPlanId", params["safetyPlanId"])
                             intent.putExtra("subjectId", state.data?.nextsubject_id)
+                            intent.putExtra("trainName", params["name"])
                             startActivity(intent)
                         } else {
                             finish()
