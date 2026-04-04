@@ -34,6 +34,11 @@
     <string name="contact_service">联系客服</string>
     <string name="copyright">Copyright © 2023 车启联 版权所有</string>
     <string name="toast_agreement">请同意服务协议和隐私政策</string>
+    <string name="normal_login_title">欢迎登录</string>
+    <string name="normal_login_subtitle">登录后继续使用车辆与培训服务</string>
+    <string name="training_login_title">培训账号登录</string>
+    <string name="training_login_subtitle">登录后开始课程学习、考试和签到</string>
+    <string name="training_hint_account">请输入培训账号</string>
     <string name="agreement_dialog_title">欢迎使用车启联</string>
     <string name="agreement_dialog_desc">为保障你的个人信息安全，在使用完整功能前，请先阅读并同意相关协议内容。</string>
     <string name="agreement_consent_content">我已阅读并同意《服务协议》及《隐私政策》后进入应用</string>
@@ -130,6 +135,13 @@
     <string name="app_version">Version 1.0.12</string>
     <string name="service_terms">服务协议</string>
     <string name="privacy_policy">隐私政策</string>
+    <string name="login_prompt_title">登录后继续</string>
+    <string name="login_prompt_desc">登录后可同步账号信息、查看完整车辆数据并使用更多服务能力。</string>
+    <string name="training_login_prompt_title">登录后开始培训</string>
+    <string name="training_login_prompt_desc">完成登录后可进入课程学习、考试、签到和培训支付等完整流程。</string>
+    <string name="login_prompt_positive">立即登录</string>
+    <string name="login_prompt_negative">稍后再说</string>
+    <string name="training_login_prompt_negative">联系客服</string>
 
     <string name="certificate_title">我的证书 · </string>
     <string name="certificate_content">已获得%d张</string>

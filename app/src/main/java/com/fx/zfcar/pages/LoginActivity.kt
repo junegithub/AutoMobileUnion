@@ -83,6 +83,22 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updatePageWithLoginState() {
+        binding.tvLoginTitle.text = if (trainingLogin) {
+            getString(R.string.training_login_title)
+        } else {
+            getString(R.string.normal_login_title)
+        }
+        binding.tvLoginSubtitle.text = if (trainingLogin) {
+            getString(R.string.training_login_subtitle)
+        } else {
+            getString(R.string.normal_login_subtitle)
+        }
+        binding.etAccount.hint = if (trainingLogin) {
+            getString(R.string.training_hint_account)
+        } else {
+            getString(R.string.hint_account)
+        }
+
         if (!trainingLogin) {
             if (MyApp.userInfo != null) {
                 binding.tvUsername.text = MyApp.userInfo?.username
@@ -93,6 +109,9 @@ class LoginActivity : AppCompatActivity() {
                 binding.userGroup.visibility = View.GONE
                 binding.loginGroup.visibility = View.VISIBLE
             }
+        } else {
+            binding.userGroup.visibility = View.GONE
+            binding.loginGroup.visibility = View.VISIBLE
         }
     }
 

@@ -2,10 +2,15 @@ package com.fx.zfcar.util
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.LayoutInflater
 import com.fx.zfcar.pages.LoginActivity
 import com.fx.zfcar.pages.PolicyContentActivity
 import com.fx.zfcar.pages.openDial
 import androidx.appcompat.app.AlertDialog
+import com.fx.zfcar.R
+import com.fx.zfcar.databinding.DialogLoginPromptBinding
 import com.loper7.date_time_picker.DateTimeConfig
 import com.loper7.date_time_picker.dialog.CardDatePickerDialog
 
@@ -21,21 +26,17 @@ object DialogUtils {
     fun showLoginPromptDialog(
         context: Context
     ) {
-        // 构建AlertDialog
-        val dialogBuilder = AlertDialog.Builder(context)
-            .setMessage("请登录后使用")
-            // 继续体验按钮（消极按钮）
-            .setNegativeButton("继续体验") { dialog, _ ->
-
-            }
-            // 立即登录按钮（积极按钮）
-            .setPositiveButton("立即登录") { dialog, _ ->
+        showStyledLoginPromptDialog(
+            context = context,
+            title = context.getString(R.string.login_prompt_title),
+            message = context.getString(R.string.login_prompt_desc),
+            negativeText = context.getString(R.string.login_prompt_negative),
+            positiveText = context.getString(R.string.login_prompt_positive),
+            onNegative = {},
+            onPositive = {
                 context.startActivity(Intent(context, LoginActivity::class.java))
             }
-
-        // 创建弹窗并配置样式
-        val dialog = dialogBuilder.create()
-        dialog.show()
+        )
     }
 
     /**
@@ -45,23 +46,21 @@ object DialogUtils {
     fun showTrainingLoginPromptDialog(
         context: Context
     ) {
-        // 构建AlertDialog
-        val dialogBuilder = AlertDialog.Builder(context)
-            .setMessage("请登录后开始培训")
-            // 继续体验按钮（消极按钮）
-            .setNegativeButton("联系客服") { dialog, _ ->
+        showStyledLoginPromptDialog(
+            context = context,
+            title = context.getString(R.string.training_login_prompt_title),
+            message = context.getString(R.string.training_login_prompt_desc),
+            negativeText = context.getString(R.string.training_login_prompt_negative),
+            positiveText = context.getString(R.string.login_prompt_positive),
+            onNegative = {
                 context.openDial("05354971763")
-            }
-            // 立即登录按钮（积极按钮）
-            .setPositiveButton("立即登录") { dialog, _ ->
+            },
+            onPositive = {
                 val intent = Intent(context, LoginActivity::class.java)
                 intent.putExtra(LoginActivity.Companion.LOGIN_TYPE_TRAINING, true)
                 context.startActivity(intent)
             }
-
-        // 创建弹窗并配置样式
-        val dialog = dialogBuilder.create()
-        dialog.show()
+        )
     }
 
     fun showTermsDlg(context: Context) {
@@ -69,6 +68,40 @@ object DialogUtils {
     }
     fun showPrivacyDlg(context: Context) {
         PolicyContentActivity.open(context, PolicyContentActivity.TYPE_PRIVACY)
+    }
+
+    private fun showStyledLoginPromptDialog(
+        context: Context,
+        title: String,
+        message: String,
+        negativeText: String,
+        positiveText: String,
+        onNegative: () -> Unit,
+        onPositive: () -> Unit
+    ) {
+        val binding = DialogLoginPromptBinding.inflate(LayoutInflater.from(context))
+        binding.tvDialogTitle.text = title
+        binding.tvDialogMessage.text = message
+        binding.btnNegative.text = negativeText
+        binding.btnPositive.text = positiveText
+
+        val dialog = AlertDialog.Builder(context)
+            .setView(binding.root)
+            .setCancelable(true)
+            .create()
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        binding.btnNegative.setOnClickListener {
+            dialog.dismiss()
+            onNegative()
+        }
+        binding.btnPositive.setOnClickListener {
+            dialog.dismiss()
+            onPositive()
+        }
+
+        dialog.show()
     }
 
     /**

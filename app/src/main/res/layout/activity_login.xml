@@ -31,18 +31,42 @@
         android:id="@+id/login_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="et_account, et_pwd, btn_login, agreement_layout"/>
+        app:constraint_referenced_ids="tv_login_title, tv_login_subtitle, et_account, et_pwd, btn_login, agreement_layout"/>
+
+    <TextView
+        android:id="@+id/tv_login_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_24"
+        android:text="欢迎登录"
+        android:textColor="@color/colorTextDark"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/iv_banner" />
+
+    <TextView
+        android:id="@+id/tv_login_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_8"
+        android:text="登录后继续使用完整服务"
+        android:textColor="@color/colorTextLight"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_login_title" />
 
     <EditText
         android:id="@+id/et_account"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_48"
         android:layout_marginHorizontal="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_20"
         android:background="@drawable/et_gray_radius"
         android:hint="@string/hint_account"
         android:paddingHorizontal="@dimen/dp_16"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintTop_toBottomOf="@id/iv_banner"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_login_subtitle"/>
 
     <EditText
         android:id="@+id/et_pwd"
@@ -90,8 +114,10 @@
         <!-- 协议文本（独立TextView） -->
         <TextView
             android:id="@+id/tv_agreement_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:lineSpacingExtra="2dp"
             android:textSize="14sp"
             android:text="@string/agreement"
             android:textColor="@color/text_gray"
