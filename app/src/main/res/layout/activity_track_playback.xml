@@ -65,11 +65,13 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_gravity="bottom"
         android:background="@drawable/bg_bottom_sheet"
+        android:clickable="true"
+        android:focusable="true"
         android:orientation="vertical"
-        android:padding="15dp">
+        android:padding="15dp"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/switch_panel"
@@ -348,5 +350,7 @@
         android:id="@+id/time_choose_container"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true" />
 </FrameLayout>

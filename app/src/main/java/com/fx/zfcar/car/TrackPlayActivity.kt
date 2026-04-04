@@ -127,6 +127,9 @@ class TrackPlayActivity : AppCompatActivity() {
 
         binding.progressBar.thumb = VehicleImageProvider.scaleBitmapDrawable(this,
             VehicleImageProvider.getVehicleImageResId(dlcartype, carStatus),0.5f)
+
+        binding.content.setOnTouchListener { _, _ -> false }
+        binding.timeChooseContainer.setOnTouchListener { _, _ -> false }
     }
 
     /**
@@ -185,6 +188,7 @@ class TrackPlayActivity : AppCompatActivity() {
                 binding.switchPanel.setImageResource(R.drawable.expand)
                 binding.content.translationY = (binding.content.height - binding.contentTopLayout.top).toFloat()
             }
+            syncMapPadding()
         }
         // 设置按钮点击事件
         binding.ivPlayPause.setOnClickListener {
@@ -404,6 +408,7 @@ class TrackPlayActivity : AppCompatActivity() {
             val builder = LatLngBounds.builder()
             latLngList.forEach { builder.include(it) }
             val bounds = builder.build()
+            updateMapCenterAnchor(getVisibleBottomPanelHeight())
             aMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
         }
     }
@@ -422,6 +427,7 @@ class TrackPlayActivity : AppCompatActivity() {
             binding.btnShare.visibility = View.VISIBLE
             binding.timeChooseContainer.visibility = View.GONE
         }
+        syncMapPadding()
     }
 
     /**
@@ -667,6 +673,7 @@ class TrackPlayActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mapView.onResume()
+        syncMapPadding()
     }
 
     override fun onPause() {
@@ -708,6 +715,40 @@ class TrackPlayActivity : AppCompatActivity() {
 
     private fun colorOf(colorRes: Int): Int {
         return ContextCompat.getColor(this, colorRes)
+    }
+
+    private fun syncMapPadding() {
+        binding.root.post {
+            updateMapCenterAnchor(getVisibleBottomPanelHeight())
+        }
+    }
+
+    private fun updateMapCenterAnchor(visibleBottomPanelHeight: Int) {
+        val width = binding.mapView.width
+        val height = binding.mapView.height
+        if (width <= 0 || height <= 0) {
+            return
+        }
+        if (visibleBottomPanelHeight > 0) {
+            aMap.setPointToCenter(width / 2, ((height - visibleBottomPanelHeight) / 2f).toInt())
+        } else {
+            aMap.setPointToCenter(width / 2, height / 2)
+        }
+    }
+
+    private fun getVisibleBottomPanelHeight(): Int {
+        val contentHeight = if (binding.content.visibility == View.VISIBLE) {
+            val translated = binding.content.height - binding.content.translationY.toInt()
+            translated.coerceAtLeast(0)
+        } else {
+            0
+        }
+        val timeChooseHeight = if (binding.timeChooseContainer.visibility == View.VISIBLE) {
+            binding.timeChooseContainer.height
+        } else {
+            0
+        }
+        return maxOf(contentHeight, timeChooseHeight)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
