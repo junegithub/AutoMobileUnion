@@ -2,10 +2,12 @@ package com.fx.zfcar
 
 import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import com.amap.api.maps.MapsInitializer
 import com.fx.zfcar.net.CarUser
 import com.fx.zfcar.net.RetrofitClient
 import com.fx.zfcar.net.UserLoginData
+import com.fx.zfcar.util.WindowInsetHelper
 import com.kongzue.dialogx.DialogX
 
 class MyApp : Application() {
@@ -19,6 +21,20 @@ class MyApp : Application() {
         MapsInitializer.updatePrivacyShow(this, true, true)
         MapsInitializer.updatePrivacyAgree(this, true)
         DialogX.init(this)
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityCreated(activity: android.app.Activity, savedInstanceState: Bundle?) {
+                activity.window?.decorView?.post {
+                    WindowInsetHelper.applyBottomInset(activity)
+                }
+            }
+
+            override fun onActivityStarted(activity: android.app.Activity) = Unit
+            override fun onActivityResumed(activity: android.app.Activity) = Unit
+            override fun onActivityPaused(activity: android.app.Activity) = Unit
+            override fun onActivityStopped(activity: android.app.Activity) = Unit
+            override fun onActivitySaveInstanceState(activity: android.app.Activity, outState: Bundle) = Unit
+            override fun onActivityDestroyed(activity: android.app.Activity) = Unit
+        })
     }
 
     // 3. 公共静态方法，全局获取MyApp实例
