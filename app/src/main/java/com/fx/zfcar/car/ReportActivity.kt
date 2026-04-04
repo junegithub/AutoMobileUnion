@@ -7,14 +7,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fx.zfcar.databinding.ActivityReportBinding
 import com.fx.zfcar.car.viewmodel.ReportViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
-import com.chad.library.adapter4.QuickAdapterHelper
-import com.chad.library.adapter4.loadState.LoadState
-import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
 import com.chad.library.adapter4.util.setOnDebouncedItemClick
 import com.fx.zfcar.car.adapter.ReportAdapter
 import com.fx.zfcar.car.adapter.ReportItem
@@ -55,13 +53,13 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private var currentTimeType = 1 // 1:昨天 2:今天 3:近三天 4:近一周
     private var currentTabIndex = 0 // 当前一级Tab索引
     private lateinit var reportAdapter: ReportAdapter
-    private lateinit var adapterHelper: QuickAdapterHelper
     private var pageNum: Int = 1
     private val pageSize = 20
     private var loadFromMore: Boolean = false
     private var currentTotal: Int = 0
     private val currentItems = mutableListOf<ReportItem>()
     private var reachedEnd: Boolean = false
+    private lateinit var layoutManager: LinearLayoutManager
 
     private var startDate: String = ""
     private var endDate: String = ""
@@ -136,11 +134,14 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
      */
     private fun initRecyclerView() {
         reportAdapter = ReportAdapter(ReportAdapter.ReportType.MILEAGE)
-        refreshAdapter()
-        binding.rvContent.layoutManager = LinearLayoutManager(this)
+        layoutManager = LinearLayoutManager(this)
+        binding.rvContent.layoutManager = layoutManager
+        binding.rvContent.adapter = reportAdapter
+        bindAdapterListener()
+        initScrollPagination()
     }
 
-    private fun refreshAdapter() {
+    private fun bindAdapterListener() {
         reportAdapter.setOnDebouncedItemClick { adapter, view, position ->
             if (reportAdapter.type == ReportAdapter.ReportType.WARNING) {
                 val warningItem = (reportAdapter.getItem(position) as ReportItem.WarningItem).data
@@ -164,27 +165,31 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(intent)
             }
         }
-        adapterHelper = QuickAdapterHelper.Builder(reportAdapter)
-            .setTrailingLoadStateAdapter(object : TrailingLoadStateAdapter.OnTrailingListener {
-                override fun onLoad() {
-                    if (binding.progressBar.visibility == View.VISIBLE || loadFromMore || reachedEnd) {
-                        updateAdapterLoadState()
-                        return
-                    }
+    }
+
+    private fun initScrollPagination() {
+        binding.rvContent.clearOnScrollListeners()
+        binding.rvContent.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy <= 0 || binding.llEmpty.visibility == View.VISIBLE) {
+                    return
+                }
+                if (binding.progressBar.visibility == View.VISIBLE || loadFromMore || reachedEnd) {
+                    return
+                }
+                val totalItemCount = layoutManager.itemCount
+                if (totalItemCount == 0) {
+                    return
+                }
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                if (lastVisibleItem >= totalItemCount - 2) {
                     pageNum++
                     loadFromMore = true
-                    adapterHelper.trailingLoadState = LoadState.Loading
                     loadData()
                 }
-
-                override fun onFailRetry() {
-                }
-
-            })
-            .setTrailPreloadSize(1)
-            .attachTo(binding.rvContent)
-
-        updateAdapterLoadState()
+            }
+        })
     }
 
     override fun onClick(v: View) {
@@ -303,11 +308,6 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
      * 刷新适配器类型
      */
     private fun refreshAdapterType() {
-        if (::adapterHelper.isInitialized) {
-            adapterHelper.removeAdapter(reportAdapter)
-            adapterHelper.trailingLoadStateAdapter?.setOnLoadMoreListener(null)
-            adapterHelper.trailingLoadState = LoadState.None
-        }
         val adapterType = when (currentTabIndex) {
             0 -> ReportAdapter.ReportType.MILEAGE
             1 -> ReportAdapter.ReportType.WARNING
@@ -322,7 +322,8 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             else -> ReportAdapter.ReportType.MILEAGE
         }
         reportAdapter = ReportAdapter(adapterType)
-        refreshAdapter()
+        binding.rvContent.adapter = reportAdapter
+        bindAdapterListener()
     }
 
     /**
@@ -605,15 +606,9 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         binding.progressBar.visibility = View.GONE
         if (apiState is ApiState.Success || apiState is ApiState.Error) {
             if (loadFromMore) {
-                updateAdapterLoadState()
                 loadFromMore = false
             }
         }
-    }
-
-    private fun updateAdapterLoadState() {
-        reachedEnd = currentTotal <= 0 || currentItems.size >= currentTotal
-        adapterHelper.trailingLoadState = LoadState.NotLoading(reachedEnd)
     }
 
     private fun resetDateRangeToDefault() {
@@ -632,7 +627,6 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         binding.tvCarNumStop.visibility = View.GONE
         binding.llEmpty.visibility = View.GONE
         reportAdapter.submitList(emptyList())
-        updateAdapterLoadState()
         loadData()
     }
 
@@ -645,6 +639,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             currentTotal = currentItems.size
         }
         currentItems.addAll(newItems)
+        reachedEnd = currentTotal <= 0 || currentItems.size >= currentTotal
         if (currentItems.isEmpty()) {
             binding.llEmpty.visibility = View.VISIBLE
             binding.tvEmptyTip.text = emptyTip
@@ -653,7 +648,6 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             binding.llEmpty.visibility = View.GONE
             reportAdapter.submitList(currentItems.toList())
         }
-        updateAdapterLoadState()
     }
 
     /**
