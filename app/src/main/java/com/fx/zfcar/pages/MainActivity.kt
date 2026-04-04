@@ -1,6 +1,10 @@
 package com.fx.zfcar.pages
 
 import android.os.Bundle
+import android.os.SystemClock
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -11,6 +15,8 @@ import com.fx.zfcar.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var lastBackPressedAt = 0L
+    private var exitDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +58,40 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    handleExitBackPress()
+                }
+            }
+        )
     }
 
+    private fun handleExitBackPress() {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastBackPressedAt > 2000L) {
+            lastBackPressedAt = now
+            Toast.makeText(this, getString(R.string.main_exit_hint), Toast.LENGTH_SHORT).show()
+            return
+        }
+        lastBackPressedAt = 0L
+        showExitDialog()
+    }
+
+    private fun showExitDialog() {
+        if (exitDialog?.isShowing == true) {
+            return
+        }
+        exitDialog = AlertDialog.Builder(this)
+            .setTitle(R.string.main_exit_dialog_title)
+            .setMessage(R.string.main_exit_dialog_message)
+            .setNegativeButton(R.string.main_exit_dialog_cancel, null)
+            .setPositiveButton(R.string.main_exit_dialog_confirm) { _, _ ->
+                finishAffinity()
+            }
+            .create()
+        exitDialog?.show()
+    }
 }
