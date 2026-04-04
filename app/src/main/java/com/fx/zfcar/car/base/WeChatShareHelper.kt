@@ -3,12 +3,14 @@ package com.fx.zfcar.car.base
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.fx.zfcar.R
 import com.fx.zfcar.net.WxPayParams
 import com.fx.zfcar.training.exam.toPayReq
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.util.Constant
+import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.viewmodel.ApiState
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage
@@ -64,13 +66,13 @@ class WeChatShareHelper(private val context: Context,
         val encodedToken = try {
             URLEncoder.encode(token, "UTF-8")
         } catch (e: Exception) {
-            context?.showToast("Token编码失败")
+            context.showToast("Token编码失败")
             return
         }
 
         // 4. 检查微信是否安装
         if (!wxApi.isWXAppInstalled) {
-            context?.showToast("未安装微信")
+            context.showToast("未安装微信")
             return
         }
 
@@ -104,7 +106,7 @@ class WeChatShareHelper(private val context: Context,
         // 6. 发送分享请求
         val result = wxApi.sendReq(req)
         if (!result) {
-            context?.showToast("分享请求发送失败")
+            context.showToast("分享请求发送失败")
         }
     }
 
@@ -115,7 +117,7 @@ class WeChatShareHelper(private val context: Context,
     private fun getValidWXThumbnail(): ByteArray? {
         return try {
             // 步骤1：加载图片（优先用本地资源，网络图片需先下载）
-            val drawable = context.resources.getDrawable(R.drawable.icon_logo)
+            val drawable = ContextCompat.getDrawable(context, R.drawable.icon_logo) ?: return null
             var bitmap = Bitmap.createBitmap(
                 drawable.intrinsicWidth,
                 drawable.intrinsicHeight,
@@ -156,5 +158,43 @@ class WeChatShareHelper(private val context: Context,
 
     fun goPay(payParams: WxPayParams) {
         wxApi.sendReq(payParams.toPayReq())
+    }
+
+    fun shareTrajectory(token: String, beginTime: Long, endTime: Long, shareMinutes: Int) {
+        val encodedToken = try {
+            URLEncoder.encode(token, "UTF-8")
+        } catch (e: Exception) {
+            context.showToast("Token编码失败")
+            return
+        }
+
+        if (!wxApi.isWXAppInstalled) {
+            context.showToast("未安装微信")
+            return
+        }
+
+        val endShareTime = System.currentTimeMillis() + shareMinutes * 60 * 1000L
+        val beginTimeValue = DateUtil.timestamp2String(beginTime).replace("-", "").replace(":", "").replace(" ", "")
+        val endTimeValue = DateUtil.timestamp2String(endTime).replace("-", "").replace(":", "").replace(" ", "")
+        val shareUrl = "https://www.ezbeidou.com/trajectory?params=$encodedToken&endShareTime=$endShareTime&beginTime=$beginTimeValue&endTime=$endTimeValue"
+
+        val webpageObject = WXWebpageObject().apply {
+            webpageUrl = shareUrl
+        }
+        val msg = WXMediaMessage(webpageObject).apply {
+            title = "轨迹分享"
+            description = carnum
+            thumbData = getValidWXThumbnail()
+        }
+        val req = SendMessageToWX.Req().apply {
+            transaction = "trajectory_share_${System.currentTimeMillis()}"
+            message = msg
+            scene = SendMessageToWX.Req.WXSceneSession
+        }
+
+        val result = wxApi.sendReq(req)
+        if (!result) {
+            context.showToast("分享请求发送失败")
+        }
     }
 }

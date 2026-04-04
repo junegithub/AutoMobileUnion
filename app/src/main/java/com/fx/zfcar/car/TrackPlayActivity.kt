@@ -2,6 +2,7 @@ package com.fx.zfcar.car
 
 import com.fx.zfcar.databinding.ActivityTrackPlaybackBinding
 import com.fx.zfcar.net.TrackData
+import com.fx.zfcar.net.TrackShareRequest
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.graphics.Color
 import android.view.View
 import android.widget.SeekBar
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.amap.api.maps.AMap
 import com.amap.api.maps.CameraUpdateFactory
@@ -25,6 +27,7 @@ import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ProgressDialogUtils
 import com.fx.zfcar.viewmodel.ApiState
+import com.fx.zfcar.training.user.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.*
@@ -50,6 +53,7 @@ class TrackPlayActivity : AppCompatActivity() {
     private var animationTimer: Timer? = null
 
     private val trackInfoStateFlow = MutableStateFlow<ApiState<TrackData>>(ApiState.Idle)
+    private val shareTrackStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
 
     private lateinit var timeFilterHelper: TimeFilterHelper
@@ -92,7 +96,9 @@ class TrackPlayActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        carId = intent.getStringExtra(KEY_CAR_ID).toString()
+        carId = intent.getStringExtra(KEY_CAR_ID)
+            ?: intent.getIntExtra(KEY_CAR_ID, 0).takeIf { it > 0 }?.toString()
+            .orEmpty()
         dlcartype = intent.getStringExtra(KEY_CAR_DLTYPE).toString()
         carStatus = intent.getIntExtra(KEY_CAR_STATUS, 0)
 
@@ -127,8 +133,13 @@ class TrackPlayActivity : AppCompatActivity() {
      * 解析轨迹数据
      */
     private fun loadTrackData() {
+        val currentCarId = carId.toIntOrNull()
+        if (currentCarId == null || currentCarId <= 0) {
+            showToast("车辆信息异常")
+            return
+        }
         carInfoViewModel.getTrackInfo(
-            carId.toInt(),
+            currentCarId,
             DateUtil.timestamp2String(endTime),
             DateUtil.timestamp2String(startTime), trackInfoStateFlow)
     }
@@ -250,8 +261,22 @@ class TrackPlayActivity : AppCompatActivity() {
 
         // 设置分享按钮点击事件
         binding.btnShare.setOnClickListener {
-            wechat.carnum = trackData!!.carinfo.carnum
-            carInfoViewModel.shareLastPosition(carId.toLong(), wechat.shareLocationStateFlow)
+            val currentTrack = trackData
+            if (currentTrack == null) {
+                showToast("暂无轨迹数据")
+                return@setOnClickListener
+            }
+            wechat.carnum = currentTrack.carinfo.carnum
+                    carInfoViewModel.shareTrack(
+                TrackShareRequest(
+                    carId = carId,
+                    start = DateUtil.timestamp2String(startTime),
+                    end = DateUtil.timestamp2String(endTime),
+                    minute = getShareDurationMinutes().toString()
+                ),
+                getShareDurationMinutes(),
+                shareTrackStateFlow
+            )
         }
     }
 
@@ -269,14 +294,32 @@ class TrackPlayActivity : AppCompatActivity() {
                             drawTrack(uiState.data)
                             moveMapToFirstPoint(uiState.data)
                             startAnimation()
+                            setPlayingState(true)
                         }
                         ProgressDialogUtils.dismiss()
                     }
                     is ApiState.Error -> {
                         ProgressDialogUtils.dismiss()
+                        setPlayingState(false)
                     }
                     is ApiState.Idle -> {
                     }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            shareTrackStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Success -> {
+                        uiState.data?.let { token ->
+                            wechat.shareTrajectory(token, startTime, endTime, getShareDurationMinutes())
+                        }
+                    }
+                    is ApiState.Error -> {
+                        showToast(uiState.msg)
+                    }
+                    else -> Unit
                 }
             }
         }
@@ -317,7 +360,7 @@ class TrackPlayActivity : AppCompatActivity() {
         val polylineOptions = PolylineOptions()
             .addAll(latLngList)
             .width(10f)
-            .color(resources.getColor(R.color.blue))
+            .color(colorOf(R.color.blue))
             .setDottedLine(false)
             .geodesic(false)
 
@@ -359,7 +402,9 @@ class TrackPlayActivity : AppCompatActivity() {
 
         // 设置地图显示范围以包含整个轨迹
         if (latLngList.size > 1) {
-            val bounds = LatLngBounds.builder().include(latLngList[0]).include(latLngList.last()).build()
+            val builder = LatLngBounds.builder()
+            latLngList.forEach { builder.include(it) }
+            val bounds = builder.build()
             aMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
         }
     }
@@ -429,21 +474,22 @@ class TrackPlayActivity : AppCompatActivity() {
      */
     private fun setPlayTimeMode(mode: PlayTimeMode) {
         currentPlayMode = mode
+        val currentTrack = trackData ?: return
 
         // 更新标签样式
         when (mode) {
             PlayTimeMode.MODE_5_MINUTES -> {
                 // 5分钟 = 300秒，计算每段轨迹的播放间隔
-                animationInterval = if (trackData!!.postlist.size > 1) {
-                    (300000L / (trackData!!.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
+                animationInterval = if (currentTrack.postlist.size > 1) {
+                    (300000L / (currentTrack.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
                 } else {
                     1000L
                 }
             }
             PlayTimeMode.MODE_15_MINUTES -> {
                 // 15分钟 = 900秒，计算每段轨迹的播放间隔
-                animationInterval = if (trackData!!.postlist.size > 1) {
-                    (900000L / (trackData!!.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
+                animationInterval = if (currentTrack.postlist.size > 1) {
+                    (900000L / (currentTrack.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
                 } else {
                     1000L
                 }
@@ -465,19 +511,19 @@ class TrackPlayActivity : AppCompatActivity() {
         // 更新UI显示
         when (speed) {
             PlaySpeed.SLOW -> {
-                binding.tvSpeedSlow.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
+                binding.tvSpeedSlow.setBackgroundColor(colorOf(android.R.color.holo_blue_light))
                 binding.tvSpeedNormal.setBackgroundColor(Color.TRANSPARENT)
                 binding.tvSpeedFast.setBackgroundColor(Color.TRANSPARENT)
             }
             PlaySpeed.NORMAL -> {
                 binding.tvSpeedSlow.setBackgroundColor(Color.TRANSPARENT)
-                binding.tvSpeedNormal.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
+                binding.tvSpeedNormal.setBackgroundColor(colorOf(android.R.color.holo_blue_light))
                 binding.tvSpeedFast.setBackgroundColor(Color.TRANSPARENT)
             }
             PlaySpeed.FAST -> {
                 binding.tvSpeedSlow.setBackgroundColor(Color.TRANSPARENT)
                 binding.tvSpeedNormal.setBackgroundColor(Color.TRANSPARENT)
-                binding.tvSpeedFast.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
+                binding.tvSpeedFast.setBackgroundColor(colorOf(android.R.color.holo_blue_light))
             }
         }
 
@@ -491,8 +537,14 @@ class TrackPlayActivity : AppCompatActivity() {
      * 开始轨迹动画
      */
     private fun startAnimation() {
+        val currentTrack = trackData
+        if (currentTrack == null || currentTrack.postlist.isEmpty()) {
+            setPlayingState(false)
+            return
+        }
         // 停止之前的动画
         pauseAnimation()
+        setPlayingState(true)
 
         // 根据当前速度计算实际的动画间隔
         val actualInterval = (animationInterval / currentPlaySpeed.multiplier).toLong()
@@ -502,8 +554,8 @@ class TrackPlayActivity : AppCompatActivity() {
         animationTimer?.schedule(object : TimerTask() {
             override fun run() {
                 runOnUiThread {
-                    if (currentPointIndex < trackData!!.postlist.size) {
-                        val currentPoint = trackData!!.postlist[currentPointIndex]
+                    if (currentPointIndex < currentTrack.postlist.size) {
+                        val currentPoint = currentTrack.postlist[currentPointIndex]
 
                         // 更新当前时间和速度显示
                         updatePositionInfo(currentPoint)
@@ -519,8 +571,8 @@ class TrackPlayActivity : AppCompatActivity() {
                         highlightCurrentTrackSegment()
 
                         // 更新进度条
-                        if (trackData!!.postlist.size > 1) {
-                            val progress = (currentPointIndex.toFloat() / (trackData!!.postlist.size - 1) * 100).toInt()
+                        if (currentTrack.postlist.size > 1) {
+                            val progress = (currentPointIndex.toFloat() / (currentTrack.postlist.size - 1) * 100).toInt()
                             binding.progressBar.progress = progress
                         }
 
@@ -540,6 +592,7 @@ class TrackPlayActivity : AppCompatActivity() {
     private fun pauseAnimation() {
         animationTimer?.cancel()
         animationTimer = null
+        setPlayingState(false)
     }
 
     /**
@@ -553,17 +606,18 @@ class TrackPlayActivity : AppCompatActivity() {
         binding.progressBar.progress = 0
 
         // 重置轨迹线颜色
+        val currentTrack = trackData ?: return
         val latLngList = ArrayList<LatLng>()
-        for (point in trackData!!.postlist) {
+        for (point in currentTrack.postlist) {
             latLngList.add(LatLng(point.lat, point.lng))
         }
 
         polyline.points = latLngList
-        polyline.color = resources.getColor(R.color.blue)
+        polyline.color = colorOf(R.color.blue)
 
         // 重置当前时间和速度显示
-        if (trackData!!.postlist.isNotEmpty()) {
-            val firstPoint = trackData!!.postlist[0]
+        if (currentTrack.postlist.isNotEmpty()) {
+            val firstPoint = currentTrack.postlist[0]
             updatePositionInfo(firstPoint)
 
             // 移动地图中心点到起点
@@ -579,13 +633,14 @@ class TrackPlayActivity : AppCompatActivity() {
      * 高亮显示当前轨迹段
      */
     private fun highlightCurrentTrackSegment() {
-        if (currentPointIndex <= 0 || currentPointIndex >= trackData!!.postlist.size) {
+        val currentTrack = trackData ?: return
+        if (currentPointIndex <= 0 || currentPointIndex >= currentTrack.postlist.size) {
             return
         }
 
         val latLngList = ArrayList<LatLng>()
-        for (i in 0 until trackData!!.postlist.size) {
-            val point = trackData!!.postlist[i]
+        for (i in 0 until currentTrack.postlist.size) {
+            val point = currentTrack.postlist[i]
             latLngList.add(LatLng(point.lat, point.lng))
         }
 
@@ -594,20 +649,20 @@ class TrackPlayActivity : AppCompatActivity() {
 
         // 创建分段颜色列表
         val colorList = ArrayList<Int>()
-        for (i in 0 until trackData!!.postlist.size - 1) {
+        for (i in 0 until currentTrack.postlist.size - 1) {
             if (i < currentPointIndex - 1) {
                 // 已走过的轨迹段
-                colorList.add(resources.getColor(R.color.blue))
+                colorList.add(colorOf(R.color.blue))
             } else {
                 // 未走过的轨迹段
-                colorList.add(resources.getColor(R.color.blue_light))
+                colorList.add(colorOf(R.color.blue_light))
             }
         }
 
         // 设置轨迹线分段颜色
         polyline.setCustomTextureList(null) // 清除自定义纹理
 //        polyline.colorValues = colorList
-        polyline.color = resources.getColor(R.color.blue_light)
+        polyline.color = colorOf(R.color.blue_light)
     }
 
     override fun onResume() {
@@ -636,6 +691,24 @@ class TrackPlayActivity : AppCompatActivity() {
         ProgressDialogUtils.dismiss()
         mapView.onDestroy()
         pauseAnimation()
+    }
+
+    private fun setPlayingState(isPlaying: Boolean) {
+        playing = isPlaying
+        binding.ivPlayPause.setImageResource(
+            if (isPlaying) R.drawable.track_pause else R.drawable.track_play
+        )
+    }
+
+    private fun getShareDurationMinutes(): Int {
+        return when (currentPlayMode) {
+            PlayTimeMode.MODE_5_MINUTES -> 5
+            PlayTimeMode.MODE_15_MINUTES -> 15
+        }
+    }
+
+    private fun colorOf(colorRes: Int): Int {
+        return ContextCompat.getColor(this, colorRes)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

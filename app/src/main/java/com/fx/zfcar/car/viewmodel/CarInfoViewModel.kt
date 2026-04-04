@@ -11,6 +11,7 @@ import com.fx.zfcar.net.SearchHistoryRequest
 import com.fx.zfcar.net.SearchResult
 import com.fx.zfcar.net.SendContentRequest
 import com.fx.zfcar.net.TrackData
+import com.fx.zfcar.net.TrackShareRequest
 import com.fx.zfcar.net.VideoInfoData
 import com.fx.zfcar.viewmodel.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -127,6 +128,19 @@ class CarInfoViewModel : CarBaseViewModel() {
     fun shareLastPosition(carId: Long, stateFlow: MutableStateFlow<ApiState<String>>) {
         launchRequest(
             block = { vehicleRepository.shareLastPosition(carId) },
+            stateFlow
+        )
+    }
+
+    fun shareTrack(request: TrackShareRequest, minute: Int, stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = {
+                if (minute <= 5) {
+                    vehicleRepository.shareTrack(request)
+                } else {
+                    vehicleRepository.shareTrackV2(request)
+                }
+            },
             stateFlow
         )
     }

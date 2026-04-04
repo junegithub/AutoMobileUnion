@@ -46,6 +46,8 @@ class CarRepository(private val apiService: CarApiService) {
         apiService.getOilAddReport(page, pageSize, search, timetype)
 
     suspend fun shareLastPosition(carId: Long) = apiService.shareLastPosition(carId)
+    suspend fun shareTrack(request: TrackShareRequest) = apiService.shareTrack(request)
+    suspend fun shareTrackV2(request: TrackShareRequest) = apiService.shareTrackV2(request)
 
     suspend fun getTrackInfo(carId: Int, endtime: String, starttime: String, isFilter: Boolean?, is704: Boolean?) =
         apiService.getTrackInfo(carId, endtime, starttime, isFilter, is704)

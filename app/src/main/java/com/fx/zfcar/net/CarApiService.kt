@@ -101,6 +101,12 @@ interface CarApiService {
     @POST("aggregation/app/position/shareLastPosition")
     suspend fun shareLastPosition(@Body carId: Long): Response<BaseResponse<String>>
 
+    @POST("aggregation/app/position/shareTrack")
+    suspend fun shareTrack(@Body request: TrackShareRequest): Response<BaseResponse<String>>
+
+    @POST("aggregation/app/position/shareTrack/V2")
+    suspend fun shareTrackV2(@Body request: TrackShareRequest): Response<BaseResponse<String>>
+
     @GET("aggregation/app/position/track")
     suspend fun getTrackInfo(
         @Query("car_id") carId: Int,
