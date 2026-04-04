@@ -19,7 +19,7 @@ class UserCenterActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (savedInstanceState == null) {
-            replaceFragment(ProfileFragment())
+            replaceFragmentWithoutBackStack(ProfileFragment())
         }
     }
 
@@ -47,7 +47,7 @@ class UserCenterActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 1) {
+        if (supportFragmentManager.backStackEntryCount > 0) {
             super.onBackPressed()
         } else {
             finish()
