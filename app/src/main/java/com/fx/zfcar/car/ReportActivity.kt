@@ -61,6 +61,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private var loadFromMore: Boolean = false
     private var currentTotal: Int = 0
     private val currentItems = mutableListOf<ReportItem>()
+    private var reachedEnd: Boolean = false
 
     private var startDate: String = ""
     private var endDate: String = ""
@@ -166,12 +167,13 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         adapterHelper = QuickAdapterHelper.Builder(reportAdapter)
             .setTrailingLoadStateAdapter(object : TrailingLoadStateAdapter.OnTrailingListener {
                 override fun onLoad() {
-                    if (binding.progressBar.visibility == View.VISIBLE || currentItems.size >= currentTotal) {
+                    if (binding.progressBar.visibility == View.VISIBLE || loadFromMore || reachedEnd) {
                         updateAdapterLoadState()
                         return
                     }
                     pageNum++
                     loadFromMore = true
+                    adapterHelper.trailingLoadState = LoadState.Loading
                     loadData()
                 }
 
@@ -610,7 +612,8 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateAdapterLoadState() {
-        adapterHelper.trailingLoadState = LoadState.NotLoading(currentItems.size >= currentTotal)
+        reachedEnd = currentTotal <= 0 || currentItems.size >= currentTotal
+        adapterHelper.trailingLoadState = LoadState.NotLoading(reachedEnd)
     }
 
     private fun resetDateRangeToDefault() {
@@ -624,6 +627,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         pageNum = 1
         loadFromMore = false
         currentTotal = 0
+        reachedEnd = false
         currentItems.clear()
         binding.tvCarNumStop.visibility = View.GONE
         binding.llEmpty.visibility = View.GONE
@@ -636,6 +640,9 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         currentTotal = total
         if (!loadFromMore) {
             currentItems.clear()
+        }
+        if (loadFromMore && newItems.isEmpty()) {
+            currentTotal = currentItems.size
         }
         currentItems.addAll(newItems)
         if (currentItems.isEmpty()) {
