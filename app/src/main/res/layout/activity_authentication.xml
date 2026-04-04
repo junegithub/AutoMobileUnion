@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5"
-    android:paddingTop="@dimen/dp_24">
+    android:background="#F5F5F5">
 
     <!-- 顶部标题栏 -->
     <include
