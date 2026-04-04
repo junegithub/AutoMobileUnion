@@ -22,6 +22,11 @@ interface TrainingApiService {
     @GET("api/user/info")
     suspend fun getUserInfoSafe(): Response<TrainingBaseResponse<UserInfoData>>
 
+    @GET("system/app/user/profile")
+    suspend fun editNickname(
+        @Query("nickname") nickname: String
+    ): Response<TrainingBaseResponse<Any>>
+
     @GET("api/user/userotherinfo")
     suspend fun getUserOtherInfo(): Response<TrainingBaseResponse<TrainingOtherInfo>>
 

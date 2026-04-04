@@ -1,21 +1,27 @@
 package com.fx.zfcar.training.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.fx.zfcar.net.PayOrderData
 import com.fx.zfcar.net.UserInfoData
+import com.fx.zfcar.training.pay.PayOrderActivity
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
+import com.fx.zfcar.util.PayUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.fx.zfcar.R
 import com.fx.zfcar.databinding.FragmentPaymentBinding
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlin.getValue
 
 class PaymentFragment : BaseUserFragment() {
 
@@ -23,6 +29,11 @@ class PaymentFragment : BaseUserFragment() {
 
     private val trainingViewModel by viewModels<SafetyTrainingViewModel>()
     private var safeUserStateFlow = MutableStateFlow<ApiState<UserInfoData>>(ApiState.Idle)
+    private var yearPayStateFlow = MutableStateFlow<ApiState<PayOrderData>>(ApiState.Idle)
+    private val gson = Gson()
+    private val payMethods = arrayOf("支付宝支付", "微信支付")
+    private var yearId: Int = 0
+    private var currentPayMethod: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,9 +51,15 @@ class PaymentFragment : BaseUserFragment() {
 
         // 绑定点击事件
         binding.btnPaymentRecords.setOnClickListener {
+            startActivity(Intent(requireContext(), PayOrderActivity::class.java))
         }
         
         binding.btnPay.setOnClickListener {
+            if (yearId <= 0) {
+                context?.showToast("暂无可支付的年度计划")
+                return@setOnClickListener
+            }
+            showPayMethodDialog()
         }
 
         lifecycleScope.launch {
@@ -53,7 +70,11 @@ class PaymentFragment : BaseUserFragment() {
 
                     is ApiState.Success -> {
                         uiState.data?.let {
+                            yearId = uiState.data.year.id
+                            binding.etPaymentName.setText("年度支付")
                             binding.etPaymentAmount.setText(uiState.data.year_money)
+                            val yearMoney = uiState.data.year_money.toFloatOrNull() ?: 0f
+                            binding.btnPay.isEnabled = yearMoney > 0f
                         }
                     }
 
@@ -66,10 +87,84 @@ class PaymentFragment : BaseUserFragment() {
             }
         }
 
+        lifecycleScope.launch {
+            yearPayStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                    }
+
+                    is ApiState.Success -> {
+                        val payData = uiState.data
+                        if (payData != null && currentPayMethod == "wechat") {
+                            PayUtils.callWeChatPay(requireActivity(), payData) { isSuccess, msg ->
+                                if (isSuccess) {
+                                    context?.showToast("年度支付成功")
+                                    activity?.onBackPressed()
+                                } else {
+                                    context?.showToast(msg)
+                                }
+                                yearPayStateFlow.value = ApiState.Idle
+                            }
+                        }
+                    }
+
+                    is ApiState.Error -> {
+                        context?.showToast("支付失败：${uiState.msg}")
+                        yearPayStateFlow.value = ApiState.Idle
+                    }
+
+                    is ApiState.Idle -> {
+                    }
+                }
+            }
+        }
+
         trainingViewModel.getUserInfoSafe(safeUserStateFlow)
     }
 
     override fun getTitle(): String = getString(R.string.title_payment)
 
     override fun getTitleView(): TextView = binding.titleLayout.tvTitle
+
+    private fun showPayMethodDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("选择支付方式")
+            .setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, payMethods)) { _, which ->
+                yearAllPay(which)
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    private fun yearAllPay(which: Int) {
+        if (which == 1) {
+            currentPayMethod = "wechat"
+            PayUtils.getWeChatLoginCode(requireActivity()) { code ->
+                val params = mapOf(
+                    "code" to code,
+                    "type" to "wechat",
+                    "method" to "app",
+                    "year_id" to yearId
+                )
+                trainingViewModel.yearPay(params, yearPayStateFlow)
+            }
+        } else if (which == 0) {
+            currentPayMethod = "alipay"
+            val params = mapOf(
+                "type" to "alipay",
+                "method" to "app",
+                "year_id" to yearId
+            )
+            trainingViewModel.yearPay(params, yearPayStateFlow)
+            PayUtils.callAlipay(requireActivity(), gson.toJson(params)) { isSuccess, msg ->
+                if (isSuccess) {
+                    context?.showToast("年度支付成功")
+                    activity?.onBackPressed()
+                } else {
+                    context?.showToast(msg)
+                }
+                yearPayStateFlow.value = ApiState.Idle
+            }
+        }
+    }
 }

@@ -293,11 +293,25 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
         )
     }
 
+    fun editNickname(nickname: String, stateFlow: MutableStateFlow<ApiState<Any>>) {
+        launchRequest(
+            block = { vehicleRepository.editNickname(nickname) },
+            stateFlow
+        )
+    }
+
     // 重置密码
     fun resetPwd(newpassword: String, oldpassword: String,
                  stateFlow: MutableStateFlow<ApiState<Any>>) {
         launchRequest(
             block = { vehicleRepository.resetPwd(newpassword, oldpassword) },
+            stateFlow
+        )
+    }
+
+    fun logoff(stateFlow: MutableStateFlow<ApiState<Any>>) {
+        launchRequest(
+            block = { vehicleRepository.logoff() },
             stateFlow
         )
     }

@@ -16,6 +16,8 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun getUserInfoSafe() = apiService.getUserInfoSafe()
 
+    suspend fun editNickname(nickname: String) = apiService.editNickname(nickname)
+
     suspend fun getUserOtherInfo() = apiService.getUserOtherInfo()
 
     suspend fun epidemicView() = apiService.epidemicView()
