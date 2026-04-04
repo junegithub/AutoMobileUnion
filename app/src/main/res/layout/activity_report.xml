@@ -125,6 +125,7 @@
 
     <!-- 时间筛选（昨天/今天/近三天/近一周） -->
     <LinearLayout
+        android:id="@+id/timeFilterContainer"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_48"
         android:gravity="end|center_vertical"

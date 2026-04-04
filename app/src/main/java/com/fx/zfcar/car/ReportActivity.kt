@@ -29,16 +29,13 @@ import com.fx.zfcar.net.PhotoReportData
 import com.fx.zfcar.net.WarningReportData
 import com.fx.zfcar.pages.CalendarDialog
 import com.fx.zfcar.training.user.showToast
+import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.android.material.chip.Chip
 import com.fx.zfcar.R
 import com.fx.zfcar.net.StopDetailData
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
+import java.util.Calendar
 
 class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityReportBinding
@@ -62,8 +59,9 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private var pageNum: Int = 1
     private val pageSize = 20
     private var loadFromMore: Boolean = false
+    private var currentTotal: Int = 0
+    private val currentItems = mutableListOf<ReportItem>()
 
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
     private var startDate: String = ""
     private var endDate: String = ""
 
@@ -101,20 +99,19 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             calendarDlg.updateStartAndEndData(startDate, endDate)
             calendarDlg.setOnDateSelectedListener(object : CalendarDialog.OnDateSelectedListener {
                 override fun onSelected(start: String, end: String) {
-                    startDate = dateFormat.format(Date(start))
-                    endDate = dateFormat.format(Date(end))
+                    startDate = DateUtil.timestamp2Date(start.toLong())
+                    endDate = DateUtil.timestamp2Date(end.toLong())
                     updateDateRange()
-                    pageNum = 1
-                    loadData()
+                    resetPagingAndLoad()
                 }
             })
             calendarDlg.show(supportFragmentManager, "DATE_PICKER")
         }
 
         binding.ivClearDate.setOnClickListener {
-            startDate = "开始日期"
-            endDate = "结束日期"
+            resetDateRangeToDefault()
             updateDateRange()
+            resetPagingAndLoad()
         }
     }
 
@@ -155,7 +152,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 val offlineItem = (reportAdapter.getItem(position) as ReportItem.OfflineItem).data
                 val intent = Intent(this, OfflineDetailActivity::class.java)
                 intent.putExtra(OfflineDetailActivity.KEY_CAR_ID, offlineItem.carId.toInt())
-                intent.putExtra(OfflineDetailActivity.KEY_CAR_NUM, offlineItem.offline)
+                intent.putExtra(OfflineDetailActivity.KEY_CAR_NUM, offlineItem.carNum)
                 intent.putExtra(OfflineDetailActivity.KEY_START, binding.tvStartDate.text.toString())
                 intent.putExtra(OfflineDetailActivity.KEY_END, binding.tvEndDate.text.toString())
                 startActivity(intent)
@@ -169,10 +166,13 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         adapterHelper = QuickAdapterHelper.Builder(reportAdapter)
             .setTrailingLoadStateAdapter(object : TrailingLoadStateAdapter.OnTrailingListener {
                 override fun onLoad() {
-                    println("June onLoad $this")
-//                    pageNum++
-//                    loadFromMore = true
-//                    loadData()
+                    if (binding.progressBar.visibility == View.VISIBLE || currentItems.size >= currentTotal) {
+                        updateAdapterLoadState()
+                        return
+                    }
+                    pageNum++
+                    loadFromMore = true
+                    loadData()
                 }
 
                 override fun onFailRetry() {
@@ -228,7 +228,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
-        loadData()
+        resetPagingAndLoad()
     }
 
     // 重置时间筛选未选中态
@@ -292,8 +292,9 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
         binding.llDateRange.visibility = if (currentTabIndex == 9) View.VISIBLE else View.GONE
+        binding.timeFilterContainer.visibility = if (currentTabIndex == 9) View.GONE else View.VISIBLE
         refreshAdapterType()
-        loadData()
+        resetPagingAndLoad()
     }
 
     /**
@@ -327,16 +328,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
      */
     private fun initSearch() {
         binding.etSearch.setOnEditorActionListener { v, actionId, event ->
-            loadData()
+            resetPagingAndLoad()
             true
         }
 
-        // 1. 定义日期格式（匹配 yyyy-MM-dd）
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        // 2. 获取今天的日期
-        val today = LocalDate.now()
-        startDate = today.minusDays(20).format(formatter)
-        endDate = today.minusDays(0).format(formatter)
+        resetDateRangeToDefault()
         updateDateRange()
     }
 
@@ -346,14 +342,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.MileageItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无里程数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
+                        handlePagedSuccess(
+                            total = state.data?.total ?: 0,
+                            newItems = state.data?.list?.map { ReportItem.MileageItem(it) }.orEmpty(),
+                            emptyTip = "暂无里程数据"
+                        )
                     }
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
@@ -374,14 +367,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.WarningItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无报警数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
+                        handlePagedSuccess(
+                            total = state.data?.total ?: 0,
+                            newItems = state.data?.list?.map { ReportItem.WarningItem(it) }.orEmpty(),
+                            emptyTip = "暂无报警数据"
+                        )
                     }
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
@@ -402,14 +392,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.ActiveWarningItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无安全报警数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
+                        handlePagedSuccess(
+                            total = state.data?.total ?: 0,
+                            newItems = state.data?.list?.map { ReportItem.ActiveWarningItem(it) }.orEmpty(),
+                            emptyTip = "暂无安全报警数据"
+                        )
                     }
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
@@ -430,14 +417,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.PhotoItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无照片数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
+                        handlePagedSuccess(
+                            total = state.data?.total ?: 0,
+                            newItems = state.data?.list?.map { ReportItem.PhotoItem(it) }.orEmpty(),
+                            emptyTip = "暂无照片数据"
+                        )
                     }
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
@@ -458,14 +442,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.ExpiredItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无过期数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
+                        handlePagedSuccess(
+                            total = state.data?.total ?: 0,
+                            newItems = state.data?.list?.map { ReportItem.ExpiredItem(it) }.orEmpty(),
+                            emptyTip = "暂无过期数据"
+                        )
                     }
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
@@ -486,15 +467,21 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.StopItem(it) }
-                        if (dataList?.isEmpty() == true) {
+                        val dataList = state.data?.list?.map { ReportItem.StopItem(it) }.orEmpty()
+                        if (dataList.isEmpty() && !loadFromMore) {
                             binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无过期数据"
+                            binding.tvEmptyTip.text = "暂无停车数据"
                             binding.tvCarNumStop.visibility = View.GONE
+                            reportAdapter.submitList(emptyList())
                         } else {
                             binding.llEmpty.visibility = View.GONE
                             binding.tvCarNumStop.visibility = View.VISIBLE
-                            reportAdapter.submitList(dataList)
+                            binding.tvCarNumStop.text = "车牌号:${state.data?.list?.firstOrNull()?.carnum.orEmpty()}"
+                            handlePagedSuccess(
+                                total = state.data?.total ?: 0,
+                                newItems = dataList,
+                                emptyTip = "暂无停车数据"
+                            )
                         }
                     }
                     is ApiState.Error -> {
@@ -516,14 +503,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.OilAddItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无加油数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
+                        handlePagedSuccess(
+                            total = state.data?.total ?: 0,
+                            newItems = state.data?.list?.map { ReportItem.OilAddItem(it) }.orEmpty(),
+                            emptyTip = "暂无加油数据"
+                        )
                     }
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
@@ -544,14 +528,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.OilDayItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无油耗数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
+                        handlePagedSuccess(
+                            total = state.data?.total ?: 0,
+                            newItems = state.data?.list?.map { ReportItem.OilDayItem(it) }.orEmpty(),
+                            emptyTip = "暂无油耗数据"
+                        )
                     }
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
@@ -572,14 +553,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.LeakItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无漏油数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
+                        handlePagedSuccess(
+                            total = state.data?.total ?: 0,
+                            newItems = state.data?.list?.map { ReportItem.LeakItem(it) }.orEmpty(),
+                            emptyTip = "暂无漏油数据"
+                        )
                     }
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
@@ -600,14 +578,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 updateLoadState(state)
                 when (state) {
                     is ApiState.Success -> {
-                        val dataList = state.data?.list?.map { ReportItem.OfflineItem(it) }
-                        if (dataList?.isEmpty() == true) {
-                            binding.llEmpty.visibility = View.VISIBLE
-                            binding.tvEmptyTip.text = "暂无离线数据"
-                        } else {
-                            binding.llEmpty.visibility = View.GONE
-                            reportAdapter.submitList(dataList)
-                        }
+                        handlePagedSuccess(
+                            total = state.data?.total ?: 0,
+                            newItems = state.data?.list?.map { ReportItem.OfflineItem(it) }.orEmpty(),
+                            emptyTip = "暂无离线数据"
+                        )
                     }
                     is ApiState.Error -> {
                         binding.llEmpty.visibility = View.VISIBLE
@@ -624,7 +599,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun updateLoadState(apiState : ApiState<Any>) {
+    private fun updateLoadState(apiState : ApiState<*>) {
         binding.progressBar.visibility = View.GONE
         if (apiState is ApiState.Success || apiState is ApiState.Error) {
             if (loadFromMore) {
@@ -635,7 +610,43 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateAdapterLoadState() {
-        adapterHelper.trailingLoadState = LoadState.NotLoading(false)
+        adapterHelper.trailingLoadState = LoadState.NotLoading(currentItems.size >= currentTotal)
+    }
+
+    private fun resetDateRangeToDefault() {
+        val calendar = Calendar.getInstance()
+        endDate = DateUtil.timestamp2Date(calendar.timeInMillis)
+        calendar.add(Calendar.DAY_OF_MONTH, -20)
+        startDate = DateUtil.timestamp2Date(calendar.timeInMillis)
+    }
+
+    private fun resetPagingAndLoad() {
+        pageNum = 1
+        loadFromMore = false
+        currentTotal = 0
+        currentItems.clear()
+        binding.tvCarNumStop.visibility = View.GONE
+        binding.llEmpty.visibility = View.GONE
+        reportAdapter.submitList(emptyList())
+        updateAdapterLoadState()
+        loadData()
+    }
+
+    private fun handlePagedSuccess(total: Int, newItems: List<ReportItem>, emptyTip: String) {
+        currentTotal = total
+        if (!loadFromMore) {
+            currentItems.clear()
+        }
+        currentItems.addAll(newItems)
+        if (currentItems.isEmpty()) {
+            binding.llEmpty.visibility = View.VISIBLE
+            binding.tvEmptyTip.text = emptyTip
+            reportAdapter.submitList(emptyList())
+        } else {
+            binding.llEmpty.visibility = View.GONE
+            reportAdapter.submitList(currentItems.toList())
+        }
+        updateAdapterLoadState()
     }
 
     /**
