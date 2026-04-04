@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>CvNetVideo_js_1.3.0控件测试</title>
+    <script type="text/javascript" src="https://lib.cvtsp.com/video/CVNetVideoJs/1.3.0/CvNetVideo.js"></script>
+    <script type="text/javascript" src="./uni.webview.1.5.4.js"></script>
+</head>
+
+<body>
+<div id="player" style="width:700px;height:982px;background:rgb(0, 0, 0);">
+    <script>
+        window.onload = function () {
+            init();
+        };
+        function onHlsPlay(id, ucVideo, hlshttp, hlshttps, rtmpurl, cid) {
+            console.log(hlshttp, hlshttps, rtmpurl, cid);
+            uni.postMessage({
+                data: {
+                    action: rtmpurl
+                }
+            });
+            return true;
+        }
+        var uc1;
+        function init() {
+            uc1 = CvNetVideo.Init(document.querySelector("#player"), 1,
+                {
+                    networkSpeaking:false,
+                    playerMode:6,
+                    events: {
+                        onHlsPlay: onHlsPlay
+                    }
+                });
+        }
+
+        function Connectt(sim,channel=1,startTime,endTime,Alarm=0,MediaType=0,StreamType=0,StorageType=1,server,port) {
+            let newSim = sim.toString().padStart(12,0)
+            CvNetVideo.PlaybackVideo(
+                newSim,
+                channel,
+                "0",
+                StreamType,
+                "1",
+                "0",
+                "0",
+                startTime,
+                endTime,
+                0,
+                {
+                    clusterHost: server,
+                    clusterPort: port,
+                },
+                6,
+                "0"
+            );
+        }
+    </script>
+</div>
+</body>
+</html>

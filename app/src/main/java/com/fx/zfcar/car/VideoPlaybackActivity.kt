@@ -1,6 +1,7 @@
 package com.fx.zfcar.car
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,14 +12,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Query
 import com.fx.zfcar.car.adapter.VideoTimeSelectorAdapter
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
 import com.fx.zfcar.databinding.ActivityVideoPlaybackBinding
 import com.fx.zfcar.net.VideoChannel
 import com.fx.zfcar.net.VideoInfoData
+import com.fx.zfcar.training.drivelog.CarSearchActivity
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.DialogUtils
@@ -27,6 +26,7 @@ import com.fx.zfcar.viewmodel.ApiState
 import com.kongzue.dialogx.dialogs.BottomMenu
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.getValue
@@ -39,6 +39,8 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         const val KEY_CAR_VIDEO = "key_car_video"
         const val KEY_CAR_ONLINE = "key_car_online"
     }
+
+    private val REQUEST_CODE_CAR_SEARCH = 2001
 
     // ViewBinding核心对象
     private lateinit var binding: ActivityVideoPlaybackBinding
@@ -62,6 +64,10 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
     private var wayNums = listOf<VideoChannel>()
     private var videoCar = false
     private var online = false
+    private val gson = Gson()
+    private val pendingVideoList = mutableListOf<VideoRecordItem>()
+    private var pendingResponseCount = 0
+    private var videoListOpened = false
 
     // 选项数组
     private val channelArr = mutableListOf("所有通道", "通道1", "通道2", "通道3", "通道4", "通道5", "通道6", "通道7", "通道8")
@@ -91,6 +97,9 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         // 初始化控件和事件
         initView()
 
+        // 监听视频信息
+        observeVideoInfo()
+
         // 初始化默认时间
         initDefaultTime()
 
@@ -106,7 +115,9 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
      */
     private fun getIntentParams() {
         carNum = intent.getStringExtra(KEY_CAR_NUM) ?: ""
-        carId = intent.getStringExtra(KEY_CAR_ID) ?: ""
+        carId = intent.getStringExtra(KEY_CAR_ID)
+            ?: intent.getIntExtra(KEY_CAR_ID, 0).takeIf { it > 0 }?.toString()
+            .orEmpty()
         videoCar = intent.getBooleanExtra(KEY_CAR_VIDEO, false)
         online = intent.getBooleanExtra(KEY_CAR_ONLINE, false)
     }
@@ -318,10 +329,9 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
      * 跳转到车辆选择页面
      */
     private fun goSearch() {
-//        val intent = Intent(this, CarSearchActivity::class.java) // 替换为你的实际Activity
-//        intent.putExtra("carNum", carNum)
-//        intent.putExtra("type", "videoList")
-//        startActivity(intent)
+        val intent = Intent(this, CarSearchActivity::class.java)
+        intent.putExtra("from", "videoPlayback")
+        startActivityForResult(intent, REQUEST_CODE_CAR_SEARCH)
     }
 
     /**
@@ -338,6 +348,9 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         Toast.makeText(this, "正在加载", Toast.LENGTH_SHORT).show()
+        pendingVideoList.clear()
+        pendingResponseCount = 0
+        videoListOpened = false
         evalJs()
     }
 
@@ -378,7 +391,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
     /**
      * 获取车辆视频信息
      */
-    private fun getVideoInfo(carId: String) {
+    private fun observeVideoInfo() {
         lifecycleScope.launch {
             videoInfoStateFlow.collect {state ->
                 when (state) {
@@ -405,7 +418,13 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+    }
 
+    private fun getVideoInfo(carId: String) {
+        if (carId.isBlank()) {
+            showToast("车辆信息缺失")
+            return
+        }
         carInfoViewModel.getVideoInfo(carId.toInt(), videoInfoStateFlow)
     }
 
@@ -487,12 +506,75 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         @JavascriptInterface
         fun getMessage(data: String) {
             runOnUiThread {
-//                val intent = Intent(this@VideoPlaybackActivity, VideoListActivity::class.java) // 替换为你的实际Activity
-//                intent.putExtra("carnum", carNum)
-//                intent.putExtra("videoList", data)
-//                startActivity(intent)
+                handleVideoListResult(data)
             }
         }
+    }
+
+    private fun handleVideoListResult(data: String) {
+        val queryResult = runCatching {
+            gson.fromJson(data, VideoQueryResult::class.java)
+        }.getOrNull()
+
+        val fileList = queryResult?.FileList.orEmpty()
+        pendingResponseCount += 1
+        if (fileList.isEmpty()) {
+            maybeOpenVideoList()
+            return
+        }
+
+        pendingVideoList.addAll(fileList)
+        maybeOpenVideoList()
+    }
+
+    private fun maybeOpenVideoList() {
+        if (videoListOpened) return
+        val expectedCount = if (channelIndex == 0) wayNums.size else 1
+        if (expectedCount <= 0) {
+            showToast("暂无可用视频通道")
+            return
+        }
+        if (pendingResponseCount < expectedCount && channelIndex == 0) {
+            return
+        }
+
+        if (pendingVideoList.isEmpty()) {
+            showToast("暂无内容")
+            return
+        }
+
+        videoListOpened = true
+        val intent = Intent(this, VideoListActivity::class.java).apply {
+            putExtra(VideoListActivity.KEY_CAR_NUM, carNum)
+            putExtra(VideoListActivity.KEY_SIM, sim)
+            putExtra(VideoListActivity.KEY_VIDEO_LIST, gson.toJson(pendingVideoList))
+        }
+        startActivity(intent)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_CODE_CAR_SEARCH || resultCode != RESULT_OK) return
+
+        val selectedCarNum = data?.getStringExtra("carNum").orEmpty()
+        val selectedCarId = data?.getStringExtra("carId").orEmpty()
+        if (selectedCarNum.isEmpty() || selectedCarId.isEmpty()) return
+
+        carNum = selectedCarNum
+        carId = selectedCarId
+        binding.tvCarNum.text = carNum
+
+        channelIndex = 0
+        streamIndex = 0
+        storageIndex = 0
+        mediaIndex = 0
+        binding.tvStream.text = streamArr[0]
+        binding.tvStorage.text = storageArr[0]
+        binding.tvMedia.text = mediaArr[0]
+        pendingVideoList.clear()
+        pendingResponseCount = 0
+        videoListOpened = false
+        getVideoInfo(carId)
     }
 
     // 数据模型
@@ -502,30 +584,17 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         var isSelected: Boolean = false
     )
 
-    interface VideoApiService {
-        @GET("videoInfoBycarId")
-        fun getVideoInfo(@Query("car_id") carId: String): Call<VideoResponse>
-    }
-
-    data class VideoResponse(
-        val code: Int,
-        val msg: String,
-        val data: VideoData
+    data class VideoQueryResult(
+        val FileList: List<VideoRecordItem> = emptyList()
     )
 
-    data class VideoData(
-        val data: VideoDetail
-    )
-
-    data class VideoDetail(
-        val sim: String?,
-        val version: Int?,
-        val android: String?,
-        val ios: String?,
-        val waynums: List<WayNum>?
-    )
-
-    data class WayNum(
-        val wayNumCode: Int
+    data class VideoRecordItem(
+        val Channel: Int = 0,
+        val StartTime: String = "",
+        val EndTime: String = "",
+        val FileSize: Long = 0L,
+        val MediaType: Int = 0,
+        val StreamType: Int = 0,
+        val StorageType: Int = 0
     )
 }

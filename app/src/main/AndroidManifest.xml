@@ -89,6 +89,8 @@
         <activity android:name=".car.ActivityNavi" />
         <activity android:name=".car.TrackPlayActivity" />
         <activity android:name=".car.VideoPlaybackActivity" />
+        <activity android:name=".car.VideoListActivity" />
+        <activity android:name=".car.VideoFullActivity" />
         <activity android:name=".car.RealTimeMonitorActivity" />
 
         <activity android:name=".training.AuthenticationActivity" />
