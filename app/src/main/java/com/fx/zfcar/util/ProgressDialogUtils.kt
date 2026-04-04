@@ -1,16 +1,21 @@
 package com.fx.zfcar.util
 
-import android.app.ProgressDialog
+import android.app.Activity
+import android.app.Dialog
 import android.content.Context
+import android.view.LayoutInflater
+import android.view.Window
+import android.view.WindowManager
+import android.widget.TextView
+import com.fx.zfcar.R
 
 /**
- * ProgressDialog 加载弹窗工具类
+ * 加载弹窗工具类
  * 全局调用：ProgressDialogUtils.show(activity, "加载中...") / ProgressDialogUtils.dismiss()
- * 注意：ProgressDialog已被标记为废弃，仅按需求封装，建议长期使用DialogFragment替代
  */
 object ProgressDialogUtils {
-    // 全局唯一的ProgressDialog实例
-    private var progressDialog: ProgressDialog? = null
+    private var progressDialog: Dialog? = null
+    private var messageView: TextView? = null
 
     /**
      * 显示加载弹窗
@@ -19,27 +24,36 @@ object ProgressDialogUtils {
      * @param cancelable 是否可取消（点击返回键/空白处），默认false
      */
     fun show(context: Context, message: String = "加载中...", cancelable: Boolean = false) {
-        // 先关闭已有弹窗，避免重复显示
+        if (context is Activity && (context.isFinishing || context.isDestroyed)) return
         dismiss()
 
-        // 创建ProgressDialog实例（兼容不同版本）
-        progressDialog = ProgressDialog(context).apply {
-            // 设置弹窗样式为“转圈加载”（无进度条）
-            setProgressStyle(ProgressDialog.STYLE_SPINNER)
-            // 设置提示文字
-            setMessage(message)
-            // 设置是否可取消
+        val dialog = Dialog(context).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
             setCancelable(cancelable)
-            // 设置点击空白处是否取消（和cancelable保持一致）
             setCanceledOnTouchOutside(cancelable)
+        }
+        val contentView = LayoutInflater.from(context).inflate(R.layout.dialog_loading, null)
+        messageView = contentView.findViewById(R.id.tv_loading_message)
+        messageView?.text = message
+        dialog.setContentView(contentView)
+        dialog.window?.apply {
+            setBackgroundDrawableResource(android.R.color.transparent)
+            setLayout(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            setDimAmount(0.32f)
+        }
 
-            // 防止Context已销毁导致的崩溃
-            try {
-                show()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                progressDialog = null
-            }
+        try {
+            dialog.show()
+            progressDialog = dialog
+        } catch (e: Exception) {
+            e.printStackTrace()
+            progressDialog = null
+            messageView = null
         }
     }
 
@@ -50,7 +64,7 @@ object ProgressDialogUtils {
     fun updateMessage(message: String) {
         progressDialog?.let {
             if (it.isShowing) {
-                it.setMessage(message)
+                messageView?.text = message
             }
         }
     }
@@ -68,8 +82,8 @@ object ProgressDialogUtils {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        // 释放实例，避免内存泄漏
         progressDialog = null
+        messageView = null
     }
 
     /**
