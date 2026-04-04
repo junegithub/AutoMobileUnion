@@ -332,12 +332,11 @@ class RealTimeMonitorActivity : AppCompatActivity() {
     }
 
     private fun getVideoInfo() {
-        val currentCarId = carId.toIntOrNull()
-        if (currentCarId == null || currentCarId <= 0) {
+        if (carId.isBlank()) {
             showToast("车辆信息异常")
             return
         }
-        carInfoViewModel.getVideoInfo(currentCarId, videoInfoStateFlow)
+        carInfoViewModel.getVideoInfo(carId, videoInfoStateFlow)
     }
 
     /**

@@ -118,7 +118,7 @@ class CarInfoViewModel : CarBaseViewModel() {
         )
     }
 
-    fun getVideoInfo(carId: Int, stateFlow: MutableStateFlow<ApiState<VideoInfoData>>) {
+    fun getVideoInfo(carId: String, stateFlow: MutableStateFlow<ApiState<VideoInfoData>>) {
         launchRequest(
             block = { vehicleRepository.getVideoInfo(carId) },
             stateFlow

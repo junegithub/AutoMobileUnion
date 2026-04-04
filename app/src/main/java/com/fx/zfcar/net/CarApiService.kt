@@ -117,7 +117,7 @@ interface CarApiService {
     ): Response<BaseResponse<TrackData>>
 
     @GET("aggregation/app/video/videonew")
-    suspend fun getVideoInfo(@Query("car_id") carId: Int): Response<BaseResponse<VideoInfoData>>
+    suspend fun getVideoInfo(@Query("car_id") carId: String): Response<BaseResponse<VideoInfoData>>
 
     @GET("aggregation/app/work/activeWarning")
     suspend fun getActiveWarning(

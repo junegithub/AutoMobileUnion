@@ -52,7 +52,7 @@ class CarRepository(private val apiService: CarApiService) {
     suspend fun getTrackInfo(carId: Int, endtime: String, starttime: String, isFilter: Boolean?, is704: Boolean?) =
         apiService.getTrackInfo(carId, endtime, starttime, isFilter, is704)
 
-    suspend fun getVideoInfo(carId: Int) = apiService.getVideoInfo(carId)
+    suspend fun getVideoInfo(carId: String) = apiService.getVideoInfo(carId)
 
     suspend fun getActiveWarning(search: String?, timetype: Int, page: String) =
         apiService.getActiveWarning(search, timetype, page)

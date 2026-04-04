@@ -425,7 +425,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
             showToast("车辆信息缺失")
             return
         }
-        carInfoViewModel.getVideoInfo(carId.toInt(), videoInfoStateFlow)
+        carInfoViewModel.getVideoInfo(carId, videoInfoStateFlow)
     }
 
     /**
