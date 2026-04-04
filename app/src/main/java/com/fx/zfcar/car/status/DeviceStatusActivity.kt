@@ -2,6 +2,7 @@ package com.fx.zfcar.car.status
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +22,7 @@ class DeviceStatusActivity : AppCompatActivity() {
 
     private val carStatusListStateFlow = MutableStateFlow<ApiState<CarStatusListData>>(ApiState.Idle)
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
+    private var lastNavigateAt: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,7 @@ class DeviceStatusActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        renderStatusCounts(null)
         lifecycleScope.launch {
             carStatusListStateFlow.collect { state ->
                 when (state) {
@@ -40,20 +43,12 @@ class DeviceStatusActivity : AppCompatActivity() {
                         ProgressDialogUtils.show(this@DeviceStatusActivity)
                     }
                     is ApiState.Success -> {
-                        // 隐藏进度框，关闭输入框，提示成功
                         ProgressDialogUtils.dismiss()
-                        state.data?.let {
-                            // 直接给每个TextView赋值
-                            binding.tvDriveCount.text = it.drive.toString()
-                            binding.tvStopCount.text = it.stop.toString()
-                            binding.tvOfflineCount.text = it.offline.toString()
-                            binding.tvOverSpeedCount.text = it.overSpeed.toString()
-                            binding.tvTiredCount.text = it.tired.toString()
-                            binding.tvExpiredCount.text = it.expired.toString()
-                        }
+                        renderStatusCounts(state.data)
                     }
                     is ApiState.Error -> {
                         ProgressDialogUtils.dismiss()
+                        renderStatusCounts(null)
                         showToast("获取数据失败：${state.msg}")
                     }
                     is ApiState.Idle -> {
@@ -78,31 +73,49 @@ class DeviceStatusActivity : AppCompatActivity() {
 
         // 行驶中条目点击
         binding.itemDrive.setOnClickListener {
-            swithToDetail("行驶中", "driving")
+            handleStatusClick { switchToDetail("行驶中", "driving") }
         }
         // 静止条目点击
         binding.itemStop.setOnClickListener {
-            swithToDetail("静止", "stop")
+            handleStatusClick { switchToDetail("静止", "stop") }
         }
         // 离线条目点击
         binding.itemOffline.setOnClickListener {
-            swithToDetail("离线", "offline")
+            handleStatusClick { switchToDetail("离线", "offline") }
         }
         // 超速条目点击
         binding.itemOverSpeed.setOnClickListener {
-            swithToDetail("超速", "overSpeed")
+            handleStatusClick { switchToDetail("超速", "overSpeed") }
         }
         // 疲劳条目点击
         binding.itemTired.setOnClickListener {
-            swithToDetail("疲劳", "tired")
+            handleStatusClick { switchToDetail("疲劳", "tired") }
         }
         // 到期条目点击
         binding.itemExpired.setOnClickListener {
-            startActivity(Intent(this@DeviceStatusActivity, ExpireCarActivity::class.java))
+            handleStatusClick {
+                startActivity(Intent(this@DeviceStatusActivity, ExpireCarActivity::class.java))
+            }
         }
     }
 
-    private fun swithToDetail(title: String, type: String) {
+    private fun renderStatusCounts(data: CarStatusListData?) {
+        binding.tvDriveCount.text = (data?.drive ?: 0).toString()
+        binding.tvStopCount.text = (data?.stop ?: 0).toString()
+        binding.tvOfflineCount.text = (data?.offline ?: 0).toString()
+        binding.tvOverSpeedCount.text = (data?.overSpeed ?: 0).toString()
+        binding.tvTiredCount.text = (data?.tired ?: 0).toString()
+        binding.tvExpiredCount.text = (data?.expired ?: 0).toString()
+    }
+
+    private fun handleStatusClick(action: () -> Unit) {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastNavigateAt < 500) return
+        lastNavigateAt = now
+        action()
+    }
+
+    private fun switchToDetail(title: String, type: String) {
         val intent = Intent(this, DeviceStatusListActivity::class.java)
         intent.putExtra(DeviceStatusListActivity.KEY_CAR_STATUS_TITLE, title)
         intent.putExtra(DeviceStatusListActivity.KEY_CAR_STATUS_TYPE, type)

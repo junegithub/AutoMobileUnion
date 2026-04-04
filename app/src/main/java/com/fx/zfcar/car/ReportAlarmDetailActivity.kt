@@ -5,9 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.chad.library.adapter4.QuickAdapterHelper
-import com.chad.library.adapter4.loadState.LoadState
-import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.fx.zfcar.car.adapter.WarningDetailAdapter
 import com.fx.zfcar.car.viewmodel.ReportViewModel
 import com.fx.zfcar.net.WarningDetailData
@@ -42,8 +40,10 @@ class ReportAlarmDetailActivity : AppCompatActivity() {
     private var warnType = 0
     private var warnNum = 0
     private var warnName = ""
-    private lateinit var adapterHelper: QuickAdapterHelper
     private var loadFromMore: Boolean = false
+    private var currentTotal: Int = 0
+    private var reachedEnd: Boolean = false
+    private lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,28 +59,16 @@ class ReportAlarmDetailActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        binding.tvTitle.text = "$warnName$warnNum"
+        binding.tvTitle.text = "${warnName}${warnNum}"
         // 初始化RecyclerView
         warningDetailAdapter = WarningDetailAdapter()
         warningDetailAdapter.submitList(detailItems)
-        adapterHelper = QuickAdapterHelper.Builder(warningDetailAdapter)
-            .setTrailingLoadStateAdapter(object : TrailingLoadStateAdapter.OnTrailingListener {
-                override fun onLoad() {
-                    pageNum++
-                    loadFromMore = true
-                    loadData()
-                }
-
-                override fun onFailRetry() {
-                }
-
-            })
-            .setTrailPreloadSize(1)
-            .attachTo(binding.rvWarningList)
-        updateLoadState()
+        layoutManager = LinearLayoutManager(this@ReportAlarmDetailActivity)
         binding.rvWarningList.apply {
-            layoutManager = LinearLayoutManager(this@ReportAlarmDetailActivity)
+            layoutManager = this@ReportAlarmDetailActivity.layoutManager
+            adapter = warningDetailAdapter
         }
+        initScrollPagination()
 
         lifecycleScope.launch {
             warningDetailStateFlow.collect { state ->
@@ -89,24 +77,22 @@ class ReportAlarmDetailActivity : AppCompatActivity() {
                         // 显示进度框
                     }
                     is ApiState.Success -> {
-                        // 隐藏进度框，关闭输入框，提示成功
-                        state.data?.let {
-                            detailItems.addAll(state.data.list)
-                            warningDetailAdapter.notifyDataSetChanged()
+                        val data = state.data ?: return@collect
+                        currentTotal = data.total
+                        if (!loadFromMore) {
+                            detailItems.clear()
                         }
-                        if (loadFromMore) {
-                            updateLoadState()
-                            loadFromMore = false
-                        }
+                        detailItems.addAll(data.list)
+                        reachedEnd = detailItems.size >= currentTotal || data.list.size < pageSize
+                        warningDetailAdapter.submitList(detailItems.toList())
+                        loadFromMore = false
                     }
                     is ApiState.Error -> {
                         showToast("获取数据失败：${state.msg}")
                         // 重置状态
                         warningDetailStateFlow.value = ApiState.Idle
-                        if (loadFromMore) {
-                            updateLoadState()
-                            loadFromMore = false
-                        }
+                        if (loadFromMore && pageNum > 1) pageNum--
+                        loadFromMore = false
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -116,8 +102,19 @@ class ReportAlarmDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateLoadState() {
-        adapterHelper.trailingLoadState = LoadState.NotLoading(false)
+    private fun initScrollPagination() {
+        binding.rvWarningList.clearOnScrollListeners()
+        binding.rvWarningList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy <= 0 || loadFromMore || reachedEnd) return
+                if (layoutManager.findLastVisibleItemPosition() >= warningDetailAdapter.itemCount - 2 && warningDetailAdapter.itemCount > 0) {
+                    pageNum++
+                    loadFromMore = true
+                    loadData()
+                }
+            }
+        })
     }
 
     private fun loadData() {
