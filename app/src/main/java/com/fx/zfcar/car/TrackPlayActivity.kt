@@ -128,6 +128,7 @@ class TrackPlayActivity : AppCompatActivity() {
         binding.progressBar.thumb = VehicleImageProvider.scaleBitmapDrawable(this,
             VehicleImageProvider.getVehicleImageResId(dlcartype, carStatus),0.5f)
 
+        binding.switchShowParking.isChecked = false
         binding.content.setOnTouchListener { _, _ -> false }
         binding.timeChooseContainer.setOnTouchListener { _, _ -> false }
     }
@@ -401,6 +402,8 @@ class TrackPlayActivity : AppCompatActivity() {
             val marker = aMap.addMarker(stopMarkerOptions)
             stopMarkers.add(marker)
         }
+
+        toggleParkingMarkers(binding.switchShowParking.isChecked)
 
         // 设置地图显示范围以包含整个轨迹
         if (latLngList.size > 1) {
