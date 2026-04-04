@@ -1,7 +1,6 @@
 package com.fx.zfcar.car
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -10,8 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -111,11 +110,17 @@ class CarFragment : Fragment(), AMapLocationListener {
 
     private lateinit var labelAdapter: LabelAdapter
 
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
-    }
-
     private lateinit var wechat: WeChatShareHelper
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        val allGranted = result.values.all { it }
+        if (allGranted) {
+            startLocation()
+        } else {
+            context?.showToast("缺少定位权限，无法获取当前位置")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -154,13 +159,16 @@ class CarFragment : Fragment(), AMapLocationListener {
     }
 
     private fun openCarDetails(marker: Marker) {
-        currentCar = marker.`object` as MapPositionItem
-        val id = currentCar?.id?.toInt()
+        val car = marker.`object` as? MapPositionItem ?: return
+        currentCar = car
+        val id = car.id.toIntOrNull() ?: return
         carInfoViewModel.getRealTimeAddress(id, currentCar?.carnum,
             addressStateFlow)
-        carInfoViewModel.getCarInfo(id!!,
+        carInfoViewModel.getCarInfo(id,
             carInfoStateFlow)
-        carInfoViewModel.addSearchHistory(SearchHistoryRequest(currentCar?.carnum!!), addSearchStateFlow)
+        currentCar?.carnum?.let {
+            carInfoViewModel.addSearchHistory(SearchHistoryRequest(it), addSearchStateFlow)
+        }
         showSingleMarker(marker)
     }
 
@@ -232,6 +240,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             if (MyApp.isLogin == true) {
                 val intent = Intent(requireContext(), TreeListActivity::class.java)
                 intent.putExtra(TreeListActivity.KEY_CAR_NUM, totalCars)
+                intent.putExtra(TreeListActivity.KEY_SEARCH_TYPE, TreeListActivity.SEARCH_TYPE_MAP)
                 startActivity(intent)
             } else {
                 DialogUtils.showLoginPromptDialog(requireContext())
@@ -242,6 +251,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                 val intent = Intent(requireContext(), TreeListActivity::class.java)
                 intent.putExtra(TreeListActivity.KEY_CAR_NUM, totalCars)
                 intent.putExtra(TreeListActivity.KEY_CAR_SEARCH, true)
+                intent.putExtra(TreeListActivity.KEY_SEARCH_TYPE, TreeListActivity.SEARCH_TYPE_MAP)
                 startActivity(intent)
             } else {
                 DialogUtils.showLoginPromptDialog(requireContext())
@@ -257,6 +267,7 @@ class CarFragment : Fragment(), AMapLocationListener {
 
         binding.rootCarDetail.tvClose.setOnClickListener {
             binding.rootCarDetail.root.visibility = View.GONE
+            showAllMarkers()
         }
 
         binding.rootCarDetail.rootMore.tvCall.setOnClickListener {
@@ -265,9 +276,9 @@ class CarFragment : Fragment(), AMapLocationListener {
             }
         }
         binding.rootCarDetail.rootMore.tvWechat.setOnClickListener {
-            wechat.carnum = currentRealTimeAddress!!.carinfo.carnum
-            carInfoViewModel.shareLastPosition(currentRealTimeAddress!!.carinfo.id.toLong(),
-                wechat.shareLocationStateFlow)
+            val carInfo = currentRealTimeAddress?.carinfo ?: return@setOnClickListener
+            wechat.carnum = carInfo.carnum
+            carInfoViewModel.shareLastPosition(carInfo.id.toLong(), wechat.shareLocationStateFlow)
         }
         binding.rootCarDetail.rootMore.tvNavigation.setOnClickListener {
             val intent = Intent(requireContext(), ActivityNavi::class.java)
@@ -280,7 +291,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             showInputDialog()
         }
         binding.rootCarDetail.rootMore.tvTakePhoto.setOnClickListener {
-            carInfoViewModel.takePhoto(currentCar?.id!!, takePhotoStateFlow)
+            currentCar?.id?.let { carInfoViewModel.takePhoto(it, takePhotoStateFlow) }
         }
 
         val tabLayout = binding.rootCarDetail.tabLayout
@@ -304,26 +315,29 @@ class CarFragment : Fragment(), AMapLocationListener {
                 } else if (tab.position == 1) {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
                     binding.rootCarDetail.rootMore.root.visibility = View.GONE
+                    val carInfo = currentRealTimeAddress?.carinfo ?: return
                     val intent = Intent(requireContext(), TrackPlayActivity::class.java)
-                    intent.putExtra(TrackPlayActivity.KEY_CAR_ID, currentRealTimeAddress!!.carinfo.id)
-                    intent.putExtra(TrackPlayActivity.KEY_CAR_DLTYPE, currentRealTimeAddress!!.carinfo.dlcartype)
-                    intent.putExtra(TrackPlayActivity.KEY_CAR_STATUS, currentRealTimeAddress!!.carinfo.status.toInt())
+                    intent.putExtra(TrackPlayActivity.KEY_CAR_ID, carInfo.id)
+                    intent.putExtra(TrackPlayActivity.KEY_CAR_DLTYPE, carInfo.dlcartype)
+                    intent.putExtra(TrackPlayActivity.KEY_CAR_STATUS, carInfo.status.toInt())
                     startActivity(intent)
 
                 } else if (tab.position == 2) {
+                    val carInfo = currentRealTimeAddress?.carinfo ?: return
                     val intent = Intent(requireContext(), RealTimeMonitorActivity::class.java)
-                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_ID, currentRealTimeAddress!!.carinfo.id)
-                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_NUM, currentRealTimeAddress!!.carinfo.carnum)
+                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_ID, carInfo.id)
+                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_NUM, carInfo.carnum)
                     intent.putExtra(RealTimeMonitorActivity.KEY_CAR_VIDEO, isVideoCar)
-                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_ONLINE, currentRealTimeAddress!!.carinfo.online)
+                    intent.putExtra(RealTimeMonitorActivity.KEY_CAR_ONLINE, carInfo.online)
                     startActivity(intent)
 
                 } else if (tab.position == 3) {
+                    val carInfo = currentRealTimeAddress?.carinfo ?: return
                     val intent = Intent(requireContext(), VideoPlaybackActivity::class.java)
-                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_ID, currentRealTimeAddress!!.carinfo.id)
-                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_NUM, currentRealTimeAddress!!.carinfo.carnum)
+                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_ID, carInfo.id)
+                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_NUM, carInfo.carnum)
                     intent.putExtra(VideoPlaybackActivity.KEY_CAR_VIDEO, isVideoCar)
-                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_ONLINE, currentRealTimeAddress!!.carinfo.online)
+                    intent.putExtra(VideoPlaybackActivity.KEY_CAR_ONLINE, carInfo.online)
                     startActivity(intent)
 
                 } else if (tab.position == 4) {
@@ -358,21 +372,17 @@ class CarFragment : Fragment(), AMapLocationListener {
 
                     is ApiState.Success -> {
                         // 更新统计数据
-                        val statistics = uiState.data
-                        totalCars = statistics?.total!!
+                        val statistics = uiState.data ?: return@collect
+                        totalCars = statistics.total
                         updateCarNum()
-                        carList = statistics?.list
+                        carList = statistics.list
                         addCarMarkers()
-                        zoomToAllCars()
-                        if (searListStateFlow.value is ApiState.Success && labelAdapter.itemCount == 0) {
-                            carList?.let {
-                                val newArr = carList!!.subList(0, minOf(5, carList!!.size))
-                                val searchList = mutableListOf<SearchResult>()
-                                newArr.forEach { item ->
-                                    searchList.add(SearchResult("", "", item.carnum, 0))
-                                }
-                                labelAdapter.updateData(searchList)
-                            }
+                        if (!requestFromOtherPage) {
+                            zoomToAllCars()
+                        }
+                        val searchState = searListStateFlow.value
+                        if (searchState !is ApiState.Success || searchState.data.isNullOrEmpty()) {
+                            updateLabelHistoryWithFallback()
                         }
                     }
 
@@ -391,34 +401,33 @@ class CarFragment : Fragment(), AMapLocationListener {
                     is ApiState.Loading -> {
                     }
                     is ApiState.Success -> {
+                        val addressData = uiState.data ?: return@collect
                         if (requestFromOtherPage) {
                             requestFromOtherPage = false
-                            val  carInfo = uiState?.data?.carinfo
-                            carInfo?.let {
-                                val marker =
-                                    markerList.find { it.title == carInfo.carnum }
-                                marker?.let {
-                                    markerList.remove(marker)
-                                    marker.remove()
-                                }
-
-                                val mapPositionItem = MapPositionItem(
-                                    carInfo.dlcartype,
-                                    "",
-                                    "",
-                                    carInfo.latitude,
-                                    carInfo.direction.toString(),
-                                    carInfo.id,
-                                    carInfo.carnum,
-                                    carInfo.longitude,
-                                    carInfo.status.toInt(),
-                                    carInfo.direction.toString()
-                                )
-
-                                showSingleMarker(addCarMarker(mapPositionItem))
+                            val carInfo = addressData.carinfo
+                            val marker =
+                                markerList.find { it.title == carInfo.carnum }
+                            marker?.let {
+                                markerList.remove(marker)
+                                marker.remove()
                             }
+
+                            val mapPositionItem = MapPositionItem(
+                                carInfo.dlcartype,
+                                "",
+                                "",
+                                carInfo.latitude,
+                                carInfo.direction.toString(),
+                                carInfo.id,
+                                carInfo.carnum,
+                                carInfo.longitude,
+                                carInfo.status.toInt(),
+                                carInfo.direction.toString()
+                            )
+
+                            showSingleMarker(addCarMarker(mapPositionItem))
                         }
-                        refreshRealAddressCarDetails(uiState?.data)
+                        refreshRealAddressCarDetails(addressData)
                     }
                     is ApiState.Error -> {
                     }
@@ -436,7 +445,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                     }
                     is ApiState.Success -> {
                         // 成功：隐藏进度条，显示数据
-                        refreshCarDetails(it?.data)
+                        refreshCarDetails(it.data)
                     }
                     is ApiState.Error -> {
                         // 失败：显示错误信息，隐藏其他视图
@@ -488,14 +497,14 @@ class CarFragment : Fragment(), AMapLocationListener {
                         hideLoadingDialog()
                         context?.showToast("拍照成功")
                         // 重置状态
-                        sendStateFlow.value = ApiState.Idle
+                        takePhotoStateFlow.value = ApiState.Idle
                     }
                     is ApiState.Error -> {
                         // 隐藏进度框，提示错误
                         hideLoadingDialog()
                         context?.showToast("拍照失败：${state.msg}")
                         // 重置状态
-                        sendStateFlow.value = ApiState.Idle
+                        takePhotoStateFlow.value = ApiState.Idle
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -512,11 +521,17 @@ class CarFragment : Fragment(), AMapLocationListener {
                     }
                     is ApiState.Success -> {
                         // 成功：隐藏进度条，显示数据
-                        binding.plateRecycler.visibility = View.VISIBLE
-                        labelAdapter.updateData(it.data)
+                        val history = it.data.orEmpty()
+                        if (history.isNotEmpty()) {
+                            binding.plateRecycler.visibility = View.VISIBLE
+                            labelAdapter.updateData(history)
+                        } else {
+                            updateLabelHistoryWithFallback()
+                        }
                     }
                     is ApiState.Error -> {
                         // 失败：显示错误信息，隐藏其他视图
+                        updateLabelHistoryWithFallback()
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -552,12 +567,31 @@ class CarFragment : Fragment(), AMapLocationListener {
             totalCars = 1
             updateCarNum()
             carList = emptyList()
+            binding.plateRecycler.visibility = View.GONE
+            labelAdapter.updateData(emptyList())
             clearAllOverlays(aMap)
         }
     }
 
     private fun updateCarNum() {
         binding.btnAllCars.text = "全部${totalCars}辆车"
+    }
+
+    private fun updateLabelHistoryWithFallback() {
+        if (MyApp.isLogin != true) {
+            binding.plateRecycler.visibility = View.GONE
+            labelAdapter.updateData(emptyList())
+            return
+        }
+        val cars = carList.orEmpty()
+        if (cars.isEmpty()) {
+            binding.plateRecycler.visibility = View.GONE
+            labelAdapter.updateData(emptyList())
+            return
+        }
+        val fallback = cars.take(5).map { SearchResult("", "", it.carnum, 0) }
+        binding.plateRecycler.visibility = View.VISIBLE
+        labelAdapter.updateData(fallback)
     }
 
     /**
@@ -588,8 +622,8 @@ class CarFragment : Fragment(), AMapLocationListener {
      * 添加车辆标记到地图
      */
     private fun addCarMarkers() {
+        clearAllMarkers()
         carList?.forEach { car ->
-            markerList.clear()
             addCarMarker(car)
         }
     }
@@ -664,8 +698,11 @@ class CarFragment : Fragment(), AMapLocationListener {
                 // 1. 输入判空逻辑
                 if (content.isEmpty()) {
                     context?.showToast( "请输入下发内容")
+                    return@setPositiveButton
                 }
-                carInfoViewModel.sendContent(currentCar?.id!!, content, sendStateFlow)
+                currentCar?.id?.let {
+                    carInfoViewModel.sendContent(it, content, sendStateFlow)
+                }
             }
             .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
@@ -702,12 +739,30 @@ class CarFragment : Fragment(), AMapLocationListener {
      * 自动缩放地图，将所有车辆显示在视野内（带边缘留白）
      */
     private fun zoomToAllCars() {
+        val cars = carList.orEmpty()
+        if (cars.isEmpty()) {
+            return
+        }
+        if (cars.size == 1) {
+            val onlyCar = cars.first()
+            aMap.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(onlyCar.latitude, onlyCar.longitude),
+                    15f
+                )
+            )
+            return
+        }
         val boundsBuilder = LatLngBounds.builder()
         // 构建所有车辆的经纬度边界
-        carList?.forEach { boundsBuilder.include(LatLng(it.latitude, it.longitude)) }
+        cars.forEach { boundsBuilder.include(LatLng(it.latitude, it.longitude)) }
         val bounds = boundsBuilder.build()
         // 动画缩放：100为地图四周留白（像素），避免标记贴边
         aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100), 100, null)
+    }
+
+    private fun showAllMarkers() {
+        markerList.forEach { it.isVisible = true }
     }
 
     // 核心逻辑：只显示目标 Marker，并移动地图到中心
@@ -748,12 +803,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             // 权限已授予，开始定位
             startLocation()
         } else {
-            // 申请权限
-            ActivityCompat.requestPermissions(
-                requireContext() as Activity,
-                missingPermissions.toTypedArray(),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
+            locationPermissionLauncher.launch(missingPermissions.toTypedArray())
         }
     }
 
@@ -806,23 +856,6 @@ class CarFragment : Fragment(), AMapLocationListener {
         // 移动地图到当前位置，缩放级别设为 15（可根据需求调整）
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
         aMap.animateCamera(cameraUpdate, 500, null) // 500ms 平滑动画
-    }
-
-    // 权限申请结果回调
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
-            if (allGranted) {
-                startLocation()
-            } else {
-                context?.showToast( "缺少定位权限，无法获取当前位置")
-            }
-        }
     }
 
     /**

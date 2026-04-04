@@ -46,13 +46,9 @@ class LabelAdapter() :
     }
 
     fun updateData(data: List<SearchResult>?) {
-        data?.let {
-            if (!data.isEmpty()) {
-                vehicleList.clear()
-                vehicleList.addAll(data)
-                notifyDataSetChanged()
-            }
-        }
+        vehicleList.clear()
+        data?.let { vehicleList.addAll(it) }
+        notifyDataSetChanged()
     }
 
     override fun getItemCount() = vehicleList.size
