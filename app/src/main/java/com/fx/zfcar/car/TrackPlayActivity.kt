@@ -197,7 +197,6 @@ class TrackPlayActivity : AppCompatActivity() {
             } else {
                 startAnimation()
             }
-            playing = !playing
         }
 
         binding.trackDurationGroup.setOnCheckedChangeListener { _, checkedId ->
