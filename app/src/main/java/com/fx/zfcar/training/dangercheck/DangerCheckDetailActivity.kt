@@ -527,9 +527,9 @@ class DangerCheckDetailActivity : AppCompatActivity() {
         // 5. 照片上传
         binding.layoutPhotos.setOnClickListener {
             saveTempForm()
-//            val intent = Intent(this, UploadPhotosActivity::class.java)
-//            intent.putExtra("photosNum", photoNum)
-//            startActivity(intent)
+            val intent = Intent(this, UploadPhotosActivity::class.java)
+            intent.putExtra("photosNum", photoNum)
+            startActivity(intent)
         }
 
         // 6. 驾驶员签名

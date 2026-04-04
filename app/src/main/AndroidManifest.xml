@@ -122,6 +122,7 @@
         <activity android:name=".training.dangercheck.DangerCheckActivity" />
         <activity android:name=".training.dangercheck.DangerHistoryRecordActivity" />
         <activity android:name=".training.dangercheck.DangerCheckDetailActivity" />
+        <activity android:name=".training.dangercheck.UploadPhotosActivity" />
 
         <activity android:name=".training.safetycheck.CarSafetyCheckActivity" />
         <activity android:name=".training.safetycheck.LastRecordActivity" />
