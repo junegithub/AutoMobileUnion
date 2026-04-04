@@ -92,6 +92,9 @@ object DialogUtils {
 
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        PressEffectUtils.setCommonPressEffect(binding.btnNegative)
+        PressEffectUtils.setCommonPressEffect(binding.btnPositive)
+
         binding.btnNegative.setOnClickListener {
             dialog.dismiss()
             onNegative()
