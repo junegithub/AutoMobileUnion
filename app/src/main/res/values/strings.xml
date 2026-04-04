@@ -34,6 +34,11 @@
     <string name="contact_service">联系客服</string>
     <string name="copyright">Copyright © 2023 车启联 版权所有</string>
     <string name="toast_agreement">请同意服务协议和隐私政策</string>
+    <string name="agreement_dialog_title">欢迎使用车启联</string>
+    <string name="agreement_dialog_desc">为保障你的个人信息安全，在使用完整功能前，请先阅读并同意相关协议内容。</string>
+    <string name="agreement_consent_content">我已阅读并同意《服务协议》及《隐私政策》后进入应用</string>
+    <string name="agreement_accept">同意并进入</string>
+    <string name="agreement_reject">暂不同意</string>
     <string name="toast_empty_account">账号/密码不能为空</string>
 
     <string name="device_alarm">设备报警</string>

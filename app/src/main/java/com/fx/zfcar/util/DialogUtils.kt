@@ -2,11 +2,10 @@ package com.fx.zfcar.util
 
 import android.content.Context
 import android.content.Intent
-import android.text.Html
 import com.fx.zfcar.pages.LoginActivity
+import com.fx.zfcar.pages.PolicyContentActivity
 import com.fx.zfcar.pages.openDial
 import androidx.appcompat.app.AlertDialog
-import com.kongzue.dialogx.dialogs.MessageDialog
 import com.loper7.date_time_picker.DateTimeConfig
 import com.loper7.date_time_picker.dialog.CardDatePickerDialog
 
@@ -66,12 +65,10 @@ object DialogUtils {
     }
 
     fun showTermsDlg(context: Context) {
-        MessageDialog.show("服务协议",
-            Html.fromHtml(AssetFileReader.readTxtFile(context, "terms.txt"), Html.FROM_HTML_MODE_COMPACT), "确定")
+        PolicyContentActivity.open(context, PolicyContentActivity.TYPE_TERMS)
     }
     fun showPrivacyDlg(context: Context) {
-        MessageDialog.show("隐私政策",
-            Html.fromHtml(AssetFileReader.readTxtFile(context, "privacy.html"), Html.FROM_HTML_MODE_COMPACT), "确定")
+        PolicyContentActivity.open(context, PolicyContentActivity.TYPE_PRIVACY)
     }
 
     /**

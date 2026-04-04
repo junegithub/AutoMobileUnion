@@ -64,9 +64,8 @@
         </activity>
 
         <activity
-            android:name=".pages.MainActivity"
+            android:name=".pages.LaunchActivity"
             android:theme="@style/Theme.AutoMobileUnion"
-            android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -74,6 +73,14 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".pages.MainActivity"
+            android:theme="@style/Theme.AutoMobileUnion"
+            android:launchMode="singleTask"
+            android:exported="true" />
+
+        <activity android:name=".pages.AgreementConsentActivity" />
+        <activity android:name=".pages.PolicyContentActivity" />
         <activity android:name=".pages.LoginActivity" />
 
         <activity android:name=".car.DeviceAlarmActivity" />

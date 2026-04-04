@@ -25,7 +25,6 @@ import com.fx.zfcar.net.UserLoginData
 import com.fx.zfcar.net.UserLoginRequest
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
-import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ProgressDialogUtils
 import com.fx.zfcar.util.SPUtils
@@ -286,7 +285,7 @@ class LoginActivity : AppCompatActivity() {
         // 设置「服务协议」可点击
         spannableString.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
-                DialogUtils.showTermsDlg(this@LoginActivity)
+                PolicyContentActivity.open(this@LoginActivity, PolicyContentActivity.TYPE_TERMS)
             }
 
             override fun updateDrawState(ds: TextPaint) {
@@ -305,8 +304,7 @@ class LoginActivity : AppCompatActivity() {
 
             override fun onClick(widget: View) {
                 widget.clearFocus()
-                // 点击隐私政策的逻辑（如跳转到隐私政策页面）
-                DialogUtils.showPrivacyDlg(this@LoginActivity)
+                PolicyContentActivity.open(this@LoginActivity, PolicyContentActivity.TYPE_PRIVACY)
             }
         }, privacyStart, privacyEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 

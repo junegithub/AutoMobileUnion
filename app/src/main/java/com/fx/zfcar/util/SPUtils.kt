@@ -12,6 +12,7 @@ object SPUtils {
     private const val KEY_REMEMBER = "remember_password"
     private const val KEY_AUTO_LOGIN = "auto_login"
     private const val SP_KEY_NOTICE_ID = "noticeId"
+    private const val KEY_POLICY_ACCEPTED = "policy_accepted"
 
     private fun getSP(): SharedPreferences {
         return MyApp.Companion.getAppContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
@@ -106,5 +107,13 @@ object SPUtils {
 
     fun clear() {
         getSP().edit().clear().apply()
+    }
+
+    fun savePolicyAccepted(accepted: Boolean) {
+        getSP().edit().putBoolean(KEY_POLICY_ACCEPTED, accepted).apply()
+    }
+
+    fun isPolicyAccepted(): Boolean {
+        return getSP().getBoolean(KEY_POLICY_ACCEPTED, false)
     }
 }
