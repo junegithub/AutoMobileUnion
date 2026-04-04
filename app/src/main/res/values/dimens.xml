@@ -125,6 +125,7 @@
 
     <!-- 状态栏高度（动态适配） -->
     <dimen name="status_bar_height">24dp</dimen>
+    <dimen name="bottom_action_safe_spacing">32dp</dimen>
 
     <dimen name="padding_horizontal">36dp</dimen>    <!-- 10vw = 36dp (360dp宽度) -->
     <dimen name="padding_vertical">18dp</dimen>      <!-- 2vh = 18dp (900dp高度) -->

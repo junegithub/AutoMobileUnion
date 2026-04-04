@@ -543,7 +543,7 @@
         android:layout_height="56dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/bottom_action_safe_spacing"
         android:background="@color/blue_2979ff"
         android:text="下一步"
         android:textColor="@color/white"

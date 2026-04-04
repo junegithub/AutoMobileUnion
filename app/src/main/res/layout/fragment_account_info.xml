@@ -106,6 +106,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginStart="@dimen/dp_16"
         android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/bottom_action_safe_spacing"
         android:background="@drawable/btn_bg_blue"
         android:text="@string/btn_logout"
         android:textColor="@color/colorWhite"

@@ -228,5 +228,8 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         android:background="@drawable/btn_submit_bg"
-        android:layout_margin="@dimen/dp_16"/>
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginTop="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/bottom_action_safe_spacing"/>
 </LinearLayout>

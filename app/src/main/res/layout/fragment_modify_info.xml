@@ -48,6 +48,7 @@
             android:textColor="@android:color/white"
             android:background="@drawable/btn_bg_blue"
             android:layout_marginTop="32dp"
+            android:layout_marginBottom="@dimen/bottom_action_safe_spacing"
             android:elevation="4dp"/>
 
     </LinearLayout>
