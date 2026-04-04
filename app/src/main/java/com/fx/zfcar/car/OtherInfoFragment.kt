@@ -55,7 +55,7 @@ class OtherInfoFragment : Fragment() {
         )
         setRowValue(rows[0], "入网时间", info.intime)
         setRowValue(rows[1], "服务缴费日期", info.paytime)
-        setRowValue(rows[2], "服务合同到期时间", "2021-05-30 00:00:00")
+        setRowValue(rows[2], "服务合同到期时间", info.validtime)
         setRowValue(rows[3], "备注", info.remark)
     }
 

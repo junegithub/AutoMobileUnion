@@ -58,9 +58,9 @@ class TerminalInfoFragment : Fragment() {
         setRowValue(rows[0], "终端ID", info.id)
         setRowValue(rows[1], "SIM", info.sim)
         setRowValue(rows[2], "真实SIM", info.realsim)
-        setRowValue(rows[3], "设备类型", "2G")
+        setRowValue(rows[3], "设备类型", info.getSimTypeName())
         setRowValue(rows[4], "终端厂家名称", info.makerName)
-        setRowValue(rows[5], "终端型号", "BSJ_A6BD")
+        setRowValue(rows[5], "终端型号", info.kindName)
     }
 
     // 设置行数据

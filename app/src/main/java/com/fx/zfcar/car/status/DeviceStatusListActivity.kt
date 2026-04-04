@@ -6,9 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.chad.library.adapter4.QuickAdapterHelper
-import com.chad.library.adapter4.loadState.LoadState
-import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter4.util.setOnDebouncedItemClick
 import com.fx.zfcar.car.adapter.StatusAdapter
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
@@ -42,8 +40,9 @@ class DeviceStatusListActivity : AppCompatActivity() {
     private var pageNum: Int = 1
     private val pageSize = 50
     private var carType = ""
-    private lateinit var adapterHelper: QuickAdapterHelper
     private var loadFromMore: Boolean = false
+    private var reachedEnd: Boolean = false
+    private lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,24 +74,12 @@ class DeviceStatusListActivity : AppCompatActivity() {
             startActivity(Intent(this@DeviceStatusListActivity, MainActivity::class.java))
             finish()
         }
-        adapterHelper = QuickAdapterHelper.Builder(statusAdapter)
-            .setTrailingLoadStateAdapter(object : TrailingLoadStateAdapter.OnTrailingListener {
-                override fun onLoad() {
-                    pageNum++
-                    loadFromMore = true
-                    loadData()
-                }
-
-                override fun onFailRetry() {
-                }
-
-            })
-            .setTrailPreloadSize(1)
-            .attachTo(binding.rvStatusList)
-        updateLoadState()
+        layoutManager = LinearLayoutManager(this@DeviceStatusListActivity)
         binding.rvStatusList.apply {
-            layoutManager = LinearLayoutManager(this@DeviceStatusListActivity)
+            layoutManager = this@DeviceStatusListActivity.layoutManager
+            adapter = statusAdapter
         }
+        initScrollPagination()
 
         lifecycleScope.launch {
             statusListStateFlow.collect { state ->
@@ -101,24 +88,21 @@ class DeviceStatusListActivity : AppCompatActivity() {
                         // 显示进度框
                     }
                     is ApiState.Success -> {
-                        // 隐藏进度框，关闭输入框，提示成功
-                        state.data?.let {
-                            statusList.addAll(state.data)
-                            statusAdapter.notifyDataSetChanged()
+                        val data = state.data.orEmpty()
+                        if (!loadFromMore) {
+                            statusList.clear()
                         }
-                        if (loadFromMore) {
-                            updateLoadState()
-                            loadFromMore = false
-                        }
+                        statusList.addAll(data)
+                        reachedEnd = data.size < pageSize
+                        statusAdapter.submitList(statusList.toList())
+                        loadFromMore = false
                     }
                     is ApiState.Error -> {
                         showToast("获取数据失败：${state.msg}")
                         // 重置状态
                         statusListStateFlow.value = ApiState.Idle
-                        if (loadFromMore) {
-                            updateLoadState()
-                            loadFromMore = false
-                        }
+                        if (loadFromMore && pageNum > 1) pageNum--
+                        loadFromMore = false
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -128,8 +112,19 @@ class DeviceStatusListActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateLoadState() {
-        adapterHelper.trailingLoadState = LoadState.NotLoading(false)
+    private fun initScrollPagination() {
+        binding.rvStatusList.clearOnScrollListeners()
+        binding.rvStatusList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy <= 0 || loadFromMore || reachedEnd) return
+                if (layoutManager.findLastVisibleItemPosition() >= statusAdapter.itemCount - 2 && statusAdapter.itemCount > 0) {
+                    pageNum++
+                    loadFromMore = true
+                    loadData()
+                }
+            }
+        })
     }
 
     private fun loadData() {

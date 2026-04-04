@@ -9,9 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.chad.library.adapter4.QuickAdapterHelper
-import com.chad.library.adapter4.loadState.LoadState
-import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter4.util.setOnDebouncedItemClick
 import com.fx.zfcar.R
 import com.fx.zfcar.car.adapter.AlarmAdapter
@@ -24,16 +22,15 @@ import com.fx.zfcar.pages.CalendarDialog
 import com.fx.zfcar.pages.EventData
 import com.fx.zfcar.pages.MainActivity
 import com.fx.zfcar.training.user.showToast
+import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.fx.zfcar.databinding.ActivityDeviceAlarmBinding
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.getValue
 
 class DeviceAlarmActivity : AppCompatActivity() {
@@ -49,11 +46,10 @@ class DeviceAlarmActivity : AppCompatActivity() {
     private var startDate: String = ""
     private var endDate: String = ""
     private lateinit var alarmTypes: Array<String>
-    private lateinit var adapterHelper: QuickAdapterHelper
     private var loadFromMore: Boolean = false
-
-    // 日期格式化器
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+    private var currentTotal: Int = 0
+    private var reachedEnd: Boolean = false
+    private lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,24 +89,12 @@ class DeviceAlarmActivity : AppCompatActivity() {
             startActivity(Intent(this@DeviceAlarmActivity, MainActivity::class.java))
             finish()
         }
-        adapterHelper = QuickAdapterHelper.Builder(alarmAdapter)
-            .setTrailingLoadStateAdapter(object : TrailingLoadStateAdapter.OnTrailingListener {
-                override fun onLoad() {
-                    pageNum++
-                    loadFromMore = true
-                    loadData()
-                }
-
-                override fun onFailRetry() {
-                }
-
-            })
-            .setTrailPreloadSize(1)
-            .attachTo(binding.rvAlarmList)
-        updateLoadState()
+        layoutManager = LinearLayoutManager(this@DeviceAlarmActivity)
         binding.rvAlarmList.apply {
-            layoutManager = LinearLayoutManager(this@DeviceAlarmActivity)
+            layoutManager = this@DeviceAlarmActivity.layoutManager
+            adapter = alarmAdapter
         }
+        initScrollPagination()
 
         // 初始化Spinner（全部报警下拉）
         val spinnerAdapter = ArrayAdapter.createFromResource(
@@ -129,23 +113,22 @@ class DeviceAlarmActivity : AppCompatActivity() {
                         // 显示进度框
                     }
                     is ApiState.Success -> {
-                        // 隐藏进度框，关闭输入框，提示成功
-                        state.data?.let { it?.list?.let { elements -> alarmList.addAll(elements) } }
-                        updateListWithSpinnerSelection(binding.spinnerAlarmType.selectedItemPosition)
-                        alarmAdapter.notifyDataSetChanged()
-                        if (loadFromMore) {
-                            updateLoadState()
-                            loadFromMore = false
+                        val data = state.data ?: return@collect
+                        currentTotal = data.total.toInt()
+                        if (!loadFromMore) {
+                            alarmList.clear()
                         }
+                        alarmList.addAll(data.list)
+                        reachedEnd = alarmList.size >= currentTotal || data.list.size < pageSize
+                        updateListWithSpinnerSelection(binding.spinnerAlarmType.selectedItemPosition)
+                        loadFromMore = false
                     }
                     is ApiState.Error -> {
                         showToast("获取数据失败：${state.msg}")
                         // 重置状态
                         alarmListStateFlow.value = ApiState.Idle
-                        if (loadFromMore) {
-                            updateLoadState()
-                            loadFromMore = false
-                        }
+                        if (loadFromMore) pageNum--
+                        loadFromMore = false
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -155,8 +138,19 @@ class DeviceAlarmActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateLoadState() {
-        adapterHelper.trailingLoadState = LoadState.NotLoading(false)
+    private fun initScrollPagination() {
+        binding.rvAlarmList.clearOnScrollListeners()
+        binding.rvAlarmList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy <= 0 || loadFromMore || reachedEnd) return
+                if (layoutManager.findLastVisibleItemPosition() >= alarmAdapter.itemCount - 2 && alarmAdapter.itemCount > 0) {
+                    pageNum++
+                    loadFromMore = true
+                    loadData()
+                }
+            }
+        })
     }
 
     private fun loadData() {
@@ -180,10 +174,12 @@ class DeviceAlarmActivity : AppCompatActivity() {
             calendarDlg.updateStartAndEndData(startDate, endDate)
             calendarDlg.setOnDateSelectedListener(object : CalendarDialog.OnDateSelectedListener {
                 override fun onSelected(start: String, end: String) {
-                    startDate = dateFormat.format(Date(start))
-                    endDate = dateFormat.format(Date(end))
+                    startDate = DateUtil.timestamp2Date(start.toLong())
+                    endDate = DateUtil.timestamp2Date(end.toLong())
                     updateDateRange()
                     pageNum = 1
+                    currentTotal = 0
+                    reachedEnd = false
                     alarmList.clear()
                     loadData()
                 }

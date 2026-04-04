@@ -8,6 +8,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.fx.zfcar.car.adapter.CarInfoPagerAdapter
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
 import com.fx.zfcar.net.CarInfo
+import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.android.material.tabs.TabLayoutMediator
@@ -44,12 +45,10 @@ class CarInfoActivity : AppCompatActivity() {
                     }
                     is ApiState.Success -> {
                         // 成功：隐藏进度条，显示数据
-                        state.data?.let {
-                            refreshAdapter(state.data)
-                        }
+                        state.data?.let { refreshAdapter(it) }
                     }
                     is ApiState.Error -> {
-                        // 失败：显示错误信息，隐藏其他视图
+                        showToast(state.msg)
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理

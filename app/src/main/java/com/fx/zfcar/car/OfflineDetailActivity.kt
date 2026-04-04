@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fx.zfcar.car.adapter.OfflineDateAdapter
 import com.fx.zfcar.car.viewmodel.ReportViewModel
+import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.fx.zfcar.databinding.ActivityOfflineDetailBinding
@@ -38,7 +39,8 @@ class OfflineDetailActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         binding.rvList.layoutManager = layoutManager
 
-        binding.tvTitle.text = "离线提醒" + intent.getIntExtra(KEY_CAR_NUM, 0)
+        val carNum = intent.getStringExtra(KEY_CAR_NUM).orEmpty()
+        binding.tvTitle.text = if (carNum.isNotEmpty()) "离线提醒 $carNum" else "离线提醒"
 
         lifecycleScope.launch {
             offlineDetailStateFlow.collect {state ->
@@ -48,12 +50,10 @@ class OfflineDetailActivity : AppCompatActivity() {
                     }
                     is ApiState.Success -> {
                         // 成功：隐藏进度条，显示数据
-                        state.data?.let {
-                            setupRecyclerView(state.data)
-                        }
+                        setupRecyclerView(state.data.orEmpty())
                     }
                     is ApiState.Error -> {
-                        // 失败：显示错误信息，隐藏其他视图
+                        showToast(state.msg)
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -63,8 +63,8 @@ class OfflineDetailActivity : AppCompatActivity() {
         }
 
         val carId = intent.getIntExtra(KEY_CAR_ID, 0)
-        val start = intent.getStringExtra(KEY_START).toString()
-        val end = intent.getStringExtra(KEY_END).toString()
+        val start = intent.getStringExtra(KEY_START).orEmpty()
+        val end = intent.getStringExtra(KEY_END).orEmpty()
         reportViewModel.getOfflineDetailReport(carId, end, start, offlineDetailStateFlow)
     }
 

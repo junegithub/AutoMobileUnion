@@ -5,9 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.chad.library.adapter4.QuickAdapterHelper
-import com.chad.library.adapter4.loadState.LoadState
-import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.fx.zfcar.car.adapter.ExpireCarAdapter
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
 import com.fx.zfcar.net.CarExpireItem
@@ -26,13 +24,15 @@ import kotlin.getValue
 class ExpireCarActivity : AppCompatActivity() {
     private lateinit var binding: ActivityExpireCarBinding
     private lateinit var adapter: ExpireCarAdapter
-    private lateinit var adapterHelper: QuickAdapterHelper
 
     private val statusList = mutableListOf<CarExpireItem>()
 
     private var pageNum = 1
     private val pageSize = 50 // 每页条数
     private var loadFromMore: Boolean = false
+    private var currentTotal: Int = 0
+    private var reachedEnd: Boolean = false
+    private lateinit var layoutManager: LinearLayoutManager
 
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
     private val statusListStateFlow = MutableStateFlow<ApiState<CarExpireResponse>>(ApiState.Idle)
@@ -55,25 +55,23 @@ class ExpireCarActivity : AppCompatActivity() {
                         // 显示进度框
                     }
                     is ApiState.Success -> {
-                        // 隐藏进度框，关闭输入框，提示成功
-                        state.data?.let {
-                            statusList.addAll(state.data.list)
-                            adapter.notifyDataSetChanged()
+                        val data = state.data ?: return@collect
+                        currentTotal = data.total
+                        if (!loadFromMore) {
+                            statusList.clear()
                         }
-                        if (loadFromMore) {
-                            updateLoadState()
-                            loadFromMore = false
-                        }
+                        statusList.addAll(data.list)
+                        reachedEnd = statusList.size >= currentTotal || data.list.size < pageSize
+                        adapter.submitList(statusList.toList())
+                        loadFromMore = false
                     }
                     is ApiState.Error -> {
 
                         showToast("获取数据失败：${state.msg}")
                         // 重置状态
                         statusListStateFlow.value = ApiState.Idle
-                        if (loadFromMore) {
-                            updateLoadState()
-                            loadFromMore = false
-                        }
+                        if (loadFromMore && pageNum > 1) pageNum--
+                        loadFromMore = false
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -94,28 +92,27 @@ class ExpireCarActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         adapter = ExpireCarAdapter()
         adapter.submitList(statusList)
+        layoutManager = LinearLayoutManager(this@ExpireCarActivity)
         binding.rvStatusList.apply {
-            layoutManager = LinearLayoutManager(this@ExpireCarActivity)
+            layoutManager = this@ExpireCarActivity.layoutManager
+            adapter = this@ExpireCarActivity.adapter
         }
-        adapterHelper = QuickAdapterHelper.Builder(adapter)
-            .setTrailingLoadStateAdapter(object : TrailingLoadStateAdapter.OnTrailingListener {
-                override fun onLoad() {
-                    pageNum++
-                    loadFromMore = true
-                    loadCarList()
-                }
-
-                override fun onFailRetry() {
-                }
-
-            })
-            .setTrailPreloadSize(1)
-            .attachTo(binding.rvStatusList)
-        updateLoadState()
+        initScrollPagination()
     }
 
-    private fun updateLoadState() {
-        adapterHelper.trailingLoadState = LoadState.NotLoading(false)
+    private fun initScrollPagination() {
+        binding.rvStatusList.clearOnScrollListeners()
+        binding.rvStatusList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy <= 0 || loadFromMore || reachedEnd) return
+                if (layoutManager.findLastVisibleItemPosition() >= adapter.itemCount - 2 && adapter.itemCount > 0) {
+                    pageNum++
+                    loadFromMore = true
+                    loadCarList(binding.customTabLayout.selectedTabPosition == 1)
+                }
+            }
+        })
     }
 
     /**
@@ -126,8 +123,11 @@ class ExpireCarActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.position?.let { position ->
                     pageNum = 1 // 切换Tab重置页码
+                    currentTotal = 0
+                    reachedEnd = false
+                    loadFromMore = false
                     statusList.clear()
-                    adapter.notifyDataSetChanged()
+                    adapter.submitList(emptyList())
                     loadCarList(position == 1)
                 }
             }

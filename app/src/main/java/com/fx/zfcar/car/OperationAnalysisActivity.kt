@@ -2,6 +2,7 @@ package com.fx.zfcar.car
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.fx.zfcar.car.base.CustomMarkerView
 import com.fx.zfcar.car.base.PieChartConfig
@@ -40,8 +41,8 @@ class OperationAnalysisActivity : AppCompatActivity() {
                     is ApiState.Success -> {
                         // 隐藏进度框，关闭输入框，提示成功
                         state.data?.let {
-                            initVehiclePieData(state.data.caroperate)
-                            initAlarmPieData(state.data.carwarning)
+                            initVehiclePieData(it.caroperate)
+                            initAlarmPieData(it.carwarning)
                         }
                     }
                     is ApiState.Error -> {
@@ -68,10 +69,10 @@ class OperationAnalysisActivity : AppCompatActivity() {
     private fun initVehiclePieData(caroperate: CarOperateInfo) {
         // 颜色匹配截图
         val colors = listOf(
-            resources.getColor(R.color.color_normal),
-            resources.getColor(R.color.color_arrears),
-            resources.getColor(R.color.color_maintenance),
-            resources.getColor(R.color.color_stop)
+            ContextCompat.getColor(this, R.color.color_normal),
+            ContextCompat.getColor(this, R.color.color_arrears),
+            ContextCompat.getColor(this, R.color.color_maintenance),
+            ContextCompat.getColor(this, R.color.color_stop)
         )
 
         val entries = mutableListOf<PieEntry>().apply {
@@ -95,20 +96,20 @@ class OperationAnalysisActivity : AppCompatActivity() {
      * 初始化报警分布饼图数据（匹配截图：90.77%其他、4.30%超速、0.51%疲劳、4.43%摄像头故障）
      */
     private fun initAlarmPieData(carwarning: List<WarningTypeInfo>) {
-        val entries = mutableListOf<PieEntry>().apply {
-            add(constructPieEntry(carwarning[0]))
-            add(constructPieEntry(carwarning[1]))
-            add(constructPieEntry(carwarning[2]))
-            add(constructPieEntry(carwarning[3]))
+        if (carwarning.isEmpty()) {
+            binding.pieChartAlarm.clear()
+            return
         }
+
+        val entries = carwarning.take(4).map { constructPieEntry(it) }
 
         // 颜色匹配截图
         val colors = listOf(
-            resources.getColor(R.color.color_other_alarm),
-            resources.getColor(R.color.color_overspeed),
-            resources.getColor(R.color.color_fatigue),
-            resources.getColor(R.color.color_camera_fault)
-        )
+            ContextCompat.getColor(this, R.color.color_other_alarm),
+            ContextCompat.getColor(this, R.color.color_overspeed),
+            ContextCompat.getColor(this, R.color.color_fatigue),
+            ContextCompat.getColor(this, R.color.color_camera_fault)
+        ).take(entries.size)
 
         // 绑定数据+提示框
         PieChartConfig.setPieData(binding.pieChartAlarm, entries, colors,
