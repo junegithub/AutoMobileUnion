@@ -10,7 +10,7 @@ import retrofit2.http.Query
 interface CarApiService {
     // 查车相关API（/car/app 前缀）
     @GET("car/app/car/carinfo")
-    suspend fun getCarInfo(@Query("car_id") carId: Int): Response<BaseResponse<CarInfo>>
+    suspend fun getCarInfo(@Query("car_id") carId: String): Response<BaseResponse<CarInfo>>
 
     @GET("car/app/car/isLYBH")
     suspend fun isLYBH(): Response<BaseResponse<Boolean>>
@@ -57,7 +57,7 @@ interface CarApiService {
 
     @GET("aggregation/app/position/realtimeaddress")
     suspend fun getRealTimeAddress(
-        @Query("car_id") carId: Int?,
+        @Query("car_id") carId: String?,
         @Query("carnum") carnum: String?
     ): Response<BaseResponse<RealTimeAddressData>>
 
@@ -109,7 +109,7 @@ interface CarApiService {
 
     @GET("aggregation/app/position/track")
     suspend fun getTrackInfo(
-        @Query("car_id") carId: Int,
+        @Query("car_id") carId: String,
         @Query("endtime") endtime: String,
         @Query("starttime") starttime: String,
         @Query("isFilter") isFilter: Boolean?,
@@ -152,7 +152,7 @@ interface CarApiService {
 
     @GET("aggregation/app/work/offlineDetail")
     suspend fun getOfflineDetailReport(
-        @Query("carId") carId: Int,
+        @Query("carId") carId: String,
         @Query("end") end: String,
         @Query("start") start: String
     ): Response<BaseResponse<List<String>>>

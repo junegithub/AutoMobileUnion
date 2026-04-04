@@ -57,7 +57,15 @@ class CarInfoActivity : AppCompatActivity() {
             }
         }
 
-        carInfoViewModel.getCarInfo(intent.getIntExtra(KEY_CAR_ID, 0), carInfoStateFlow)
+        val carId = intent.getStringExtra(KEY_CAR_ID)
+            ?: intent.getIntExtra(KEY_CAR_ID, 0).takeIf { it > 0 }?.toString()
+            .orEmpty()
+        if (carId.isBlank()) {
+            showToast("车辆信息异常")
+            finish()
+            return
+        }
+        carInfoViewModel.getCarInfo(carId, carInfoStateFlow)
     }
 
     private fun refreshAdapter(carInfo: CarInfo) {

@@ -164,7 +164,8 @@ class CarFragment : Fragment(), AMapLocationListener {
     private fun openCarDetails(marker: Marker) {
         val car = marker.`object` as? MapPositionItem ?: return
         currentCar = car
-        val id = car.id.toIntOrNull() ?: return
+        val id = car.id
+        if (id.isBlank()) return
         carInfoViewModel.getRealTimeAddress(id, currentCar?.carnum,
             addressStateFlow)
         carInfoViewModel.getCarInfo(id,
@@ -976,7 +977,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                     openCarDetails(marker)
                 } else {
                     requestFromOtherPage = true
-                    val carId = vehicleInfo.carId.toInt()
+                    val carId = vehicleInfo.carId
                     carInfoViewModel.getRealTimeAddress(carId, vehicleInfo.carNum,
                         addressStateFlow)
                     carInfoViewModel.getCarInfo(carId, carInfoStateFlow)
@@ -989,7 +990,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                     openCarDetails(marker)
                 } else {
                     requestFromOtherPage = true
-                    carInfoViewModel.getRealTimeAddress(0, carNum,
+                    carInfoViewModel.getRealTimeAddress(null, carNum,
                         addressStateFlow
                     )
                 }

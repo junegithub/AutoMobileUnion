@@ -133,13 +133,12 @@ class TrackPlayActivity : AppCompatActivity() {
      * 解析轨迹数据
      */
     private fun loadTrackData() {
-        val currentCarId = carId.toIntOrNull()
-        if (currentCarId == null || currentCarId <= 0) {
+        if (carId.isBlank()) {
             showToast("车辆信息异常")
             return
         }
         carInfoViewModel.getTrackInfo(
-            currentCarId,
+            carId,
             DateUtil.timestamp2String(endTime),
             DateUtil.timestamp2String(startTime), trackInfoStateFlow)
     }

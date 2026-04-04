@@ -81,7 +81,7 @@ class ReportViewModel : CarBaseViewModel() {
         )
     }
     //离线天数详情
-    fun getOfflineDetailReport(carId: Int, end: String, start: String,
+    fun getOfflineDetailReport(carId: String, end: String, start: String,
                          stateFlow: MutableStateFlow<ApiState<List<String>>>) {
         launchRequest(
             block = { vehicleRepository.getOfflineDetailReport(carId, end, start) },

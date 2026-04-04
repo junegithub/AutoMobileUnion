@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class CarInfoViewModel : CarBaseViewModel() {
 
     // 获取车辆基础信息
-    fun getCarInfo(carId: Int, stateFlow: MutableStateFlow<ApiState<CarInfo>>) {
+    fun getCarInfo(carId: String, stateFlow: MutableStateFlow<ApiState<CarInfo>>) {
         launchRequest(
             block = { vehicleRepository.getCarInfo(carId) },
             stateFlow
@@ -38,7 +38,7 @@ class CarInfoViewModel : CarBaseViewModel() {
     }
 
     // 实时地址
-    fun getRealTimeAddress(carId: Int?, carnum: String?,
+    fun getRealTimeAddress(carId: String?, carnum: String?,
                            stateFlow: MutableStateFlow<ApiState<RealTimeAddressData>>) {
         launchRequest(
             block = { vehicleRepository.getRealTimeAddress(carId, carnum) },
@@ -72,7 +72,7 @@ class CarInfoViewModel : CarBaseViewModel() {
     }
 
     // 轨迹信息
-    fun getTrackInfo(carId: Int, endtime: String, starttime: String,
+    fun getTrackInfo(carId: String, endtime: String, starttime: String,
                      stateFlow: MutableStateFlow<ApiState<TrackData>>) {
         launchRequest(
             block = { vehicleRepository.getTrackInfo(carId, endtime, starttime, true, true) },

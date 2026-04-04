@@ -62,9 +62,16 @@ class OfflineDetailActivity : AppCompatActivity() {
             }
         }
 
-        val carId = intent.getIntExtra(KEY_CAR_ID, 0)
+        val carId = intent.getStringExtra(KEY_CAR_ID)
+            ?: intent.getIntExtra(KEY_CAR_ID, 0).takeIf { it > 0 }?.toString()
+            .orEmpty()
         val start = intent.getStringExtra(KEY_START).orEmpty()
         val end = intent.getStringExtra(KEY_END).orEmpty()
+        if (carId.isBlank()) {
+            showToast("车辆信息异常")
+            finish()
+            return
+        }
         reportViewModel.getOfflineDetailReport(carId, end, start, offlineDetailStateFlow)
     }
 

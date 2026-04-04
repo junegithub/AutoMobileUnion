@@ -4,7 +4,7 @@ package com.fx.zfcar.net
 // Repository Layer
 class CarRepository(private val apiService: CarApiService) {
     // 查车相关API
-    suspend fun getCarInfo(carId: Int) = apiService.getCarInfo(carId)
+    suspend fun getCarInfo(carId: String) = apiService.getCarInfo(carId)
 
     suspend fun isLYBH() = apiService.isLYBH()
 
@@ -16,7 +16,7 @@ class CarRepository(private val apiService: CarApiService) {
 
     suspend fun getMapPositions(size: Int?) = apiService.getMapPositions(size)
 
-    suspend fun getRealTimeAddress(carId: Int?, carnum: String?) =
+    suspend fun getRealTimeAddress(carId: String?, carnum: String?) =
         apiService.getRealTimeAddress(carId, carnum)
 
     suspend fun getSearchHistory() = apiService.getSearchHistory()
@@ -49,7 +49,7 @@ class CarRepository(private val apiService: CarApiService) {
     suspend fun shareTrack(request: TrackShareRequest) = apiService.shareTrack(request)
     suspend fun shareTrackV2(request: TrackShareRequest) = apiService.shareTrackV2(request)
 
-    suspend fun getTrackInfo(carId: Int, endtime: String, starttime: String, isFilter: Boolean?, is704: Boolean?) =
+    suspend fun getTrackInfo(carId: String, endtime: String, starttime: String, isFilter: Boolean?, is704: Boolean?) =
         apiService.getTrackInfo(carId, endtime, starttime, isFilter, is704)
 
     suspend fun getVideoInfo(carId: String) = apiService.getVideoInfo(carId)
@@ -66,7 +66,7 @@ class CarRepository(private val apiService: CarApiService) {
     suspend fun getOfflineReport(end: String, page: Int, pageSize: Int?, search: String?, start: String) =
         apiService.getOfflineReport(end, page, pageSize, search, start)
 
-    suspend fun getOfflineDetailReport(carId: Int, end: String, start: String) =
+    suspend fun getOfflineDetailReport(carId: String, end: String, start: String) =
         apiService.getOfflineDetailReport(carId, end, start)
 
     suspend fun getPhotoReport(page: Int, pageSize: Int?, search: String?, timetype: Int) =
