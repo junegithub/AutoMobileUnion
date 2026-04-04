@@ -12,6 +12,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import androidx.activity.viewModels
 import com.chad.library.adapter4.QuickAdapterHelper
+import com.chad.library.adapter4.loadState.LoadState
 import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
 import com.chad.library.adapter4.util.setOnDebouncedItemClick
 import com.fx.zfcar.car.adapter.CarNumAdapter
@@ -41,6 +42,10 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     companion object {
         const val KEY_CAR_NUM = "key_car_num"
         const val KEY_CAR_SEARCH = "key_car_search"
+        const val KEY_SEARCH_TYPE = "key_search_type"
+
+        const val SEARCH_TYPE_MAP = "map"
+        const val SEARCH_TYPE_VIDEO_LIST = "videoList"
     }
 
     private lateinit var binding: ActivityTreeListBinding
@@ -51,8 +56,11 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     private val carNumSearchStateFlow = MutableStateFlow<ApiState<SearchCarTypeData>>(ApiState.Idle)
 
     private var fromSearch: Boolean = false
+    private var searchType: String = SEARCH_TYPE_MAP
     private var filterList = mutableListOf<String>()
     private var carNumList = mutableListOf<SearchCarItem>()
+    private var selectedFilterType: String = "all"
+    private var currentTotal: Int = 0
 
     private var pageNum: Int = 1
     private val pageSize = 20
@@ -67,6 +75,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
         setContentView(binding.root)
 
         fromSearch = intent.getBooleanExtra(KEY_CAR_SEARCH, false)
+        searchType = intent.getStringExtra(KEY_SEARCH_TYPE) ?: SEARCH_TYPE_MAP
 
         PressEffectUtils.setCommonPressEffect(binding.ivBack)
         PressEffectUtils.setCommonPressEffect(binding.tvSearchExecute)
@@ -96,8 +105,8 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     private fun executeSearch() {
         fromSearch = true
         adapter.setSearch(fromSearch)
-        carNumList.clear()
-        loadSearchData()
+        resetSearchListState()
+        loadSearchData(showTree = true)
         loadRootTreeData()
     }
 
@@ -152,14 +161,16 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
         filterSpinnerAdapter = FilterSpinnerAdapter(this, filterList)
         binding.spinnerFilter.adapter = filterSpinnerAdapter
 
-        // 默认选中第一个选项（全部状态162）
-        binding.spinnerFilter.setSelection(0)
-
         // Spinner选择监听
         binding.spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedFilter = filterList[position]
-                // 补充筛选逻辑：根据选中的状态过滤列表
+                val nextFilterType = filterTypeByPosition(position)
+                if (selectedFilterType == nextFilterType && carNumList.isNotEmpty()) {
+                    return
+                }
+                selectedFilterType = nextFilterType
+                resetSearchListState()
+                loadSearchData(showTree = false)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -227,21 +238,28 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
                 when (state) {
                     is ApiState.Success -> {
                         state.data?.let {
+                            currentTotal = it.count.all
                             filterList.clear()
-                            filterList.add("全部状态${state.data.count.all}")
-                            filterList.add("运行${state.data.count.driving}")
-                            filterList.add("离线${state.data.count.offline}")
-                            filterList.add("停车${state.data.count.stop}")
-                            filterList.add("过期${state.data.count.expired}")
+                            filterList.add("全部状态${it.count.all}")
+                            filterList.add("运行${it.count.driving}")
+                            filterList.add("离线${it.count.offline}")
+                            filterList.add("停车${it.count.stop}")
+                            filterList.add("过期${it.count.expired}")
                             filterSpinnerAdapter.notifyDataSetChanged()
+                            binding.spinnerFilter.setSelection(filterPositionByType(selectedFilterType), false)
 
-                            carNumList.addAll(state.data.list)
-                            carNumAdapter.notifyDataSetChanged()
+                            if (pageNum == 1) {
+                                carNumList.clear()
+                            }
+                            carNumList.addAll(it.list)
+                            carNumAdapter.submitList(carNumList.toList())
+                            updateLoadMoreState()
                         }
                         binding.rvCarnumList.visibility = View.VISIBLE
                         binding.tabLayout.visibility = View.VISIBLE
                     }
                     is ApiState.Error -> {
+                        updateLoadMoreState(isError = pageNum > 1)
                         showToast("加载失败：${state.msg}")
                     }
                     ApiState.Loading -> {
@@ -255,15 +273,66 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
 
     private fun loadRootTreeData() {
         if (fromSearch) {
-            searchViewModel.getTreeBlurry(binding.etSearch.text.toString(), false, true, stateFlow)
+            searchViewModel.getTreeBlurry(
+                binding.etSearch.text.toString(),
+                false,
+                searchType != SEARCH_TYPE_VIDEO_LIST,
+                stateFlow
+            )
         } else {
             searchViewModel.getTree("", false, true, stateFlow)
         }
     }
 
-    private fun loadSearchData() {
-        searchViewModel.searchCarByType(binding.etSearch.text.toString(),
-            null, "all", pageSize.toString(), pageNum.toString(), carNumSearchStateFlow)
+    private fun loadSearchData(showTree: Boolean = false) {
+        searchViewModel.searchCarByType(
+            binding.etSearch.text.toString(),
+            if (searchType == SEARCH_TYPE_VIDEO_LIST) false else null,
+            selectedFilterType,
+            pageSize.toString(),
+            pageNum.toString(),
+            carNumSearchStateFlow
+        )
+        if (showTree) {
+            binding.rvCarnumList.visibility = View.VISIBLE
+            binding.tabLayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun resetSearchListState() {
+        pageNum = 1
+        currentTotal = 0
+        carNumList.clear()
+        carNumAdapter.submitList(emptyList())
+        updateLoadMoreState()
+    }
+
+    private fun updateLoadMoreState(isError: Boolean = false) {
+        adapterHelper.trailingLoadState = when {
+            isError -> LoadState.Error(Exception("load failed"))
+            carNumList.isEmpty() || carNumList.size >= currentTotal -> LoadState.NotLoading(endOfPaginationReached = true)
+            else -> LoadState.NotLoading(endOfPaginationReached = false)
+        }
+    }
+
+    private fun filterTypeByPosition(position: Int): String {
+        return when (position) {
+            1 -> "driving"
+            2 -> "offline"
+            3 -> "stop"
+            4 -> "expired"
+            else -> "all"
+        }
+    }
+
+    private fun filterPositionByType(type: String): Int {
+        return when (type) {
+            "driving" -> 1
+            "offline" -> 2
+            "stop" -> 3
+            "expired" -> 4
+            else -> 0
+        }
     }
 
     private fun switchMapDetail(carId: String, carNum: String) {
@@ -283,7 +352,8 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     // ==================== 点击事件回调实现 ====================
     override fun onItemClick(item: TreeItem) {
         if (item.isLeaf) {
-            switchMapDetail("0", item.name)
+            val targetCarId = item.id.ifBlank { "0" }
+            switchMapDetail(targetCarId, item.name)
         }
     }
 
