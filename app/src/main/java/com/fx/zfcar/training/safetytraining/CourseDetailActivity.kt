@@ -45,9 +45,6 @@ class CourseDetailActivity : AppCompatActivity() {
     // 页面参数
     private var subjectId: String = ""
     private var safetyPlanId: String = ""
-    private var trainName: String = ""
-    private var nextSubjectId: String = "" // 下一课ID
-
     // AndroidX Media3 播放器
     private var player: ExoPlayer? = null
     private var isPlayerReady = false
@@ -71,16 +68,13 @@ class CourseDetailActivity : AppCompatActivity() {
     private var flag = true // 首次人脸识别标记
     private var pageScoll = 0 // 滚动位置
     private var evaluateInput = ""
-    private var eveluateShow = false // 评价弹窗显示标记
     private var studyReported = false
 
     // 定时器（完整实现原逻辑）
-    private var timer1: Timer? = null
     private var timer2: Timer? = null
     private var timer3: Timer? = null
     private var timer4: Timer? = null
     private val handler = Handler(Looper.getMainLooper())
-    private var urlFlag = true // 跳转标记
 
     // StateFlow
     private val _courseDetailFlow = MutableStateFlow<ApiState<CoursewareViewData>>(ApiState.Idle)
@@ -149,8 +143,6 @@ class CourseDetailActivity : AppCompatActivity() {
         intent?.let {
             subjectId = it.getStringExtra("subjectId") ?: ""
             safetyPlanId = it.getStringExtra("safetyPlanId") ?: ""
-            trainName = it.getStringExtra("trainName") ?: ""
-            nextSubjectId = it.getStringExtra("next") ?: ""
         }
     }
 
@@ -162,17 +154,14 @@ class CourseDetailActivity : AppCompatActivity() {
 
         // 评价按钮
         binding.tvEvaluate.setOnClickListener {
-            eveluateShow = true
             showEvaluateDialog()
         }
 
         // 评价弹窗
         binding.llEvaluateMask.setOnClickListener {
-            eveluateShow = false
             hideEvaluateDialog()
         }
         binding.tvCancelEvaluate.setOnClickListener {
-            eveluateShow = false
             hideEvaluateDialog()
         }
         binding.tvConfirmEvaluate.setOnClickListener { submitEvaluate() }
@@ -210,16 +199,6 @@ class CourseDetailActivity : AppCompatActivity() {
             .build().also { exoPlayer ->
 
                 binding.playerView.player = exoPlayer
-                /*binding.playerView.setControllerVisibilityListener { visibility ->
-                    // 播放器控制栏显示/隐藏时切换清晰度弹窗显示状态
-                    definitionShow = visibility == View.VISIBLE
-                    if (visibility == View.VISIBLE) {
-                        showDefinitionDialog()
-                    } else {
-                        hideDefinitionDialog()
-                    }
-                }*/
-
                 // 设置播放源
                 val mediaItem = MediaItem.fromUri(videoUrl)
                 exoPlayer.setMediaItem(mediaItem)
@@ -333,140 +312,11 @@ class CourseDetailActivity : AppCompatActivity() {
         binding.llEvaluateMask.visibility = View.GONE
     }
 
-/*    private fun initOtherCourseList(courseList: List<OtherCourse>) {
-        binding.llOtherCourses.removeAllViews()
-
-        courseList.forEachIndexed { index, course ->
-            // 课程项容器
-            val courseItem = LinearLayout(this).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    bottomMargin = 16.dp
-                }
-                orientation = LinearLayout.VERTICAL
-                background = getDrawable(R.drawable.bg_course_item)
-                padding = 16.dp
-            }
-
-            // 课程类型+时长
-            val typeTimeView = TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    bottomMargin = 8.dp
-                }
-                text = "${course.type_text}    ${course.time}"
-                textSize = 12.sp
-                setTextColor(getColor(R.color.text_666))
-            }
-
-            // 课程名称
-            val nameView = TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    bottomMargin = 12.dp
-                }
-                text = course.name
-                textSize = 16.sp
-                setTextColor(getColor(R.color.text_333))
-            }
-
-            // 状态+操作栏
-            val statusBar = LinearLayout(this).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
-            }
-
-            // 学习状态
-            val statusView = TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    0,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    1f
-                ).apply {
-                    rightMargin = 16.dp
-                }
-                val statusText = when {
-                    course.studytype == 0 -> "未学习"
-                    course.time == course.studytimeText -> "已完成"
-                    else -> "已学习${course.studytimeText}"
-                }
-                text = statusText
-                textSize = 14.sp
-                setTextColor(if (course.studytype == 1) getColor(R.color.green_17a83e) else getColor(R.color.red_ff445a))
-                background = getDrawable(if (course.studytype == 1) R.drawable.bg_green_tag else R.drawable.bg_red_tag)
-                padding = 4.dp
-                gravity = Gravity.CENTER
-            }
-
-            // 开始学习按钮
-            val studyBtn = TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                text = "开始学习 >"
-                textSize = 14.sp
-                setTextColor(getColor(R.color.blue_3f83f7))
-                setOnClickListener {
-                    goToCourseDetail(course, courseList, index)
-                }
-            }
-
-            // 组装视图
-            statusBar.addView(statusView)
-            statusBar.addView(studyBtn)
-            courseItem.addView(typeTimeView)
-            courseItem.addView(nameView)
-            courseItem.addView(statusBar)
-
-            binding.llOtherCourses.addView(courseItem)
-        }
-    }*/
-
-    /*private fun goToCourseDetail(course: OtherCourse, courseList: List<OtherCourse>, index: Int) {
-        // 停止当前视频播放
-        player?.pause()
-        cancelAllTimers()
-
-        // 计算下一课ID
-        val nextId = when {
-            courseList.size <= 1 -> subjectId
-            index + 1 == courseList.size -> courseList[0].id
-            else -> courseList[index + 1].id
-        }
-
-        // 跳转到课程详情
-        val intent = Intent(this, CourseDetailActivity::class.java).apply {
-            putExtra("safetyPlanId", safetyPlanId)
-            putExtra("subjectId", course.id)
-            putExtra("name", course.name)
-            putExtra("next", nextId)
-        }
-        startActivity(intent)
-
-        // 提交学习时长
-        if (!ischeckface) {
-            checkFace()
-        }
-    }*/
-
     /**
      * 启动所有定时器（还原原逻辑）
      */
     private fun startAllTimers() {
         cancelAllTimers()
-
-        // 定时器1：1秒后恢复滚动位置（已在接口回调中实现）
 
         // 定时器2：20秒后首次人脸识别
         if (flag && hasStudyTime < alltime) {
@@ -476,7 +326,6 @@ class CourseDetailActivity : AppCompatActivity() {
                     override fun run() {
                         handler.post {
                             val longtime = 20
-                            urlFlag = false
                             navigateToFaceCheck(longtime)
                         }
                     }
@@ -490,7 +339,6 @@ class CourseDetailActivity : AppCompatActivity() {
                 override fun run() {
                     handler.post {
                         val longtime = 1200
-                        urlFlag = false
                         navigateToFaceCheck(longtime)
                     }
                 }
@@ -508,7 +356,6 @@ class CourseDetailActivity : AppCompatActivity() {
                             if (time == alltime) {
                                 cancel()
                                 ischeckface = true
-                                urlFlag = false
                                 navigateToFaceCheck(longtime)
                                 return@post
                             }
@@ -544,12 +391,10 @@ class CourseDetailActivity : AppCompatActivity() {
      * 取消所有定时器
      */
     private fun cancelAllTimers() {
-        timer1?.cancel()
         timer2?.cancel()
         timer3?.cancel()
         timer4?.cancel()
 
-        timer1 = null
         timer2 = null
         timer3 = null
         timer4 = null
@@ -644,6 +489,11 @@ class CourseDetailActivity : AppCompatActivity() {
         if (data != null) {
             val courseData = data
 
+            // 每次重新加载课程详情时重置本页运行态，避免首检/播放状态串到下一次进入
+            clickNumber = 0
+            ischeckface = false
+            flag = true
+
             // 保存基础信息
             courseInfo = courseData.courrow
             trainAbout = courseData.row
@@ -693,10 +543,11 @@ class CourseDetailActivity : AppCompatActivity() {
                         .into(binding.ivCourseImage)
 
                     // 恢复滚动位置
-//                    handler.postDelayed({
-//                        binding.scrollView.scrollTo(0, courseData.courrow.pageScoll)
-//                        pageScoll = courseData.courrow.pageScoll
-//                    }, 1000)
+                    val savedScroll = SPUtils.getInt("course_scroll_${courseData.courrow.id}")
+                    handler.postDelayed({
+                        binding.scrollView.scrollTo(0, savedScroll)
+                        pageScoll = savedScroll
+                    }, 1000)
 
                     // 启动定时器（原逻辑）
                     if (hasStudyTime < alltime) {
@@ -705,26 +556,6 @@ class CourseDetailActivity : AppCompatActivity() {
                 }
             }
 
-            // 处理其他课程列表
-//            val formattedCourses = courseData.otherlist.map { course ->
-//                course.copy(
-//                    time = DateUtil.secondToDate(course.longtime),
-//                    studytimeText = DateUtil.secondToDate(course.studytime)
-//                )
-//            }
-//            initOtherCourseList(formattedCourses)
-
-            // 已完成自动跳转下一课
-            if (hasStudyTime == alltime && nextSubjectId.isNotEmpty() && nextSubjectId != "onlyone") {
-                handler.postDelayed({
-                    val intent = Intent(this, CourseDetailActivity::class.java).apply {
-                        putExtra("safetyPlanId", safetyPlanId)
-                        putExtra("subjectId", nextSubjectId)
-                    }
-                    startActivity(intent)
-                    finish()
-                }, 1000)
-            }
         } else {
             showToast("获取课程详情失败")
         }
@@ -744,10 +575,6 @@ class CourseDetailActivity : AppCompatActivity() {
                     finish()
                 }, 1000)
             }
-            // 人脸识别
-//            else if (data.isend == 0) {
-//                navigateToFaceCheck(longtime, isEnd = true)
-//            }
         }
     }
 
