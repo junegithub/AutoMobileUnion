@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -118,11 +119,9 @@ class ScoreDetailActivity : AppCompatActivity() {
                                 binding.tvFullScore.text = "满分：${scoreData.row.score}分"
 
                                 // 加载签名图片
-                                scoreData.info.imgurl?.let {
-                                    Glide.with(this@ScoreDetailActivity)
-                                        .load(scoreData.info.imgurl)
-                                        .into(binding.ivSign)
-                                }
+                                Glide.with(this@ScoreDetailActivity)
+                                    .load(scoreData.info.imgurl)
+                                    .into(binding.ivSign)
 
                                 // 保存题目列表
                                 questionList = scoreData.questions
@@ -161,7 +160,7 @@ class ScoreDetailActivity : AppCompatActivity() {
                             }
                         }
                         is ApiState.Error -> {
-                            showToast(state.msg ?: "获取题目详情失败")
+                            showToast(state.msg)
                             hideQuestionDetail()
                         }
                     }
@@ -197,15 +196,15 @@ class ScoreDetailActivity : AppCompatActivity() {
                 // 设置背景颜色（答对/答错）
                 if (question.uanswercolor == "green") {
                     setBackgroundResource(R.drawable.bg_green_answer)
-                    setTextColor(resources.getColor(R.color.green_17a83e, null))
+                    setTextColor(ContextCompat.getColor(this@ScoreDetailActivity, R.color.green_17a83e))
                 } else {
                     setBackgroundResource(R.drawable.bg_red_answer)
-                    setTextColor(resources.getColor(R.color.red_ff445a, null))
+                    setTextColor(ContextCompat.getColor(this@ScoreDetailActivity, R.color.red_ff445a))
                 }
 
                 // 点击事件
                 setOnClickListener {
-                    getQuestionDetail(question.id.toString(), question.uanswer ?: "")
+                    getQuestionDetail(question.id.toString(), question.uanswer)
                 }
             }
 

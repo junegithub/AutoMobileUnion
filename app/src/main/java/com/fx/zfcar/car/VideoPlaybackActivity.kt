@@ -400,9 +400,9 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     is ApiState.Success -> {
                         state.data?.let {
-                            sim = state.data.sim ?: ""
-                            version = if (state.data.version == 2019) 1 else 0
-                            wayNums = state.data.waynums ?: emptyList()
+                            sim = it.sim
+                            version = if (it.version == 2019) 1 else 0
+                            wayNums = it.waynums
 
                             // 更新通道列表
                             updateChannelList()

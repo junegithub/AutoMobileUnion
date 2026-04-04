@@ -241,7 +241,7 @@ class MeetingDetailActivity : AppCompatActivity() {
             binding.llSignArea.visibility = View.VISIBLE
 
             // 检查是否已有签名
-            meetingDetail.signfile?.forEach { signFile ->
+            meetingDetail.signfile.forEach { signFile ->
                 if (signFile.type == "0") {
                     hasSign = true
                     signImg = signFile.imgurl
@@ -260,7 +260,7 @@ class MeetingDetailActivity : AppCompatActivity() {
             binding.llPhotoArea.visibility = View.VISIBLE
 
             // 检查是否已有拍照
-            meetingDetail.signfile?.forEach { signFile ->
+            meetingDetail.signfile.forEach { signFile ->
                 if (signFile.type == "1") {
                     hasPhoto = true
                     photoImg = signFile.imgurl

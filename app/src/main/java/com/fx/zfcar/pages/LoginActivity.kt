@@ -12,6 +12,7 @@ import android.text.style.ClickableSpan
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.fx.zfcar.R
 import com.fx.zfcar.MyApp
@@ -290,7 +291,7 @@ class LoginActivity : AppCompatActivity() {
 
             override fun updateDrawState(ds: TextPaint) {
                 super.updateDrawState(ds)
-                ds.setColor(getResources().getColor(R.color.blue)) // 链接文字颜色
+                ds.setColor(ContextCompat.getColor(this@LoginActivity, R.color.blue)) // 链接文字颜色
             }
 
         }, serviceStart, serviceEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -299,7 +300,7 @@ class LoginActivity : AppCompatActivity() {
         spannableString.setSpan(object : ClickableSpan() {
             override fun updateDrawState(ds: TextPaint) {
                 super.updateDrawState(ds)
-                ds.setColor(getResources().getColor(R.color.blue)) // 链接文字颜色
+                ds.setColor(ContextCompat.getColor(this@LoginActivity, R.color.blue)) // 链接文字颜色
             }
 
             override fun onClick(widget: View) {
@@ -313,7 +314,7 @@ class LoginActivity : AppCompatActivity() {
         binding.tvAgreementText.text = spannableString
         binding.tvAgreementText.movementMethod = LinkMovementMethod.getInstance()
         // 去除点击后文字的高亮背景
-        binding.tvAgreementText.highlightColor = getResources().getColor(R.color.transparent)
+        binding.tvAgreementText.highlightColor = ContextCompat.getColor(this, R.color.transparent)
     }
 
     override fun onDestroy() {

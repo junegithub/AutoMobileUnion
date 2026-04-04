@@ -1,6 +1,7 @@
 package com.fx.zfcar.car.base
 
 import android.graphics.Color
+import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.Legend
@@ -100,7 +101,7 @@ object PieChartConfig {
         /**当valuePosition位于外部时，表示行后半部分的长度*(即折线靠近百分比那端的长度) */
         dataSet.valueLinePart2Length = 0.1f // 引线第二段长度
         dataSet.valueLineWidth = 1f         // 引线宽度
-        dataSet.valueLineColor = pieChart.resources.getColor(R.color.text_gray) // 引线灰色
+        dataSet.valueLineColor = ContextCompat.getColor(pieChart.context, R.color.text_gray) // 引线灰色
         //设置Y值的位置在圆外
         dataSet.yValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE // 数值外侧
         dataSet.xValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE

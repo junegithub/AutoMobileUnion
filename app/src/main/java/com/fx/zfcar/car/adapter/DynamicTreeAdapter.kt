@@ -142,7 +142,7 @@ class DynamicTreeAdapter(
                         }
                         is ApiState.Error -> {
                             item.isLoading = false // 关闭加载状态
-                            listener.onLoadError(state.msg ?: "加载失败，请重试")
+                            listener.onLoadError(state.msg)
                             refreshFlatList() // 刷新关闭加载状态
                         }
                         ApiState.Loading -> {

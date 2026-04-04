@@ -155,13 +155,7 @@ class DriveLogActivity : AppCompatActivity() {
      * 处理行车日志加载成功
      */
     private fun handleTravelLogSuccess(data: TravelLogData) {
-        // 格式化时间
-        val formattedDrafts = mutableListOf<TravelLogItem>()
-        data.list?.let {
-            data.list.map { item ->
-//            item.copy(updatetime = item.updatetime)
-            }
-        }
+        val formattedDrafts = data.list.filterIsInstance<TravelLogItem>()
 
         // 解析最后一条记录
         val lastRecord = data.rows

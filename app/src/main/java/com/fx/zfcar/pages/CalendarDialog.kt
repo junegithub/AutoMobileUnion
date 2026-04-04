@@ -8,6 +8,7 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.GridView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.PressEffectUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -138,7 +139,7 @@ class CalendarDialog : BottomSheetDialogFragment() {
         // 日历单元格点击
         gvCalendar.onItemClickListener = onItemClickListener@{ _, _, position, _ ->
             val adapter = gvCalendar.adapter as CalendarAdapter
-            val item = adapter.getItem(position) as CalendarItem
+            val item = adapter.getItem(position)
             if (item.isEmpty) return@onItemClickListener
 
             when {
@@ -217,27 +218,27 @@ class CalendarDialog : BottomSheetDialogFragment() {
             if (item.isStart) {
                 vSelectedBg.visibility = View.VISIBLE
                 vRangeBg.visibility = View.GONE
-                tvDate.setTextColor(resources.getColor(R.color.calendar_bg_white))
+                tvDate.setTextColor(ContextCompat.getColor(requireContext(), R.color.calendar_bg_white))
                 tvLabel.text = getString(R.string.start)
                 tvLabel.visibility = View.VISIBLE
             } else if (item.isEnd) {
                 vSelectedBg.visibility = View.VISIBLE
                 vRangeBg.visibility = View.GONE
-                tvDate.setTextColor(resources.getColor(R.color.calendar_bg_white))
+                tvDate.setTextColor(ContextCompat.getColor(requireContext(), R.color.calendar_bg_white))
                 tvLabel.text = getString(R.string.end)
                 tvLabel.visibility = View.VISIBLE
             } else if (item.isMiddle) {
                 vSelectedBg.visibility = View.GONE
                 vRangeBg.visibility = View.VISIBLE
-                tvDate.setTextColor(resources.getColor(R.color.calendar_text_black))
+                tvDate.setTextColor(ContextCompat.getColor(requireContext(), R.color.calendar_text_black))
                 tvLabel.visibility = View.GONE
             } else {
                 vSelectedBg.visibility = View.GONE
                 vRangeBg.visibility = View.GONE
                 if (isFutureTime(item)) {
-                    tvDate.setTextColor(resources.getColor(R.color.calendar_text_gray))
+                    tvDate.setTextColor(ContextCompat.getColor(requireContext(), R.color.calendar_text_gray))
                 } else {
-                    tvDate.setTextColor(resources.getColor(R.color.calendar_text_black))
+                    tvDate.setTextColor(ContextCompat.getColor(requireContext(), R.color.calendar_text_black))
                 }
                 tvLabel.visibility = View.GONE
             }
@@ -260,7 +261,7 @@ class CalendarDialog : BottomSheetDialogFragment() {
         sdf.timeZone = TimeZone.getDefault()
 
         return try {
-            val date = sdf.parse(dateStr)
+            val date = sdf.parse(dateStr) ?: return null
             val calendar = Calendar.getInstance()
             calendar.time = date
             // 清空时分秒

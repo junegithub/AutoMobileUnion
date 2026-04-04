@@ -176,7 +176,7 @@ data class CarInfo(
 
     // 获取完整地址
     fun getFullAddress(): String {
-        return "${provice ?: ""} ${city ?: ""} ${area ?: ""}".trim()
+        return "$provice $city $area".trim()
     }
 
     fun getSimTypeName(): String {
@@ -297,12 +297,12 @@ data class RealTimeCarInfo(
 ) {
     // 获取今日里程（默认0）
     fun getTodayMileage(): String {
-        return "${todayMileage ?: 0.0}km"
+        return "${todayMileage}km"
     }
 
     // 获取总里程（默认0）
     fun getTotalMileage(): String {
-        return "${milege ?: 0}km"
+        return "${milege}km"
     }
 }
 
