@@ -14,6 +14,12 @@ object TbAdSdkManager {
     private var initializing = false
     private val pendingCallbacks = mutableListOf<(Boolean) -> Unit>()
 
+    fun warmUp(application: Application) {
+        ensureInit(application) { success ->
+            Log.d(TAG, "TB SDK warm up result: $success")
+        }
+    }
+
     fun ensureInit(application: Application, callback: (Boolean) -> Unit) {
         if (!TbAdConfig.isConfigured(application)) {
             callback(false)

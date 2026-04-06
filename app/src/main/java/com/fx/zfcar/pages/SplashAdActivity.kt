@@ -20,7 +20,14 @@ class SplashAdActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashAdBinding
     private val mainHandler = Handler(Looper.getMainLooper())
     private var hasNavigated = false
-    private val fallbackTask = Runnable { routeNext() }
+    private val initTimeoutTask = Runnable {
+        Log.w(TAG, "TB splash init timeout, fallback route")
+        routeNext()
+    }
+    private val loadTimeoutTask = Runnable {
+        Log.w(TAG, "TB splash load timeout, fallback route")
+        routeNext()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,17 +35,22 @@ class SplashAdActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (!TbAdConfig.isConfigured(this)) {
+            Log.d(TAG, "TB splash skipped: appId/codeId not configured")
             routeNext()
             return
         }
 
-        mainHandler.postDelayed(fallbackTask, SPLASH_LOAD_TIMEOUT_MS)
+        Log.d(TAG, "TB splash start loading")
+        mainHandler.postDelayed(initTimeoutTask, SDK_INIT_TIMEOUT_MS)
         TbAdSdkManager.ensureInit(application as MyApp) { success ->
             runOnUiThread {
+                mainHandler.removeCallbacks(initTimeoutTask)
                 if (!success || isFinishing || isDestroyed) {
+                    Log.w(TAG, "TB splash sdk init failed, fallback route")
                     routeNext()
                     return@runOnUiThread
                 }
+                Log.d(TAG, "TB splash sdk init success")
                 loadSplash()
             }
         }
@@ -46,6 +58,7 @@ class SplashAdActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun loadSplash() {
+        mainHandler.postDelayed(loadTimeoutTask, SPLASH_LOAD_TIMEOUT_MS)
         val config = TbSplashConfig.Builder()
             .codeId(TbAdConfig.splashCodeId(this))
             .container(binding.splashContainer)
@@ -56,16 +69,22 @@ class SplashAdActivity : AppCompatActivity() {
                 routeNext()
             }
 
-            override fun onTick(timeLeft: Long) = Unit
+            override fun onTick(timeLeft: Long) {
+                Log.d(TAG, "TB splash tick: $timeLeft")
+            }
 
-            override fun onClicked() = Unit
+            override fun onClicked() {
+                Log.d(TAG, "TB splash clicked")
+            }
 
             override fun onDismiss() {
+                Log.d(TAG, "TB splash dismissed")
                 routeNext()
             }
 
             override fun onExposure(position: Position) {
-                mainHandler.removeCallbacks(fallbackTask)
+                Log.d(TAG, "TB splash exposed: $position")
+                mainHandler.removeCallbacks(loadTimeoutTask)
             }
         })
     }
@@ -75,7 +94,9 @@ class SplashAdActivity : AppCompatActivity() {
             return
         }
         hasNavigated = true
-        mainHandler.removeCallbacks(fallbackTask)
+        mainHandler.removeCallbacks(initTimeoutTask)
+        mainHandler.removeCallbacks(loadTimeoutTask)
+        Log.d(TAG, "TB splash route next")
         val target = if (SPUtils.isPolicyAccepted()) {
             Intent(this, MainActivity::class.java)
         } else {
@@ -86,12 +107,14 @@ class SplashAdActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        mainHandler.removeCallbacks(fallbackTask)
+        mainHandler.removeCallbacks(initTimeoutTask)
+        mainHandler.removeCallbacks(loadTimeoutTask)
         super.onDestroy()
     }
 
     companion object {
         private const val TAG = "SplashAdActivity"
-        private const val SPLASH_LOAD_TIMEOUT_MS = 4500L
+        private const val SDK_INIT_TIMEOUT_MS = 8000L
+        private const val SPLASH_LOAD_TIMEOUT_MS = 15000L
     }
 }

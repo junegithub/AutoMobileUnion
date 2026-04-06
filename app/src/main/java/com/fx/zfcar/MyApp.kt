@@ -7,6 +7,7 @@ import com.amap.api.maps.MapsInitializer
 import com.fx.zfcar.net.CarUser
 import com.fx.zfcar.net.RetrofitClient
 import com.fx.zfcar.net.UserLoginData
+import com.fx.zfcar.ad.TbAdSdkManager
 import com.fx.zfcar.util.WindowInsetHelper
 import com.kongzue.dialogx.DialogX
 
@@ -21,6 +22,7 @@ class MyApp : Application() {
         MapsInitializer.updatePrivacyShow(this, true, true)
         MapsInitializer.updatePrivacyAgree(this, true)
         DialogX.init(this)
+        TbAdSdkManager.warmUp(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: android.app.Activity, savedInstanceState: Bundle?) {
                 activity.window?.decorView?.post {

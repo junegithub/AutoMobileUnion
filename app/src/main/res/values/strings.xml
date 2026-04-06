@@ -46,7 +46,6 @@
     <string name="agreement_reject">暂不同意</string>
     <string name="toast_empty_account">账号/密码不能为空</string>
     <string name="launch_splash_loading">启动中…</string>
-    <string name="launch_splash_subtitle">正在为你准备开屏内容</string>
     <string name="tb_ad_app_id">1330509223779385377-5</string>
     <string name="tb_ad_splash_code_id">1330512946933022784</string>
 
