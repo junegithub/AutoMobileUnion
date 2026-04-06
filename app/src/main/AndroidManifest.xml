@@ -106,7 +106,7 @@
         </activity>
 
         <activity
-            android:name=".pages.LaunchActivity"
+            android:name=".pages.SplashAdActivity"
             android:theme="@style/Theme.AutoMobileUnion"
             android:exported="true">
             <intent-filter>
@@ -114,11 +114,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".pages.SplashAdActivity"
-            android:theme="@style/Theme.AutoMobileUnion"
-            android:exported="false" />
 
         <activity
             android:name=".pages.MainActivity"
