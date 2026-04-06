@@ -40,7 +40,13 @@ class SplashAdActivity : AppCompatActivity() {
             return
         }
 
-        Log.d(TAG, "TB splash start loading")
+        Log.d(TAG, "TB splash start loading, sdkReady=${TbAdSdkManager.isReady()}")
+        if (TbAdSdkManager.isReady()) {
+            Log.d(TAG, "TB splash sdk already ready")
+            loadSplash()
+            return
+        }
+
         mainHandler.postDelayed(initTimeoutTask, SDK_INIT_TIMEOUT_MS)
         TbAdSdkManager.ensureInit(application as MyApp) { success ->
             runOnUiThread {
@@ -58,6 +64,7 @@ class SplashAdActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun loadSplash() {
+        Log.d(TAG, "TB splash load with timeout=${SPLASH_LOAD_TIMEOUT_MS}ms")
         mainHandler.postDelayed(loadTimeoutTask, SPLASH_LOAD_TIMEOUT_MS)
         val config = TbSplashConfig.Builder()
             .codeId(TbAdConfig.splashCodeId(this))

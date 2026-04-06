@@ -14,6 +14,8 @@ object TbAdSdkManager {
     private var initializing = false
     private val pendingCallbacks = mutableListOf<(Boolean) -> Unit>()
 
+    fun isReady(): Boolean = initialized
+
     fun warmUp(application: Application) {
         ensureInit(application) { success ->
             Log.d(TAG, "TB SDK warm up result: $success")
