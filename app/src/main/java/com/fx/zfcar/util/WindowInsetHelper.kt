@@ -9,6 +9,7 @@ import androidx.core.view.updatePadding
 import com.fx.zfcar.R
 import com.fx.zfcar.car.VideoFullActivity
 import com.fx.zfcar.pages.MainActivity
+import com.fx.zfcar.pages.SplashAdActivity
 import com.fx.zfcar.training.notice.SignatureActivity
 
 object WindowInsetHelper {
@@ -31,6 +32,7 @@ object WindowInsetHelper {
 
     private fun shouldApplyBottomInset(activity: Activity): Boolean {
         return activity !is MainActivity &&
+            activity !is SplashAdActivity &&
             activity !is VideoFullActivity &&
             activity !is SignatureActivity
     }
