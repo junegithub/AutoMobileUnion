@@ -531,10 +531,9 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
     }
 
     private fun handlePayErrorResult(msg: String, type: String) {
-        if (msg != "不需要支付") {
+        if (!msg.contains("不需要支付")) {
             showToast(msg)
         } else {
-
             checkPayItem?.let {
                 gotoFaceCheck(getItemId(type), getItemName(type), type)
             }

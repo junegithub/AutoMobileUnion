@@ -199,11 +199,7 @@ class FaceCheckActivity : AppCompatActivity() {
      * 检查权限
      */
     private fun checkPermissions() {
-        val permissions = arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
+        val permissions = arrayOf(Manifest.permission.CAMERA)
 
         val needPermissions = mutableListOf<String>()
         for (permission in permissions) {

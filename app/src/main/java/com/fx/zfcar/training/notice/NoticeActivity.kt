@@ -81,6 +81,7 @@ class NoticeActivity : AppCompatActivity() {
                     }
 
                     is ApiState.Error -> {
+                        showToast(uiState.msg)
                     }
                     is ApiState.Idle -> {
                     }

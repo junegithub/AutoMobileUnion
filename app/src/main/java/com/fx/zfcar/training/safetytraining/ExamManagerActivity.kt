@@ -131,6 +131,9 @@ class ExamManagerActivity : AppCompatActivity() {
                         }
                         is ApiState.Error -> {
                             showToast(state.msg)
+                            // 获题失败，退回结果/按钮界面，避免卡在空白考试界面
+                            isAnswer = true
+                            updateUIState()
                             resetQuestionListState()
                         }
                     }
@@ -257,6 +260,7 @@ class ExamManagerActivity : AppCompatActivity() {
                     putExtra("training_safetyplan_id", trainingSafetyPlanId)
                     putExtra("type", type)
                     putExtra("answer", answerJson)
+                    putExtra("exams_id", examsId)
                 }
                 startActivity(intent)
 

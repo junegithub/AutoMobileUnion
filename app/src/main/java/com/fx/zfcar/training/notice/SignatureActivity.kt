@@ -11,14 +11,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.fx.zfcar.databinding.ActivitySignatureBinding
 import com.fx.zfcar.net.ApiConfig
+import com.fx.zfcar.net.SubmitExamRequest
 import com.fx.zfcar.net.UploadFileData
 import com.fx.zfcar.training.user.showToast
+import com.fx.zfcar.training.viewmodel.ExamViewModel
 import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.util.BitmapUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ProgressDialogUtils
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -31,12 +35,19 @@ class SignatureActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignatureBinding
 
     private val noticeViewModel by viewModels<NoticeViewModel>()
+    private val examViewModel by viewModels<ExamViewModel>()
     private var uploadStateFlow = MutableStateFlow<ApiState<UploadFileData>>(ApiState.Idle)
+    private var submitExamStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
 
     // 接收的参数
     private var from: String = ""
     private var fill: String = ""
     private var type: String = ""
+
+    // 考试流参数（有值时走考试提交逻辑）
+    private var answer: String = ""
+    private var examsId: String = ""
+    private var trainingSafetyPlanId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +85,9 @@ class SignatureActivity : AppCompatActivity() {
         from = intent.getStringExtra("from") ?: ""
         fill = intent.getStringExtra("fill") ?: ""
         type = intent.getStringExtra("type") ?: ""
+        answer = intent.getStringExtra("answer") ?: ""
+        examsId = intent.getStringExtra("exams_id") ?: ""
+        trainingSafetyPlanId = intent.getIntExtra("training_safetyplan_id", 0).toString()
     }
 
     private fun initListener() {
@@ -112,15 +126,25 @@ class SignatureActivity : AppCompatActivity() {
 
                         val signImgUrl = "${ApiConfig.BASE_URL_TRAINING}${uiState.data?.url ?: ""}"
 
-                        SPUtils.save(fill, signImgUrl)
-
-                        val intent = Intent(this@SignatureActivity, SignatureActivity::class.java)
-                        intent.putExtra("fromPage", from)
-                        intent.putExtra("fromUrl", "sign")
-                        intent.putExtra("type", type)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                        startActivity(intent)
-                        finish()
+                        if (answer.isNotEmpty()) {
+                            // 考试流：提交答卷
+                            val answerList: List<String> = Gson().fromJson(
+                                answer, object : TypeToken<List<String>>() {}.type
+                            )
+                            examViewModel.submitExam(
+                                SubmitExamRequest(
+                                    answer = answerList,
+                                    exams_id = examsId,
+                                    training_publicplan_id = trainingSafetyPlanId,
+                                    imgurl = signImgUrl
+                                ),
+                                submitExamStateFlow
+                            )
+                        } else {
+                            // 责任书等签字流：保存 URL 并返回
+                            SPUtils.save(fill, signImgUrl)
+                            finish()
+                        }
                     }
 
                     is ApiState.Error -> {
@@ -129,6 +153,26 @@ class SignatureActivity : AppCompatActivity() {
                     }
                     is ApiState.Idle -> {
                     }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            submitExamStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                        ProgressDialogUtils.show(this@SignatureActivity, "提交中...")
+                    }
+                    is ApiState.Success -> {
+                        ProgressDialogUtils.dismiss()
+                        showToast("提交成功")
+                        finish()
+                    }
+                    is ApiState.Error -> {
+                        ProgressDialogUtils.dismiss()
+                        showToast("提交失败：${uiState.msg}")
+                    }
+                    is ApiState.Idle -> {}
                 }
             }
         }
