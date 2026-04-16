@@ -14,16 +14,22 @@ class OtherInfoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var carInfo: CarInfo? = null
-        set(value) {
-            field = value
-        }
 
     companion object {
+        private const val ARG_CAR_INFO = "arg_car_info"
+
         fun newInstance(carInfo: CarInfo): OtherInfoFragment {
             val fragment = OtherInfoFragment()
-            fragment.carInfo = carInfo
+            fragment.arguments = Bundle().apply {
+                putParcelable(ARG_CAR_INFO, carInfo)
+            }
             return fragment
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        carInfo = arguments?.getParcelable(ARG_CAR_INFO)
     }
 
     override fun onCreateView(

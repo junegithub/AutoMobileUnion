@@ -87,6 +87,11 @@ class TrainingFragment : Fragment(), View.OnClickListener {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkLoginStatus()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         // 释放绑定
@@ -409,7 +414,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
             SPUtils.save("trainLogin", "")
         } else {
             // 检查 Token
-            val trainToken = SPUtils.get("trainToken")
+            val trainToken = SPUtils.getTrainingToken()
             if (trainToken.isNotEmpty()) {
                 // 已登录，检查签署状态并获取通知信息
                 isSign()

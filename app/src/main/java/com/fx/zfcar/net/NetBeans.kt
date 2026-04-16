@@ -1,6 +1,8 @@
 package com.fx.zfcar.net
 
 import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -54,6 +56,7 @@ data class UserInfo(
     val token: String?
 )
 
+@Parcelize
 data class CarInfo(
     val deptName: String,
     val firstonlinetime: String?,
@@ -160,7 +163,7 @@ data class CarInfo(
     val isVideoCar: Boolean,
     val category: CategoryInfo?,
     val audiocode: String
-){
+) : Parcelable {
     // 格式化日期（去除时分秒，只保留年月日）
     fun formatDate(dateStr: String?): String {
         if (dateStr.isNullOrEmpty()) return "-"
@@ -191,24 +194,27 @@ data class CarInfo(
     }
 }
 
+@Parcelize
 data class BrandInfo(
     val name: String,
     val nickname: String,
     val type: String
-)
+) : Parcelable
 
+@Parcelize
 data class CarSku(
     val type: String,
     val carId: String,
     val money: Double,
     val carIds: String?
-)
+) : Parcelable
 
+@Parcelize
 data class CategoryInfo(
     val name: String,
     val nickname: String,
     val type: String
-)
+) : Parcelable
 
 data class OilDayReportData(
     val total: Int,

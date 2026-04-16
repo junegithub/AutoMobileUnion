@@ -81,6 +81,15 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
         PressEffectUtils.setCommonPressEffect(binding.tvSearchExecute)
         binding.ivBack.setOnClickListener { finish() }
         binding.btnCarCount.text = "${intent.getIntExtra(KEY_CAR_NUM, 0)}辆车"
+        binding.btnCarCount.setOnClickListener {
+            binding.etSearch.setText("")
+            fromSearch = false
+            adapter.setSearch(false)
+            binding.rvCarnumList.visibility = View.GONE
+            binding.tabLayout.visibility = View.GONE
+            binding.spinnerFilter.visibility = View.GONE
+            loadRootTreeData()
+        }
 
         binding.tvSearchExecute.setOnClickListener {
             executeSearch()
@@ -103,6 +112,11 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     }
 
     private fun executeSearch() {
+        val keyword = binding.etSearch.text.toString().trim()
+        if (keyword.isEmpty()) {
+            showToast("请输入搜索关键词")
+            return
+        }
         fromSearch = true
         adapter.setSearch(fromSearch)
         resetSearchListState()

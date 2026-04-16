@@ -69,7 +69,6 @@ import kotlin.getValue
  * 功能：定位蓝点、车辆标记、自动缩放显示所有车辆、车牌关联
  */
 class CarFragment : Fragment(), AMapLocationListener {
-    val dlCarTypes = setOf("10", "12", "13", "14", "K13", "K23", "K26", "K31")
 
     // 声明ViewBinding对象
     private var _binding: FragmentMapBinding? = null
@@ -109,6 +108,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     private var locationClient: AMapLocationClient? = null
 
     private var requestFromOtherPage: Boolean = false
+    private var lastRequestedCarId: String = ""
     private var lastLoginState: Boolean? = null
 
     private lateinit var labelAdapter: LabelAdapter
@@ -166,6 +166,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         currentCar = car
         val id = car.id
         if (id.isBlank()) return
+        lastRequestedCarId = id
         carInfoViewModel.getRealTimeAddress(id, currentCar?.carnum,
             addressStateFlow)
         carInfoViewModel.getCarInfo(id,
@@ -406,6 +407,9 @@ class CarFragment : Fragment(), AMapLocationListener {
                     }
                     is ApiState.Success -> {
                         val addressData = uiState.data ?: return@collect
+                        // 忽略过期请求的响应（快速切换车辆时可能乱序到达）
+                        val respondedCarId = addressData.carinfo?.id ?: ""
+                        if (respondedCarId.isNotBlank() && respondedCarId != lastRequestedCarId) return@collect
                         if (requestFromOtherPage) {
                             requestFromOtherPage = false
                             val carInfo = addressData.carinfo
@@ -722,10 +726,11 @@ class CarFragment : Fragment(), AMapLocationListener {
         binding.rootCarDetail.root.visibility = View.VISIBLE
         binding.rootCarDetail.rootCarLocation.root.visibility = View.VISIBLE
         // 车牌号
-        val imageSource = if (realTimeCarInfo?.dlcartype in dlCarTypes) {
-            R.drawable.jiaoche
-        } else {
-            R.drawable.huoche
+        val dlcartype = realTimeCarInfo?.dlcartype ?: ""
+        val imageSource = when {
+            dlcartype.startsWith("K") || Regex("1[0-35-6]").matches(dlcartype) -> R.drawable.ic_keche_xingshi
+            dlcartype == "14" -> R.drawable.jiaoche
+            else -> R.drawable.huoche
         }
         binding.rootCarDetail.ivCarIcon.setImageResource(imageSource)
         binding.rootCarDetail.tvCarNum.text = realTimeCarInfo?.carnum ?: ""
@@ -937,6 +942,13 @@ class CarFragment : Fragment(), AMapLocationListener {
         restoreLoginStateFromCache()
         val loginChanged = lastLoginState != (MyApp.isLogin == true)
         syncCarPageState(forceReload = loginChanged)
+        // Tabs 1/2/3 launch external Activities; on return, rootCarLocation.root
+        // remains GONE because onTabSelected hid it. Reset to tab 0 to restore
+        // the visible location panel.
+        val tabLayout = binding.rootCarDetail.tabLayout
+        if (tabLayout.selectedTabPosition in 1..3) {
+            tabLayout.getTabAt(0)?.select()
+        }
     }
 
     override fun onPause() {
@@ -978,6 +990,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                 } else {
                     requestFromOtherPage = true
                     val carId = vehicleInfo.carId
+                    lastRequestedCarId = carId
                     carInfoViewModel.getRealTimeAddress(carId, vehicleInfo.carNum,
                         addressStateFlow)
                     carInfoViewModel.getCarInfo(carId, carInfoStateFlow)

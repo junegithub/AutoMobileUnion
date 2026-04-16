@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.fx.zfcar.net.ApiConfig
 import com.fx.zfcar.net.CarInfo
 import com.fx.zfcar.R
 import com.fx.zfcar.databinding.FragmentCarInfoBinding
@@ -18,16 +19,22 @@ class CarInfoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var carInfo: CarInfo? = null
-        set(value) {
-            field = value
-        }
 
     companion object {
+        private const val ARG_CAR_INFO = "arg_car_info"
+
         fun newInstance(carInfo: CarInfo): CarInfoFragment {
             val fragment = CarInfoFragment()
-            fragment.carInfo = carInfo
+            fragment.arguments = Bundle().apply {
+                putParcelable(ARG_CAR_INFO, carInfo)
+            }
             return fragment
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        carInfo = arguments?.getParcelable(ARG_CAR_INFO)
     }
 
     override fun onCreateView(
@@ -63,7 +70,7 @@ class CarInfoFragment : Fragment() {
         setRowValue(basicRows[0], "所属地区", info.area)
         setRowValue(basicRows[1], "车辆识别代码/车架号", info.frameno)
         setRowValue(basicRows[2], "车牌号", info.carnum)
-        setRowValue(basicRows[3], "车身颜色", info.platecolor)
+        setRowValue(basicRows[3], "车身颜色", ApiConfig.CarColor.getLabelByValue(info.platecolor.toIntOrNull() ?: 0))
         setRowValue(basicRows[4], "联系人", info.contacts)
         setRowValue(basicRows[5], "手机号", info.phone, true)
 
@@ -113,7 +120,7 @@ class CarInfoFragment : Fragment() {
         setRowValue(extRows[3], "经营范围", info.bussinessArea)
         setRowValue(extRows[4], "运输行业类别", info.Industrytype_text)
         setRowValue(extRows[5], "车辆类型", info.dlcartype_text)
-        setRowValue(extRows[6], "车身颜色", info.platecolor)
+        setRowValue(extRows[6], "车身颜色", ApiConfig.CarColor.getLabelByValue(info.platecolor.toIntOrNull() ?: 0))
         setRowValue(extRows[7], "品牌类型", info.bcategoryName)
         setRowValue(extRows[8], "车辆型号", info.carmodeltype)
         setRowValue(extRows[9], "总质量(kg)", info.weight.toString())
@@ -137,7 +144,7 @@ class CarInfoFragment : Fragment() {
         setRowValue(extRows[27], "行驶证发证日期", info.dlusedate)
         setRowValue(extRows[28], "发动机号", info.dlenginenum)
         setRowValue(extRows[29], "发动机型号", info.enginetype)
-        setRowValue(extRows[30], "百公里参考油耗(升/百公里)", "-")
+        setRowValue(extRows[30], "百公里参考油耗(升/百公里)", if (info.lkm == 0.0) "-" else info.lkm.toString())
         setRowValue(extRows[31], "漏油标定值/升", info.oilAddVal.toString())
     }
 

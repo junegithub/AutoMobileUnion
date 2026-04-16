@@ -48,8 +48,9 @@ object VehicleImageProvider {
      */
     private fun getVehicleType(vehicleId: String): String {
         return when {
-            Regex("1[0-35-6]").matches(vehicleId) -> "keche"       // 客车 10-16
-            vehicleId == "14" -> "jiaoche"                        // 轿车
+            vehicleId.startsWith("K") -> "keche"              // K系列均为客车
+            Regex("1[0-35-6]").matches(vehicleId) -> "keche"  // 客车 10-16
+            vehicleId == "14" -> "jiaoche"                    // 轿车
             Regex("2[0-3]").matches(vehicleId) -> "huoche"        // 货车 20-23
             Regex("3[0-9]|40").matches(vehicleId) -> "teshuche"   // 特殊车辆 30-40
             Regex("5[0-9]|6[0-4]").matches(vehicleId) -> "tuolaji" // 拖拉机 50-64

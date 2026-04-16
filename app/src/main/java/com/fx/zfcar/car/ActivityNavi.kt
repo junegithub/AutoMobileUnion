@@ -127,18 +127,37 @@ class ActivityNavi : AppCompatActivity() {
     }
 
     /**
-     * 通用导航 - 弹出应用选择弹窗
+     * 通用导航 - 优先高德地图（GCJ02 坐标系兼容），降级到系统 geo: Intent
+     *
+     * 后端返回的经纬度为 GCJ02 坐标（高德/国测局加密），直接传给 geo: URI 会导致
+     * 系统地图（使用 WGS84）出现约 300m 的偏差。高德自有 URI scheme 原生使用
+     * GCJ02，优先调用可完全规避偏差。
      */
     private fun startUniversalNavigation() {
         try {
-            // 构建系统通用导航Intent
-            val navigationIntent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("geo:${targetLatLng.latitude},${targetLatLng.longitude}?q=${Uri.encode(targetAddress)}")
+            // 优先：高德地图自有 URI（GCJ02 原生，无坐标系偏差）
+            val aMapUri = Uri.parse(
+                "amapuri://route/plan/" +
+                "?dlng=${targetLatLng.longitude}" +
+                "&dlat=${targetLatLng.latitude}" +
+                "&dname=${Uri.encode(targetAddress)}" +
+                "&dev=0&t=0"
+            )
+            val aMapIntent = Intent(Intent.ACTION_VIEW, aMapUri).apply {
+                setPackage("com.autonavi.minimap")
+            }
+            if (packageManager.resolveActivity(aMapIntent, 0) != null) {
+                startActivity(aMapIntent)
+                return
             }
 
-            // 检查是否有可用导航应用
-            startActivity(navigationIntent)
-
+            // 降级：系统通用 geo: Intent（非高德地图时可能有轻微坐标偏差）
+            startActivity(Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(
+                    "geo:${targetLatLng.latitude},${targetLatLng.longitude}" +
+                    "?q=${Uri.encode(targetAddress)}"
+                )
+            })
         } catch (e: Exception) {
             Toast.makeText(this, "启动导航失败：${e.message}", Toast.LENGTH_SHORT).show()
         }

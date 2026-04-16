@@ -614,7 +614,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private fun resetDateRangeToDefault() {
         val calendar = Calendar.getInstance()
         endDate = DateUtil.timestamp2Date(calendar.timeInMillis)
-        calendar.add(Calendar.DAY_OF_MONTH, -20)
+        calendar.add(Calendar.DAY_OF_MONTH, -7)
         startDate = DateUtil.timestamp2Date(calendar.timeInMillis)
     }
 

@@ -104,7 +104,12 @@ class AccountInfoFragment : BaseUserFragment() {
     private fun handleLogoutSuccess() {
         MyApp.isTrainingLogin = false
         MyApp.trainingUserInfo = null
-        SPUtils.clear()
+        // 仅清除培训模块相关数据，保留车辆模块token和登录信息
+        SPUtils.saveTrainingToken(null)
+        SPUtils.remove("userInfo")
+        SPUtils.remove("companyInfo")
+        SPUtils.remove("carInfo")
+        SPUtils.remove("requestType")
         context?.showToast(getString(R.string.toast_logout_success))
 
         val intent = Intent(requireContext(), LoginActivity::class.java).apply {

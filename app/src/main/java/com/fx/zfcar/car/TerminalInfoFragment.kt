@@ -14,16 +14,22 @@ class TerminalInfoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var carInfo: CarInfo? = null
-        set(value) {
-            field = value
-        }
 
     companion object {
+        private const val ARG_CAR_INFO = "arg_car_info"
+
         fun newInstance(carInfo: CarInfo): TerminalInfoFragment {
             val fragment = TerminalInfoFragment()
-            fragment.carInfo = carInfo
+            fragment.arguments = Bundle().apply {
+                putParcelable(ARG_CAR_INFO, carInfo)
+            }
             return fragment
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        carInfo = arguments?.getParcelable(ARG_CAR_INFO)
     }
 
     override fun onCreateView(
@@ -55,7 +61,7 @@ class TerminalInfoFragment : Fragment() {
             binding.rowMakerName,
             binding.rowTerminalModel
         )
-        setRowValue(rows[0], "终端ID", info.id)
+        setRowValue(rows[0], "终端ID", info.num)
         setRowValue(rows[1], "SIM", info.sim)
         setRowValue(rows[2], "真实SIM", info.realsim)
         setRowValue(rows[3], "设备类型", info.getSimTypeName())
