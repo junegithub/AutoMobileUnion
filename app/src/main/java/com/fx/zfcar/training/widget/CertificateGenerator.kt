@@ -14,6 +14,8 @@ import com.fx.zfcar.R
 import com.fx.zfcar.databinding.CertificateDialogBinding
 import com.fx.zfcar.databinding.DialogContinueEduBinding
 import com.fx.zfcar.util.BitmapUtils
+import java.util.Calendar
+import java.util.Locale
 
 class CertificateGenerator(private val context: Context) {
 
@@ -82,7 +84,7 @@ class CertificateGenerator(private val context: Context) {
         binding.codenum.text = "编号：${data.codenum}"
         binding.name.text = "姓名：${data.name}"
         binding.cardnum.text = "身份证号：${data.cardnum}"
-        binding.cardnum.text = "从业资格证号：${data.cardnum}"
+        binding.qualifyId.text = "从业资格证号：${data.cardnum}"
 
         val startDate = DateUtil.extractYMDFromDateStr(data.start)
         val endDate = DateUtil.extractYMDFromDateStr(data.end)
@@ -95,7 +97,14 @@ class CertificateGenerator(private val context: Context) {
 
         // 签章和日期
         binding.sealCategory.text = "${data.category}驾驶员继续教育机构(签章)"
-        binding.currentDate.text = "${DateUtil.getCurrentYear()}年${DateUtil.getCurrentYear()}月${DateUtil.getCurrentYear()}日"
+        val today = Calendar.getInstance(Locale.CHINA)
+        binding.currentDate.text = String.format(
+            Locale.CHINA,
+            "%d年%d月%d日",
+            today.get(Calendar.YEAR),
+            today.get(Calendar.MONTH) + 1,
+            today.get(Calendar.DAY_OF_MONTH)
+        )
 
         // 备注
         binding.noteCategory.text = " 注：此合格证明为驾驶员到${data.category}管理机构办理诚信考核签章手续的凭证"

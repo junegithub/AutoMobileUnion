@@ -17,12 +17,15 @@ import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
-import com.kongzue.dialogx.datepicker.DatePickerDialog
-import com.kongzue.dialogx.datepicker.interfaces.OnDateSelected
 import com.fx.zfcar.R
 import com.fx.zfcar.databinding.FragmentStudyDetailsBinding
+import com.loper7.date_time_picker.DateTimeConfig
+import com.loper7.date_time_picker.dialog.CardDatePickerDialog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.getValue
 
 
@@ -66,17 +69,20 @@ class StudyDetailsFragment : BaseUserFragment() {
 
         // 月份选择箭头点击事件
         binding.tvSelectedMonth.setOnClickListener {
-            DatePickerDialog.build()
-                .setMaxYear(DateUtil.getCurrentYear())
-                .setDefaultSelect(
-                    DateUtil.getCurrentYear(), DateUtil.getCurrentMonth(),
-                    DateUtil.getCurrentDay())
-                .show(object : OnDateSelected() {
-                    override fun onSelect(text: String?, year: Int, month: Int, day: Int) {
-                        binding.tvSelectedMonth.text = "$year-$month"
+            CardDatePickerDialog.builder(requireContext())
+                .setDisplayType(mutableListOf(DateTimeConfig.YEAR, DateTimeConfig.MONTH))
+                .setDefaultTime(System.currentTimeMillis())
+                .showFocusDateInfo(false)
+                .showBackNow(false)
+                .setWrapSelectorWheel(false)
+                .showDateLabel(true)
+                .setOnChoose { millis ->
+                    binding.tvSelectedMonth.text = SimpleDateFormat("yyyy-MM", Locale.CHINA)
+                        .format(Date(millis))
                         loadSafetyEducationData()
-                    }
-                })
+                }
+                .build()
+                .show()
         }
 
         // 初始化RecyclerView

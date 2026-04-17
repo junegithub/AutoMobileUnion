@@ -96,6 +96,7 @@
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -108,6 +109,7 @@
         <activity
             android:name=".pages.SplashAdActivity"
             android:theme="@style/Theme.AutoMobileUnion"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -119,76 +121,79 @@
             android:name=".pages.MainActivity"
             android:theme="@style/Theme.AutoMobileUnion"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:exported="true" />
 
-        <activity android:name=".pages.AgreementConsentActivity" />
-        <activity android:name=".pages.PolicyContentActivity" />
-        <activity android:name=".pages.LoginActivity" />
+        <activity android:name=".pages.AgreementConsentActivity" android:screenOrientation="portrait" />
+        <activity android:name=".pages.PolicyContentActivity" android:screenOrientation="portrait" />
+        <activity android:name=".pages.LoginActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".car.DeviceAlarmActivity" />
-        <activity android:name=".car.status.DeviceStatusActivity" />
-        <activity android:name=".car.OperationAnalysisActivity" />
-        <activity android:name=".car.ReportActivity" />
-        <activity android:name=".car.status.DeviceStatusListActivity" />
-        <activity android:name=".car.status.ExpireCarActivity" />
-        <activity android:name=".car.ReportAlarmDetailActivity" />
-        <activity android:name=".car.CarInfoActivity" />
-        <activity android:name=".car.OfflineDetailActivity" />
-        <activity android:name=".car.TreeListActivity" />
-        <activity android:name=".car.ActivityNavi" />
-        <activity android:name=".car.TrackPlayActivity" />
-        <activity android:name=".car.VideoPlaybackActivity" />
-        <activity android:name=".car.VideoListActivity" />
-        <activity android:name=".car.VideoFullActivity" />
-        <activity android:name=".car.RealTimeMonitorActivity" />
+        <activity android:name=".car.DeviceAlarmActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.status.DeviceStatusActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.OperationAnalysisActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.ReportActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.status.DeviceStatusListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.status.ExpireCarActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.ReportAlarmDetailActivity" android:screenOrientation="portrait" />
+        <activity
+            android:name=".car.CarInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".car.OfflineDetailActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.TreeListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.ActivityNavi" android:screenOrientation="portrait" />
+        <activity android:name=".car.TrackPlayActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.VideoPlaybackActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.VideoListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.VideoFullActivity" android:screenOrientation="portrait" />
+        <activity android:name=".car.RealTimeMonitorActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.AuthenticationActivity" />
-        <activity android:name=".training.MeetingDetailActivity" />
+        <activity android:name=".training.AuthenticationActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.MeetingDetailActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.user.UserCenterActivity" />
-        <activity android:name=".training.user.ScanCodeActivity" />
-        <activity android:name=".training.user.StudyRecordActivity" />
+        <activity android:name=".training.user.UserCenterActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.user.ScanCodeActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.user.StudyRecordActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.pay.PayDetailActivity" />
-        <activity android:name=".training.pay.PayOrderActivity" />
+        <activity android:name=".training.pay.PayDetailActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.pay.PayOrderActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.safetytraining.TrainListActivity" />
-        <activity android:name=".training.safetytraining.ScoreDetailActivity" />
-        <activity android:name=".training.safetytraining.ExamManagerActivity" />
-        <activity android:name=".training.safetytraining.DailyTrainListActivity" />
-        <activity android:name=".training.safetytraining.TrainCourseListActivity" />
-        <activity android:name=".training.safetytraining.StudyDetailActivity" />
+        <activity android:name=".training.safetytraining.TrainListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.safetytraining.ScoreDetailActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.safetytraining.ExamManagerActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.safetytraining.DailyTrainListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.safetytraining.TrainCourseListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.safetytraining.StudyDetailActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.jobs.JobsActivity" />
-        <activity android:name=".training.jobs.PublishJobActivity" />
-        <activity android:name=".training.jobs.MyJobDetailActivity" />
-        <activity android:name=".training.jobs.JobDetailCompanyActivity" />
+        <activity android:name=".training.jobs.JobsActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.jobs.PublishJobActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.jobs.MyJobDetailActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.jobs.JobDetailCompanyActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.YiqingSignActivity" />
-        <activity android:name=".training.DriverBookActivity" />
+        <activity android:name=".training.YiqingSignActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.DriverBookActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.exam.ExamPracticeActivity" />
-        <activity android:name=".training.exam.AnswerQuestionActivity" />
+        <activity android:name=".training.exam.ExamPracticeActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.exam.AnswerQuestionActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.dangercheck.DangerCheckActivity" />
-        <activity android:name=".training.dangercheck.DangerHistoryRecordActivity" />
-        <activity android:name=".training.dangercheck.DangerCheckDetailActivity" />
-        <activity android:name=".training.dangercheck.UploadPhotosActivity" />
+        <activity android:name=".training.dangercheck.DangerCheckActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.dangercheck.DangerHistoryRecordActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.dangercheck.DangerCheckDetailActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.dangercheck.UploadPhotosActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.safetycheck.CarSafetyCheckActivity" />
-        <activity android:name=".training.safetycheck.LastRecordActivity" />
-        <activity android:name=".training.safetycheck.CarCheckStageActivity" />
-        <activity android:name=".training.safetytraining.FaceCheckActivity" />
+        <activity android:name=".training.safetycheck.CarSafetyCheckActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.safetycheck.LastRecordActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.safetycheck.CarCheckStageActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.safetytraining.FaceCheckActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.drivelog.DriveLogActivity" />
-        <activity android:name=".training.drivelog.LastDriveLogRecordActivity" />
-        <activity android:name=".training.drivelog.DriveLogStageActivity" />
-        <activity android:name=".training.drivelog.CarSearchActivity" />
+        <activity android:name=".training.drivelog.DriveLogActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.drivelog.LastDriveLogRecordActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.drivelog.DriveLogStageActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.drivelog.CarSearchActivity" android:screenOrientation="portrait" />
 
-        <activity android:name=".training.notice.NoticeActivity" />
-        <activity android:name=".training.notice.NoticeDetailActivity" />
-        <activity android:name=".training.notice.WarningDetailActivity" />
-        <activity android:name=".training.notice.SignatureActivity" />
+        <activity android:name=".training.notice.NoticeActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.notice.NoticeDetailActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.notice.WarningDetailActivity" android:screenOrientation="portrait" />
+        <activity android:name=".training.notice.SignatureActivity" android:screenOrientation="portrait" />
     </application>
 
 </manifest>

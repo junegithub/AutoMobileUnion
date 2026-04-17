@@ -37,6 +37,7 @@ class PayOrderAdapter(
         binding.tvCreateTime.text = "订单生成时间：${order.createtime}"
         binding.tvAmount.text = "支付金额：${order.amount / 100.0}元" // 分转元
         binding.tvPayStatus.text = "支付状态：${order.paystatus}"
+        binding.tvPayMethod.text = "支付方式：${order.type.toPayMethodText()}"
 
         // 设置支付状态文字颜色
         when (order.status) {
@@ -80,4 +81,13 @@ class PayOrderAdapter(
      * 获取当前数据列表
      */
     fun getCurrentList(): List<OrderItem> = orderList
+
+    private fun String.toPayMethodText(): String {
+        return when (lowercase()) {
+            "wechat", "wxpay" -> "微信支付"
+            "alipay" -> "支付宝支付"
+            "company" -> "企业支付"
+            else -> if (isBlank()) "--" else this
+        }
+    }
 }

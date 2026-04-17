@@ -49,7 +49,7 @@ class PayOrderActivity : AppCompatActivity() {
     private val orderListState = _orderListState.asStateFlow()
 
     private var page = 1 // 当前页码
-    private var totalPage = 1 // 总页数
+    private var totalCount = 0 // 总条数
     private var showLoadMore = 1 // 1-显示加载更多 0-隐藏
     private var dataList = 0 // 0-有数据 1-空数据
     private var loadMoreStatus: LoadMoreStatus = LoadMoreStatus.LOADMORE
@@ -132,7 +132,7 @@ class PayOrderActivity : AppCompatActivity() {
      * 上拉加载更多
      */
     private fun onReachBottom() {
-        if (page >= totalPage) {
+        if (orderAdapter.getCurrentList().size >= totalCount) {
             loadMoreStatus = LoadMoreStatus.NOMORE
             updateLoadMoreText()
             return
@@ -165,14 +165,15 @@ class PayOrderActivity : AppCompatActivity() {
             is ApiState.Success -> {
                 state.data?.let {
                     val data = state.data
-                    totalPage = data.total
+                    totalCount = data.total
+                    binding.titleLayout.tvTitle.text = "支付订单（共${totalCount}条）"
 
                     if (data.list.isNotEmpty()) {
                         // 更新列表数据
                         orderAdapter.updateData(data.list, page > 1)
 
                         // 控制加载更多显示
-                        if (data.list.size < 6) {
+                        if (orderAdapter.getCurrentList().size >= totalCount) {
                             showLoadMore = 0
                             binding.tvLoadMore.visibility = View.GONE
                         } else {
@@ -225,7 +226,7 @@ class PayOrderActivity : AppCompatActivity() {
         // 清空列表
         orderAdapter.clearData()
         // 重置分页
-        totalPage = 0
+        totalCount = 0
         page = 1
         // 重新加载
         getList()
