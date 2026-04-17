@@ -936,10 +936,6 @@ class CarFragment : Fragment(), AMapLocationListener {
                 // 定位成功
                 val latLng = LatLng(it.latitude, it.longitude)
                 moveMapToLocation(latLng)
-                context?.showToast( "定位成功：${it.address}")
-            } else {
-                // 定位失败
-                context?.showToast("定位失败：${it.errorInfo} (错误码：${it.errorCode})")
             }
         }
     }
