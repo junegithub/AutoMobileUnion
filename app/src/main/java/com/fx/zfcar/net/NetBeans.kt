@@ -159,6 +159,7 @@ data class CarInfo(
     val jointype: String,
     val userName: String?,
     val oilAddVal: Int,
+    val oilspillval: Int = 0,
     val tccheckdate: String,
     val isVideoCar: Boolean,
     val category: CategoryInfo?,

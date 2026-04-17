@@ -10,11 +10,38 @@
         android:id="@+id/title_layout"
         layout="@layout/fragment_title" />
 
-    <!-- 报警列表 -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_status_list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="@dimen/margin_15" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_status_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/margin_15" />
+
+        <LinearLayout
+            android:id="@+id/ll_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_empty_data" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="暂无车辆"
+                android:textColor="@color/text_gray"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

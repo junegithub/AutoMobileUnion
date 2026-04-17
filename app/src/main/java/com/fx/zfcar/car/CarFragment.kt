@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,6 +71,9 @@ import kotlin.getValue
  * 功能：定位蓝点、车辆标记、自动缩放显示所有车辆、车牌关联
  */
 class CarFragment : Fragment(), AMapLocationListener {
+    companion object {
+        private const val REFRESH_INTERVAL_MS = 30_000L
+    }
 
     // 声明ViewBinding对象
     private var _binding: FragmentMapBinding? = null
@@ -110,6 +115,16 @@ class CarFragment : Fragment(), AMapLocationListener {
     private var requestFromOtherPage: Boolean = false
     private var lastRequestedCarId: String = ""
     private var lastLoginState: Boolean? = null
+    private val refreshHandler = Handler(Looper.getMainLooper())
+    private val refreshRunnable = object : Runnable {
+        override fun run() {
+            if (!isAdded) return
+            if (MyApp.isLogin == true) {
+                loadCarStatus()
+            }
+            refreshHandler.postDelayed(this, REFRESH_INTERVAL_MS)
+        }
+    }
 
     private lateinit var labelAdapter: LabelAdapter
 
@@ -945,6 +960,8 @@ class CarFragment : Fragment(), AMapLocationListener {
         restoreLoginStateFromCache()
         val loginChanged = lastLoginState != (MyApp.isLogin == true)
         syncCarPageState(forceReload = loginChanged)
+        refreshHandler.removeCallbacks(refreshRunnable)
+        refreshHandler.postDelayed(refreshRunnable, REFRESH_INTERVAL_MS)
         // Tabs 1/2/3 launch external Activities; on return, rootCarLocation.root
         // remains GONE because onTabSelected hid it. Reset to tab 0 to restore
         // the visible location panel.
@@ -957,6 +974,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     override fun onPause() {
         super.onPause()
         binding.mapView.onPause()
+        refreshHandler.removeCallbacks(refreshRunnable)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -976,6 +994,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             inputDialog = null
         }
         locationClient?.onDestroy()
+        refreshHandler.removeCallbacksAndMessages(null)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

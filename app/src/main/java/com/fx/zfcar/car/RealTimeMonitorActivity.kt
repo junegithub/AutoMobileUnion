@@ -43,6 +43,7 @@ class RealTimeMonitorActivity : AppCompatActivity() {
         const val KEY_CAR_NUM = "key_car_num"
         const val KEY_CAR_VIDEO = "key_car_video"
         const val KEY_CAR_ONLINE = "key_car_online"
+        private const val VIDEO_LOAD_TIMEOUT_MS = 8000L
     }
 
     // ViewBinding
@@ -61,6 +62,7 @@ class RealTimeMonitorActivity : AppCompatActivity() {
     private var wayNums = mutableListOf<VideoChannel>()
     private var srcArr = mutableListOf<String>()
     private val loadedChannels = mutableSetOf<Int>()
+    private var currentLoadAttempt = 0
 
     // 视频播放器列表（使用 Media3 ExoPlayer）
     private val exoPlayers = mutableListOf<ExoPlayer>()
@@ -348,6 +350,10 @@ class RealTimeMonitorActivity : AppCompatActivity() {
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             return
         }
+        if (wayNums.isEmpty()) {
+            showToast("暂无可用视频通道")
+            return
+        }
 
         Toast.makeText(this, "正在加载", Toast.LENGTH_SHORT).show()
         videoAdapter.tabShow = true
@@ -356,9 +362,24 @@ class RealTimeMonitorActivity : AppCompatActivity() {
         srcArr.clear()
         loadedChannels.clear()
         releasePlayers()
+        currentLoadAttempt += 1
+        scheduleLoadTimeout(currentLoadAttempt)
 
         // 执行JS调用获取视频流
         evalJs()
+    }
+
+    private fun scheduleLoadTimeout(loadAttempt: Int) {
+        binding.root.postDelayed({
+            if (loadAttempt != currentLoadAttempt || isFinishing || isDestroyed) {
+                return@postDelayed
+            }
+            if (loadedChannels.isEmpty()) {
+                showToast("视频加载失败，请稍后重试")
+            } else if (loadedChannels.size < wayNums.size) {
+                showToast("部分通道加载失败")
+            }
+        }, VIDEO_LOAD_TIMEOUT_MS)
     }
 
     /**
@@ -382,6 +403,9 @@ class RealTimeMonitorActivity : AppCompatActivity() {
      * 接收WebView消息并播放视频（Media3 版本）
      */
     private fun handleWebMessage(channel: Int, videoUrl: String) {
+        if (videoUrl.isBlank()) {
+            return
+        }
         if (!loadedChannels.add(channel)) {
             return
         }

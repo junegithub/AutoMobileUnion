@@ -244,6 +244,7 @@ class LoginActivity : AppCompatActivity() {
                     is ApiState.Success -> {
                         ProgressDialogUtils.dismiss()
                         SPUtils.saveTrainingToken(uiState.data?.token)
+                        SPUtils.saveTrainingLoginUser(Gson().toJson(uiState.data))
                         MyApp.isTrainingLogin = true
                         MyApp.trainingUserInfo = uiState.data
                         finish()

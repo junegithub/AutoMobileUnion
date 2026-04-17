@@ -21,6 +21,7 @@ class CarInfoActivity : AppCompatActivity() {
 
     companion object {
         const val KEY_CAR_ID = "key_car_id"
+        private const val KEY_CAR_INFO_STATE = "key_car_info_state"
     }
 
     val titles = listOf("车辆信息", "终端信息", "其他信息")
@@ -28,6 +29,7 @@ class CarInfoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCarInfoBinding
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
     private var carInfoStateFlow = MutableStateFlow<ApiState<CarInfo>>(ApiState.Idle)
+    private var currentCarInfo: CarInfo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +47,10 @@ class CarInfoActivity : AppCompatActivity() {
                     }
                     is ApiState.Success -> {
                         // 成功：隐藏进度条，显示数据
-                        state.data?.let { refreshAdapter(it) }
+                        state.data?.let {
+                            currentCarInfo = it
+                            refreshAdapter(it)
+                        }
                     }
                     is ApiState.Error -> {
                         showToast(state.msg)
@@ -55,6 +60,12 @@ class CarInfoActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+
+        savedInstanceState?.getParcelable<CarInfo>(KEY_CAR_INFO_STATE)?.let {
+            currentCarInfo = it
+            refreshAdapter(it)
+            return
         }
 
         val carId = intent.getStringExtra(KEY_CAR_ID)
@@ -76,5 +87,10 @@ class CarInfoActivity : AppCompatActivity() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = titles[position]
         }.attach()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        currentCarInfo?.let { outState.putParcelable(KEY_CAR_INFO_STATE, it) }
     }
 }

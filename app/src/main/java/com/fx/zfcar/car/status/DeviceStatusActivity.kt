@@ -2,6 +2,8 @@ package com.fx.zfcar.car.status
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,11 +20,22 @@ import kotlinx.coroutines.launch
 import kotlin.getValue
 
 class DeviceStatusActivity : AppCompatActivity() {
+    companion object {
+        private const val REFRESH_INTERVAL_MS = 30_000L
+    }
+
     private lateinit var binding: ActivityDeviceStatusBinding
 
     private val carStatusListStateFlow = MutableStateFlow<ApiState<CarStatusListData>>(ApiState.Idle)
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
     private var lastNavigateAt: Long = 0L
+    private val refreshHandler = Handler(Looper.getMainLooper())
+    private val refreshRunnable = object : Runnable {
+        override fun run() {
+            initData()
+            refreshHandler.postDelayed(this, REFRESH_INTERVAL_MS)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,5 +141,17 @@ class DeviceStatusActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         ProgressDialogUtils.dismiss()
+        refreshHandler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshHandler.removeCallbacks(refreshRunnable)
+        refreshHandler.postDelayed(refreshRunnable, REFRESH_INTERVAL_MS)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        refreshHandler.removeCallbacks(refreshRunnable)
     }
 }

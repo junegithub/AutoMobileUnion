@@ -260,8 +260,7 @@ class ExamPracticeActivity : AppCompatActivity() {
                 .collect { state ->
                     when (state) {
                         is ApiState.Error -> {
-                            showToast("不需要支付")
-                            goQuestion(categoryModel)
+                            handlePayCheckError(state.msg)
                         }
 
                         is ApiState.Success -> {
@@ -287,8 +286,7 @@ class ExamPracticeActivity : AppCompatActivity() {
                 .collect { state ->
                     when (state) {
                         is ApiState.Error -> {
-                            showToast("不需要支付")
-                            goQuestion(categoryModel)
+                            handlePayCheckError(state.msg)
                         }
 
                         is ApiState.Success -> {
@@ -606,6 +604,15 @@ class ExamPracticeActivity : AppCompatActivity() {
      */
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handlePayCheckError(message: String) {
+        if (message.contains("不需要支付")) {
+            goQuestion(categoryModel)
+        } else {
+            showToast(message)
+            hidePayDialog()
+        }
     }
 
     /**

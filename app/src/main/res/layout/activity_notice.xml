@@ -21,12 +21,28 @@
         app:tabIndicatorHeight="2dp"
         app:tabTextAppearance="@style/TabTextStyle"/>
 
-    <!-- 公告列表-->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_notice_list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- 公告列表-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_notice_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never" />
+
+        <TextView
+            android:id="@+id/tv_empty_tip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="暂无公告"
+            android:textColor="#999999"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <!-- 加载更多提示（触底时显示） -->
     <TextView

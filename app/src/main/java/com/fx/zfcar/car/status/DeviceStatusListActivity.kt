@@ -2,6 +2,9 @@ package com.fx.zfcar.car.status
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +33,7 @@ class DeviceStatusListActivity : AppCompatActivity() {
         // const val 用于编译期确定的字符串常量（必须是字面量，不能是方法返回值）
         const val KEY_CAR_STATUS_TITLE = "key_car_status_title"
         const val KEY_CAR_STATUS_TYPE = "key_car_status_type"
+        private const val REFRESH_INTERVAL_MS = 30_000L
     }
 
     private lateinit var binding: ActivityDeviceStatusListBinding
@@ -43,6 +47,16 @@ class DeviceStatusListActivity : AppCompatActivity() {
     private var loadFromMore: Boolean = false
     private var reachedEnd: Boolean = false
     private lateinit var layoutManager: LinearLayoutManager
+    private val refreshHandler = Handler(Looper.getMainLooper())
+    private val refreshRunnable = object : Runnable {
+        override fun run() {
+            if (!loadFromMore) {
+                pageNum = 1
+                loadData()
+            }
+            refreshHandler.postDelayed(this, REFRESH_INTERVAL_MS)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,9 +109,12 @@ class DeviceStatusListActivity : AppCompatActivity() {
                         statusList.addAll(data)
                         reachedEnd = data.size < pageSize
                         statusAdapter.submitList(statusList.toList())
+                        binding.llEmptyView.visibility = if (statusList.isEmpty()) View.VISIBLE else View.GONE
+                        binding.rvStatusList.visibility = if (statusList.isEmpty()) View.GONE else View.VISIBLE
                         loadFromMore = false
                     }
                     is ApiState.Error -> {
+                        binding.llEmptyView.visibility = if (statusList.isEmpty()) View.VISIBLE else View.GONE
                         showToast("获取数据失败：${state.msg}")
                         // 重置状态
                         statusListStateFlow.value = ApiState.Idle
@@ -136,5 +153,21 @@ class DeviceStatusListActivity : AppCompatActivity() {
         PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
         // 返回按钮点击
         binding.titleLayout.tvTitle.setOnClickListener { finish() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshHandler.removeCallbacks(refreshRunnable)
+        refreshHandler.postDelayed(refreshRunnable, REFRESH_INTERVAL_MS)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        refreshHandler.removeCallbacks(refreshRunnable)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        refreshHandler.removeCallbacksAndMessages(null)
     }
 }

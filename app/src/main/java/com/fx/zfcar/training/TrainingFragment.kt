@@ -382,8 +382,11 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                     }
 
                     is ApiState.Error -> {
-                        // 不需要支付
-                        goToTrainHome(mType, mTitle)
+                        if (uiState.msg.contains("不需要支付")) {
+                            goToTrainHome(mType, mTitle)
+                        } else {
+                            context?.showToast(uiState.msg)
+                        }
                     }
                     is ApiState.Idle -> {
                     }
@@ -410,16 +413,29 @@ class TrainingFragment : Fragment(), View.OnClickListener {
         val trainLogin = SPUtils.get("trainLogin")
         if ("yes" == trainLogin) {
             // 退出登录状态
+            MyApp.isTrainingLogin = false
+            MyApp.trainingUserInfo = null
             loginStatus = false
             SPUtils.save("trainLogin", "")
         } else {
             // 检查 Token
             val trainToken = SPUtils.getTrainingToken()
             if (trainToken.isNotEmpty()) {
+                MyApp.isTrainingLogin = true
+                if (MyApp.trainingUserInfo == null) {
+                    val cachedUser = SPUtils.getTrainingLoginUser()
+                    if (cachedUser.isNotEmpty()) {
+                        runCatching {
+                            Gson().fromJson(cachedUser, com.fx.zfcar.net.UserLoginData::class.java)
+                        }.getOrNull()?.let { MyApp.trainingUserInfo = it }
+                    }
+                }
                 // 已登录，检查签署状态并获取通知信息
                 isSign()
                 getNoticeInfo()
             } else {
+                MyApp.isTrainingLogin = false
+                MyApp.trainingUserInfo = null
                 loginStatus = false
             }
         }

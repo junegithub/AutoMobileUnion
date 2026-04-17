@@ -13,6 +13,7 @@ object SPUtils {
     private const val KEY_AUTO_LOGIN = "auto_login"
     private const val SP_KEY_NOTICE_ID = "noticeId"
     private const val KEY_POLICY_ACCEPTED = "policy_accepted"
+    private const val KEY_TRAINING_LOGIN_USER = "training_login_user"
 
     private fun getSP(): SharedPreferences {
         return MyApp.Companion.getAppContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
@@ -47,6 +48,14 @@ object SPUtils {
 
     fun getTrainingToken(): String {
         return getSP().getString(ApiConfig.SP_KEY_TRAINING_TOKEN, "") ?: ""
+    }
+
+    fun saveTrainingLoginUser(content: String?) {
+        getSP().edit().putString(KEY_TRAINING_LOGIN_USER, content).apply()
+    }
+
+    fun getTrainingLoginUser(): String {
+        return getSP().getString(KEY_TRAINING_LOGIN_USER, "") ?: ""
     }
 
     fun saveNoticeId(id: String?) {

@@ -39,6 +39,7 @@ class NoticeActivity : AppCompatActivity() {
     private lateinit var noticeAdapter: NoticeAdapter
 
     private var totalPages = 0
+    private var isLoading = false
 
     private val noticeViewModel by viewModels<NoticeViewModel>()
     private var noticeStateFlow = MutableStateFlow<ApiState<NoticeData>>(ApiState.Idle)
@@ -70,17 +71,39 @@ class NoticeActivity : AppCompatActivity() {
             noticeStateFlow.collect { uiState ->
                 when (uiState) {
                     is ApiState.Loading -> {
+                        isLoading = true
+                        if (noticeParams.page == 1) {
+                            binding.tvLoadMore.visibility = View.GONE
+                            binding.tvEmptyTip.visibility = View.GONE
+                        }
                     }
 
                     is ApiState.Success -> {
+                        isLoading = false
                         uiState.data?.let {
                             totalPages = uiState.data.total
                             noticeList.addAll(uiState.data.rows)
-                            noticeAdapter.notifyDataSetChanged()
+                            noticeAdapter.submitList(noticeList.toList())
+                            updateEmptyState()
+                            binding.tvLoadMore.visibility =
+                                if (noticeList.isNotEmpty() && noticeParams.page >= totalPages) {
+                                    View.VISIBLE
+                                } else {
+                                    View.GONE
+                                }
                         }
                     }
 
                     is ApiState.Error -> {
+                        isLoading = false
+                        if (noticeParams.page > 1) {
+                            noticeParams.page--
+                        }
+                        if (noticeList.isEmpty()) {
+                            binding.tvEmptyTip.text = "暂无公告"
+                            binding.tvEmptyTip.visibility = View.VISIBLE
+                            binding.tvLoadMore.visibility = View.GONE
+                        }
                         showToast(uiState.msg)
                     }
                     is ApiState.Idle -> {
@@ -126,7 +149,11 @@ class NoticeActivity : AppCompatActivity() {
                 noticeParams.index = index
                 noticeParams.type = index + 1
                 noticeParams.page = 1
+                totalPages = 0
                 noticeList.clear()
+                noticeAdapter.submitList(emptyList())
+                binding.tvLoadMore.visibility = View.GONE
+                binding.tvEmptyTip.visibility = View.GONE
                 loadInfo() // 切换tab重新加载数据
             }
 
@@ -136,6 +163,7 @@ class NoticeActivity : AppCompatActivity() {
     }
 
     private fun loadInfo() {
+        if (isLoading) return
         if (noticeParams.type == 3) {
             loadWarningNoticeRequest(noticeParams)
         } else {
@@ -144,12 +172,15 @@ class NoticeActivity : AppCompatActivity() {
     }
 
     private fun loadMore() {
+        if (isLoading) return
         if (noticeParams.page < totalPages) {
             noticeParams.page++
             loadInfo()
         } else {
-            binding.tvLoadMore.visibility = View.VISIBLE
-            showToast("没有更多消息了")
+            if (noticeList.isNotEmpty()) {
+                binding.tvLoadMore.visibility = View.VISIBLE
+                showToast("没有更多消息了")
+            }
         }
     }
 
@@ -175,5 +206,9 @@ class NoticeActivity : AppCompatActivity() {
 
     private fun loadWarningNoticeRequest(params: NoticeParams) {
         noticeViewModel.warningNotice(params.page, params.index, params.type, noticeStateFlow)
+    }
+
+    private fun updateEmptyState() {
+        binding.tvEmptyTip.visibility = if (noticeList.isEmpty()) View.VISIBLE else View.GONE
     }
 }

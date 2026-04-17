@@ -209,6 +209,7 @@ class YiqingSignActivity : AppCompatActivity() {
     private fun showSignContent() {
         binding.layoutContent.visibility = View.VISIBLE
         val contentBuilder = StringBuilder()
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
         when (categoryId) {
             "3031" -> {
@@ -221,7 +222,7 @@ class YiqingSignActivity : AppCompatActivity() {
                     append("<p style='font-size:16sp;line-height:1.6;'>三、禁止乱开乱动一切机动车，未经批准不准将车交给无上岗证资格的人员驾驶，不搭载无关人员。认真遵守驾驶员《安全行车十条禁令)，不得超载、超速行驶、不得酒后驾驶、不得疲劳驾驶。</p>")
                     append("<p style='font-size:16sp;line-height:1.6;'>四、做到出车前、行驶中、收车后的“三检”工作，不带病行车，保持车辆技术状况良好。</p>")
                     append("<p style='font-size:16sp;line-height:1.6;'>五、做到“三懂、四会”，三懂即;懂车辆技术性能。懂事故处理方法、懂货运基本知识。四会:会使用消防器材会工艺操作、会处理事故隐患、会维护保养。</p>")
-                    append("<p style='font-size:16sp;line-height:1.6;'>本承诺书有效期自2022年1月1日起至2022年12月31 日止。</p>")
+                    append("<p style='font-size:16sp;line-height:1.6;'>本承诺书有效期自${currentYear}年1月1日起至${currentYear}年12月31日止。</p>")
                     if (hasSign) {
                         append("<p style='font-size:15sp;font-weight:bold;margin:10dp 0;'>签字日期：$signTime</p>")
                     }

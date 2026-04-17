@@ -39,7 +39,7 @@
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="编号: 202207T3U209"
+            android:text="编号: XXXXXXXX"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:lineSpacingExtra="4dp"
-            android:text="你于2022年7月5日至2022年8月9日参加道路旅客运输驾驶员继续教育，现已完成规定内容和24学时，考核合格，准予结业。"
+            android:text="你于20XX年X月至20XX年X月参加道路旅客运输驾驶员继续教育，现已完成规定内容和24学时，考核合格，准予结业。"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 
@@ -119,7 +119,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginTop="5dp"
-            android:text="2026年2月25日"
+            android:text="20XX年X月"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 

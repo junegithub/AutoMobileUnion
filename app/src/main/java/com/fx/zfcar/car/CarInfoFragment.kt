@@ -67,10 +67,10 @@ class CarInfoFragment : Fragment() {
             binding.rowContact,
             binding.rowPhone
         )
-        setRowValue(basicRows[0], "所属地区", info.area)
+        setRowValue(basicRows[0], "所属地区", listOf(info.provice, info.city, info.area).filter { it.isNotBlank() }.joinToString(" "))
         setRowValue(basicRows[1], "车辆识别代码/车架号", info.frameno)
         setRowValue(basicRows[2], "车牌号", info.carnum)
-        setRowValue(basicRows[3], "车身颜色", ApiConfig.CarColor.getLabelByValue(info.platecolor.toIntOrNull() ?: 0))
+        setRowValue(basicRows[3], "车身颜色", resolveColorLabel(info.carnumcolor))
         setRowValue(basicRows[4], "联系人", info.contacts)
         setRowValue(basicRows[5], "手机号", info.phone, true)
 
@@ -117,20 +117,20 @@ class CarInfoFragment : Fragment() {
         setRowValue(extRows[0], "所属机构", info.deptName)
         setRowValue(extRows[1], "轴数", info.axisnum)
         setRowValue(extRows[2], "轮胎数", info.tiresnum)
-        setRowValue(extRows[3], "经营范围", info.bussinessArea)
+        setRowValue(extRows[3], "经营范围", info.tcrange)
         setRowValue(extRows[4], "运输行业类别", info.Industrytype_text)
         setRowValue(extRows[5], "车辆类型", info.dlcartype_text)
-        setRowValue(extRows[6], "车身颜色", ApiConfig.CarColor.getLabelByValue(info.platecolor.toIntOrNull() ?: 0))
+        setRowValue(extRows[6], "车身颜色", resolveColorLabel(info.platecolor))
         setRowValue(extRows[7], "品牌类型", info.bcategoryName)
         setRowValue(extRows[8], "车辆型号", info.carmodeltype)
-        setRowValue(extRows[9], "总质量(kg)", info.weight.toString())
+        setRowValue(extRows[9], "总质量(kg)", info.dlsumweight.toDisplayNumber())
         setRowValue(extRows[10], "核定载质量(kg)", info.dlcheckweight.toString())
-        setRowValue(extRows[11], "外廓尺寸-长*宽*高(mm)", formatSize(info.boxl, info.boxw, info.boxh))
-        setRowValue(extRows[12], "货箱内部尺寸-长*宽*高(mm)", formatSize(info.dlboxl, info.dlboxw, info.dlboxh))
-        setRowValue(extRows[13], "商业险有效期", info.validtime)
-        setRowValue(extRows[14], "道路运输许可证号", info.tcertificateno)
+        setRowValue(extRows[11], "外廓尺寸-长*宽*高(mm)", formatSize(info.dlboxl, info.dlboxw, info.dlboxh))
+        setRowValue(extRows[12], "货箱内部尺寸-长*宽*高(mm)", formatSize(info.boxl, info.boxw, info.boxh))
+        setRowValue(extRows[13], "商业险有效期", info.icbusivaliddate)
+        setRowValue(extRows[14], "道路运输许可证号", info.tcnum)
         setRowValue(extRows[15], "车辆所有人类别", info.holdertype_text)
-        setRowValue(extRows[16], "道路运输证号", info.tcnum)
+        setRowValue(extRows[16], "道路运输证号", info.tcertificateno)
         setRowValue(extRows[17], "燃料种类", info.fueltype_text)
         setRowValue(extRows[18], "准牵引总质量(kg)", info.ttotalmass.toString())
         setRowValue(extRows[19], "轮胎规格", info.tiresize)
@@ -144,13 +144,18 @@ class CarInfoFragment : Fragment() {
         setRowValue(extRows[27], "行驶证发证日期", info.dlusedate)
         setRowValue(extRows[28], "发动机号", info.dlenginenum)
         setRowValue(extRows[29], "发动机型号", info.enginetype)
-        setRowValue(extRows[30], "百公里参考油耗(升/百公里)", if (info.lkm == 0.0) "-" else info.lkm.toString())
-        setRowValue(extRows[31], "漏油标定值/升", info.oilAddVal.toString())
+        setRowValue(extRows[30], "百公里参考油耗(升/百公里)", info.lkm.toDisplayNumber())
+        setRowValue(extRows[31], "漏油标定值/升", (info.oilspillval.takeIf { it != 0 } ?: info.oilAddVal).toDisplayNumber())
     }
 
     private fun formatSize(length: Double, width: Double, height: Double): String {
         if (length == 0.0 && width == 0.0 && height == 0.0) return "-"
         return "${length.toInt()}*${width.toInt()}*${height.toInt()}"
+    }
+
+    private fun resolveColorLabel(value: String?): String {
+        val colorValue = value?.toIntOrNull() ?: return "-"
+        return ApiConfig.CarColor.getLabelByValue(colorValue)
     }
 
     // 设置行数据
@@ -174,12 +179,27 @@ class CarInfoFragment : Fragment() {
         imageUrl: String?
     ) {
         imageBinding.tvImageLabel.text = label
-        // 如需加载图片，取消下面注释并添加Glide依赖
-         if (!imageUrl.isNullOrEmpty()) {
-             Glide.with(this)
-                 .load(imageUrl)
-                 .placeholder(R.drawable.ic_image_placeholder)
-                 .into(imageBinding.ivImagePlaceholder)
-         }
+        if (!imageUrl.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(resolveImageUrl(imageUrl))
+                .placeholder(R.drawable.ic_image_placeholder)
+                .error(R.drawable.ic_image_placeholder)
+                .into(imageBinding.ivImagePlaceholder)
+        } else {
+            imageBinding.ivImagePlaceholder.setImageResource(R.drawable.ic_image_placeholder)
+        }
+    }
+
+    private fun resolveImageUrl(imageUrl: String): String {
+        if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+            return imageUrl
+        }
+        return ApiConfig.BASE_URL.removeSuffix("/") + "/" + imageUrl.removePrefix("/")
+    }
+
+    private fun Number.toDisplayNumber(): String {
+        val value = this.toDouble()
+        if (value == 0.0) return "-"
+        return if (value % 1.0 == 0.0) value.toInt().toString() else value.toString()
     }
 }

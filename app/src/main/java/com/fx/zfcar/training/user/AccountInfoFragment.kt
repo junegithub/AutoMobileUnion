@@ -71,6 +71,7 @@ class AccountInfoFragment : BaseUserFragment() {
         MyApp.trainingUserInfo = null
         // 仅清除培训模块相关数据，保留车辆模块token和登录信息
         SPUtils.saveTrainingToken(null)
+        SPUtils.saveTrainingLoginUser(null)
         SPUtils.remove("userInfo")
         SPUtils.remove("companyInfo")
         SPUtils.remove("carInfo")

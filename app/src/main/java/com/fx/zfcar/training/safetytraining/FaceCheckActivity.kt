@@ -180,6 +180,7 @@ class FaceCheckActivity : AppCompatActivity() {
 
         // 操作按钮（开始验证/拍照）
         binding.tvAction.setOnClickListener {
+            if (!ensureCameraReady()) return@setOnClickListener
             if (!cameraXManager.isPreviewing) {
                 // 开始预览
                 startCameraPreview()
@@ -191,6 +192,7 @@ class FaceCheckActivity : AppCompatActivity() {
 
         // 翻转摄像头
         binding.tvSwitchCamera.setOnClickListener {
+            if (!ensureCameraReady()) return@setOnClickListener
             cameraXManager.switchCamera()
         }
     }
@@ -249,6 +251,7 @@ class FaceCheckActivity : AppCompatActivity() {
      */
     private fun startCameraPreview() {
         try {
+            if (!ensureCameraReady()) return
             // CameraX会自动处理预览启动
             binding.tvAction.text = getString(R.string.btn_take_photo)
             binding.tvSwitchCamera.visibility = View.VISIBLE
@@ -264,6 +267,20 @@ class FaceCheckActivity : AppCompatActivity() {
         } catch (e: Exception) {
             showToast(getString(R.string.hint_camera_failed) + ":${e.message}")
         }
+    }
+
+    private fun ensureCameraReady(): Boolean {
+        if (::cameraXManager.isInitialized) {
+            return true
+        }
+        val hasCameraPermission =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        if (!hasCameraPermission) {
+            checkPermissions()
+            return false
+        }
+        initCameraX()
+        return ::cameraXManager.isInitialized
     }
 
     /**

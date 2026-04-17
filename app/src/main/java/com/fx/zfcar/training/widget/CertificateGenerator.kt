@@ -89,7 +89,7 @@ class CertificateGenerator(private val context: Context) {
         val startDate = DateUtil.extractYMDFromDateStr(data.start)
         val endDate = DateUtil.extractYMDFromDateStr(data.end)
         val studyHours = if (data.city_id == 1460 && data.category_id == 5) 54 else 24
-        binding.studyTime.text = "       你于${startDate.first}年${startDate.second}月${startDate.third}日至${endDate.first}年${endDate.second}月${endDate.third}日参加${data.category}驾驶员继续教育，现已完成规定内容和${studyHours}学时，考核合格，准予结业。"
+        binding.studyTime.text = "       你于${startDate.first}年${startDate.second}月至${endDate.first}年${endDate.second}月参加${data.category}驾驶员继续教育，现已完成规定内容和${studyHours}学时，考核合格，准予结业。"
 
         if (data.category_id != 5) {
             binding.categoryId.text = "      凭此证明可以在网上申请跨省通办，办理诚信考核手续。"
@@ -100,10 +100,9 @@ class CertificateGenerator(private val context: Context) {
         val today = Calendar.getInstance(Locale.CHINA)
         binding.currentDate.text = String.format(
             Locale.CHINA,
-            "%d年%d月%d日",
+            "%d年%d月",
             today.get(Calendar.YEAR),
-            today.get(Calendar.MONTH) + 1,
-            today.get(Calendar.DAY_OF_MONTH)
+            today.get(Calendar.MONTH) + 1
         )
 
         // 备注

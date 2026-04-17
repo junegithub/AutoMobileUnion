@@ -36,6 +36,10 @@ import com.fx.zfcar.net.StopDetailData
 import java.util.Calendar
 
 class ReportActivity : AppCompatActivity(), View.OnClickListener {
+    companion object {
+        private const val PARKING_SEARCH_HINT = "请输入车牌号后查询停车统计"
+    }
+
     private lateinit var binding: ActivityReportBinding
 
     private val reportViewModel by viewModels<ReportViewModel>()
@@ -149,6 +153,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 intent.putExtra(ReportAlarmDetailActivity.KEY_WARN_REPORT_NUM, warningItem.num)
                 intent.putExtra(ReportAlarmDetailActivity.KEY_WARN_REPORT_NAME, warningItem.name)
                 intent.putExtra(ReportAlarmDetailActivity.KEY_WARN_REPORT_TYPE, warningItem.warningType)
+                intent.putExtra(ReportAlarmDetailActivity.KEY_WARN_REPORT_TIME_TYPE, currentTimeType)
                 startActivity(intent)
             } else if (reportAdapter.type == ReportAdapter.ReportType.OFFLINE) {
                 val offlineItem = (reportAdapter.getItem(position) as ReportItem.OfflineItem).data
@@ -657,6 +662,15 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         val searchText = binding.etSearch.text.toString().trim()
         binding.progressBar.visibility = View.VISIBLE
         binding.llEmpty.visibility = View.GONE
+
+        if (currentTabIndex == 5 && searchText.isBlank()) {
+            binding.progressBar.visibility = View.GONE
+            binding.llEmpty.visibility = View.VISIBLE
+            binding.tvEmptyTip.text = PARKING_SEARCH_HINT
+            reportAdapter.submitList(emptyList())
+            reachedEnd = true
+            return
+        }
 
         when (currentTabIndex) {
             0 -> loadMileageData(searchText) // 里程查询

@@ -26,6 +26,7 @@ class ReportAlarmDetailActivity : AppCompatActivity() {
         const val KEY_WARN_REPORT_NUM = "key_warn_report_num"
         const val KEY_WARN_REPORT_NAME = "key_warn_report_name"
         const val KEY_WARN_REPORT_TYPE = "key_warn_report_type"
+        const val KEY_WARN_REPORT_TIME_TYPE = "key_warn_report_time_type"
     }
 
     private lateinit var binding: ActivityReportWarningDetailBinding
@@ -35,7 +36,7 @@ class ReportAlarmDetailActivity : AppCompatActivity() {
     private val warningDetailStateFlow = MutableStateFlow<ApiState<WarningDetailData>>(ApiState.Idle)
     private var pageNum: Int = 1
     private val pageSize = 20
-    private val timetype = 1
+    private var timetype = 1
 
     private var warnType = 0
     private var warnNum = 0
@@ -53,6 +54,7 @@ class ReportAlarmDetailActivity : AppCompatActivity() {
         warnType = intent.getIntExtra(KEY_WARN_REPORT_TYPE, 0)
         warnNum = intent.getIntExtra(KEY_WARN_REPORT_NUM, 0)
         warnName = intent.getStringExtra(KEY_WARN_REPORT_NAME).toString()
+        timetype = intent.getIntExtra(KEY_WARN_REPORT_TIME_TYPE, 1)
         initView()
         loadData()
         initListener()

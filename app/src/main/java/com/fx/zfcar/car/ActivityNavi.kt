@@ -29,6 +29,7 @@ class ActivityNavi : AppCompatActivity() {
     // 外部传入的非空参数
     private lateinit var targetAddress: String
     private lateinit var targetLatLng: LatLng
+    private var didInflateContent = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +49,7 @@ class ActivityNavi : AppCompatActivity() {
         // 3. 无可处理的外部地图时再回退到内嵌预览页
         binding = ActivityNavBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        didInflateContent = true
 
         PressEffectUtils.setCommonPressEffect(binding.btnNavigate)
         binding.btnNavigate.setOnClickListener {
@@ -141,19 +143,7 @@ class ActivityNavi : AppCompatActivity() {
      */
     private fun startUniversalNavigation() {
         try {
-            // 优先：高德地图自有 URI（GCJ02 原生，无坐标系偏差）
-            val aMapUri = Uri.parse(
-                "amapuri://route/plan/" +
-                "?dlng=${targetLatLng.longitude}" +
-                "&dlat=${targetLatLng.latitude}" +
-                "&dname=${Uri.encode(targetAddress)}" +
-                "&dev=0&t=0"
-            )
-            val aMapIntent = Intent(Intent.ACTION_VIEW, aMapUri).apply {
-                setPackage("com.autonavi.minimap")
-            }
-            if (packageManager.resolveActivity(aMapIntent, 0) != null) {
-                startActivity(aMapIntent)
+            if (launchExternalNavigation()) {
                 return
             }
 
@@ -171,41 +161,78 @@ class ActivityNavi : AppCompatActivity() {
 
     private fun openExternalLocation(): Boolean {
         return try {
-            val aMapIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(
-                    "amapuri://route/plan/" +
-                        "?dlng=${targetLatLng.longitude}" +
-                        "&dlat=${targetLatLng.latitude}" +
-                        "&dname=${Uri.encode(targetAddress)}" +
-                        "&dev=0&t=0"
-                )
-            ).apply {
-                setPackage("com.autonavi.minimap")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            if (packageManager.resolveActivity(aMapIntent, 0) != null) {
-                startActivity(aMapIntent)
-                return true
-            }
-
-            val geoIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(
-                    "geo:${targetLatLng.latitude},${targetLatLng.longitude}" +
-                        "?q=${targetLatLng.latitude},${targetLatLng.longitude}(${Uri.encode(targetAddress)})"
-                )
-            ).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            if (packageManager.resolveActivity(geoIntent, 0) != null) {
-                startActivity(geoIntent)
-                return true
-            }
-            false
+            launchExternalNavigation()
         } catch (e: Exception) {
             false
         }
+    }
+
+    private fun launchExternalNavigation(): Boolean {
+        val amapIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(
+                "amapuri://route/plan/" +
+                    "?dlng=${targetLatLng.longitude}" +
+                    "&dlat=${targetLatLng.latitude}" +
+                    "&dname=${Uri.encode(targetAddress)}" +
+                    "&dev=0&t=0"
+            )
+        ).apply {
+            setPackage("com.autonavi.minimap")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        if (packageManager.resolveActivity(amapIntent, 0) != null) {
+            startActivity(amapIntent)
+            return true
+        }
+
+        val tencentIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(
+                "qqmap://map/routeplan?type=drive" +
+                    "&tocoord=${targetLatLng.latitude},${targetLatLng.longitude}" +
+                    "&to=${Uri.encode(targetAddress)}" +
+                    "&coord_type=1" +
+                    "&policy=0"
+            )
+        ).apply {
+            setPackage("com.tencent.map")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        if (packageManager.resolveActivity(tencentIntent, 0) != null) {
+            startActivity(tencentIntent)
+            return true
+        }
+
+        val baiduIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(
+                "baidumap://map/direction?destination=name:${Uri.encode(targetAddress)}|latlng:${targetLatLng.latitude},${targetLatLng.longitude}" +
+                    "&coord_type=gcj02&mode=driving&src=autombileunion"
+            )
+        ).apply {
+            setPackage("com.baidu.BaiduMap")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        if (packageManager.resolveActivity(baiduIntent, 0) != null) {
+            startActivity(baiduIntent)
+            return true
+        }
+
+        val geoIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(
+                "geo:${targetLatLng.latitude},${targetLatLng.longitude}" +
+                    "?q=${targetLatLng.latitude},${targetLatLng.longitude}(${Uri.encode(targetAddress)})"
+            )
+        ).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        if (packageManager.resolveActivity(geoIntent, 0) != null) {
+            startActivity(geoIntent)
+            return true
+        }
+        return false
     }
 
     /**
@@ -213,21 +240,29 @@ class ActivityNavi : AppCompatActivity() {
      */
     override fun onResume() {
         super.onResume()
-        binding.mapView.onResume()
+        if (didInflateContent) {
+            binding.mapView.onResume()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        binding.mapView.onPause()
+        if (didInflateContent) {
+            binding.mapView.onPause()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        binding.mapView.onSaveInstanceState(outState)
+        if (didInflateContent) {
+            binding.mapView.onSaveInstanceState(outState)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.mapView.onDestroy()
+        if (didInflateContent) {
+            binding.mapView.onDestroy()
+        }
     }
 }

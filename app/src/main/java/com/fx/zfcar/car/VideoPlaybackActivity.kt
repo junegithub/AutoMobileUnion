@@ -375,9 +375,14 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
                 }
             } else {
                 // 指定通道
+                val selectedChannelCode = wayNums.getOrNull(channelIndex - 1)?.wayNumCode?.toIntOrNull()
+                if (selectedChannelCode == null) {
+                    showToast("通道信息异常")
+                    return
+                }
                 val jsCode = String.format(
                     "Connectt(%d,%d,%d,%d,0,%d,%d,%d,'www.ezbeidou.com',17001,0);",
-                    simNum, channelIndex, startTimeStamp, endTimeStamp,
+                    simNum, selectedChannelCode, startTimeStamp, endTimeStamp,
                     mediaIndex, streamIndex, storageIndex
                 )
                 binding.webView.evaluateJavascript(jsCode, null)

@@ -187,7 +187,10 @@ class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, Recycle
                 oldItem is ReportItem.ActiveWarningItem && newItem is ReportItem.ActiveWarningItem -> oldItem.data.warningType == newItem.data.warningType
                 oldItem is ReportItem.PhotoItem && newItem is ReportItem.PhotoItem -> oldItem.data.carId == newItem.data.carId && oldItem.data.ts == newItem.data.ts
                 oldItem is ReportItem.ExpiredItem && newItem is ReportItem.ExpiredItem -> oldItem.data.carId == newItem.data.carId
-                oldItem is ReportItem.StopItem && newItem is ReportItem.StopItem -> oldItem.data.carId == newItem.data.carId
+                oldItem is ReportItem.StopItem && newItem is ReportItem.StopItem ->
+                    oldItem.data.carId == newItem.data.carId &&
+                        oldItem.data.startTime == newItem.data.startTime &&
+                        oldItem.data.endTime == newItem.data.endTime
                 oldItem is ReportItem.OilAddItem && newItem is ReportItem.OilAddItem -> oldItem.data.carId == newItem.data.carId
                 oldItem is ReportItem.OilDayItem && newItem is ReportItem.OilDayItem -> oldItem.data.carId == newItem.data.carId
                 oldItem is ReportItem.LeakItem && newItem is ReportItem.LeakItem -> oldItem.data.carId == newItem.data.carId
