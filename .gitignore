@@ -79,7 +79,3 @@ google-services.json.local
 .Trashes
 ehthumbs.db
 Thumbs.db
-DerivedData/
-*.xcuserstate
-*.xcworkspace/xcuserdata/
-*.xcodeproj/xcuserdata/
