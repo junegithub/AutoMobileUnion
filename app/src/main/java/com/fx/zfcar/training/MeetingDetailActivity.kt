@@ -141,8 +141,7 @@ class MeetingDetailActivity : AppCompatActivity() {
                         is ApiState.Success -> {
                             if (state.data != null) {
                                 showToast("提交成功")
-                                // 重新加载会议详情
-                                loadMeetingDetail()
+                                finish()
                             } else {
                                 showToast("提交失败")
                             }

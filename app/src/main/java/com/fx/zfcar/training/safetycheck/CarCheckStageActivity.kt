@@ -18,12 +18,28 @@ import com.fx.zfcar.databinding.LayoutStage4Binding
 import com.fx.zfcar.databinding.LayoutStage5Binding
 import com.fx.zfcar.databinding.LayoutStage6Binding
 import com.fx.zfcar.databinding.LayoutStage7Binding
+import com.fx.zfcar.net.ApiConfig
 import com.fx.zfcar.net.CarCheckForm
 import com.fx.zfcar.net.CheckStage
+import com.fx.zfcar.net.UploadFileData
 import com.fx.zfcar.training.adapter.ImageAdapter
 import com.fx.zfcar.training.drivelog.CarSearchActivity
+import com.fx.zfcar.training.jobs.GlideEngine
+import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.util.BitmapUtils
+import com.fx.zfcar.util.PressEffectUtils
+import com.fx.zfcar.viewmodel.ApiState
+import com.luck.picture.lib.basic.PictureSelector
+import com.luck.picture.lib.config.SelectMimeType
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import com.permissionx.guolindev.PermissionX
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import java.util.*
 
 class CarCheckStageActivity : AppCompatActivity() {
@@ -39,10 +55,10 @@ class CarCheckStageActivity : AppCompatActivity() {
 
     // ViewModel
     private val viewModel by viewModels<CarCheckViewModel>()
+    private val noticeViewModel by viewModels<NoticeViewModel>()
 
     // 请求码
     private val REQUEST_CODE_CAR_SEARCH = 1001
-    private val REQUEST_CODE_IMAGE_SELECT = 1002
 
     // 图片适配器
     private lateinit var carCertiAdapter: ImageAdapter
@@ -55,6 +71,8 @@ class CarCheckStageActivity : AppCompatActivity() {
     private lateinit var cutoffAdapter: ImageAdapter
     private lateinit var staticAdapter: ImageAdapter
     private lateinit var waybillAdapter: ImageAdapter
+    private val uploadFlow = MutableStateFlow<ApiState<UploadFileData>>(ApiState.Idle)
+    private var pendingImageField: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -220,21 +238,15 @@ class CarCheckStageActivity : AppCompatActivity() {
 
         // 步骤2：添加图片
         stage2Binding.btnAddCarCerti.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("carCerti", url)
-            }
+            selectImage("carCerti")
         }
 
         stage2Binding.btnAddPeopleCerti.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("peopleCerti", url)
-            }
+            selectImage("peopleCerti")
         }
 
         stage2Binding.btnAddInsure.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("insureCerti", url)
-            }
+            selectImage("insureCerti")
         }
 
         // 步骤3：状态选择
@@ -267,21 +279,15 @@ class CarCheckStageActivity : AppCompatActivity() {
 
         // 步骤3：添加图片
         stage3Binding.btnAddCar.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("carCheck", url)
-            }
+            selectImage("carCheck")
         }
 
         stage3Binding.btnAddUrgent.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("urgentCheck", url)
-            }
+            selectImage("urgentCheck")
         }
 
         stage3Binding.btnAddSign.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("signCheck", url)
-            }
+            selectImage("signCheck")
         }
 
         // 步骤4：状态选择
@@ -323,27 +329,19 @@ class CarCheckStageActivity : AppCompatActivity() {
 
         // 步骤4：添加图片
         stage4Binding.btnAddCanbody.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("canBody", url)
-            }
+            selectImage("canBody")
         }
 
         stage4Binding.btnAddCutoff.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("cutoff", url)
-            }
+            selectImage("cutoff")
         }
 
         stage4Binding.btnAddStatic.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("static", url)
-            }
+            selectImage("static")
         }
 
         stage4Binding.btnAddWaybill.setOnClickListener {
-            selectImage { url ->
-                viewModel.addImage("waybill", url)
-            }
+            selectImage("waybill")
         }
 
         // 步骤5：问题和意见输入
@@ -414,6 +412,33 @@ class CarCheckStageActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.checkerSigned.collect { signed ->
                 // 负责人签名状态更新
+            }
+        }
+
+        lifecycleScope.launch {
+            uploadFlow.collect { state ->
+                when (state) {
+                    is ApiState.Idle -> Unit
+                    is ApiState.Loading -> {
+                        Toast.makeText(this@CarCheckStageActivity, "图片上传中...", Toast.LENGTH_SHORT).show()
+                    }
+                    is ApiState.Success -> {
+                        val field = pendingImageField
+                        val uploadedUrl = state.data?.url
+                        if (field != null && !uploadedUrl.isNullOrBlank()) {
+                            viewModel.addImage(field, ApiConfig.BASE_URL_TRAINING + uploadedUrl)
+                        } else {
+                            Toast.makeText(this@CarCheckStageActivity, "图片上传失败", Toast.LENGTH_SHORT).show()
+                        }
+                        pendingImageField = null
+                        uploadFlow.value = ApiState.Idle
+                    }
+                    is ApiState.Error -> {
+                        pendingImageField = null
+                        Toast.makeText(this@CarCheckStageActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        uploadFlow.value = ApiState.Idle
+                    }
+                }
             }
         }
     }
@@ -697,23 +722,91 @@ class CarCheckStageActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 选择图片（简化版，实际项目替换为图片选择库）
-     */
-    private fun selectImage(onResult: (String) -> Unit) {
-        // 模拟图片选择，实际项目中替换为：
-        // 1. 系统相册/相机调用
-        // 2. 第三方图片选择库（如PictureSelector）
-        // 3. 图片上传后返回URL
+    private fun selectImage(field: String) {
+        PermissionX.init(this)
+            .permissions(
+                android.Manifest.permission.CAMERA,
+                android.Manifest.permission.READ_MEDIA_IMAGES
+            )
+            .request { allGranted, _, _ ->
+                if (!allGranted) {
+                    Toast.makeText(this, "需要相机和相册权限才能上传图片", Toast.LENGTH_SHORT).show()
+                    return@request
+                }
 
-        AlertDialog.Builder(this)
-            .setTitle("选择图片")
-            .setItems(arrayOf("从相册选择", "拍照")) { _, which ->
-                // 模拟返回图片URL
-                val imageUrl = "https://example.com/image_${System.currentTimeMillis()}.jpg"
-                onResult(imageUrl)
+                pendingImageField = field
+                AlertDialog.Builder(this)
+                    .setTitle("选择图片")
+                    .setItems(arrayOf("从相册选择", "拍照")) { _, which ->
+                        launchPictureSelector(openCamera = which == 1)
+                    }
+                    .show()
             }
-            .show()
+    }
+
+    private fun launchPictureSelector(openCamera: Boolean) {
+        if (openCamera) {
+            PictureSelector.create(this)
+                .openCamera(SelectMimeType.ofImage())
+                .forResult(object : OnResultCallbackListener<LocalMedia> {
+                    override fun onResult(result: ArrayList<LocalMedia>) {
+                        handleImageSelected(result)
+                    }
+
+                    override fun onCancel() {
+                        pendingImageField = null
+                    }
+                })
+        } else {
+            PictureSelector.create(this)
+                .openGallery(SelectMimeType.ofImage())
+                .isDisplayCamera(true)
+                .setImageEngine(GlideEngine.createGlideEngine())
+                .isPreviewImage(true)
+                .setMaxSelectNum(1)
+                .setMinSelectNum(1)
+                .setImageSpanCount(4)
+                .forResult(object : OnResultCallbackListener<LocalMedia> {
+                    override fun onResult(result: ArrayList<LocalMedia>) {
+                        handleImageSelected(result)
+                    }
+
+                    override fun onCancel() {
+                        pendingImageField = null
+                    }
+                })
+        }
+    }
+
+    private fun handleImageSelected(result: ArrayList<LocalMedia>) {
+        val media = result.firstOrNull() ?: return
+        val imagePath = getImagePath(media)
+        if (imagePath.isNullOrBlank()) {
+            pendingImageField = null
+            Toast.makeText(this@CarCheckStageActivity, "未获取到图片路径", Toast.LENGTH_SHORT).show()
+            return
+        }
+        uploadImage(File(imagePath))
+    }
+
+    private fun getImagePath(media: LocalMedia): String? {
+        return when {
+            media.isCompressed -> media.compressPath
+            media.isCut -> media.cutPath
+            else -> media.realPath ?: media.path
+        }
+    }
+
+    private fun uploadImage(file: File) {
+        if (!file.exists()) {
+            pendingImageField = null
+            Toast.makeText(this, "图片文件不存在", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
+        noticeViewModel.uploadFile(body, uploadFlow)
     }
 
     /**
@@ -754,13 +847,8 @@ class CarCheckStageActivity : AppCompatActivity() {
 
         when (requestCode) {
             REQUEST_CODE_CAR_SEARCH -> {
-                val carNum = data?.getStringExtra("carnum") ?: ""
+                val carNum = data?.getStringExtra("carNum") ?: ""
                 viewModel.updateFormField { it.carnum = carNum }
-            }
-            REQUEST_CODE_IMAGE_SELECT -> {
-                val imageUrl = data?.getStringExtra("image_url") ?: ""
-                // 根据当前步骤处理图片
-                // 实际项目中需要区分是哪个检查项的图片
             }
         }
     }

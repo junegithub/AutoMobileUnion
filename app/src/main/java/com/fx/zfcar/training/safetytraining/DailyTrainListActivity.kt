@@ -156,6 +156,11 @@ class DailyTrainListActivity : AppCompatActivity() {
     private fun handleListSuccess(data: CoursewareListData) {
         trainAbout = data.row
         totalPage = data.total
+        SPUtils.save("needSign", data.row.issign)
+        SPUtils.save("item", com.google.gson.Gson().toJson(data.row))
+        SPUtils.save("id", data.row.id.toString())
+        SPUtils.save("tempTrainItemId", data.row.id.toString())
+        SPUtils.save("tempTrainItemName", name)
 
         binding.tvTotalClass.text = "${data.row.sublongtime}课时"
         binding.tvProgress.text = "${getProgress(data.list)}%"

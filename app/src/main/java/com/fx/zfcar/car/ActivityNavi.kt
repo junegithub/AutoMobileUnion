@@ -33,15 +33,21 @@ class ActivityNavi : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. 初始化ViewBinding
-        binding = ActivityNavBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        // 2. 接收并校验外部传入的参数（强制非空）
+        // 1. 接收并校验外部传入的参数（强制非空）
         if (!receiveAndCheckIntentParams()) {
             finish() // 参数无效，关闭页面
             return
         }
+
+        // 2. 优先按原 app 的行为直接打开外部地图，避免内嵌预览页带来的坐标偏差感知
+        if (openExternalLocation()) {
+            finish()
+            return
+        }
+
+        // 3. 无可处理的外部地图时再回退到内嵌预览页
+        binding = ActivityNavBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         PressEffectUtils.setCommonPressEffect(binding.btnNavigate)
         binding.btnNavigate.setOnClickListener {
@@ -54,7 +60,7 @@ class ActivityNavi : AppCompatActivity() {
 
         binding.tvTargetAddress.text = targetAddress
         binding.tvTargetAddressDesp.text = targetAddress
-        // 3. 初始化地图并展示目标位置
+        // 4. 初始化地图并展示目标位置
         initMap(savedInstanceState)
         showTargetLocation()
     }
@@ -160,6 +166,45 @@ class ActivityNavi : AppCompatActivity() {
             })
         } catch (e: Exception) {
             Toast.makeText(this, "启动导航失败：${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openExternalLocation(): Boolean {
+        return try {
+            val aMapIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(
+                    "amapuri://route/plan/" +
+                        "?dlng=${targetLatLng.longitude}" +
+                        "&dlat=${targetLatLng.latitude}" +
+                        "&dname=${Uri.encode(targetAddress)}" +
+                        "&dev=0&t=0"
+                )
+            ).apply {
+                setPackage("com.autonavi.minimap")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            if (packageManager.resolveActivity(aMapIntent, 0) != null) {
+                startActivity(aMapIntent)
+                return true
+            }
+
+            val geoIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(
+                    "geo:${targetLatLng.latitude},${targetLatLng.longitude}" +
+                        "?q=${targetLatLng.latitude},${targetLatLng.longitude}(${Uri.encode(targetAddress)})"
+                )
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            if (packageManager.resolveActivity(geoIntent, 0) != null) {
+                startActivity(geoIntent)
+                return true
+            }
+            false
+        } catch (e: Exception) {
+            false
         }
     }
 

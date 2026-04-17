@@ -85,6 +85,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
             binding.etSearch.setText("")
             fromSearch = false
             adapter.setSearch(false)
+            binding.rvTreeList.visibility = View.VISIBLE
             binding.rvCarnumList.visibility = View.GONE
             binding.tabLayout.visibility = View.GONE
             binding.spinnerFilter.visibility = View.GONE
@@ -350,7 +351,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     }
 
     private fun switchMapDetail(carId: String, carNum: String) {
-        EventBus.getDefault().post(
+        EventBus.getDefault().postSticky(
             EventData(
                 EventData.EVENT_CAR_DETAIL,
                 BaseCarInfo(

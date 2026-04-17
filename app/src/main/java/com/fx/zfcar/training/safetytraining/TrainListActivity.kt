@@ -36,6 +36,7 @@ import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
+import com.google.gson.Gson
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.drop
@@ -603,6 +604,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
      */
     private fun checkPay(item: TrainListItem, typeTag: String) {
         checkPayItem = item
+        cacheSelectedTrainItem(item, typeTag)
         when (typeTag) {
             "train" -> {
                 trainingViewModel.checkSafe((item as TrainListItem.TypeSafeItem).data.id.toString(),
@@ -616,6 +618,40 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
             }
             "before" -> handlePayCheckResult(Any(), typeTag)
         }
+    }
+
+    private fun cacheSelectedTrainItem(item: TrainListItem, typeTag: String) {
+        val itemId: String
+        val itemName: String
+        val itemJson: String
+
+        when (typeTag) {
+            "train", "daily" -> {
+                val data = (item as TrainListItem.TypeSafeItem).data
+                itemId = data.id.toString()
+                itemName = data.name
+                itemJson = Gson().toJson(data)
+                SPUtils.save("needSign", data.issign)
+            }
+            "subject" -> {
+                val data = (item as TrainListItem.TypeContinueItem).data
+                itemId = data.id.toString()
+                itemName = data.name
+                itemJson = Gson().toJson(data)
+            }
+            "before" -> {
+                val data = (item as TrainListItem.TypePreJobItem).data
+                itemId = data.id.toString()
+                itemName = data.name
+                itemJson = Gson().toJson(data)
+            }
+            else -> return
+        }
+
+        SPUtils.save("id", itemId)
+        SPUtils.save("item", itemJson)
+        SPUtils.save("tempTrainItemId", itemId)
+        SPUtils.save("tempTrainItemName", itemName)
     }
 
     // 跳签字页面

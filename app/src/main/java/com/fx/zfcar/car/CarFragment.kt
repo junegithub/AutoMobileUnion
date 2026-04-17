@@ -326,6 +326,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                     intent.putExtra(TrackPlayActivity.KEY_CAR_DLTYPE, carInfo.dlcartype)
                     intent.putExtra(TrackPlayActivity.KEY_CAR_STATUS, carInfo.status.toInt())
                     startActivity(intent)
+                    tabLayout.getTabAt(0)?.select()
 
                 } else if (tab.position == 2) {
                     val carInfo = currentRealTimeAddress?.carinfo ?: return
@@ -335,6 +336,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                     intent.putExtra(RealTimeMonitorActivity.KEY_CAR_VIDEO, isVideoCar)
                     intent.putExtra(RealTimeMonitorActivity.KEY_CAR_ONLINE, carInfo.online)
                     startActivity(intent)
+                    tabLayout.getTabAt(0)?.select()
 
                 } else if (tab.position == 3) {
                     val carInfo = currentRealTimeAddress?.carinfo ?: return
@@ -344,6 +346,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                     intent.putExtra(VideoPlaybackActivity.KEY_CAR_VIDEO, isVideoCar)
                     intent.putExtra(VideoPlaybackActivity.KEY_CAR_ONLINE, carInfo.online)
                     startActivity(intent)
+                    tabLayout.getTabAt(0)?.select()
 
                 } else if (tab.position == 4) {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
@@ -975,7 +978,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         locationClient?.onDestroy()
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onMessageEvent(event: EventData) {
         when (event.eventType) {
             EventData.EVENT_LOGIN -> {
@@ -983,6 +986,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                 syncCarPageState(forceReload = true)
             }
             EventData.EVENT_CAR_DETAIL -> {
+                EventBus.getDefault().removeStickyEvent(event)
                 val vehicleInfo = event.data as BaseCarInfo
                 val marker = markerList.find { it.title == vehicleInfo.carNum}
                 if (marker != null) {
@@ -997,6 +1001,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                 }
             }
             EventData.EVENT_LABEL_DETAIL -> {
+                EventBus.getDefault().removeStickyEvent(event)
                 val carNum = event.data as String
                 val marker = markerList.find { it.title == carNum}
                 if (marker != null) {

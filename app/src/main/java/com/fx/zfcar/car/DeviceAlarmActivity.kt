@@ -77,7 +77,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
         alarmAdapter.submitList(alarmList)
         alarmAdapter.setOnDebouncedItemClick { adapter, view, position ->
             val item = alarmList[position]
-            EventBus.getDefault().post(
+            EventBus.getDefault().postSticky(
                 EventData(
                     EventData.EVENT_CAR_DETAIL,
                     BaseCarInfo(

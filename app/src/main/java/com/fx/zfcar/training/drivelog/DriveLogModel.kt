@@ -2,12 +2,18 @@ package com.fx.zfcar.training.drivelog
 
 import androidx.lifecycle.MutableLiveData
 import com.fx.zfcar.net.TravelPostRequest
+import com.fx.zfcar.net.UserInfoDetail
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.SPUtils
 import com.google.gson.Gson
 import java.util.regex.Pattern
 
 class DriveLogModel {
+    companion object {
+        const val KEY_SELECTED_CAR_ID = "training_drive_log_selected_car_id"
+        const val KEY_SELECTED_CAR_NUM = "training_drive_log_selected_car_num"
+    }
+
     // 步骤控制
     val stage = MutableLiveData<Int>(1)
     val stageStep = MutableLiveData<Int>(15)
@@ -52,26 +58,18 @@ class DriveLogModel {
      * 初始化
      */
     fun init(carNum: String? = null) {
+        val userInfo = parseUserInfo()
+        val driverName = userInfo?.nickname?.takeIf { it.isNotBlank() }
+            ?: userInfo?.username.orEmpty()
+        val userId = userInfo?.id ?: 0
 
-        // 获取用户信息
-        val userInfo = SPUtils.get("userInfo")
-        val (driverName, userId) = if (!userInfo.isNullOrEmpty()) {
-            // 解析用户信息获取昵称和ID - 实际项目中解析JSON
-            Pair("默认驾驶员", 0)
+        val savedCarId = SPUtils.getInt(KEY_SELECTED_CAR_ID)
+        val savedCarNum = SPUtils.get(KEY_SELECTED_CAR_NUM)
+        val resolvedCarNum = carNum?.takeIf { it.isNotBlank() } ?: savedCarNum
+        val resolvedCarId = if (!resolvedCarNum.isNullOrBlank() && resolvedCarNum == savedCarNum) {
+            savedCarId
         } else {
-            Pair("默认驾驶员", 0)
-        }
-
-        // 获取车辆信息
-        val (carId, carNumber) = if (!carNum.isNullOrEmpty()) {
-            Pair(0, carNum) // 实际项目中根据车牌号获取car_id
-        } else {
-            val carInfo = SPUtils.get("carInfo")
-            if (!carInfo.isNullOrEmpty()) {
-                Pair(0, "默认车牌号") // 解析车辆信息
-            } else {
-                Pair(0, "")
-            }
+            0
         }
 
         // 更新本地表单默认值
@@ -80,8 +78,8 @@ class DriveLogModel {
             addtime = DateUtil.timestamp2Date(System.currentTimeMillis())
             driver_name = driverName
             user_id = userId
-            car_id = carId
-            carnum = carNumber
+            car_id = resolvedCarId
+            carnum = resolvedCarNum.orEmpty()
             updatetime = DateUtil.timestamp2String(System.currentTimeMillis())
         }
 
@@ -93,6 +91,16 @@ class DriveLogModel {
         }
 
         localForm.postValue(currentForm)
+    }
+
+    private fun parseUserInfo(): UserInfoDetail? {
+        val userInfo = SPUtils.get("userInfo")
+        if (userInfo.isBlank()) {
+            return null
+        }
+        return runCatching {
+            Gson().fromJson(userInfo, UserInfoDetail::class.java)
+        }.getOrNull()
     }
 
     /**
@@ -313,6 +321,10 @@ class DriveLogModel {
                 when {
                     currentForm.driver_name.isBlank() -> {
                         showToast.value = "请输入驾驶员姓名"
+                        return false
+                    }
+                    currentForm.car_id <= 0 -> {
+                        showToast.value = "请选择车辆"
                         return false
                     }
                     currentForm.carnum.isBlank() -> {

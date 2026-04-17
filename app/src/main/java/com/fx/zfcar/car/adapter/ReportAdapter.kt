@@ -108,7 +108,7 @@ class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, Recycle
     // 照片项ViewHolder
     class PhotoViewHolder(private val binding: ItemPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: PhotoReportItem) {
-            binding.tvTime.text = data.time
+            binding.tvTime.text = "拍照时间:${data.time ?: data.ts}"
             binding.tvCarNum.text = data.carNum
             binding.tvAddress.text = data.address
             // 加载图片（替换为真实URL）

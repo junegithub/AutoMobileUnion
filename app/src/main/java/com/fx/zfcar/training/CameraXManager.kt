@@ -213,12 +213,15 @@ class CameraXManager(
             File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath)
         }
 
-        if (!storageDir?.exists()!!) storageDir.mkdirs()
+        val targetDir = storageDir ?: context.cacheDir
+        if (!targetDir.exists()) {
+            targetDir.mkdirs()
+        }
 
         return File.createTempFile(
             "FACE_${timeStamp}_",
             ".jpg",
-            storageDir
+            targetDir
         )
     }
 

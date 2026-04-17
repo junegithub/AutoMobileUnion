@@ -26,6 +26,7 @@ import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ProgressDialogUtils
+import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.kongzue.dialogx.dialogs.BottomMenu
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -773,13 +774,15 @@ class DriveLogStageActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1001 && resultCode == RESULT_OK) {
             val carNum = data?.getStringExtra("carNum")
-            carNum?.let {
-                binding.etCarnum.setText(it)
-                val form = viewModel.localForm.value ?: return
-                form.carnum = it
-                // 实际项目中根据车牌号获取car_id
-                form.car_id = 0
+            val carId = data?.getIntExtra("carId", 0) ?: 0
+            carNum?.let { selectedCarNum ->
+                binding.etCarnum.setText(selectedCarNum)
+                val form = viewModel.localForm.value ?: return@let
+                form.carnum = selectedCarNum
+                form.car_id = carId
                 viewModel.localForm.value = form
+                SPUtils.save(DriveLogModel.KEY_SELECTED_CAR_NUM, selectedCarNum)
+                SPUtils.save(DriveLogModel.KEY_SELECTED_CAR_ID, carId)
             }
         }
     }

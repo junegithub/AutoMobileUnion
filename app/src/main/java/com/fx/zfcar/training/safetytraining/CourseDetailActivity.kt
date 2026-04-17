@@ -45,6 +45,9 @@ class CourseDetailActivity : AppCompatActivity() {
     // 页面参数
     private var subjectId: String = ""
     private var safetyPlanId: String = ""
+    private var courseType: String = ""
+    private var number: String = ""
+    private var trainName: String = ""
     // AndroidX Media3 播放器
     private var player: ExoPlayer? = null
     private var isPlayerReady = false
@@ -143,6 +146,9 @@ class CourseDetailActivity : AppCompatActivity() {
         intent?.let {
             subjectId = it.getStringExtra("subjectId") ?: ""
             safetyPlanId = it.getStringExtra("safetyPlanId") ?: ""
+            courseType = it.getStringExtra("type") ?: ""
+            number = it.getStringExtra("number") ?: ""
+            trainName = it.getStringExtra("trainName") ?: ""
         }
     }
 
@@ -356,7 +362,7 @@ class CourseDetailActivity : AppCompatActivity() {
                             if (time == alltime) {
                                 cancel()
                                 ischeckface = true
-                                navigateToFaceCheck(longtime)
+                                navigateToFaceCheck(longtime, isEnd = true)
                                 return@post
                             }
                             time++
@@ -421,8 +427,10 @@ class CourseDetailActivity : AppCompatActivity() {
             putExtra("longtime", longtime.toString())
             putExtra("pageScoll", pageScoll.toString())
             if (isEnd) {
-                putExtra("type", "newFace")
+                putExtra("type", if (courseType.isNotEmpty()) courseType else "newFace")
                 putExtra("faceType", "end")
+                putExtra("name", trainName.ifEmpty { courseInfo?.name ?: "" })
+                putExtra("number", number)
             }
         }
         startActivity(intent)
@@ -570,6 +578,9 @@ class CourseDetailActivity : AppCompatActivity() {
                     val intent = Intent(this, CourseDetailActivity::class.java).apply {
                         putExtra("safetyPlanId", safetyPlanId)
                         putExtra("subjectId", data.nextsubject_id.toString())
+                        putExtra("type", courseType)
+                        putExtra("number", number)
+                        putExtra("trainName", trainName)
                     }
                     startActivity(intent)
                     finish()
@@ -669,7 +680,7 @@ class CourseDetailActivity : AppCompatActivity() {
             if (alltime - currentTime <= 1) {
                 ischeckface = true
                 player.pause()
-                checkFace()
+                navigateToFaceCheck(longtime, isEnd = true)
                 stopProgressListener()
             }
         }

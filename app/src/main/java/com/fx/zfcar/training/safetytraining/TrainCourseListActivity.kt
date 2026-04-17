@@ -251,6 +251,13 @@ class TrainCourseListActivity : AppCompatActivity() {
 
         // 更新培训概览
         trainAbout = data.row
+        SPUtils.save("item", com.google.gson.Gson().toJson(data.row))
+        SPUtils.save("id", data.row.id.toString())
+        SPUtils.save("tempTrainItemId", data.row.id.toString())
+        SPUtils.save("tempTrainItemName", name)
+        if (type == "before") {
+            SPUtils.save("needBeforeSign", data.row.issign)
+        }
         updateTrainAboutUI()
 
         // 更新分页信息
@@ -352,9 +359,13 @@ class TrainCourseListActivity : AppCompatActivity() {
             putExtra("safetyPlanId", trainAbout?.id ?: id)
             putExtra("subjectId", course.id)
             putExtra("name", course.name)
+            putExtra("trainName", name)
+            putExtra("type", type)
 
             // 根据类型添加不同参数
             if (type == "subject") {
+                putExtra("number", number)
+            } else if (type == "before") {
                 putExtra("number", number)
             }
         }

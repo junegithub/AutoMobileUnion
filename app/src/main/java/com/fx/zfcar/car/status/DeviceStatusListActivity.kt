@@ -62,7 +62,7 @@ class DeviceStatusListActivity : AppCompatActivity() {
         statusAdapter.submitList(statusList)
         statusAdapter.setOnDebouncedItemClick { adapter, view, position ->
             val item = statusList[position]
-            EventBus.getDefault().post(
+            EventBus.getDefault().postSticky(
                 EventData(
                     EventData.EVENT_CAR_DETAIL,
                     BaseCarInfo(
