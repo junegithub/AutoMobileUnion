@@ -49,6 +49,7 @@ class TrackPlayActivity : AppCompatActivity() {
     private lateinit var startMarker: Marker
     private lateinit var endMarker: Marker
     private lateinit var stopMarkers: ArrayList<Marker>
+    private var playbackMarker: Marker? = null
     private var currentPointIndex = 0
     private var animationTimer: Timer? = null
 
@@ -127,6 +128,7 @@ class TrackPlayActivity : AppCompatActivity() {
 
         binding.progressBar.thumb = VehicleImageProvider.scaleBitmapDrawable(this,
             VehicleImageProvider.getVehicleImageResId(dlcartype, carStatus),0.5f)
+        setPlaySpeed(currentPlaySpeed)
 
         binding.switchShowParking.isChecked = false
         binding.content.setOnTouchListener { _, _ -> false }
@@ -235,6 +237,7 @@ class TrackPlayActivity : AppCompatActivity() {
                         binding.tvSpeed.text = currentPoint.speed
 
                         // 移动地图中心点到当前位置
+                        updatePlaybackMarker(currentPoint)
                         aMap.moveCamera(
                             CameraUpdateFactory.newLatLng(
                                 LatLng(currentPoint.lat, currentPoint.lng)
@@ -347,6 +350,7 @@ class TrackPlayActivity : AppCompatActivity() {
         // 清除之前的轨迹
         aMap.clear()
         stopMarkers.clear()
+        playbackMarker = null
 
         if (trackData.postlist.isEmpty()) {
             Log.e("TrackDraw", "轨迹点列表为空")
@@ -388,6 +392,7 @@ class TrackPlayActivity : AppCompatActivity() {
             .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_marker))
 
         endMarker = aMap.addMarker(endMarkerOptions)
+        addOrUpdatePlaybackMarker(firstPoint)
 
         // 添加停留点标记
         for (stop in trackData.stop) {
@@ -461,6 +466,7 @@ class TrackPlayActivity : AppCompatActivity() {
             firstPoint?.let {
                 binding.tvStartLocation.text = "起始位置:${firstPoint.address}"
                 updatePositionInfo(firstPoint)
+                addOrUpdatePlaybackMarker(firstPoint)
             }
             val lastPoint = trackData.postlist.lastOrNull()
             lastPoint?.let {
@@ -518,19 +524,28 @@ class TrackPlayActivity : AppCompatActivity() {
         // 更新UI显示
         when (speed) {
             PlaySpeed.SLOW -> {
-                binding.tvSpeedSlow.setBackgroundColor(colorOf(android.R.color.holo_blue_light))
-                binding.tvSpeedNormal.setBackgroundColor(Color.TRANSPARENT)
-                binding.tvSpeedFast.setBackgroundColor(Color.TRANSPARENT)
+                binding.tvSpeedSlow.isSelected = true
+                binding.tvSpeedNormal.isSelected = false
+                binding.tvSpeedFast.isSelected = false
+                binding.tvSpeedSlow.setTextColor(colorOf(android.R.color.white))
+                binding.tvSpeedNormal.setTextColor(colorOf(R.color.blue_3DA3FF))
+                binding.tvSpeedFast.setTextColor(colorOf(R.color.blue_3DA3FF))
             }
             PlaySpeed.NORMAL -> {
-                binding.tvSpeedSlow.setBackgroundColor(Color.TRANSPARENT)
-                binding.tvSpeedNormal.setBackgroundColor(colorOf(android.R.color.holo_blue_light))
-                binding.tvSpeedFast.setBackgroundColor(Color.TRANSPARENT)
+                binding.tvSpeedSlow.isSelected = false
+                binding.tvSpeedNormal.isSelected = true
+                binding.tvSpeedFast.isSelected = false
+                binding.tvSpeedSlow.setTextColor(colorOf(R.color.blue_3DA3FF))
+                binding.tvSpeedNormal.setTextColor(colorOf(android.R.color.white))
+                binding.tvSpeedFast.setTextColor(colorOf(R.color.blue_3DA3FF))
             }
             PlaySpeed.FAST -> {
-                binding.tvSpeedSlow.setBackgroundColor(Color.TRANSPARENT)
-                binding.tvSpeedNormal.setBackgroundColor(Color.TRANSPARENT)
-                binding.tvSpeedFast.setBackgroundColor(colorOf(android.R.color.holo_blue_light))
+                binding.tvSpeedSlow.isSelected = false
+                binding.tvSpeedNormal.isSelected = false
+                binding.tvSpeedFast.isSelected = true
+                binding.tvSpeedSlow.setTextColor(colorOf(R.color.blue_3DA3FF))
+                binding.tvSpeedNormal.setTextColor(colorOf(R.color.blue_3DA3FF))
+                binding.tvSpeedFast.setTextColor(colorOf(android.R.color.white))
             }
         }
 
@@ -566,6 +581,7 @@ class TrackPlayActivity : AppCompatActivity() {
 
                         // 更新当前时间和速度显示
                         updatePositionInfo(currentPoint)
+                        updatePlaybackMarker(currentPoint)
 
                         // 移动地图中心点到当前位置
                         aMap.moveCamera(
@@ -626,6 +642,7 @@ class TrackPlayActivity : AppCompatActivity() {
         if (currentTrack.postlist.isNotEmpty()) {
             val firstPoint = currentTrack.postlist[0]
             updatePositionInfo(firstPoint)
+            addOrUpdatePlaybackMarker(firstPoint)
 
             // 移动地图中心点到起点
             aMap.moveCamera(
@@ -698,6 +715,8 @@ class TrackPlayActivity : AppCompatActivity() {
         super.onDestroy()
         ProgressDialogUtils.dismiss()
         mapView.onDestroy()
+        playbackMarker?.remove()
+        playbackMarker = null
         pauseAnimation()
     }
 
@@ -717,6 +736,38 @@ class TrackPlayActivity : AppCompatActivity() {
 
     private fun colorOf(colorRes: Int): Int {
         return ContextCompat.getColor(this, colorRes)
+    }
+
+    private fun addOrUpdatePlaybackMarker(point: TrackPosition) {
+        val markerIcon = (VehicleImageProvider.scaleBitmapDrawable(
+            this,
+            VehicleImageProvider.getVehicleImageResId(dlcartype, carStatus),
+            0.75f
+        ) as? android.graphics.drawable.BitmapDrawable)?.bitmap ?: return
+
+        val position = LatLng(point.lat, point.lng)
+        if (playbackMarker == null) {
+            playbackMarker = aMap.addMarker(
+                MarkerOptions()
+                    .position(position)
+                    .anchor(0.5f, 0.5f)
+                    .setFlat(true)
+                    .rotateAngle(point.direction.toFloat())
+                    .icon(BitmapDescriptorFactory.fromBitmap(markerIcon))
+            )
+        } else {
+            playbackMarker?.position = position
+            playbackMarker?.rotateAngle = point.direction.toFloat()
+        }
+    }
+
+    private fun updatePlaybackMarker(point: TrackPosition) {
+        if (playbackMarker == null) {
+            addOrUpdatePlaybackMarker(point)
+            return
+        }
+        playbackMarker?.position = LatLng(point.lat, point.lng)
+        playbackMarker?.rotateAngle = point.direction.toFloat()
     }
 
     private fun syncMapPadding() {
