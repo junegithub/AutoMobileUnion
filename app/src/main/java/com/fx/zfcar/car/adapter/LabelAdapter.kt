@@ -32,7 +32,7 @@ class LabelAdapter() :
             EventBus.getDefault().post(
                 EventData(
                     EventData.EVENT_LABEL_DETAIL,
-                    (v as TextView).text
+                    (v as TextView).text.toString()
                 )
             )
         }

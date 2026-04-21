@@ -40,6 +40,7 @@ import com.fx.zfcar.net.CarInfo
 import com.fx.zfcar.net.MapPositionData
 import com.fx.zfcar.net.MapPositionItem
 import com.fx.zfcar.net.RealTimeAddressData
+import com.fx.zfcar.net.RealTimeCarInfo
 import com.fx.zfcar.net.SearchHistoryRequest
 import com.fx.zfcar.net.SearchResult
 import com.fx.zfcar.pages.EventData
@@ -73,6 +74,11 @@ import kotlin.getValue
 class CarFragment : Fragment(), AMapLocationListener {
     companion object {
         private const val REFRESH_INTERVAL_MS = 30_000L
+        private const val VIRTUAL_CAR_ID = "88888"
+        private const val VIRTUAL_CAR_NUM = "临Y88888"
+        private const val VIRTUAL_CAR_LATITUDE = 37.526160860660895
+        private const val VIRTUAL_CAR_LONGITUDE = 121.39249868630571
+        private const val VIRTUAL_CAR_ADDRESS = "山东省,烟台市,芝罘区,环山路(南272米),烟台市园林科研中心(西北176米)"
     }
 
     // 声明ViewBinding对象
@@ -181,6 +187,10 @@ class CarFragment : Fragment(), AMapLocationListener {
         currentCar = car
         val id = car.id
         if (id.isBlank()) return
+        if (MyApp.isLogin != true || id == VIRTUAL_CAR_ID) {
+            showVirtualCarDetails(marker)
+            return
+        }
         lastRequestedCarId = id
         carInfoViewModel.getRealTimeAddress(id, currentCar?.carnum,
             addressStateFlow)
@@ -238,10 +248,7 @@ class CarFragment : Fragment(), AMapLocationListener {
 
         // 未登录按钮跳转登录页
         binding.tvUnlogin.setOnClickListener {
-            if (MyApp.isLogin == true) {
-                return@setOnClickListener
-            }
-            DialogUtils.showLoginPromptDialog(requireContext())
+            startActivity(Intent(requireContext(), LoginActivity::class.java))
         }
         binding.alarm.setOnClickListener {
             requireLogin {
@@ -335,7 +342,14 @@ class CarFragment : Fragment(), AMapLocationListener {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.VISIBLE
                     binding.rootCarDetail.rootMore.root.visibility = View.GONE
                     binding.rootCarDetail.trackItemContainer.visibility = View.GONE
-                } else if (tab.position == 1) {
+                    return
+                }
+                if (MyApp.isLogin != true) {
+                    DialogUtils.showLoginPromptDialog(requireContext())
+                    tabLayout.getTabAt(0)?.select()
+                    return
+                }
+                if (tab.position == 1) {
                     binding.rootCarDetail.rootCarLocation.root.visibility = View.GONE
                     binding.rootCarDetail.rootMore.root.visibility = View.GONE
                     val carInfo = currentRealTimeAddress?.carinfo ?: return
@@ -646,7 +660,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         val isLoggedIn = MyApp.isLogin == true
         updateViewLoginState()
         if (!isLoggedIn) {
-            resetCarPageState()
+            showVirtualCarState()
             lastLoginState = false
             return
         }
@@ -667,12 +681,6 @@ class CarFragment : Fragment(), AMapLocationListener {
         } else {
             binding.tvUnlogin.setImageResource(R.drawable.login_avatar)
             binding.alarm.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_alarm_tip, 0, 0)
-            totalCars = 1
-            updateCarNum()
-            carList = emptyList()
-            binding.plateRecycler.visibility = View.GONE
-            labelAdapter.updateData(emptyList())
-            clearAllOverlays(aMap)
         }
     }
 
@@ -690,8 +698,8 @@ class CarFragment : Fragment(), AMapLocationListener {
 
     private fun updateLabelHistoryWithFallback() {
         if (MyApp.isLogin != true) {
-            binding.plateRecycler.visibility = View.GONE
-            labelAdapter.updateData(emptyList())
+            binding.plateRecycler.visibility = View.VISIBLE
+            labelAdapter.updateData(listOf(SearchResult("", "carnum", VIRTUAL_CAR_NUM, 0)))
             return
         }
         val cars = carList.orEmpty()
@@ -737,6 +745,71 @@ class CarFragment : Fragment(), AMapLocationListener {
         carList?.forEach { car ->
             addCarMarker(car)
         }
+    }
+
+    private fun showVirtualCarState() {
+        requestFromOtherPage = false
+        totalCars = 1
+        updateCarNum()
+        carList = listOf(createVirtualMapPosition())
+        currentRealTimeAddress = null
+        binding.rootCarDetail.root.visibility = View.GONE
+        binding.rootCarDetail.rootMore.root.visibility = View.GONE
+        binding.rootCarDetail.rootCarLocation.root.visibility = View.VISIBLE
+        clearAllOverlays(aMap)
+        addCarMarkers()
+        updateLabelHistoryWithFallback()
+        zoomToAllCars()
+    }
+
+    private fun createVirtualMapPosition() = MapPositionItem(
+        dlcartype = "14",
+        deptName = "模拟机构",
+        altitude = "",
+        latitude = VIRTUAL_CAR_LATITUDE,
+        rotation = "294",
+        id = VIRTUAL_CAR_ID,
+        carnum = VIRTUAL_CAR_NUM,
+        longitude = VIRTUAL_CAR_LONGITUDE,
+        status = 2,
+        direction = "294"
+    )
+
+    private fun showVirtualCarDetails(marker: Marker) {
+        lastRequestedCarId = VIRTUAL_CAR_ID
+        val data = RealTimeAddressData(
+            address = VIRTUAL_CAR_ADDRESS,
+            carinfo = RealTimeCarInfo(
+                dlcartype = "14",
+                gpscomutime_text = "2023-06-01 10:04:06",
+                bcategoryName = "",
+                latitude = VIRTUAL_CAR_LATITUDE,
+                milege = 14842.1,
+                todayMileage = 0.0,
+                carnum = VIRTUAL_CAR_NUM,
+                speed = 0.0,
+                expired = false,
+                gpsloctime_text = "2023-06-01 10:04:04",
+                drivercard_name = "模拟司机",
+                gpsstatus = "ACC开(行驶 36分钟18秒);定位;",
+                stopTime = "",
+                id = VIRTUAL_CAR_ID,
+                longitude = VIRTUAL_CAR_LONGITUDE,
+                direction = 294,
+                alarmmsg = "暂无报警",
+                temperaturestr = "23度",
+                oil1 = "100升",
+                baidulatitude = 37.53186697400336,
+                baidulongitude = 121.399069089798,
+                online = true,
+                categoryname = "模拟机构",
+                contacts = "模拟车辆",
+                status = "2"
+            )
+        )
+        refreshRealAddressCarDetails(data)
+        refreshCarDetails(null)
+        showSingleMarker(marker)
     }
 
     private fun addCarMarker(car: MapPositionItem, skipIcon: Boolean = false): Marker {

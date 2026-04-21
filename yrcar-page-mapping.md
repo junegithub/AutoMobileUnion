@@ -312,6 +312,16 @@
 | 视频流程 | Android 主要走 `Intent extra`，少量内存态 | `videoToken`、`videoList`、`videoSim`、`videoUrl` | uni-app 的视频链明显更依赖缓存中转；另有个别页面出现 `videToken` 拼写 |
 | 报表页恢复状态 | Android 未见对应本地键 | `currentNavIndex`、`type` | `ytcar-app` 用于从首页/统计入口回到指定报表 Tab |
 
+## 测试 / 试用 / 体验账号逻辑
+
+| 场景 | Android 实现 | ytcar-app 实现 | 备注 |
+|---|---|---|---|
+| 监控端体验入口 | 查车首页 `CarFragment` 未登录时填充虚拟车辆 `临Y88888` / `88888`，显示 `全部1辆车`、地图 marker 和车牌标签；点击 marker/标签打开本地虚拟车辆详情 | `pages/v2/videoLogin/videoLogin.vue` 在 `userType !== 2` 时展示“体验账号”；`goSuffer()` 清空 `videoToken` 后返回 `pages/v2/tabOne/tabOne`，随后 `pages/map/mapHome.nvue` 的 `loginIf()` 使用 `virtual.lastPosition` 展示 `临Y88888` | 体验入口真正落点是查车首页未登录虚拟车，不走登录接口 |
+| 已登录监控账号退出后体验 | `LoginActivity` 已登录态显示用户信息和“退出登录”；退出走服务端登出并清空本地登录态，回到查车首页后由未登录虚拟车逻辑接管 | `pages/v2/videoLogin/videoLogin.vue` 已登录态显示用户信息和“退出登录”；`exitLogin()` 直接复用 `goSuffer()` 清空 `videoToken` 并返回 | uni-app 的退出更轻量，Android 保留服务端登出 |
+| 培训测试账号 | `FaceCheckActivity.checkTestAccount()` 从 `SPUtils.get("userInfo")` 解析 `UserInfoDetail.username`，命中 `safe` 或 `cece` 时展示测试账号快捷入口 | `pages/train/faceCheck/index.nvue` 从 `uni.getStorageSync('userInfo')` 解析 `username`，命中 `safe` 或 `cece` 时 `issafe=true` | 这是明确写死的测试账号名单 |
+| 测试账号跳过人脸拍照 | `activity_face_check.xml` 的 `llTestEntry` 提供“去学习继续教育 / 去学习日常培训 / 岗前”三入口；`FaceCheckActivity.initTestEntryClick()` 分别跳 `TrainCourseListActivity`、`DailyTrainListActivity`、`TrainCourseListActivity(type=before)` | `pages/train/faceCheck/index.nvue` 在 `issafe` 时展示三个 `navigator`，分别跳 `pages/train/trainList/subject`、`daily`、`before` | 仅绕过拍照核验入口，后续学习页仍按各自培训类型进入 |
+| 培训登录页体验入口 | Android 无；培训登录由 `LoginActivity.LOGIN_TYPE_TRAINING` 强制登录 | `pages/v2/videoLogin/videoLogin.vue` 中 `userType === 2` 时隐藏“体验账号” | 两端一致：培训端没有体验账号入口 |
+
 ## ytcar-app 侧暂未在 Android 找到直接对应、且确认有用户入口的页面
 
 | ytcar-app 页面 | 状态 | 备注 |
