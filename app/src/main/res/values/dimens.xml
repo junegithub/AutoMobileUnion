@@ -122,6 +122,7 @@
     <dimen name="camera_size">350dp</dimen>
     <dimen name="btn_width_335">335dp</dimen>
     <dimen name="nav_icon_size">40dp</dimen>
+    <dimen name="face_check_nav_height">64dp</dimen>
 
     <!-- 状态栏高度（动态适配） -->
     <dimen name="status_bar_height">24dp</dimen>

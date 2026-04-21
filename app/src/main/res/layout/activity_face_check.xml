@@ -9,7 +9,7 @@
     <RelativeLayout
         android:id="@+id/navBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/face_check_nav_height"
         android:background="@color/nav_bar_color"
         android:paddingTop="@dimen/status_bar_height">
 
@@ -43,6 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="@color/gray_f5"
         android:gravity="center">
 
         <!-- CameraX 专用的 PreviewView -->

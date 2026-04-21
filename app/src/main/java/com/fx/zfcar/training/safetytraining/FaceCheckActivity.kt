@@ -47,6 +47,7 @@ class FaceCheckActivity : AppCompatActivity() {
     private lateinit var cameraXManager: CameraXManager
 
     private var clickable = true
+    private var hasStartedVerification = false
 
     // 页面参数
     private lateinit var params: HashMap<String, String>
@@ -111,7 +112,7 @@ class FaceCheckActivity : AppCompatActivity() {
             runOnUiThread {
                 Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show()
                 clickable = true
-                binding.tvAction.background = ContextCompat.getDrawable(this, R.drawable.bg_btn_blue)
+                updateActionUi()
             }
         }
     }
@@ -173,6 +174,8 @@ class FaceCheckActivity : AppCompatActivity() {
      * 初始化视图
      */
     private fun initView() {
+        updateActionUi()
+
         // 返回按钮
         binding.ivBack.setOnClickListener {
             finish()
@@ -181,7 +184,7 @@ class FaceCheckActivity : AppCompatActivity() {
         // 操作按钮（开始验证/拍照）
         binding.tvAction.setOnClickListener {
             if (!ensureCameraReady()) return@setOnClickListener
-            if (!cameraXManager.isPreviewing) {
+            if (!hasStartedVerification) {
                 // 开始预览
                 startCameraPreview()
             } else {
@@ -252,18 +255,9 @@ class FaceCheckActivity : AppCompatActivity() {
     private fun startCameraPreview() {
         try {
             if (!ensureCameraReady()) return
-            // CameraX会自动处理预览启动
-            binding.tvAction.text = getString(R.string.btn_take_photo)
-            binding.tvSwitchCamera.visibility = View.VISIBLE
-
-            // 恢复按钮可点击状态
+            hasStartedVerification = true
             clickable = true
-            binding.tvAction.background = ContextCompat.getDrawable(this, R.drawable.bg_btn_blue)
-
-            // 刷新预览状态
-            if (!cameraXManager.isPreviewing) {
-                initCameraX()
-            }
+            updateActionUi()
         } catch (e: Exception) {
             showToast(getString(R.string.hint_camera_failed) + ":${e.message}")
         }
@@ -290,7 +284,7 @@ class FaceCheckActivity : AppCompatActivity() {
         if (!clickable) return
 
         clickable = false
-        binding.tvAction.background = ContextCompat.getDrawable(this, R.drawable.bg_btn_gray)
+        updateActionUi()
 
         cameraXManager.takePhoto(
             onPhotoTaken = { imageFile ->
@@ -308,7 +302,7 @@ class FaceCheckActivity : AppCompatActivity() {
             onError = { errorMsg ->
                 runOnUiThread {
                     clickable = true
-                    binding.tvAction.background = ContextCompat.getDrawable(this, R.drawable.bg_btn_blue)
+                    updateActionUi()
                     Toast.makeText(this, getString(R.string.hint_photo_failed) + ":$errorMsg", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -336,7 +330,7 @@ class FaceCheckActivity : AppCompatActivity() {
                         is ApiState.Error -> {
                             // 请求错误
                             clickable = true
-                            binding.tvAction.background = ContextCompat.getDrawable(this@FaceCheckActivity, R.drawable.bg_btn_blue)
+                            updateActionUi()
                             showToast(state.msg)
                         }
                     }
@@ -358,7 +352,7 @@ class FaceCheckActivity : AppCompatActivity() {
                         is ApiState.Error -> {
                             // 请求错误
                             clickable = true
-                            binding.tvAction.background = ContextCompat.getDrawable(this@FaceCheckActivity, R.drawable.bg_btn_blue)
+                            updateActionUi()
                             showToast(state.msg)
                             // 重新启动预览
                             startCameraPreview()
@@ -405,7 +399,7 @@ class FaceCheckActivity : AppCompatActivity() {
                     }
                     is ApiState.Error -> {
                         clickable = true
-                        binding.tvAction.background = ContextCompat.getDrawable(this@FaceCheckActivity, R.drawable.bg_btn_blue)
+                        updateActionUi()
                         showToast(state.msg)
                         // 重新启动预览
                         startCameraPreview()
@@ -444,7 +438,7 @@ class FaceCheckActivity : AppCompatActivity() {
                     }
                     is ApiState.Error -> {
                         clickable = true
-                        binding.tvAction.background = ContextCompat.getDrawable(this@FaceCheckActivity, R.drawable.bg_btn_blue)
+                        updateActionUi()
                         showToast(state.msg)
                         // 重新启动预览
                         startCameraPreview()
@@ -494,7 +488,7 @@ class FaceCheckActivity : AppCompatActivity() {
                     }
                     is ApiState.Error -> {
                         clickable = true
-                        binding.tvAction.background = ContextCompat.getDrawable(this@FaceCheckActivity, R.drawable.bg_btn_blue)
+                        updateActionUi()
                         showToast(state.msg)
                         // 重新启动预览
                         startCameraPreview()
@@ -514,7 +508,7 @@ class FaceCheckActivity : AppCompatActivity() {
                     }
                     is ApiState.Error -> {
                         clickable = true
-                        binding.tvAction.background = ContextCompat.getDrawable(this@FaceCheckActivity, R.drawable.bg_btn_blue)
+                        updateActionUi()
                         showToast(state.msg)
                         // 重新启动预览
                         startCameraPreview()
@@ -543,7 +537,7 @@ class FaceCheckActivity : AppCompatActivity() {
                     }
                     is ApiState.Error -> {
                         clickable = true
-                        binding.tvAction.background = ContextCompat.getDrawable(this@FaceCheckActivity, R.drawable.bg_btn_blue)
+                        updateActionUi()
                         showToast(state.msg)
                         // 重新启动预览
                         startCameraPreview()
@@ -589,17 +583,16 @@ class FaceCheckActivity : AppCompatActivity() {
                 )
             }
             else -> {
-                val baseMap = mutableMapOf(
-                    "subject_id" to params["subjectId"],
-                    "training_safetyplan_id" to params["safetyPlanId"],
-                    "longtime" to params["longtime"],
-                    "imgurl" to imageUrl
-                )
-                if (params["pageScoll"].isNullOrEmpty().not()) {
-                    baseMap["pageScoll"] = params["pageScoll"] ?: ""
+                val baseMap = mutableMapOf<String, String>()
+                params["subjectId"]?.takeIf { it.isNotEmpty() }?.let { baseMap["subject_id"] = it }
+                params["safetyPlanId"]?.takeIf { it.isNotEmpty() }?.let { baseMap["training_safetyplan_id"] = it }
+                params["longtime"]?.takeIf { it.isNotEmpty() }?.let { baseMap["longtime"] = it }
+                baseMap["imgurl"] = imageUrl
+                params["pageScoll"]?.takeIf { it.isNotEmpty() }?.let {
+                    baseMap["pageScoll"] = it
                 }
                 viewModel.safetyAdd(
-                    baseMap as Map<String, String>,
+                    baseMap,
                     safeAddCheckState
                 )
             }
@@ -618,6 +611,17 @@ class FaceCheckActivity : AppCompatActivity() {
      */
     private fun resetFaceCheckState() {
         _faceCheckState.value = ApiState.Idle
+    }
+
+    private fun updateActionUi() {
+        binding.tvAction.text = getString(
+            if (hasStartedVerification) R.string.btn_take_photo else R.string.btn_start_check
+        )
+        binding.tvAction.background = ContextCompat.getDrawable(
+            this,
+            if (clickable) R.drawable.bg_btn_blue else R.drawable.bg_btn_gray
+        )
+        binding.tvSwitchCamera.visibility = if (hasStartedVerification) View.VISIBLE else View.GONE
     }
 
     /**
