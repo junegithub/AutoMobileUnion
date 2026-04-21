@@ -14,7 +14,6 @@ import com.fx.zfcar.net.NoticeItem
 import com.fx.zfcar.net.NoticeParams
 import com.fx.zfcar.net.SectionItem
 import com.fx.zfcar.training.adapter.NoticeAdapter
-import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.SPUtils
@@ -40,6 +39,7 @@ class NoticeActivity : AppCompatActivity() {
 
     private var totalPages = 0
     private var isLoading = false
+    private var isLoadMore = false
 
     private val noticeViewModel by viewModels<NoticeViewModel>()
     private var noticeStateFlow = MutableStateFlow<ApiState<NoticeData>>(ApiState.Idle)
@@ -51,6 +51,7 @@ class NoticeActivity : AppCompatActivity() {
 
         initView()
         initListener()
+        renderLoading()
         loadInfo()
     }
 
@@ -72,19 +73,23 @@ class NoticeActivity : AppCompatActivity() {
                 when (uiState) {
                     is ApiState.Loading -> {
                         isLoading = true
-                        if (noticeParams.page == 1) {
+                        if (!isLoadMore) {
+                            renderLoading()
                             binding.tvLoadMore.visibility = View.GONE
-                            binding.tvEmptyTip.visibility = View.GONE
                         }
                     }
 
                     is ApiState.Success -> {
                         isLoading = false
+                        isLoadMore = false
                         uiState.data?.let {
                             totalPages = uiState.data.total
+                            if (noticeParams.page == 1) {
+                                noticeList.clear()
+                            }
                             noticeList.addAll(uiState.data.rows)
                             noticeAdapter.submitList(noticeList.toList())
-                            updateEmptyState()
+                            updatePageState()
                             binding.tvLoadMore.visibility =
                                 if (noticeList.isNotEmpty() && noticeParams.page >= totalPages) {
                                     View.VISIBLE
@@ -96,15 +101,14 @@ class NoticeActivity : AppCompatActivity() {
 
                     is ApiState.Error -> {
                         isLoading = false
-                        if (noticeParams.page > 1) {
+                        if (isLoadMore && noticeParams.page > 1) {
                             noticeParams.page--
+                            binding.tvLoadMore.text = "加载失败，上拉重试"
+                            binding.tvLoadMore.visibility = View.VISIBLE
+                        } else if (noticeList.isEmpty()) {
+                            renderEmpty("加载失败，请重试", true)
                         }
-                        if (noticeList.isEmpty()) {
-                            binding.tvEmptyTip.text = "暂无公告"
-                            binding.tvEmptyTip.visibility = View.VISIBLE
-                            binding.tvLoadMore.visibility = View.GONE
-                        }
-                        showToast(uiState.msg)
+                        isLoadMore = false
                     }
                     is ApiState.Idle -> {
                     }
@@ -142,18 +146,20 @@ class NoticeActivity : AppCompatActivity() {
         binding.titleLayout.tvTitle.setOnClickListener {
             finish()
         }
+        PressEffectUtils.setCommonPressEffect(binding.btnRetry)
+        binding.btnRetry.setOnClickListener {
+            resetListState()
+            renderLoading()
+            loadInfo()
+        }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val index = tab.position
                 noticeParams.index = index
                 noticeParams.type = index + 1
-                noticeParams.page = 1
-                totalPages = 0
-                noticeList.clear()
-                noticeAdapter.submitList(emptyList())
-                binding.tvLoadMore.visibility = View.GONE
-                binding.tvEmptyTip.visibility = View.GONE
+                resetListState()
+                renderLoading()
                 loadInfo() // 切换tab重新加载数据
             }
 
@@ -175,11 +181,14 @@ class NoticeActivity : AppCompatActivity() {
         if (isLoading) return
         if (noticeParams.page < totalPages) {
             noticeParams.page++
+            isLoadMore = true
+            binding.tvLoadMore.text = "正在加载"
+            binding.tvLoadMore.visibility = View.VISIBLE
             loadInfo()
         } else {
             if (noticeList.isNotEmpty()) {
+                binding.tvLoadMore.text = "没有更多消息了"
                 binding.tvLoadMore.visibility = View.VISIBLE
-                showToast("没有更多消息了")
             }
         }
     }
@@ -208,7 +217,42 @@ class NoticeActivity : AppCompatActivity() {
         noticeViewModel.warningNotice(params.page, params.index, params.type, noticeStateFlow)
     }
 
-    private fun updateEmptyState() {
-        binding.tvEmptyTip.visibility = if (noticeList.isEmpty()) View.VISIBLE else View.GONE
+    private fun resetListState() {
+        noticeParams.page = 1
+        totalPages = 0
+        isLoading = false
+        isLoadMore = false
+        noticeList.clear()
+        noticeAdapter.submitList(emptyList())
+        binding.tvLoadMore.text = "没有更多消息了"
+        binding.tvLoadMore.visibility = View.GONE
+    }
+
+    private fun updatePageState() {
+        if (noticeList.isEmpty()) {
+            renderEmpty("暂无公告", false)
+        } else {
+            renderContent()
+        }
+    }
+
+    private fun renderLoading() {
+        binding.pbLoading.visibility = View.VISIBLE
+        binding.rvNoticeList.visibility = View.GONE
+        binding.llEmptyView.visibility = View.GONE
+    }
+
+    private fun renderContent() {
+        binding.pbLoading.visibility = View.GONE
+        binding.rvNoticeList.visibility = View.VISIBLE
+        binding.llEmptyView.visibility = View.GONE
+    }
+
+    private fun renderEmpty(message: String, showRetry: Boolean) {
+        binding.pbLoading.visibility = View.GONE
+        binding.rvNoticeList.visibility = View.GONE
+        binding.llEmptyView.visibility = View.VISIBLE
+        binding.tvEmptyTip.text = message
+        binding.btnRetry.visibility = if (showRetry) View.VISIBLE else View.GONE
     }
 }

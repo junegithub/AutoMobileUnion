@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.view.View
 import com.fx.zfcar.car.adapter.ExpireCarAdapter
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
 import com.fx.zfcar.databinding.ActivityExpireCarBinding
@@ -45,15 +46,25 @@ class ExpireCarActivity : AppCompatActivity() {
 
         // 1. 初始化列表
         initRecyclerView()
+        renderLoading()
 
         // 2. 初始化Tab
         initTabLayout()
+        binding.btnRetry.setOnClickListener {
+            pageNum = 1
+            currentTotal = 0
+            reachedEnd = false
+            loadFromMore = false
+            loadCarList(binding.customTabLayout.selectedTabPosition == 1)
+        }
 
         lifecycleScope.launch {
             statusListStateFlow.collect { state ->
                 when (state) {
                     is ApiState.Loading -> {
-                        // 显示进度框
+                        if (!loadFromMore && statusList.isEmpty()) {
+                            renderLoading()
+                        }
                     }
                     is ApiState.Success -> {
                         val data = state.data ?: return@collect
@@ -64,10 +75,17 @@ class ExpireCarActivity : AppCompatActivity() {
                         statusList.addAll(data.list)
                         reachedEnd = statusList.size >= currentTotal || data.list.size < pageSize
                         adapter.submitList(statusList.toList())
+                        if (statusList.isEmpty()) {
+                            renderEmpty("暂无车辆", false)
+                        } else {
+                            renderContent()
+                        }
                         loadFromMore = false
                     }
                     is ApiState.Error -> {
-
+                        if (statusList.isEmpty()) {
+                            renderEmpty("加载失败，请重试", true)
+                        }
                         showToast("获取数据失败：${state.msg}")
                         // 重置状态
                         statusListStateFlow.value = ApiState.Idle
@@ -85,6 +103,7 @@ class ExpireCarActivity : AppCompatActivity() {
 
         binding.titleLayout.tvTitle.text = "到期"
         PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        PressEffectUtils.setCommonPressEffect(binding.btnRetry)
         binding.titleLayout.tvTitle.setOnClickListener { finish() }
     }
 
@@ -141,5 +160,25 @@ class ExpireCarActivity : AppCompatActivity() {
 
     private fun loadCarList(expired: Boolean = false) {
         carInfoViewModel.getOutdate(expired, pageNum, pageSize, statusListStateFlow)
+    }
+
+    private fun renderLoading() {
+        binding.pbLoading.visibility = View.VISIBLE
+        binding.rvStatusList.visibility = View.GONE
+        binding.llEmptyView.visibility = View.GONE
+    }
+
+    private fun renderContent() {
+        binding.pbLoading.visibility = View.GONE
+        binding.rvStatusList.visibility = View.VISIBLE
+        binding.llEmptyView.visibility = View.GONE
+    }
+
+    private fun renderEmpty(message: String, showRetry: Boolean) {
+        binding.pbLoading.visibility = View.GONE
+        binding.rvStatusList.visibility = View.GONE
+        binding.llEmptyView.visibility = View.VISIBLE
+        binding.tvEmptyTip.text = message
+        binding.btnRetry.visibility = if (showRetry) View.VISIBLE else View.GONE
     }
 }

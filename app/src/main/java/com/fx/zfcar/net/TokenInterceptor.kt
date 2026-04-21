@@ -9,12 +9,26 @@ import okhttp3.Response
  */
 class TokenInterceptor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        // 构建新的请求，添加token头
-        val newRequest = chain.request().newBuilder()
-            .addHeader("token", SPUtils.getTrainingToken()) // 与前端请求头key一致
-            .addHeader("Authorization", SPUtils.getToken())
-            .addHeader("Content-Type", "application/json;charset=UTF-8") // 默认JSON格式
-            .build()
+        val request = chain.request()
+        val builder = request.newBuilder()
+            .header("Content-Type", "application/json;charset=UTF-8")
+
+        val isTrainingRequest = request.url.host == "safe.ezbeidou.com"
+        if (isTrainingRequest) {
+            val trainingToken = SPUtils.getTrainingToken()
+            if (trainingToken.isNotBlank()) {
+                builder.header("token", trainingToken)
+            }
+            builder.removeHeader("Authorization")
+        } else {
+            val token = SPUtils.getToken()
+            if (token.isNotBlank()) {
+                builder.header("Authorization", token)
+            }
+            builder.removeHeader("token")
+        }
+
+        val newRequest = builder.build()
         return chain.proceed(newRequest)
     }
 }

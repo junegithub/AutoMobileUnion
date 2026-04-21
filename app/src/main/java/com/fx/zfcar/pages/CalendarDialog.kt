@@ -8,6 +8,7 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.GridView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.PressEffectUtils
@@ -16,6 +17,7 @@ import com.fx.zfcar.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import java.util.TimeZone
 
 class CalendarDialog : BottomSheetDialogFragment() {
@@ -74,6 +76,10 @@ class CalendarDialog : BottomSheetDialogFragment() {
             repeat(days) { day ->
                 val cal = Calendar.getInstance().apply {
                     set(currentYear, currentMonth, day + 1)
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
                 }
                 val isStart = startDate?.let { DateUtil.isSameDay(it, cal) } ?: false
                 val isEnd = endDate?.let { DateUtil.isSameDay(it, cal) } ?: false
@@ -167,7 +173,13 @@ class CalendarDialog : BottomSheetDialogFragment() {
 
         // 底部蓝色长条确认按钮
         btnConfirm.setOnClickListener {
-            listener?.onSelected(startDate?.time.toString(), endDate?.time.toString())
+            val start = startDate
+            if (start == null) {
+                Toast.makeText(requireContext(), "请选择开始日期", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val end = endDate ?: start
+            listener?.onSelected(start.timeInMillis.toString(), end.timeInMillis.toString())
             dismiss()
         }
 
@@ -257,22 +269,40 @@ class CalendarDialog : BottomSheetDialogFragment() {
     }
 
     fun convertWithSimpleDateFormat(dateStr: String): Calendar? {
-        val sdf = SimpleDateFormat("yyyy-MM-dd")
-        sdf.timeZone = TimeZone.getDefault()
+        val cleanDateStr = dateStr.trim()
+        if (cleanDateStr.isBlank() || cleanDateStr == "null") return null
 
-        return try {
-            val date = sdf.parse(dateStr) ?: return null
-            val calendar = Calendar.getInstance()
-            calendar.time = date
-            // 清空时分秒
-            calendar.set(Calendar.HOUR_OF_DAY, 0)
-            calendar.set(Calendar.MINUTE, 0)
-            calendar.set(Calendar.SECOND, 0)
-            calendar.set(Calendar.MILLISECOND, 0)
-            calendar
-        } catch (e: ParseException) {
-            println("解析失败：${e.message}")
-            null
+        cleanDateStr.toLongOrNull()?.let { timestamp ->
+            return normalizeCalendar(Calendar.getInstance().apply {
+                timeInMillis = timestamp
+            })
+        }
+
+        val formats = listOf(
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
+            SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+        )
+
+        for (sdf in formats) {
+            sdf.timeZone = TimeZone.getDefault()
+            try {
+                val date = sdf.parse(cleanDateStr) ?: continue
+                return normalizeCalendar(Calendar.getInstance().apply {
+                    time = date
+                })
+            } catch (_: ParseException) {
+            }
+        }
+        println("解析失败：$cleanDateStr")
+        return null
+    }
+
+    private fun normalizeCalendar(calendar: Calendar): Calendar {
+        return calendar.apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
     }
 

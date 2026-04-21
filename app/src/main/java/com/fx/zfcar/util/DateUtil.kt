@@ -57,9 +57,14 @@ object DateUtil {
     // 简化格式：yyyy-MM-dd
     private const val FORMAT_DATE_ONLY = "yyyy-MM-dd"
 
+    private fun normalizeTimestamp(timestamp: Long): Long {
+        // 后端时间戳存在秒/毫秒两种口径，这里统一兼容。
+        return if (timestamp in 1..99_999_999_999L) timestamp * 1000 else timestamp
+    }
+
     /**
-     * 将秒级时间戳转为指定格式的字符串
-     * @param timestamp 毫秒时间戳（Long）
+     * 将秒级或毫秒级时间戳转为指定格式的字符串
+     * @param timestamp 时间戳（Long）
      * @param format 时间格式，默认yyyy-MM-dd HH:mm:ss
      * @return 格式化后的时间字符串，异常时返回"--"
      */
@@ -70,7 +75,7 @@ object DateUtil {
             return "--"
         }
         return try {
-            SimpleDateFormat(format, Locale.CHINA).format(Date(timestamp))
+            SimpleDateFormat(format, Locale.CHINA).format(Date(normalizeTimestamp(timestamp)))
         } catch (e: Exception) {
             // 捕获格式化异常，返回占位符
             "--"

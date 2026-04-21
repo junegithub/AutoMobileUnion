@@ -25,8 +25,7 @@ object MarkerViewUtil {
         val ivCar = view.findViewById<ImageView>(R.id.iv_car_icon)
         val tvNum = view.findViewById<TextView>(R.id.tv_car_num)
 
-        ivCar.setImageResource(VehicleImageProvider.getVehicleImageResId(dlcartype, status))
-        ivCar.rotation = 90f - rotation
+        ivCar.setImageResource(VehicleImageProvider.getMapMarkerResId(status))
         tvNum.text = carnum
 
         // 测量 + 绘制View到Bitmap

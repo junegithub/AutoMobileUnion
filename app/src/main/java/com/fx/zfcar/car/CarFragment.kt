@@ -238,43 +238,46 @@ class CarFragment : Fragment(), AMapLocationListener {
 
         // 未登录按钮跳转登录页
         binding.tvUnlogin.setOnClickListener {
-            startActivity(Intent(requireContext(), LoginActivity::class.java))
+            if (MyApp.isLogin == true) {
+                return@setOnClickListener
+            }
+            DialogUtils.showLoginPromptDialog(requireContext())
         }
         binding.alarm.setOnClickListener {
-            startActivity(Intent(requireContext(), DeviceAlarmActivity::class.java))
+            requireLogin {
+                startActivity(Intent(requireContext(), DeviceAlarmActivity::class.java))
+            }
         }
         binding.status.setOnClickListener {
-            startActivity(Intent(requireContext(), DeviceStatusActivity::class.java))
+            requireLogin {
+                startActivity(Intent(requireContext(), DeviceStatusActivity::class.java))
+            }
         }
         binding.analysis.setOnClickListener {
-            startActivity(Intent(requireContext(), OperationAnalysisActivity::class.java))
+            requireLogin {
+                startActivity(Intent(requireContext(), OperationAnalysisActivity::class.java))
+            }
         }
         binding.report.setOnClickListener {
-            if (MyApp.Companion.isLogin == true) {
+            requireLogin {
                 startActivity(Intent(requireContext(), ReportActivity::class.java))
-            } else {
-                DialogUtils.showLoginPromptDialog(requireContext())
             }
         }
         binding.btnAllCars.setOnClickListener {
-            if (MyApp.isLogin == true) {
+            requireLogin {
                 val intent = Intent(requireContext(), TreeListActivity::class.java)
                 intent.putExtra(TreeListActivity.KEY_CAR_NUM, totalCars)
                 intent.putExtra(TreeListActivity.KEY_SEARCH_TYPE, TreeListActivity.SEARCH_TYPE_MAP)
                 startActivity(intent)
-            } else {
-                DialogUtils.showLoginPromptDialog(requireContext())
             }
         }
         binding.tvSearch.setOnClickListener {
-            if (MyApp.isLogin == true) {
+            requireLogin {
                 val intent = Intent(requireContext(), TreeListActivity::class.java)
                 intent.putExtra(TreeListActivity.KEY_CAR_NUM, totalCars)
                 intent.putExtra(TreeListActivity.KEY_CAR_SEARCH, true)
                 intent.putExtra(TreeListActivity.KEY_SEARCH_TYPE, TreeListActivity.SEARCH_TYPE_MAP)
                 startActivity(intent)
-            } else {
-                DialogUtils.showLoginPromptDialog(requireContext())
             }
         }
 
@@ -390,10 +393,11 @@ class CarFragment : Fragment(), AMapLocationListener {
             carsStateFlow.collect { uiState ->
                 when (uiState) {
                     is ApiState.Loading -> {
-                        // 加载中：显示进度条，隐藏其他视图
+                        showMapLoading("车辆加载中...")
                     }
 
                     is ApiState.Success -> {
+                        hideMapLoading()
                         // 更新统计数据
                         val statistics = uiState.data ?: return@collect
                         totalCars = statistics.total
@@ -410,7 +414,8 @@ class CarFragment : Fragment(), AMapLocationListener {
                     }
 
                     is ApiState.Error -> {
-                        // 失败：显示错误信息，隐藏其他视图
+                        hideMapLoading()
+                        context?.showToast(uiState.msg)
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -422,12 +427,14 @@ class CarFragment : Fragment(), AMapLocationListener {
             addressStateFlow.collect {uiState ->
                 when (uiState) {
                     is ApiState.Loading -> {
+                        showMapLoading("车辆详情加载中...")
                     }
                     is ApiState.Success -> {
                         val addressData = uiState.data ?: return@collect
                         // 忽略过期请求的响应（快速切换车辆时可能乱序到达）
-                        val respondedCarId = addressData.carinfo?.id ?: ""
+                        val respondedCarId = addressData.carinfo.id
                         if (respondedCarId.isNotBlank() && respondedCarId != lastRequestedCarId) return@collect
+                        hideMapLoading()
                         if (requestFromOtherPage) {
                             requestFromOtherPage = false
                             val carInfo = addressData.carinfo
@@ -447,7 +454,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                                 carInfo.id,
                                 carInfo.carnum,
                                 carInfo.longitude,
-                                carInfo.status.toInt(),
+                                carInfo.status.toIntOrNull() ?: 4,
                                 carInfo.direction.toString()
                             )
 
@@ -456,6 +463,8 @@ class CarFragment : Fragment(), AMapLocationListener {
                         refreshRealAddressCarDetails(addressData)
                     }
                     is ApiState.Error -> {
+                        hideMapLoading()
+                        context?.showToast(uiState.msg)
                     }
                     is ApiState.Idle -> {
                     }
@@ -467,14 +476,16 @@ class CarFragment : Fragment(), AMapLocationListener {
             carInfoStateFlow.collect {
                 when (it) {
                     is ApiState.Loading -> {
-                        // 加载中：显示进度条，隐藏其他视图
+                        showMapLoading("车辆信息加载中...")
                     }
                     is ApiState.Success -> {
+                        hideMapLoading()
                         // 成功：隐藏进度条，显示数据
                         refreshCarDetails(it.data)
                     }
                     is ApiState.Error -> {
-                        // 失败：显示错误信息，隐藏其他视图
+                        hideMapLoading()
+                        context?.showToast(it.msg)
                     }
                     is ApiState.Idle -> {
                         // 初始状态，无需处理
@@ -669,6 +680,14 @@ class CarFragment : Fragment(), AMapLocationListener {
         binding.btnAllCars.text = "全部${totalCars}辆车"
     }
 
+    private inline fun requireLogin(action: () -> Unit) {
+        if (MyApp.isLogin == true) {
+            action()
+        } else {
+            DialogUtils.showLoginPromptDialog(requireContext())
+        }
+    }
+
     private fun updateLabelHistoryWithFallback() {
         if (MyApp.isLogin != true) {
             binding.plateRecycler.visibility = View.GONE
@@ -729,7 +748,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         if (!skipIcon) {
             markerOptions.icon(
                 MarkerViewUtil.createCarMarker(requireContext(),
-                car.dlcartype, car.status, car.rotation.toFloat(), car.carnum))
+                car.dlcartype, car.status, car.rotation.toFloatOrNull() ?: car.direction.toFloatOrNull() ?: 0f, car.carnum))
         }
         val maker = aMap.addMarker(markerOptions) // 添加到地图
         maker.`object` = car
@@ -826,6 +845,15 @@ class CarFragment : Fragment(), AMapLocationListener {
             if (it.isShowing) it.dismiss()
             loadingDialog = null
         }
+    }
+
+    private fun showMapLoading(tip: String) {
+        binding.tvMapLoading.text = tip
+        binding.mapLoadingContainer.visibility = View.VISIBLE
+    }
+
+    private fun hideMapLoading() {
+        binding.mapLoadingContainer.visibility = View.GONE
     }
 
     /**

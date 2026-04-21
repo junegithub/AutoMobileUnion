@@ -71,6 +71,7 @@ class DeviceStatusListActivity : AppCompatActivity() {
 
     private fun initView() {
         binding.titleLayout.tvTitle.text = intent.getStringExtra(KEY_CAR_STATUS_TITLE)
+        renderLoading()
         // 初始化RecyclerView
         statusAdapter = StatusAdapter()
         statusAdapter.submitList(statusList)
@@ -94,12 +95,20 @@ class DeviceStatusListActivity : AppCompatActivity() {
             adapter = statusAdapter
         }
         initScrollPagination()
+        binding.btnRetry.setOnClickListener {
+            pageNum = 1
+            loadFromMore = false
+            reachedEnd = false
+            loadData()
+        }
 
         lifecycleScope.launch {
             statusListStateFlow.collect { state ->
                 when (state) {
                     is ApiState.Loading -> {
-                        // 显示进度框
+                        if (!loadFromMore && statusList.isEmpty()) {
+                            renderLoading()
+                        }
                     }
                     is ApiState.Success -> {
                         val data = state.data.orEmpty()
@@ -109,12 +118,17 @@ class DeviceStatusListActivity : AppCompatActivity() {
                         statusList.addAll(data)
                         reachedEnd = data.size < pageSize
                         statusAdapter.submitList(statusList.toList())
-                        binding.llEmptyView.visibility = if (statusList.isEmpty()) View.VISIBLE else View.GONE
-                        binding.rvStatusList.visibility = if (statusList.isEmpty()) View.GONE else View.VISIBLE
+                        if (statusList.isEmpty()) {
+                            renderEmpty("暂无车辆", false)
+                        } else {
+                            renderContent()
+                        }
                         loadFromMore = false
                     }
                     is ApiState.Error -> {
-                        binding.llEmptyView.visibility = if (statusList.isEmpty()) View.VISIBLE else View.GONE
+                        if (statusList.isEmpty()) {
+                            renderEmpty("加载失败，请重试", true)
+                        }
                         showToast("获取数据失败：${state.msg}")
                         // 重置状态
                         statusListStateFlow.value = ApiState.Idle
@@ -151,8 +165,29 @@ class DeviceStatusListActivity : AppCompatActivity() {
 
     private fun initListener() {
         PressEffectUtils.setCommonPressEffect(binding.titleLayout.tvTitle)
+        PressEffectUtils.setCommonPressEffect(binding.btnRetry)
         // 返回按钮点击
         binding.titleLayout.tvTitle.setOnClickListener { finish() }
+    }
+
+    private fun renderLoading() {
+        binding.pbLoading.visibility = View.VISIBLE
+        binding.rvStatusList.visibility = View.GONE
+        binding.llEmptyView.visibility = View.GONE
+    }
+
+    private fun renderContent() {
+        binding.pbLoading.visibility = View.GONE
+        binding.rvStatusList.visibility = View.VISIBLE
+        binding.llEmptyView.visibility = View.GONE
+    }
+
+    private fun renderEmpty(message: String, showRetry: Boolean) {
+        binding.pbLoading.visibility = View.GONE
+        binding.rvStatusList.visibility = View.GONE
+        binding.llEmptyView.visibility = View.VISIBLE
+        binding.tvEmptyTip.text = message
+        binding.btnRetry.visibility = if (showRetry) View.VISIBLE else View.GONE
     }
 
     override fun onResume() {

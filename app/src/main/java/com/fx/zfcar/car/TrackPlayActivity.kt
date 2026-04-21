@@ -10,8 +10,10 @@ import android.util.Log
 import android.graphics.Color
 import android.view.View
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.amap.api.maps.AMap
 import com.amap.api.maps.CameraUpdateFactory
@@ -443,43 +445,53 @@ class TrackPlayActivity : AppCompatActivity() {
     private fun updateTrackInfoUI(trackData: TrackData) {
         switchBottomSheet()
 
-        binding.tvCarNum.text = trackData.carinfo.carnum
+        setTextOrHide(binding.tvCarNum, null, trackData.carinfo.carnum)
+        setTextOrHide(binding.tvStartTime, "开始时间", DateUtil.timestamp2String(startTime))
+        setTextOrHide(binding.tvEndTime, "结束时间", DateUtil.timestamp2String(endTime))
 
-        binding.tvStartTime.text = "开始时间:${DateUtil.timestamp2String(startTime)}"
-        binding.tvEndTime.text = "结束时间:${DateUtil.timestamp2String(endTime)}"
-
-        // 3. 位置相关
-
-
-        // 4. 时长/速度相关
-        binding.tvDrivingDuration.text = "行车时长:${trackData.gotime}"
-        binding.tvParkingDuration.text = "停车时长:${trackData.stoptime}"
-        binding.tvMaxSpeed.text = "最高时速:${trackData.maxspeed}"
-        binding.tvAvgSpeed.text = "平均时速:${trackData.avgspeed}"
-
-        // 5. 里程
-        binding.tvTotalMileage.text = "行驶总里程:${trackData.mileage}"
+        setTextOrHide(binding.tvDrivingDuration, "行车时长", trackData.gotime)
+        setTextOrHide(binding.tvParkingDuration, "停车时长", trackData.stoptime)
+        setTextOrHide(binding.tvMaxSpeed, "最高时速", trackData.maxspeed)
+        setTextOrHide(binding.tvAvgSpeed, "平均时速", trackData.avgspeed)
+        setTextOrHide(binding.tvTotalMileage, "行驶总里程", trackData.mileage)
 
         // 初始化当前时间和速度显示
         if (trackData.postlist.isNotEmpty()) {
             val firstPoint = trackData.postlist.firstOrNull()
             firstPoint?.let {
-                binding.tvStartLocation.text = "起始位置:${firstPoint.address}"
+                setTextOrHide(binding.tvStartLocation, "起始位置", firstPoint.address)
                 updatePositionInfo(firstPoint)
                 addOrUpdatePlaybackMarker(firstPoint)
             }
             val lastPoint = trackData.postlist.lastOrNull()
             lastPoint?.let {
-                binding.tvEndLocation.text = "结束位置:${lastPoint.address}"
+                setTextOrHide(binding.tvEndLocation, "结束位置", lastPoint.address)
             }
+        } else {
+            clearPositionInfo()
+            binding.tvStartLocation.visibility = View.GONE
+            binding.tvEndLocation.visibility = View.GONE
         }
+
+        binding.switchShowParking.isVisible = trackData.stop.isNotEmpty()
+        binding.btnShare.isVisible = trackData.postlist.isNotEmpty()
+
+        val hasTrackPoints = trackData.postlist.isNotEmpty()
+        binding.ivPlayPause.isVisible = hasTrackPoints
+        binding.progressBar.isVisible = hasTrackPoints
+        binding.tvSpeedSlow.isVisible = hasTrackPoints
+        binding.tvSpeedNormal.isVisible = hasTrackPoints
+        binding.tvSpeedFast.isVisible = hasTrackPoints
+
+        syncInfoRowsVisibility()
     }
 
     private fun updatePositionInfo(trackPosition: TrackPosition) {
-        binding.tvLocationTime.text = "定位时间:${trackPosition.gpstime}"
-        binding.tvCommunicationTime.text = "通讯时间:${trackPosition.time}"
-        binding.tvSpeed.text = "速度:${trackPosition.speed}"
-        binding.tvGpsStatus.text = "GPS状态:${trackPosition.statusFlagString}"
+        setTextOrHide(binding.tvLocationTime, "定位时间", trackPosition.gpstime)
+        setTextOrHide(binding.tvCommunicationTime, "通讯时间", trackPosition.time)
+        setTextOrHide(binding.tvSpeed, "速度", trackPosition.speed)
+        setTextOrHide(binding.tvGpsStatus, "GPS状态", trackPosition.statusFlagString)
+        syncInfoRowsVisibility()
     }
 
     /**
@@ -802,6 +814,36 @@ class TrackPlayActivity : AppCompatActivity() {
             0
         }
         return maxOf(contentHeight, timeChooseHeight)
+    }
+
+    private fun clearPositionInfo() {
+        binding.tvLocationTime.visibility = View.GONE
+        binding.tvCommunicationTime.visibility = View.GONE
+        binding.tvSpeed.visibility = View.GONE
+        binding.tvGpsStatus.visibility = View.GONE
+    }
+
+    private fun setTextOrHide(view: TextView, label: String?, value: String?) {
+        val text = value?.trim().orEmpty()
+        if (text.isEmpty()) {
+            view.text = ""
+            view.visibility = View.GONE
+            return
+        }
+        view.text = if (label.isNullOrEmpty()) text else "$label:$text"
+        view.visibility = View.VISIBLE
+    }
+
+    private fun syncInfoRowsVisibility() {
+        syncParentVisibility(binding.tvSpeed, binding.tvGpsStatus)
+        syncParentVisibility(binding.tvLocationTime, binding.tvCommunicationTime)
+        syncParentVisibility(binding.tvDrivingDuration, binding.tvMaxSpeed)
+        syncParentVisibility(binding.tvParkingDuration, binding.tvAvgSpeed)
+    }
+
+    private fun syncParentVisibility(vararg views: TextView) {
+        val parent = views.firstOrNull()?.parent as? View ?: return
+        parent.visibility = if (views.any { it.visibility == View.VISIBLE }) View.VISIBLE else View.GONE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -123,6 +123,35 @@
         android:src="@drawable/ic_locate_all_cars"
         android:background="@drawable/btn_bg_round_rectangle"/>
 
+    <LinearLayout
+        android:id="@+id/map_loading_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_btn_outline"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/dp_16"
+        android:paddingVertical="@dimen/dp_10"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/ll_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mapView">
+
+        <ProgressBar
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20" />
+
+        <TextView
+            android:id="@+id/tv_map_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_8"
+            android:text="@string/text_loading"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14" />
+    </LinearLayout>
+
     <include
         layout="@layout/activity_car_detail"
         android:id="@+id/root_car_detail"/>

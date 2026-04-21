@@ -26,6 +26,15 @@ object VehicleImageProvider {
         3 to "baojing"      // 红色 - 报警
     )
 
+    // 地图主页面 marker 状态图标，需与 ytcar-app common/controller.js 的 carIcon() 保持一致
+    private val mapMarkerResMap = mapOf(
+        1 to R.drawable.treecargreen,
+        2 to R.drawable.treecarblue,
+        0 to R.drawable.treecaryellow,
+        4 to R.drawable.treecargray,
+        3 to R.drawable.treecarred
+    )
+
     /**
      * 根据车辆ID和状态获取图片资源ID
      *
@@ -41,19 +50,32 @@ object VehicleImageProvider {
     }
 
     /**
+     * 地图 marker 图标与 ytcar-app 当前实现对齐，只按状态取统一圆点图标。
+     */
+    fun getMapMarkerResId(status: Int): Int {
+        return mapMarkerResMap[status] ?: R.drawable.treecargray
+    }
+
+    /**
      * 根据车辆ID获取车辆类型
      *
      * @param vehicleId 车辆ID
      * @return 车辆类型
      */
     private fun getVehicleType(vehicleId: String): String {
+        val normalizedVehicleId = vehicleId.trim()
         return when {
-            vehicleId.startsWith("K") -> "keche"              // K系列均为客车
-            vehicleId == "14" -> "jiaoche"                    // 轿车
-            Regex("^(10|11|12|13|15|16)$").matches(vehicleId) -> "keche"  // 客车
-            Regex("2[0-3]").matches(vehicleId) -> "huoche"        // 货车 20-23
-            Regex("3[0-9]|40").matches(vehicleId) -> "teshuche"   // 特殊车辆 30-40
-            Regex("^(5\\d|60|61|62|63|64)$").matches(vehicleId) -> "tuolaji" // 拖拉机
+            normalizedVehicleId.contains("客") -> "keche"
+            normalizedVehicleId.contains("轿") || normalizedVehicleId.contains("小型") -> "jiaoche"
+            normalizedVehicleId.contains("货") -> "huoche"
+            normalizedVehicleId.contains("特") -> "teshuche"
+            normalizedVehicleId.contains("拖拉") -> "tuolaji"
+            normalizedVehicleId.startsWith("K") -> "keche"              // K系列均为客车
+            normalizedVehicleId == "14" -> "jiaoche"                    // 轿车
+            Regex("^(10|11|12|13|15|16)$").matches(normalizedVehicleId) -> "keche"  // 客车
+            Regex("2[0-3]").matches(normalizedVehicleId) -> "huoche"        // 货车 20-23
+            Regex("3[0-9]|40").matches(normalizedVehicleId) -> "teshuche"   // 特殊车辆 30-40
+            Regex("^(5\\d|60|61|62|63|64)$").matches(normalizedVehicleId) -> "tuolaji" // 拖拉机
             else -> "qitache"                                    // 其他车辆
         }
     }

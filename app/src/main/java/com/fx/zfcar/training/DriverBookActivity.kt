@@ -2,6 +2,7 @@ package com.fx.zfcar.training
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -58,6 +59,12 @@ class DriverBookActivity : AppCompatActivity() {
 
         // 检查签署状态
         checkDriverBookSignStatus()
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        })
     }
 
     // 初始化视图
@@ -120,8 +127,8 @@ class DriverBookActivity : AppCompatActivity() {
                             signTime = DateUtil.timestamp2String(state.data.signtime)
 
                             // 检查是否需要重新签署（涡阳县341621无需每年签）
-                            val signYear = signTime.substring(0, 4).toInt()
-                            if (hasSign && signYear < currentYear && state.data.areacode != "341621") {
+                            val signYear = signTime.take(4).toIntOrNull()
+                            if (hasSign && signYear != null && signYear < currentYear && state.data.areacode != "341621") {
                                 hasSign = false
                                 signImageUrl = ""
                             }
@@ -130,6 +137,11 @@ class DriverBookActivity : AppCompatActivity() {
                             showBookContent()
 
                             // 更新签署UI状态
+                            updateSignUI()
+                        } ?: run {
+                            hasSign = false
+                            signImageUrl = ""
+                            showBookContent()
                             updateSignUI()
                         }
                     }
@@ -167,7 +179,7 @@ class DriverBookActivity : AppCompatActivity() {
 
         // 监听责任书提交
         lifecycleScope.launch {
-            submitDriverBookFlow.collect { state ->
+            submitDriverBookFlow.drop(1).collect { state ->
                 when (state) {
                     is ApiState.Loading -> {
                         showToast("正在提交签署信息...")
@@ -198,7 +210,7 @@ class DriverBookActivity : AppCompatActivity() {
 
         if (categoryId != "3031") {
             // 非3031 - 安全生产责任状/年度目标责任书
-            if (areaCode.substring(0, 4) == "3412" || categoryId == "13548") {
+            if (areaCode.take(4) == "3412" || categoryId == "13548") {
                 // 安徽阜阳/利辛华鑫 - 安全生产责任状
                 contentBuilder.apply {
                     append("<h1 style='text-align:center;font-weight:bold;font-size:18sp;margin-bottom:16dp;'>安全生产责任状</h1>")
@@ -222,7 +234,7 @@ class DriverBookActivity : AppCompatActivity() {
             } else {
                 // 年度安全生产目标责任书
                 // 确定省份名称
-                val province = when (areaCode.substring(0, 2)) {
+                val province = when (areaCode.take(2)) {
                     "36" -> "江西"
                     "34" -> "安徽"
                     "53" -> "云南"

@@ -56,6 +56,9 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     private var mType = 0
     private var mTitle = ""
+    private var driverBookPromptShown = false
+    private var trainingHomeInitialized = false
+    private var lastTrainingToken = ""
 
     private val trainingViewModel by viewModels<SafetyTrainingViewModel>()
     private val otherUserInfoState = MutableStateFlow<ApiState<TrainingOtherInfo>>(ApiState.Idle)
@@ -82,7 +85,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
         binding.tvMonth.text = "${DateUtil.getCurrentMonth()}月"
 
         // 检查登录状态
-        checkLoginStatus()
+        checkLoginStatus(forceRefresh = true)
 
         return binding.root
     }
@@ -303,17 +306,17 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
                             // 检查签署年份
                             if (data.signtype == "1") {
-                                val signTime = DateUtil.timestamp2Date(data.signtime).substring(0, 4)
-                                if (signTime.toInt() < DateUtil.getCurrentYear()) {
+                                val signYear = DateUtil.timestamp2Date(data.signtime).take(4).toIntOrNull()
+                                if (signYear != null && signYear < DateUtil.getCurrentYear()) {
                                     // 需要重新签署
-                                    startActivity(Intent(requireContext(), DriverBookActivity::class.java))
+                                    openDriverBookOnce()
                                     return@let
                                 } else {
                                     signOne = true
                                 }
                             } else {
                                 // 未签署
-                                startActivity(Intent(requireContext(), DriverBookActivity::class.java))
+                                openDriverBookOnce()
                                 return@let
                             }
                         }
@@ -409,13 +412,16 @@ class TrainingFragment : Fragment(), View.OnClickListener {
     }
 
     // 检查登录状态
-    private fun checkLoginStatus() {
+    private fun checkLoginStatus(forceRefresh: Boolean = false) {
         val trainLogin = SPUtils.get("trainLogin")
         if ("yes" == trainLogin) {
             // 退出登录状态
             MyApp.isTrainingLogin = false
             MyApp.trainingUserInfo = null
             loginStatus = false
+            trainingHomeInitialized = false
+            lastTrainingToken = ""
+            driverBookPromptShown = false
             SPUtils.save("trainLogin", "")
         } else {
             // 检查 Token
@@ -430,13 +436,22 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                         }.getOrNull()?.let { MyApp.trainingUserInfo = it }
                     }
                 }
-                // 已登录，检查签署状态并获取通知信息
-                isSign()
-                getNoticeInfo()
+                val tokenChanged = lastTrainingToken != trainToken
+                if (forceRefresh || !trainingHomeInitialized || tokenChanged) {
+                    driverBookPromptShown = false
+                    // 已登录，检查签署状态并获取通知信息
+                    isSign()
+                    getNoticeInfo()
+                    trainingHomeInitialized = true
+                    lastTrainingToken = trainToken
+                }
             } else {
                 MyApp.isTrainingLogin = false
                 MyApp.trainingUserInfo = null
                 loginStatus = false
+                trainingHomeInitialized = false
+                lastTrainingToken = ""
+                driverBookPromptShown = false
             }
         }
     }
@@ -516,6 +531,13 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     // 驾驶员责任书
     private fun driverBook() {
+        driverBookPromptShown = true
+        startActivity(Intent(requireContext(), DriverBookActivity::class.java))
+    }
+
+    private fun openDriverBookOnce() {
+        if (driverBookPromptShown) return
+        driverBookPromptShown = true
         startActivity(Intent(requireContext(), DriverBookActivity::class.java))
     }
 
