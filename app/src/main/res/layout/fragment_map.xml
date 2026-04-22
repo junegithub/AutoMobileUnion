@@ -125,13 +125,13 @@
 
     <LinearLayout
         android:id="@+id/map_loading_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_btn_outline"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_96"
+        android:background="@drawable/bg_map_loading"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/dp_16"
-        android:paddingVertical="@dimen/dp_10"
+        android:orientation="vertical"
+        android:elevation="4dp"
+        android:padding="@dimen/dp_12"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/ll_search"
         app:layout_constraintEnd_toEndOf="parent"
@@ -139,17 +139,21 @@
         app:layout_constraintTop_toTopOf="@id/mapView">
 
         <ProgressBar
-            android:layout_width="@dimen/dp_20"
-            android:layout_height="@dimen/dp_20" />
+            android:layout_width="@dimen/dp_32"
+            android:layout_height="@dimen/dp_32"
+            android:indeterminateTint="@color/blue_3f83f7" />
 
         <TextView
             android:id="@+id/tv_map_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_8"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center"
+            android:maxLines="1"
+            android:singleLine="true"
             android:text="@string/text_loading"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/sp_10" />
     </LinearLayout>
 
     <include

@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.webkit.JavascriptInterface
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -205,6 +208,36 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         binding.webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: android.webkit.WebView?, url: String?) {
                 super.onPageFinished(view, url)
+            }
+
+            override fun onReceivedError(
+                view: android.webkit.WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                super.onReceivedError(view, request, error)
+                if (request?.isForMainFrame == true) {
+                    Log.w(
+                        "VideoPlaybackWebView",
+                        "page load error code=${error?.errorCode}, desc=${error?.description}, url=${request.url}"
+                    )
+                    showToast("网络异常，页面加载失败，请稍后重试")
+                }
+            }
+
+            override fun onReceivedHttpError(
+                view: android.webkit.WebView?,
+                request: WebResourceRequest?,
+                errorResponse: WebResourceResponse?
+            ) {
+                super.onReceivedHttpError(view, request, errorResponse)
+                if (request?.isForMainFrame == true) {
+                    Log.w(
+                        "VideoPlaybackWebView",
+                        "page http error code=${errorResponse?.statusCode}, reason=${errorResponse?.reasonPhrase}, url=${request.url}"
+                    )
+                    showToast("网络异常，页面加载失败，请稍后重试")
+                }
             }
         }
         // 加载本地HTML文件

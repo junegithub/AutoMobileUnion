@@ -9,6 +9,9 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
@@ -215,7 +218,37 @@ class RealTimeMonitorActivity : AppCompatActivity() {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
                 addJavascriptInterface(WebAppInterface(i), "AndroidInterface$i")
-                webViewClient = WebViewClient()
+                webViewClient = object : WebViewClient() {
+                    override fun onReceivedError(
+                        view: WebView?,
+                        request: WebResourceRequest?,
+                        error: WebResourceError?
+                    ) {
+                        super.onReceivedError(view, request, error)
+                        if (request?.isForMainFrame == true) {
+                            Log.w(
+                                "RealTimeMonitorWebView",
+                                "page load error code=${error?.errorCode}, desc=${error?.description}, url=${request.url}"
+                            )
+                            showToast("网络异常，页面加载失败，请稍后重试")
+                        }
+                    }
+
+                    override fun onReceivedHttpError(
+                        view: WebView?,
+                        request: WebResourceRequest?,
+                        errorResponse: WebResourceResponse?
+                    ) {
+                        super.onReceivedHttpError(view, request, errorResponse)
+                        if (request?.isForMainFrame == true) {
+                            Log.w(
+                                "RealTimeMonitorWebView",
+                                "page http error code=${errorResponse?.statusCode}, reason=${errorResponse?.reasonPhrase}, url=${request.url}"
+                            )
+                            showToast("网络异常，页面加载失败，请稍后重试")
+                        }
+                    }
+                }
                 visibility = View.GONE
 
                 // 加载本地HTML文件

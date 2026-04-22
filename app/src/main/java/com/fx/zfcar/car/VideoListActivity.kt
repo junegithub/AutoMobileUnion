@@ -5,7 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.webkit.JavascriptInterface
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebViewClient
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,7 +70,37 @@ class VideoListActivity : AppCompatActivity() {
         binding.webView.settings.javaScriptEnabled = true
         binding.webView.settings.domStorageEnabled = true
         binding.webView.addJavascriptInterface(WebAppInterface(), "AndroidInterface")
-        binding.webView.webViewClient = object : WebViewClient() {}
+        binding.webView.webViewClient = object : WebViewClient() {
+            override fun onReceivedError(
+                view: android.webkit.WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                super.onReceivedError(view, request, error)
+                if (request?.isForMainFrame == true) {
+                    Log.w(
+                        "VideoListWebView",
+                        "page load error code=${error?.errorCode}, desc=${error?.description}, url=${request.url}"
+                    )
+                    showToast("网络异常，页面加载失败，请稍后重试")
+                }
+            }
+
+            override fun onReceivedHttpError(
+                view: android.webkit.WebView?,
+                request: WebResourceRequest?,
+                errorResponse: WebResourceResponse?
+            ) {
+                super.onReceivedHttpError(view, request, errorResponse)
+                if (request?.isForMainFrame == true) {
+                    Log.w(
+                        "VideoListWebView",
+                        "page http error code=${errorResponse?.statusCode}, reason=${errorResponse?.reasonPhrase}, url=${request.url}"
+                    )
+                    showToast("网络异常，页面加载失败，请稍后重试")
+                }
+            }
+        }
         binding.webView.loadUrl("file:///android_asset/hybrid/html/rtvsVideoHistory.html")
     }
 

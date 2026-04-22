@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.fx.zfcar.net.DictItem
 import com.fx.zfcar.net.DictMapManager
 import com.fx.zfcar.net.IBaseResponse
+import com.fx.zfcar.util.NetworkErrorMapper
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -37,7 +38,7 @@ open class BaseViewModel : ViewModel() {
                 handleResponse(response, stateFlow)
             }.onFailure { exception ->
                 stateFlow?.value = ApiState.Error(
-                    msg = "请求异常：${exception.message ?: "未知错误"}",
+                    msg = NetworkErrorMapper.fromThrowable(exception),
                     throwable = exception
                 )
             }
@@ -50,7 +51,9 @@ open class BaseViewModel : ViewModel() {
     ) {
         when {
             !response.isSuccessful -> {
-                stateFlow?.value = ApiState.Error("网络请求失败：${response.code()} ${response.message()}")
+                stateFlow?.value = ApiState.Error(
+                    NetworkErrorMapper.fromHttp(response.code(), response.message())
+                )
             }
             response.body() == null -> {
                 stateFlow?.value = ApiState.Error("响应体为空")
@@ -64,7 +67,7 @@ open class BaseViewModel : ViewModel() {
             else -> {
                 val errorBody = response.errorBody()?.string()?.takeIf { it.isNotBlank() }
                 val errorMsg = response.body()?.msg ?: errorBody ?: "请求失败"
-                stateFlow?.value = ApiState.Error("接口返回错误：$errorMsg")
+                stateFlow?.value = ApiState.Error(errorMsg)
             }
         }
     }
