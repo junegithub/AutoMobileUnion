@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.fx.zfcar.R
 import com.fx.zfcar.car.base.TreeDataMapper
 import com.fx.zfcar.car.viewmodel.SearchViewModel
 import com.fx.zfcar.databinding.ItemDynamicTreeBinding
@@ -63,9 +64,10 @@ class DynamicTreeAdapter(
             binding.pbLoading.visibility = if (item.isLoading) View.VISIBLE else View.GONE
             binding.ivArrow.isEnabled = !item.isLoading
 
-            if (item.isLeaf && item.iconRes != null && item.iconRes != 0) {
+            val iconRes = getNodeIconRes(item)
+            if (iconRes != null && iconRes != 0) {
                 binding.ivIcon.visibility = View.VISIBLE
-                binding.ivIcon.setImageResource(item.iconRes)
+                binding.ivIcon.setImageResource(iconRes)
             } else {
                 binding.ivIcon.visibility = View.GONE
             }
@@ -94,6 +96,14 @@ class DynamicTreeAdapter(
             return item.hasMoreChildren || item.children.isNotEmpty()
         }
 
+        private fun getNodeIconRes(item: TreeItem): Int? {
+            return if (item.isLeaf) {
+                item.iconRes
+            } else {
+                if (item.isExpanded) R.drawable.tree_open_icon else R.drawable.tree_close_icon
+            }
+        }
+
         private fun handleExpandCollapse(item: TreeItem) {
             if (!item.isExpanded) {
                 if (!search && item.children.isEmpty() && item.hasMoreChildren) {
@@ -102,11 +112,13 @@ class DynamicTreeAdapter(
                 } else {
                     item.isExpanded = true
                     refreshFlatList()
+                    forceRefreshNode(item)
                     listener.onExpandStateChange(item, true)
                 }
             } else {
                 item.isExpanded = false
                 refreshFlatList()
+                forceRefreshNode(item)
                 listener.onExpandStateChange(item, false)
             }
         }
@@ -114,6 +126,7 @@ class DynamicTreeAdapter(
         private fun loadChildrenFromNetwork(item: TreeItem) {
             item.isLoading = true
             refreshFlatList() // 显示加载中
+            forceRefreshNode(item)
             val stateFlow = MutableStateFlow<ApiState<List<TreeNode>>>(ApiState.Idle)
 
             coroutineScope.launch {
@@ -130,6 +143,7 @@ class DynamicTreeAdapter(
                                 item.hasMoreChildren = false
                                 item.isExpanded = true
                                 refreshFlatList()
+                                forceRefreshNode(item)
                                 listener.onExpandStateChange(item, true)
                                 listener.onLoadMoreChildren(item)
                             } else {
@@ -138,12 +152,14 @@ class DynamicTreeAdapter(
                                 item.children.clear()
                                 item.isExpanded = true
                                 refreshFlatList()
+                                forceRefreshNode(item)
                             }
                         }
                         is ApiState.Error -> {
                             item.isLoading = false // 关闭加载状态
                             listener.onLoadError(state.msg)
                             refreshFlatList() // 刷新关闭加载状态
+                            forceRefreshNode(item)
                         }
                         ApiState.Loading -> {
                         }
@@ -187,6 +203,13 @@ class DynamicTreeAdapter(
         flatList.clear()
         flatList.addAll(newFlatList)
         diffResult.dispatchUpdatesTo(this)
+    }
+
+    private fun forceRefreshNode(item: TreeItem) {
+        val position = flatList.indexOfFirst { it.id == item.id }
+        if (position != RecyclerView.NO_POSITION) {
+            notifyItemChanged(position)
+        }
     }
 
     private fun buildFlatList(nodes: List<TreeItem>): MutableList<TreeItem> {

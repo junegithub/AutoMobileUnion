@@ -50,7 +50,7 @@ object TreeDataMapper {
     fun mapToTreeItem(treeNode: TreeNode, level: Int): TreeItem {
 
         return TreeItem(
-            id = treeNode.realId,
+            id = treeNode.id.ifBlank { treeNode.realId },
             name = treeNode.name,
             countText = treeNode.getCountText(),
             iconRes = getCarIconResId(treeNode.carStatus, treeNode.valid),
