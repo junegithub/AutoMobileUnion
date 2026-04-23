@@ -303,8 +303,12 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 binding.ivHeader.visibility = View.VISIBLE
             }
         }
+        if (currentTabIndex == 9) {
+            resetDateRangeToCurrentMonth()
+            updateDateRange()
+        }
         binding.llDateRange.visibility = if (currentTabIndex == 9) View.VISIBLE else View.GONE
-        binding.timeFilterContainer.visibility = if (currentTabIndex == 9) View.GONE else View.VISIBLE
+        binding.timeFilterContainer.visibility = if (currentTabIndex == 4 || currentTabIndex == 9) View.GONE else View.VISIBLE
         refreshAdapterType()
         resetPagingAndLoad()
     }
@@ -623,6 +627,13 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         startDate = DateUtil.timestamp2Date(calendar.timeInMillis)
     }
 
+    private fun resetDateRangeToCurrentMonth() {
+        val calendar = Calendar.getInstance()
+        endDate = DateUtil.timestamp2Date(calendar.timeInMillis)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        startDate = DateUtil.timestamp2Date(calendar.timeInMillis)
+    }
+
     private fun resetPagingAndLoad() {
         pageNum = 1
         loadFromMore = false
@@ -644,7 +655,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             currentTotal = currentItems.size
         }
         currentItems.addAll(newItems)
-        reachedEnd = currentTotal <= 0 || currentItems.size >= currentTotal
+        reachedEnd = if (currentTotal > 0) {
+            currentItems.size >= currentTotal
+        } else {
+            newItems.isEmpty()
+        }
         if (currentItems.isEmpty()) {
             binding.llEmpty.visibility = View.VISIBLE
             binding.tvEmptyTip.text = emptyTip

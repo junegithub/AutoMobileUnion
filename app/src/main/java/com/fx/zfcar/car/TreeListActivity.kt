@@ -115,7 +115,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     private fun executeSearch() {
         val keyword = binding.etSearch.text.toString().trim()
         if (keyword.isEmpty()) {
-            showToast("请输入搜索关键词")
+            showToast("请输入内容搜索")
             return
         }
         fromSearch = true
@@ -255,11 +255,18 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
                         state.data?.let {
                             currentTotal = it.count.all
                             filterList.clear()
-                            filterList.add("全部状态${it.count.all}")
-                            filterList.add("运行${it.count.driving}")
-                            filterList.add("离线${it.count.offline}")
-                            filterList.add("停车${it.count.stop}")
-                            filterList.add("过期${it.count.expired}")
+                            if (it.list.isNotEmpty()) {
+                                filterList.add("全部状态${it.count.all}")
+                                filterList.add("运行${it.count.driving}")
+                                filterList.add("离线${it.count.offline}")
+                                filterList.add("停车${it.count.stop}")
+                                filterList.add("过期${it.count.expired}")
+                            } else {
+                                resetFilterLabels()
+                                if (pageNum == 1) {
+                                    showToast("未找到车辆信息")
+                                }
+                            }
                             filterSpinnerAdapter.notifyDataSetChanged()
                             binding.spinnerFilter.setSelection(filterPositionByType(selectedFilterType), false)
 
@@ -274,6 +281,10 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
                         binding.tabLayout.visibility = View.VISIBLE
                     }
                     is ApiState.Error -> {
+                        if (pageNum == 1) {
+                            resetFilterLabels()
+                            filterSpinnerAdapter.notifyDataSetChanged()
+                        }
                         updateLoadMoreState(isError = pageNum > 1)
                         showToast("加载失败：${state.msg}")
                     }
@@ -322,6 +333,15 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
         updateLoadMoreState()
     }
 
+    private fun resetFilterLabels() {
+        filterList.clear()
+        filterList.add("全部状态")
+        filterList.add("运行")
+        filterList.add("离线")
+        filterList.add("停车")
+        filterList.add("过期")
+    }
+
     private fun updateLoadMoreState(isError: Boolean = false) {
         adapterHelper.trailingLoadState = when {
             isError -> LoadState.Error(Exception("load failed"))
@@ -360,7 +380,10 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
                 )
             )
         )
-        startActivity(Intent(this@TreeListActivity, MainActivity::class.java))
+        startActivity(
+            Intent(this@TreeListActivity, MainActivity::class.java)
+                .putExtra(MainActivity.EXTRA_SELECTED_TAB, MainActivity.TAB_CAR)
+        )
         finish()
     }
 

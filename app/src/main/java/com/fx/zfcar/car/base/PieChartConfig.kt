@@ -91,6 +91,7 @@ object PieChartConfig {
         // 1. 颜色配置
         dataSet.colors = colors
 
+        dataSet.setDrawValues(false)
         dataSet.valueTextSize = 8f
         dataSet.valueTextColor = Color.BLACK
         dataSet.valueFormatter = percentFormatter // 百分比格式

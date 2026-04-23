@@ -65,7 +65,7 @@
         <!-- 翻转摄像头按钮 -->
         <TextView
             android:id="@+id/tvSwitchCamera"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/previewView"
             android:layout_centerHorizontal="true"
@@ -73,7 +73,11 @@
             android:text="@string/btn_switch_camera"
             android:textColor="@color/white"
             android:background="@color/primary_blue"
-            android:padding="@dimen/dp_8"
+            android:gravity="center"
+            android:minHeight="40dp"
+            android:paddingHorizontal="@dimen/dp_12"
+            android:paddingVertical="@dimen/dp_8"
+            android:singleLine="false"
             android:visibility="gone"
             android:clickable="true" />
     </RelativeLayout>

@@ -67,7 +67,7 @@ data class CarCheckForm(
     var question: String = "",
     var idea: String = "",
 
-    // 签名图片（Base64或URL）
+    // 签名图片URL
     var checksign_img: String = "",
     var dirversign_img: String = ""
 ) {

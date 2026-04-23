@@ -33,6 +33,7 @@ import com.amap.api.maps.model.MyLocationStyle
 import com.fx.zfcar.MyApp
 import com.fx.zfcar.car.adapter.LabelAdapter
 import com.fx.zfcar.car.base.MarkerViewUtil
+import com.fx.zfcar.car.base.VehicleImageProvider
 import com.fx.zfcar.car.status.DeviceStatusActivity
 import com.fx.zfcar.car.viewmodel.CarInfoViewModel
 import com.fx.zfcar.net.BaseCarInfo
@@ -79,6 +80,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         private const val VIRTUAL_CAR_LATITUDE = 37.526160860660895
         private const val VIRTUAL_CAR_LONGITUDE = 121.39249868630571
         private const val VIRTUAL_CAR_ADDRESS = "山东省,烟台市,芝罘区,环山路(南272米),烟台市园林科研中心(西北176米)"
+        private const val KEY_CAR_USER_INFO = "carUserInfo"
     }
 
     // 声明ViewBinding对象
@@ -246,7 +248,6 @@ class CarFragment : Fragment(), AMapLocationListener {
         PressEffectUtils.setCommonPressEffect(binding.rootCarDetail.rootMore.tvSendtext)
         PressEffectUtils.setCommonPressEffect(binding.rootCarDetail.rootMore.tvTakePhoto)
 
-        // 未登录按钮跳转登录页
         binding.tvUnlogin.setOnClickListener {
             startActivity(Intent(requireContext(), LoginActivity::class.java))
         }
@@ -321,7 +322,12 @@ class CarFragment : Fragment(), AMapLocationListener {
             showInputDialog()
         }
         binding.rootCarDetail.rootMore.tvTakePhoto.setOnClickListener {
-            currentCar?.id?.let { carInfoViewModel.takePhoto(it, takePhotoStateFlow) }
+            val carId = selectedCarId()
+            if (carId.isBlank()) {
+                context?.showToast("车辆信息未加载完成")
+                return@setOnClickListener
+            }
+            carInfoViewModel.takePhoto(carId, takePhotoStateFlow)
         }
 
         val tabLayout = binding.rootCarDetail.tabLayout
@@ -418,7 +424,9 @@ class CarFragment : Fragment(), AMapLocationListener {
                         updateCarNum()
                         carList = statistics.list
                         addCarMarkers()
-                        if (!requestFromOtherPage) {
+                        if (binding.rootCarDetail.root.visibility == View.VISIBLE) {
+                            refreshSelectedMarkerAfterMapReload()
+                        } else if (!requestFromOtherPage) {
                             zoomToAllCars()
                         }
                         val searchState = searListStateFlow.value
@@ -447,7 +455,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                         val addressData = uiState.data ?: return@collect
                         // 忽略过期请求的响应（快速切换车辆时可能乱序到达）
                         val respondedCarId = addressData.carinfo.id
-                        if (respondedCarId.isNotBlank() && respondedCarId != lastRequestedCarId) return@collect
+                        if (lastRequestedCarId.isNotBlank() && respondedCarId.isNotBlank() && respondedCarId != lastRequestedCarId) return@collect
                         hideMapLoading()
                         if (requestFromOtherPage) {
                             requestFromOtherPage = false
@@ -472,6 +480,8 @@ class CarFragment : Fragment(), AMapLocationListener {
                                 carInfo.direction.toString()
                             )
 
+                            currentCar = mapPositionItem
+                            lastRequestedCarId = carInfo.id
                             showSingleMarker(addCarMarker(mapPositionItem))
                         }
                         refreshRealAddressCarDetails(addressData)
@@ -613,7 +623,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         if (token.isNotEmpty()) {
             MyApp.isLogin = true
             if (MyApp.userInfo == null) {
-                val cachedCarInfo = SPUtils.get("carInfo")
+                val cachedCarInfo = SPUtils.get(KEY_CAR_USER_INFO)
                 if (cachedCarInfo.isNotEmpty()) {
                     runCatching {
                         Gson().fromJson(cachedCarInfo, com.fx.zfcar.net.CarUserInfo::class.java)?.info
@@ -742,7 +752,7 @@ class CarFragment : Fragment(), AMapLocationListener {
      */
     private fun addCarMarkers() {
         clearAllMarkers()
-        carList?.forEach { car ->
+        carList?.filter { it.isInChinaMapBounds() }?.forEach { car ->
             addCarMarker(car)
         }
     }
@@ -837,11 +847,8 @@ class CarFragment : Fragment(), AMapLocationListener {
         binding.rootCarDetail.rootCarLocation.root.visibility = View.VISIBLE
         // 车牌号
         val dlcartype = realTimeCarInfo?.dlcartype ?: ""
-        val imageSource = when {
-            dlcartype.startsWith("K") || Regex("1[0-35-6]").matches(dlcartype) -> R.drawable.ic_keche_xingshi
-            dlcartype == "14" -> R.drawable.jiaoche
-            else -> R.drawable.huoche
-        }
+        val status = realTimeCarInfo?.status?.toIntOrNull() ?: 4
+        val imageSource = VehicleImageProvider.getVehicleImageResId(dlcartype, status)
         binding.rootCarDetail.ivCarIcon.setImageResource(imageSource)
         binding.rootCarDetail.tvCarNum.text = realTimeCarInfo?.carnum ?: ""
         binding.rootCarDetail.tvLocateTime.text = "定位时间：${realTimeCarInfo?.gpsloctime_text}"
@@ -885,9 +892,12 @@ class CarFragment : Fragment(), AMapLocationListener {
                     context?.showToast( "请输入下发内容")
                     return@setPositiveButton
                 }
-                currentCar?.id?.let {
-                    carInfoViewModel.sendContent(it, content, sendStateFlow)
+                val carId = selectedCarId()
+                if (carId.isBlank()) {
+                    context?.showToast("车辆信息未加载完成")
+                    return@setPositiveButton
                 }
+                carInfoViewModel.sendContent(carId, content, sendStateFlow)
             }
             .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
@@ -933,7 +943,7 @@ class CarFragment : Fragment(), AMapLocationListener {
      * 自动缩放地图，将所有车辆显示在视野内（带边缘留白）
      */
     private fun zoomToAllCars() {
-        val cars = carList.orEmpty()
+        val cars = carList.orEmpty().filter { it.isInChinaMapBounds() }
         if (cars.isEmpty()) {
             return
         }
@@ -953,6 +963,28 @@ class CarFragment : Fragment(), AMapLocationListener {
         val bounds = boundsBuilder.build()
         // 动画缩放：100为地图四周留白（像素），避免标记贴边
         aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100), 100, null)
+    }
+
+    private fun refreshSelectedMarkerAfterMapReload() {
+        val selectedCarId = selectedCarId()
+        val selectedCarNum = currentRealTimeAddress?.carinfo?.carnum ?: currentCar?.carnum
+        val selectedMarker = markerList.find { marker ->
+            val car = marker.`object` as? MapPositionItem
+            (selectedCarId.isNotBlank() && car?.id == selectedCarId) ||
+                (!selectedCarNum.isNullOrBlank() && marker.title == selectedCarNum)
+        }
+        if (selectedMarker == null) {
+            showAllMarkers()
+            return
+        }
+        currentCar = selectedMarker.`object` as? MapPositionItem
+        markerList.forEach { marker ->
+            marker.isVisible = marker == selectedMarker
+        }
+    }
+
+    private fun selectedCarId(): String {
+        return currentRealTimeAddress?.carinfo?.id.orEmpty().ifBlank { currentCar?.id.orEmpty() }
     }
 
     private fun showAllMarkers() {
@@ -980,6 +1012,10 @@ class CarFragment : Fragment(), AMapLocationListener {
                 isAnimating = false
             }
         })
+    }
+
+    private fun MapPositionItem.isInChinaMapBounds(): Boolean {
+        return longitude > 73.0 && longitude < 135.0 && latitude > 23.0 && latitude < 53.0
     }
 
     // 检查并申请定位权限
@@ -1124,6 +1160,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                     openCarDetails(marker)
                 } else {
                     requestFromOtherPage = true
+                    lastRequestedCarId = ""
                     carInfoViewModel.getRealTimeAddress(null, carNum,
                         addressStateFlow
                     )

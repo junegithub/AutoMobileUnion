@@ -2,8 +2,8 @@ package com.fx.zfcar.net
 
 
 data class TravelLogData(
-    val list: List<Any>,
-    val rows: TravelLogItem
+    val list: List<TravelLogItem>? = emptyList(),
+    val rows: TravelLogItem? = null
 )
 
 data class TravelLogItem(

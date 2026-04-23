@@ -135,47 +135,43 @@ class ActivityNavi : AppCompatActivity() {
     }
 
     /**
-     * 通用导航 - 优先高德地图（GCJ02 坐标系兼容），降级到系统 geo: Intent
-     *
-     * 后端返回的经纬度为 GCJ02 坐标（高德/国测局加密），直接传给 geo: URI 会导致
-     * 系统地图（使用 WGS84）出现约 300m 的偏差。高德自有 URI scheme 原生使用
-     * GCJ02，优先调用可完全规避偏差。
+     * 对齐 ytcar-app 的 uni.openLocation 行为：打开外部地图显示车辆当前位置。
      */
     private fun startUniversalNavigation() {
         try {
-            if (launchExternalNavigation()) {
+            if (launchExternalLocation()) {
                 return
             }
 
-            // 降级：系统通用 geo: Intent（非高德地图时可能有轻微坐标偏差）
             startActivity(Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(
                     "geo:${targetLatLng.latitude},${targetLatLng.longitude}" +
-                    "?q=${Uri.encode(targetAddress)}"
+                    "?q=${targetLatLng.latitude},${targetLatLng.longitude}(${Uri.encode(targetAddress)})"
                 )
             })
         } catch (e: Exception) {
-            Toast.makeText(this, "启动导航失败：${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "打开地图失败：${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun openExternalLocation(): Boolean {
         return try {
-            launchExternalNavigation()
+            launchExternalLocation()
         } catch (e: Exception) {
             false
         }
     }
 
-    private fun launchExternalNavigation(): Boolean {
+    private fun launchExternalLocation(): Boolean {
         val amapIntent = Intent(
             Intent.ACTION_VIEW,
             Uri.parse(
-                "amapuri://route/plan/" +
-                    "?dlng=${targetLatLng.longitude}" +
-                    "&dlat=${targetLatLng.latitude}" +
-                    "&dname=${Uri.encode(targetAddress)}" +
-                    "&dev=0&t=0"
+                "androidamap://viewMap" +
+                    "?sourceApplication=AutoMobileUnion" +
+                    "&poiname=${Uri.encode(targetAddress)}" +
+                    "&lat=${targetLatLng.latitude}" +
+                    "&lon=${targetLatLng.longitude}" +
+                    "&dev=0"
             )
         ).apply {
             setPackage("com.autonavi.minimap")
@@ -189,11 +185,9 @@ class ActivityNavi : AppCompatActivity() {
         val tencentIntent = Intent(
             Intent.ACTION_VIEW,
             Uri.parse(
-                "qqmap://map/routeplan?type=drive" +
-                    "&tocoord=${targetLatLng.latitude},${targetLatLng.longitude}" +
-                    "&to=${Uri.encode(targetAddress)}" +
-                    "&coord_type=1" +
-                    "&policy=0"
+                "qqmap://map/marker" +
+                    "?marker=coord:${targetLatLng.latitude},${targetLatLng.longitude};title:${Uri.encode(targetAddress)}" +
+                    "&coord_type=1"
             )
         ).apply {
             setPackage("com.tencent.map")
@@ -207,8 +201,9 @@ class ActivityNavi : AppCompatActivity() {
         val baiduIntent = Intent(
             Intent.ACTION_VIEW,
             Uri.parse(
-                "baidumap://map/direction?destination=name:${Uri.encode(targetAddress)}|latlng:${targetLatLng.latitude},${targetLatLng.longitude}" +
-                    "&coord_type=gcj02&mode=driving&src=autombileunion"
+                "baidumap://map/marker?location=${targetLatLng.latitude},${targetLatLng.longitude}" +
+                    "&title=${Uri.encode(targetAddress)}" +
+                    "&coord_type=gcj02&src=autombileunion"
             )
         ).apply {
             setPackage("com.baidu.BaiduMap")

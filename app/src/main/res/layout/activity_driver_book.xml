@@ -89,16 +89,20 @@
 
         <Button
             android:id="@+id/btnRedraw"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
             android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
             android:text="重写"
             android:textColor="#666666"
             android:background="#EEEEEE"/>
 
         <Button
             android:id="@+id/btnSave"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
             android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
             android:text="保存"
             android:textColor="#FFFFFF"
             android:background="@color/colorPrimary"/>

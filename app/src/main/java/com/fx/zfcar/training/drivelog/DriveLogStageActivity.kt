@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
 import com.fx.zfcar.R
 import com.fx.zfcar.databinding.ActivityDriveLogStageBinding
 import com.fx.zfcar.databinding.FormRowDateBinding
@@ -376,8 +377,7 @@ class DriveLogStageActivity : AppCompatActivity() {
             // 显示驾驶员签名图片
             binding.ivDriverSign.visibility = View.VISIBLE
             binding.layoutDriverSignature.visibility = View.GONE
-            // 加载签名图片（实际项目中使用Glide/Picasso）
-            // Glide.with(this).load(form.dsingimg).into(binding.ivDriverSign)
+            Glide.with(this).load(form.dsingimg).into(binding.ivDriverSign)
         } else {
             binding.ivDriverSign.visibility = View.GONE
             binding.layoutDriverSignature.visibility = View.VISIBLE
@@ -387,8 +387,7 @@ class DriveLogStageActivity : AppCompatActivity() {
             // 显示副驾驶签名图片
             binding.ivCopilotSign.visibility = View.VISIBLE
             binding.layoutCopilotSignature.visibility = View.GONE
-            // 加载签名图片
-            // Glide.with(this).load(form.ysingimg).into(binding.ivCopilotSign)
+            Glide.with(this).load(form.ysingimg).into(binding.ivCopilotSign)
         } else {
             binding.ivCopilotSign.visibility = View.GONE
             binding.layoutCopilotSignature.visibility = View.VISIBLE
@@ -489,14 +488,25 @@ class DriveLogStageActivity : AppCompatActivity() {
                 println("June goNext:${viewModel.stage.value}")
                 // 签名处理
                 if (viewModel.stage.value == 7) {
-                    // 副驾签名步骤
-                    isCopilotSign = false
-                    subCanvas()
-                    // 最后一步，提交表单
-                    saveFormData()
+                    // 副驾驶/押运员签名为选填；签了则等上传完成后提交，未签直接提交。
+                    if (binding.handwritingView2.hasSignature()) {
+                        isCopilotSign = true
+                        subCanvas()
+                    } else {
+                        val form = viewModel.localForm.value ?: return@setOnClickListener
+                        form.ysingimg = ""
+                        viewModel.localForm.value = form
+                        saveFormData()
+                    }
                 } else if (viewModel.stage.value == 6) {
                     // 驾驶员签名步骤
-                    isCopilotSign = true
+                    if (!binding.handwritingView.hasSignature()) {
+                        showToast("请驾驶员签名")
+                        viewModel.stage.value = 5
+                        viewModel.stageStep.value = (viewModel.stageStep.value ?: 30) - 15
+                        return@setOnClickListener
+                    }
+                    isCopilotSign = false
                     subCanvas()
                 }
             }
@@ -708,6 +718,17 @@ class DriveLogStageActivity : AppCompatActivity() {
         } else {
             binding.handwritingView
         }
+        if (!handwritingView.hasSignature()) {
+            if (isCopilotSign) {
+                val form = viewModel.localForm.value ?: return
+                form.ysingimg = ""
+                viewModel.localForm.value = form
+                saveFormData()
+            } else {
+                showToast("请驾驶员签名")
+            }
+            return
+        }
 
         val signatureBitmap = handwritingView.getSignatureBitmap()
         val file = BitmapUtils.saveBitmapToFile(this@DriveLogStageActivity, signatureBitmap)
@@ -753,15 +774,17 @@ class DriveLogStageActivity : AppCompatActivity() {
             // 更新副驾驶签名显示
             binding.ivCopilotSign.visibility = View.VISIBLE
             binding.layoutCopilotSignature.visibility = View.GONE
+            Glide.with(this).load(signImgUrl).into(binding.ivCopilotSign)
+            saveFormData()
         } else {
             form.dsingimg = signImgUrl
             // 更新驾驶员签名显示
             binding.ivDriverSign.visibility = View.VISIBLE
             binding.layoutDriverSignature.visibility = View.GONE
+            Glide.with(this).load(signImgUrl).into(binding.ivDriverSign)
 
             // 自动跳转到副驾驶签名步骤
             viewModel.stage.value = 6
-            viewModel.stageStep.value = viewModel.stageStep.value?.plus(15) ?: 15
         }
 
         viewModel.localForm.value = form

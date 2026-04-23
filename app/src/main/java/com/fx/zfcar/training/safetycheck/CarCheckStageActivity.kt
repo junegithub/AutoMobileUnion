@@ -2,6 +2,7 @@ package com.fx.zfcar.training.safetycheck
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.Toast
@@ -26,7 +27,6 @@ import com.fx.zfcar.training.adapter.ImageAdapter
 import com.fx.zfcar.training.drivelog.CarSearchActivity
 import com.fx.zfcar.training.jobs.GlideEngine
 import com.fx.zfcar.training.viewmodel.NoticeViewModel
-import com.fx.zfcar.util.BitmapUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.viewmodel.ApiState
 import com.luck.picture.lib.basic.PictureSelector
@@ -40,6 +40,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 class CarCheckStageActivity : AppCompatActivity() {
@@ -72,7 +73,11 @@ class CarCheckStageActivity : AppCompatActivity() {
     private lateinit var staticAdapter: ImageAdapter
     private lateinit var waybillAdapter: ImageAdapter
     private val uploadFlow = MutableStateFlow<ApiState<UploadFileData>>(ApiState.Idle)
+    private val signatureUploadFlow = MutableStateFlow<ApiState<UploadFileData>>(ApiState.Idle)
     private var pendingImageField: String? = null
+    private var pendingSignatureField: String? = null
+    private var advanceAfterSignatureUpload = false
+    private var submitAfterSignatureUpload = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -441,6 +446,50 @@ class CarCheckStageActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            signatureUploadFlow.collect { state ->
+                when (state) {
+                    is ApiState.Idle -> Unit
+                    is ApiState.Loading -> {
+                        showSubmitLoading("签名上传中...")
+                    }
+                    is ApiState.Success -> {
+                        val field = pendingSignatureField
+                        val uploadedUrl = state.data?.url
+                        if (field != null && !uploadedUrl.isNullOrBlank()) {
+                            val fullUrl = ApiConfig.BASE_URL_TRAINING + uploadedUrl
+                            when (field) {
+                                "checksign_img" -> viewModel.setDriverSigned(true, fullUrl)
+                                "dirversign_img" -> viewModel.setCheckerSigned(true, fullUrl)
+                            }
+                            val shouldAdvance = advanceAfterSignatureUpload
+                            val shouldSubmit = submitAfterSignatureUpload
+                            resetSignatureUploadState()
+                            if (shouldSubmit) {
+                                submitCarCheckForm()
+                            } else {
+                                hideSubmitLoading()
+                                if (shouldAdvance) {
+                                    viewModel.goNext()
+                                }
+                            }
+                        } else {
+                            resetSignatureUploadState()
+                            hideSubmitLoading()
+                            Toast.makeText(this@CarCheckStageActivity, "签名上传失败", Toast.LENGTH_SHORT).show()
+                        }
+                        signatureUploadFlow.value = ApiState.Idle
+                    }
+                    is ApiState.Error -> {
+                        resetSignatureUploadState()
+                        hideSubmitLoading()
+                        Toast.makeText(this@CarCheckStageActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        signatureUploadFlow.value = ApiState.Idle
+                    }
+                }
+            }
+        }
     }
 
     // 初始化签名View部分修改
@@ -448,38 +497,39 @@ class CarCheckStageActivity : AppCompatActivity() {
         // 步骤6：检查人签名
         stage6Binding.signatureView.setOnTouchListener { _, event ->
             when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    stage6Binding.signatureView.parent.requestDisallowInterceptTouchEvent(true)
+                    viewModel.setDriverSigned(false)
+                }
                 MotionEvent.ACTION_UP -> {
+                    stage6Binding.signatureView.parent.requestDisallowInterceptTouchEvent(false)
                     val hasSignature = stage6Binding.signatureView.hasSignature()
-                    // 获取签名图片（转为Base64或上传后的URL）
-                    val signatureBitmap = stage6Binding.signatureView.getSignatureBitmap()
-                    val signImage = if (signatureBitmap != null) {
-                        // 实际项目中：1.转为Base64 2.上传到服务器获取URL
-                        "data:image/png;base64,${BitmapUtils.bitmapToBase64(signatureBitmap)}"
-                    } else {
-                        ""
-                    }
-                    viewModel.setDriverSigned(hasSignature, signImage)
+                    viewModel.setDriverSigned(hasSignature)
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    stage6Binding.signatureView.parent.requestDisallowInterceptTouchEvent(false)
                 }
             }
-            true // 拦截触摸事件，防止ScrollView滚动
+            false
         }
 
         // 步骤7：负责人签名
         stage7Binding.signatureView.setOnTouchListener { _, event ->
             when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    stage7Binding.signatureView.parent.requestDisallowInterceptTouchEvent(true)
+                    viewModel.setCheckerSigned(false)
+                }
                 MotionEvent.ACTION_UP -> {
+                    stage7Binding.signatureView.parent.requestDisallowInterceptTouchEvent(false)
                     val hasSignature = stage7Binding.signatureView.hasSignature()
-                    // 获取签名图片
-                    val signatureBitmap = stage7Binding.signatureView.getSignatureBitmap()
-                    val signImage = if (signatureBitmap != null) {
-                        "data:image/png;base64,${BitmapUtils.bitmapToBase64(signatureBitmap)}"
-                    } else {
-                        ""
-                    }
-                    viewModel.setCheckerSigned(hasSignature, signImage)
+                    viewModel.setCheckerSigned(hasSignature)
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    stage7Binding.signatureView.parent.requestDisallowInterceptTouchEvent(false)
                 }
             }
-            true
+            false
         }
     }
 
@@ -702,21 +752,19 @@ class CarCheckStageActivity : AppCompatActivity() {
 
         val currentStage = viewModel.currentStage.value
 
+        if (currentStage == CheckStage.STAGE_6 && viewModel.form.value.checksign_img.isBlank()) {
+            uploadSignature("checksign_img", stage6Binding.signatureView.getSignatureBitmap(), advanceAfterUpload = true)
+            return
+        }
+
+        if (currentStage == CheckStage.STAGE_7 && viewModel.form.value.dirversign_img.isBlank()) {
+            uploadSignature("dirversign_img", stage7Binding.signatureView.getSignatureBitmap(), submitAfterUpload = true)
+            return
+        }
+
         // 最后一步提交
         if (currentStage == CheckStage.STAGE_7) {
-            showSubmitLoading()
-
-            viewModel.submitForm(
-                onSuccess = {
-                    hideSubmitLoading()
-                    Toast.makeText(this, "检查表单提交成功", Toast.LENGTH_LONG).show()
-                    finish()
-                },
-                onError = { error ->
-                    hideSubmitLoading()
-                    Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-                }
-            )
+            submitCarCheckForm()
         } else {
             viewModel.goNext()
         }
@@ -809,12 +857,69 @@ class CarCheckStageActivity : AppCompatActivity() {
         noticeViewModel.uploadFile(body, uploadFlow)
     }
 
+    private fun uploadSignature(
+        field: String,
+        bitmap: Bitmap?,
+        advanceAfterUpload: Boolean = false,
+        submitAfterUpload: Boolean = false
+    ) {
+        if (bitmap == null) {
+            Toast.makeText(this, "请完成签名", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val signatureFile = saveSignatureBitmap(bitmap)
+        if (signatureFile == null) {
+            Toast.makeText(this, "签名保存失败", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        pendingSignatureField = field
+        advanceAfterSignatureUpload = advanceAfterUpload
+        submitAfterSignatureUpload = submitAfterUpload
+        val requestFile = signatureFile.asRequestBody("image/png".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("file", signatureFile.name, requestFile)
+        noticeViewModel.uploadFile(body, signatureUploadFlow)
+    }
+
+    private fun saveSignatureBitmap(bitmap: Bitmap): File? {
+        val file = File(cacheDir, "car_check_signature_${System.currentTimeMillis()}.png")
+        return runCatching {
+            FileOutputStream(file).use { output ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, output)
+            }
+            file
+        }.getOrNull()
+    }
+
+    private fun resetSignatureUploadState() {
+        pendingSignatureField = null
+        advanceAfterSignatureUpload = false
+        submitAfterSignatureUpload = false
+    }
+
+    private fun submitCarCheckForm() {
+        showSubmitLoading()
+
+        viewModel.submitForm(
+            onSuccess = {
+                hideSubmitLoading()
+                Toast.makeText(this, "检查表单提交成功", Toast.LENGTH_LONG).show()
+                finish()
+            },
+            onError = { error ->
+                hideSubmitLoading()
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
     /**
      * 显示提交加载中
      */
-    private fun showSubmitLoading() {
+    private fun showSubmitLoading(text: String = "提交中...") {
         binding.btnNext.isEnabled = false
-        binding.btnNext.text = "提交中..."
+        binding.btnNext.text = text
     }
 
     /**

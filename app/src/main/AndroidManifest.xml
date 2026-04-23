@@ -182,12 +182,18 @@
 
         <activity android:name=".training.safetycheck.CarSafetyCheckActivity" android:screenOrientation="portrait" />
         <activity android:name=".training.safetycheck.LastRecordActivity" android:screenOrientation="portrait" />
-        <activity android:name=".training.safetycheck.CarCheckStageActivity" android:screenOrientation="portrait" />
+        <activity
+            android:name=".training.safetycheck.CarCheckStageActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".training.safetytraining.FaceCheckActivity" android:screenOrientation="portrait" />
 
         <activity android:name=".training.drivelog.DriveLogActivity" android:screenOrientation="portrait" />
         <activity android:name=".training.drivelog.LastDriveLogRecordActivity" android:screenOrientation="portrait" />
-        <activity android:name=".training.drivelog.DriveLogStageActivity" android:screenOrientation="portrait" />
+        <activity
+            android:name=".training.drivelog.DriveLogStageActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".training.drivelog.CarSearchActivity" android:screenOrientation="portrait" />
 
         <activity android:name=".training.notice.NoticeActivity" android:screenOrientation="portrait" />

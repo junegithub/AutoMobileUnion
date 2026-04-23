@@ -77,6 +77,10 @@ class DriveLogActivity : AppCompatActivity() {
         binding.layoutTitle.tvTitle.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        binding.tvLastTitle.visibility = View.GONE
+        binding.layoutLastRecord.visibility = View.GONE
+        binding.draftsTitle.visibility = View.GONE
+        binding.rvDrafts.visibility = View.GONE
 
         // 初始化草稿箱列表适配器
         draftAdapter = DriveLogDraftAdapter(
@@ -155,10 +159,10 @@ class DriveLogActivity : AppCompatActivity() {
      * 处理行车日志加载成功
      */
     private fun handleTravelLogSuccess(data: TravelLogData) {
-        val formattedDrafts = data.list.filterIsInstance<TravelLogItem>()
+        val formattedDrafts = data.list.orEmpty()
 
         // 解析最后一条记录
-        val lastRecord = data.rows
+        val lastRecord = data.rows ?: TravelLogItem()
 
         // 更新UI状态
         _uiState.update {
@@ -298,8 +302,10 @@ class DriveLogActivity : AppCompatActivity() {
         if (lastRecord.updatetime.isNotEmpty()) {
             binding.tvLastTime.text = lastRecord.updatetime
             binding.tvLastCarNum.text = lastRecord.carnum
+            binding.tvLastTitle.visibility = View.VISIBLE
             binding.layoutLastRecord.visibility = View.VISIBLE
         } else {
+            binding.tvLastTitle.visibility = View.GONE
             binding.layoutLastRecord.visibility = View.GONE
         }
     }

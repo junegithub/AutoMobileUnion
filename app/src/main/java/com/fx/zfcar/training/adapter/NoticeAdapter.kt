@@ -11,7 +11,7 @@ import com.fx.zfcar.databinding.ItemNoticeBinding
 import com.fx.zfcar.net.NoticeItem
 
 class NoticeAdapter(
-    private val type: Int,
+    private var type: Int,
     private val onItemClick: (NoticeItem) -> Unit
 ) : ListAdapter<NoticeItem, NoticeAdapter.ViewHolder>(DiffCallback()) {
 
@@ -35,7 +35,7 @@ class NoticeAdapter(
             binding.tvNoticeContent.text = item.content
 
             // 根据status显示/隐藏未读角标
-            binding.vUnreadDot.visibility = if (item.status == 0) View.VISIBLE else View.GONE
+            binding.vUnreadDot.visibility = if (item.isUnread()) View.VISIBLE else View.GONE
 
             // 根据公告类型切换图标
             val iconRes = when (type) {
@@ -62,5 +62,11 @@ class NoticeAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    fun updateType(type: Int) {
+        if (this.type == type) return
+        this.type = type
+        notifyDataSetChanged()
     }
 }

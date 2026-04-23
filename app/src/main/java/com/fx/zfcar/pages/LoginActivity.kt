@@ -39,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
 
     companion object {
         const val LOGIN_TYPE_TRAINING = "login_type_training"
+        private const val KEY_CAR_USER_INFO = "carUserInfo"
     }
 
     // 目标电话号码
@@ -67,8 +68,10 @@ class LoginActivity : AppCompatActivity() {
 
         trainingLogin = intent.getBooleanExtra(LOGIN_TYPE_TRAINING, false)
         mockData()
+        restoreNormalLoginStateFromCache()
         updatePageWithLoginState()
         initListener()
+        refreshNormalUserInfoIfNeeded()
         initAgreementText()
     }
 
@@ -79,6 +82,28 @@ class LoginActivity : AppCompatActivity() {
         } else {
             binding.etAccount.setText("admin")
             binding.etPwd.setText("32kVDyQXzPnfMJ")
+        }
+    }
+
+    private fun restoreNormalLoginStateFromCache() {
+        if (trainingLogin || MyApp.userInfo != null || SPUtils.getToken().isEmpty()) {
+            return
+        }
+        val cachedCarInfo = SPUtils.get(KEY_CAR_USER_INFO)
+        if (cachedCarInfo.isNotEmpty()) {
+            runCatching {
+                Gson().fromJson(cachedCarInfo, com.fx.zfcar.net.CarUserInfo::class.java)?.info
+            }.getOrNull()?.let {
+                MyApp.isLogin = true
+                MyApp.userInfo = it
+            }
+        }
+    }
+
+    private fun refreshNormalUserInfoIfNeeded() {
+        if (!trainingLogin && SPUtils.getToken().isNotEmpty() && MyApp.userInfo == null) {
+            MyApp.isLogin = true
+            getUserInfo()
         }
     }
 
@@ -142,7 +167,7 @@ class LoginActivity : AppCompatActivity() {
             doLogout()
         }
         binding.back.setOnClickListener {
-            finish()
+            returnToMainTab()
         }
         collectData()
     }
@@ -205,7 +230,8 @@ class LoginActivity : AppCompatActivity() {
 
                     is ApiState.Success -> {
                         MyApp.userInfo = uiState.data?.info
-                        SPUtils.save("carInfo", Gson().toJson(uiState.data))
+                        SPUtils.save(KEY_CAR_USER_INFO, Gson().toJson(uiState.data))
+                        updatePageWithLoginState()
                     }
 
                     is ApiState.Error -> {
@@ -247,7 +273,7 @@ class LoginActivity : AppCompatActivity() {
                         SPUtils.saveTrainingLoginUser(Gson().toJson(uiState.data))
                         MyApp.isTrainingLogin = true
                         MyApp.trainingUserInfo = uiState.data
-                        finish()
+                        returnToMainTab()
                     }
 
                     is ApiState.Error -> {
@@ -259,6 +285,11 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun returnToMainTab() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     fun doLogin(account: String, password: String) {

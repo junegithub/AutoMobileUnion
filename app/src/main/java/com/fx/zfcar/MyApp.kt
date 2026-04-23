@@ -10,6 +10,7 @@ import com.fx.zfcar.net.UserLoginData
 import com.fx.zfcar.ad.TbAdSdkManager
 import com.fx.zfcar.util.WindowInsetHelper
 import com.kongzue.dialogx.DialogX
+import java.lang.ref.WeakReference
 
 class MyApp : Application() {
 
@@ -31,11 +32,17 @@ class MyApp : Application() {
             }
 
             override fun onActivityStarted(activity: android.app.Activity) = Unit
-            override fun onActivityResumed(activity: android.app.Activity) = Unit
+            override fun onActivityResumed(activity: android.app.Activity) {
+                currentActivityRef = WeakReference(activity)
+            }
             override fun onActivityPaused(activity: android.app.Activity) = Unit
             override fun onActivityStopped(activity: android.app.Activity) = Unit
             override fun onActivitySaveInstanceState(activity: android.app.Activity, outState: Bundle) = Unit
-            override fun onActivityDestroyed(activity: android.app.Activity) = Unit
+            override fun onActivityDestroyed(activity: android.app.Activity) {
+                if (currentActivityRef?.get() === activity) {
+                    currentActivityRef = null
+                }
+            }
         })
     }
 
@@ -65,5 +72,11 @@ class MyApp : Application() {
 
         var isTrainingLogin: Boolean? = null
         var trainingUserInfo: UserLoginData? = null
+
+        private var currentActivityRef: WeakReference<android.app.Activity>? = null
+
+        fun getCurrentActivity(): android.app.Activity? {
+            return currentActivityRef?.get()
+        }
     }
 }

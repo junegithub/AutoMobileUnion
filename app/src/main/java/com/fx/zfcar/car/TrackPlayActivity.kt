@@ -7,6 +7,7 @@ import com.fx.zfcar.net.TrackShareRequest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.View
 import android.widget.SeekBar
@@ -70,15 +71,15 @@ class TrackPlayActivity : AppCompatActivity() {
     }
 
     // 播放速度枚举
-    enum class PlaySpeed(val multiplier: Float, val displayName: String) {
-        SLOW(0.5f, "慢"),
-        NORMAL(1.0f, "正常"),
-        FAST(2.0f, "快")
+    enum class PlaySpeed(val intervalMs: Long, val displayName: String) {
+        SLOW(2000L, "慢"),
+        NORMAL(1000L, "正常"),
+        FAST(500L, "快")
     }
 
     private var currentPlayMode = PlayTimeMode.MODE_5_MINUTES
     private var currentPlaySpeed = PlaySpeed.NORMAL
-    private var animationInterval = 200L // 默认动画间隔（毫秒）
+    private var animationInterval = PlaySpeed.NORMAL.intervalMs
     private var playing = false
     private var panelExpand = true
     private var carId = ""
@@ -161,6 +162,10 @@ class TrackPlayActivity : AppCompatActivity() {
         aMap = mapView.map
         // 设置地图缩放级别
         aMap.moveCamera(CameraUpdateFactory.zoomTo(5f))
+        aMap.setOnMarkerClickListener { marker ->
+            marker.showInfoWindow()
+            true
+        }
 
         // 设置地图UI
         val uiSettings = aMap.uiSettings
@@ -381,7 +386,8 @@ class TrackPlayActivity : AppCompatActivity() {
             .position(LatLng(firstPoint.lat, firstPoint.lng))
             .title("起点")
             .snippet("${firstPoint.address}\n时间：${firstPoint.gpstime}")
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_marker))
+            .icon(sizedBitmapDescriptor(R.drawable.start_marker, 30))
+            .anchor(0.5f, 0.5f)
 
         startMarker = aMap.addMarker(startMarkerOptions)
 
@@ -391,7 +397,8 @@ class TrackPlayActivity : AppCompatActivity() {
             .position(LatLng(lastPoint.lat, lastPoint.lng))
             .title("终点")
             .snippet("${lastPoint.address}\n时间：${lastPoint.gpstime}")
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_marker))
+            .icon(sizedBitmapDescriptor(R.drawable.end_marker, 30))
+            .anchor(0.5f, 0.5f)
 
         endMarker = aMap.addMarker(endMarkerOptions)
         addOrUpdatePlaybackMarker(firstPoint)
@@ -402,8 +409,8 @@ class TrackPlayActivity : AppCompatActivity() {
             val stopMarkerOptions = MarkerOptions()
                 .position(LatLng(stop.lat, stop.lng))
                 .title("停车点")
-                .snippet("${stop.address}\n停车时间：${stop.stoptime}\n开始时间：${stop.gpstime}\n结束时间：${stop.endtime}")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.parking_marker))
+                .snippet("开始时间：${stop.gpstime}\n结束时间：${stop.endtime}\n停车时长：${stop.stoptime}\n位置：${stop.address}")
+                .icon(sizedBitmapDescriptor(R.drawable.parking_marker, 24))
                 .anchor(0.5f, 0.5f) // 设置锚点为中心点
 
             val marker = aMap.addMarker(stopMarkerOptions)
@@ -499,32 +506,6 @@ class TrackPlayActivity : AppCompatActivity() {
      */
     private fun setPlayTimeMode(mode: PlayTimeMode) {
         currentPlayMode = mode
-        val currentTrack = trackData ?: return
-
-        // 更新标签样式
-        when (mode) {
-            PlayTimeMode.MODE_5_MINUTES -> {
-                // 5分钟 = 300秒，计算每段轨迹的播放间隔
-                animationInterval = if (currentTrack.postlist.size > 1) {
-                    (300000L / (currentTrack.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
-                } else {
-                    1000L
-                }
-            }
-            PlayTimeMode.MODE_15_MINUTES -> {
-                // 15分钟 = 900秒，计算每段轨迹的播放间隔
-                animationInterval = if (currentTrack.postlist.size > 1) {
-                    (900000L / (currentTrack.postlist.size - 1)).coerceAtLeast(50L) // 最小50毫秒
-                } else {
-                    1000L
-                }
-            }
-        }
-
-        // 如果动画正在播放，重新开始以应用新的间隔
-        if (animationTimer != null) {
-            startAnimation()
-        }
     }
 
     /**
@@ -532,6 +513,7 @@ class TrackPlayActivity : AppCompatActivity() {
      */
     private fun setPlaySpeed(speed: PlaySpeed) {
         currentPlaySpeed = speed
+        animationInterval = speed.intervalMs
 
         // 更新UI显示
         when (speed) {
@@ -581,8 +563,6 @@ class TrackPlayActivity : AppCompatActivity() {
         setPlayingState(true)
 
         // 根据当前速度计算实际的动画间隔
-        val actualInterval = (animationInterval / currentPlaySpeed.multiplier).toLong()
-
         // 创建新的计时器
         animationTimer = Timer()
         animationTimer?.schedule(object : TimerTask() {
@@ -618,7 +598,7 @@ class TrackPlayActivity : AppCompatActivity() {
                     }
                 }
             }
-        }, 0, actualInterval) // 根据速度和时间模式更新间隔
+        }, 0, animationInterval)
     }
 
     /**
@@ -750,6 +730,16 @@ class TrackPlayActivity : AppCompatActivity() {
         return ContextCompat.getColor(this, colorRes)
     }
 
+    private fun sizedBitmapDescriptor(drawableRes: Int, sizeDp: Int): BitmapDescriptor {
+        val source = BitmapFactory.decodeResource(resources, drawableRes)
+        val sizePx = (sizeDp * resources.displayMetrics.density).toInt()
+        val scaled = android.graphics.Bitmap.createScaledBitmap(source, sizePx, sizePx, true)
+        if (scaled != source) {
+            source.recycle()
+        }
+        return BitmapDescriptorFactory.fromBitmap(scaled)
+    }
+
     private fun addOrUpdatePlaybackMarker(point: TrackPosition) {
         val markerIcon = (VehicleImageProvider.scaleBitmapDrawable(
             this,
@@ -764,12 +754,12 @@ class TrackPlayActivity : AppCompatActivity() {
                     .position(position)
                     .anchor(0.5f, 0.5f)
                     .setFlat(true)
-                    .rotateAngle(point.direction.toFloat())
+                    .rotateAngle(toMapMarkerAngle(point.direction))
                     .icon(BitmapDescriptorFactory.fromBitmap(markerIcon))
             )
         } else {
             playbackMarker?.position = position
-            playbackMarker?.rotateAngle = point.direction.toFloat()
+            playbackMarker?.rotateAngle = toMapMarkerAngle(point.direction)
         }
     }
 
@@ -779,7 +769,12 @@ class TrackPlayActivity : AppCompatActivity() {
             return
         }
         playbackMarker?.position = LatLng(point.lat, point.lng)
-        playbackMarker?.rotateAngle = point.direction.toFloat()
+        playbackMarker?.rotateAngle = toMapMarkerAngle(point.direction)
+    }
+
+    private fun toMapMarkerAngle(direction: Number): Float {
+        val adjusted = direction.toDouble() - 90.0
+        return (if (adjusted < 0) 360.0 + adjusted else adjusted).toFloat()
     }
 
     private fun syncMapPadding() {

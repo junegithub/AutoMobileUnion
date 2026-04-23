@@ -83,7 +83,7 @@ class NoticeActivity : AppCompatActivity() {
                         isLoading = false
                         isLoadMore = false
                         uiState.data?.let {
-                            totalPages = uiState.data.total
+                            totalPages = uiState.data.totalPage()
                             if (noticeParams.page == 1) {
                                 noticeList.clear()
                             }
@@ -106,7 +106,7 @@ class NoticeActivity : AppCompatActivity() {
                             binding.tvLoadMore.text = "加载失败，上拉重试"
                             binding.tvLoadMore.visibility = View.VISIBLE
                         } else if (noticeList.isEmpty()) {
-                            renderEmpty("加载失败，请重试", true)
+                            renderEmpty(uiState.msg.ifBlank { "加载失败，请重试" }, true)
                         }
                         isLoadMore = false
                     }
@@ -158,6 +158,7 @@ class NoticeActivity : AppCompatActivity() {
                 val index = tab.position
                 noticeParams.index = index
                 noticeParams.type = index + 1
+                noticeAdapter.updateType(noticeParams.type)
                 resetListState()
                 renderLoading()
                 loadInfo() // 切换tab重新加载数据

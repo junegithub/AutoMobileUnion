@@ -86,7 +86,10 @@ class DeviceStatusListActivity : AppCompatActivity() {
                     )
                 )
             )
-            startActivity(Intent(this@DeviceStatusListActivity, MainActivity::class.java))
+            startActivity(
+                Intent(this@DeviceStatusListActivity, MainActivity::class.java)
+                    .putExtra(MainActivity.EXTRA_SELECTED_TAB, MainActivity.TAB_CAR)
+            )
             finish()
         }
         layoutManager = LinearLayoutManager(this@DeviceStatusListActivity)

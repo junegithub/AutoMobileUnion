@@ -141,7 +141,7 @@ class MeetingDetailActivity : AppCompatActivity() {
                         is ApiState.Success -> {
                             if (state.data != null) {
                                 showToast("提交成功")
-                                finish()
+                                loadMeetingDetail()
                             } else {
                                 showToast("提交失败")
                             }
@@ -410,7 +410,7 @@ class MeetingDetailActivity : AppCompatActivity() {
         return when {
             media.isCompressed -> media.compressPath
             media.isCut -> media.cutPath
-            else -> media.path
+            else -> media.realPath ?: media.path
         }
     }
 

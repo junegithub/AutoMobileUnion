@@ -66,7 +66,12 @@ object VehicleImageProvider {
         val normalizedVehicleId = vehicleId.trim()
         return when {
             normalizedVehicleId.contains("客") -> "keche"
-            normalizedVehicleId.contains("轿") || normalizedVehicleId.contains("小型") -> "jiaoche"
+            normalizedVehicleId.contains("轿") ||
+                normalizedVehicleId.contains("小型") ||
+                normalizedVehicleId.contains("小客") ||
+                normalizedVehicleId.contains("小车") ||
+                normalizedVehicleId.contains("微型") ||
+                normalizedVehicleId.contains("乘用") -> "jiaoche"
             normalizedVehicleId.contains("货") -> "huoche"
             normalizedVehicleId.contains("特") -> "teshuche"
             normalizedVehicleId.contains("拖拉") -> "tuolaji"

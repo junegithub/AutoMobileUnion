@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.fx.zfcar.databinding.ActivityDriverBookBinding
+import com.fx.zfcar.net.ApiConfig
 import com.fx.zfcar.net.SignViewData
 import com.fx.zfcar.net.SingPostRequest
 import com.fx.zfcar.net.UploadFileData
@@ -166,7 +167,7 @@ class DriverBookActivity : AppCompatActivity() {
                         state.data?.let {
                             val uploadData = state.data
                             // 上传成功，提交责任书签署
-                            submitDriverBook(uploadData.url)
+                            submitDriverBook(ApiConfig.BASE_URL_TRAINING + uploadData.url)
                         }
                     }
                     is ApiState.Error -> {
@@ -186,8 +187,7 @@ class DriverBookActivity : AppCompatActivity() {
                     }
                     is ApiState.Success -> {
                         showToast("提交成功")
-
-                        finish()
+                        checkDriverBookSignStatus()
                     }
                     is ApiState.Error -> {
                         showToast("提交失败：${state.msg}")

@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.fx.zfcar.databinding.ActivityCarSafetyCheckBinding
 import com.fx.zfcar.net.CarCheckData
 import com.fx.zfcar.net.CarCheckDetail
+import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.DateUtil
 import com.fx.zfcar.util.PressEffectUtils
@@ -39,10 +40,13 @@ class CarSafetyCheckActivity : AppCompatActivity() {
         binding.ivBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        binding.layoutLastRecord.visibility = View.GONE
 
         // 上次记录卡片点击事件
         binding.cardLastRecord.setOnClickListener {
-            goToLastRecordDetail(carCheckDetail)
+            carCheckDetail?.let {
+                goToLastRecordDetail(it)
+            } ?: showToast("暂无检查记录")
         }
 
         // 监听最新记录数据
@@ -51,18 +55,23 @@ class CarSafetyCheckActivity : AppCompatActivity() {
                 .collect { state ->
                     when (state) {
                         is ApiState.Success -> {
-                            state.data?.let {
+                            val record = state.data?.rows
+                            if (record != null) {
                                 // 显示上次记录区域
                                 binding.layoutLastRecord.visibility = View.VISIBLE
                                 // 设置日期和车牌号
-                                binding.tvLastRecordDate.text = DateUtil.timestamp2Date(state.data.rows.updatetime * 1000L)
-                                binding.tvLastRecordCarnum.text = state.data.rows.carnum
-                                carCheckDetail = state.data.rows
+                                binding.tvLastRecordDate.text = DateUtil.timestamp2Date(record.updatetime * 1000L)
+                                binding.tvLastRecordCarnum.text = record.carnum
+                                carCheckDetail = record
+                            } else {
+                                carCheckDetail = null
+                                binding.layoutLastRecord.visibility = View.GONE
                             }
 
                         }
                         is ApiState.Error -> {
                             binding.layoutLastRecord.visibility = View.GONE
+                            showToast(state.msg)
                         }
                         else -> {}
                     }
@@ -95,7 +104,7 @@ class CarSafetyCheckActivity : AppCompatActivity() {
     }
 
     // 跳转到上次记录详情页
-    private fun goToLastRecordDetail(record: CarCheckDetail?) {
+    private fun goToLastRecordDetail(record: CarCheckDetail) {
         // 保存记录到SP
         SPUtils.save("carCheckRecord", gson.toJson(record))
 

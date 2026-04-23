@@ -217,7 +217,7 @@ class RealTimeMonitorActivity : AppCompatActivity() {
                 )
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
-                addJavascriptInterface(WebAppInterface(i), "AndroidInterface$i")
+                addJavascriptInterface(WebAppInterface(i), "AndroidInterface")
                 webViewClient = object : WebViewClient() {
                     override fun onReceivedError(
                         view: WebView?,

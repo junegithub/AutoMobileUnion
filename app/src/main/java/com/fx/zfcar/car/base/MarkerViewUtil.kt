@@ -26,6 +26,7 @@ object MarkerViewUtil {
         val tvNum = view.findViewById<TextView>(R.id.tv_car_num)
 
         ivCar.setImageResource(VehicleImageProvider.getMapMarkerResId(status))
+        ivCar.rotation = toAndroidMapAngle(rotation)
         tvNum.text = carnum
 
         // 测量 + 绘制View到Bitmap
@@ -37,5 +38,10 @@ object MarkerViewUtil {
 
         // 转为高德Descriptor（自动管理内存）
         return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+
+    private fun toAndroidMapAngle(direction: Float): Float {
+        val adjusted = direction - 90f
+        return if (adjusted < 0f) 360f + adjusted else adjusted
     }
 }

@@ -451,7 +451,7 @@ class DriveLogModel {
             real_load = localForm.real_load,
             goods_name = localForm.goods_name,
             gotime = localForm.gotime,
-            gettime = localForm.gettime.toIntOrNull() ?: 0, // 字符串转Int
+            gettime = localForm.gettime,
             start_address = localForm.start_address,
             end_address = localForm.end_address,
             mileage = localForm.mileage,
@@ -463,6 +463,7 @@ class DriveLogModel {
             stoptime = localForm.stoptime,
             eresult = localForm.eresult ?: 0,
             dsingimg = localForm.dsingimg,
+            ysingimg = localForm.ysingimg,
             staus = localForm.staus,
             updatetime = localForm.updatetime
         )

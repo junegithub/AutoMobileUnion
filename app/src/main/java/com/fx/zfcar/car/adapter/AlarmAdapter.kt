@@ -22,10 +22,16 @@ class AlarmAdapter:
         fun bind(bean: VehicleInfo?) {
             binding.tvPlateNum.text = bean?.carNum
             binding.tvCompany.text = bean?.deptName
-            binding.tvAlarmType.text = DictMapManager.getDictLabelByValue(bean?.type?.toInt().toString())
-            binding.tvTime.text = bean?.starttimeTime + "~" + bean?.endtimeTime
+            val alarmType = DictMapManager.getDictLabelByValue(bean?.type?.toInt().toString())
+                .takeIf { it.isNotBlank() }
+                ?: bean?.type?.toInt()?.toString().orEmpty()
+            binding.tvAlarmType.text = alarmType
+            binding.tvTime.text = bean?.starttimeTime + "~" + bean?.endtimeTime.orEmpty().takeUnless { it.contains("1970") }.orEmpty()
             binding.tvAddress.text = bean?.position
-            binding.tvContact.text = bean?.contacts
+            binding.tvContact.text = listOf(bean?.driverCardName, bean?.contacts)
+                .firstOrNull { !it.isNullOrBlank() && it != "-" }
+                ?.let { it }
+                ?: ""
         }
     }
 

@@ -96,12 +96,13 @@
     <!-- 水平布局：复选框 + 协议文本 -->
     <LinearLayout
         android:id="@+id/agreement_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/et_account"
+        app:layout_constraintEnd_toEndOf="@id/et_account"
         app:layout_constraintTop_toBottomOf="@id/btn_login"
         android:layout_marginTop="@dimen/dp_16"
-        android:gravity="center_vertical"
+        android:gravity="top"
         android:orientation="horizontal">
 
         <!-- 纯复选框（无文本） -->
@@ -109,6 +110,8 @@
             android:id="@+id/cb_agreement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
             android:buttonTint="@color/black"/>
 
         <!-- 协议文本（独立TextView） -->
@@ -122,7 +125,8 @@
             android:text="@string/agreement"
             android:textColor="@color/text_gray"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:includeFontPadding="false"/>
 
     </LinearLayout>
 

@@ -144,7 +144,7 @@ class NoticeDetailActivity : AppCompatActivity() {
             }
         }
 
-        if (noticeInfo.status == 0 && SPUtils.get("noticeSign").isEmpty() && noticeInfo.issign == "0") {
+        if (noticeInfo.isUnread() && SPUtils.get("noticeSign").isEmpty() && noticeInfo.issign == "0") {
             sendRead()
         }
 

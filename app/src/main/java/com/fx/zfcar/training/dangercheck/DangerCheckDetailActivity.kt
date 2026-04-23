@@ -314,7 +314,39 @@ class DangerCheckDetailActivity : AppCompatActivity() {
         }
 
         // 8. 绑定所有数据到视图
+        normalizeCheckTime()
         bindFormToView()
+    }
+
+    private fun normalizeCheckTime() {
+        val normalized = normalizeDateString(form.checktime)
+        form.checktime = normalized.ifBlank { getCurrentDate() }
+        currentCheckTime = parseDateMillis(form.checktime) ?: System.currentTimeMillis()
+    }
+
+    private fun normalizeDateString(value: String?): String {
+        val raw = value?.trim().orEmpty()
+        if (raw.isBlank() || raw == "0" || raw.equals("null", ignoreCase = true)) return ""
+        if (raw.matches(Regex("^\\d{10,13}$"))) {
+            val timestamp = raw.toLongOrNull() ?: return raw
+            val millis = if (raw.length == 10) timestamp * 1000 else timestamp
+            return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(millis))
+        }
+        return raw
+            .replace("/", "-")
+            .substringBefore(" ")
+            .takeIf { it.matches(Regex("^\\d{4}-\\d{1,2}-\\d{1,2}$")) }
+            ?.split("-")
+            ?.let { parts ->
+                "${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}"
+            }
+            ?: raw
+    }
+
+    private fun parseDateMillis(value: String?): Long? {
+        return runCatching {
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(value.orEmpty())?.time
+        }.getOrNull()
     }
 
     // 更新表单照片字段（适配新模型命名）
@@ -715,7 +747,8 @@ class DangerCheckDetailActivity : AppCompatActivity() {
 
         when (requestCode) {
             REQUEST_CODE_CAR_SEARCH -> {
-                val carNum = data?.getStringExtra("carnum") ?: ""
+                val carNum = data?.getStringExtra("carNum") ?: data?.getStringExtra("carnum") ?: ""
+                form.carnum = carNum
                 binding.etCarNum.setText(carNum)
             }
         }

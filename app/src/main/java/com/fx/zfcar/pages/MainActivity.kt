@@ -1,5 +1,6 @@
 package com.fx.zfcar.pages
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.widget.Toast
@@ -14,6 +15,12 @@ import com.fx.zfcar.R
 import com.fx.zfcar.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        const val EXTRA_SELECTED_TAB = "extra_selected_tab"
+        const val TAB_CAR = 0
+        const val TAB_TRAINING = 1
+    }
+
     private lateinit var binding: ActivityMainBinding
     private var lastBackPressedAt = 0L
     private var exitDialog: AlertDialog? = null
@@ -58,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+        selectTabFromIntent(intent)
 
         onBackPressedDispatcher.addCallback(
             this,
@@ -67,6 +75,19 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         )
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        selectTabFromIntent(intent)
+    }
+
+    private fun selectTabFromIntent(intent: Intent?) {
+        when (intent?.getIntExtra(EXTRA_SELECTED_TAB, TAB_CAR)) {
+            TAB_TRAINING -> binding.viewPager.currentItem = TAB_TRAINING
+            else -> binding.viewPager.currentItem = TAB_CAR
+        }
     }
 
     private fun handleExitBackPress() {

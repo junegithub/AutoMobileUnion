@@ -5,9 +5,13 @@ import com.fx.zfcar.training.viewmodel.TrainingBaseViewModel
 import androidx.lifecycle.viewModelScope
 import com.fx.zfcar.net.CarCheckForm
 import com.fx.zfcar.net.CarCheckPostRequest
+import com.fx.zfcar.net.CategoryDetail
 import com.fx.zfcar.net.CheckStage
+import com.fx.zfcar.net.UserInfoDetail
 import com.fx.zfcar.util.DateUtil
+import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.viewmodel.ApiState
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,13 +42,29 @@ class CarCheckViewModel: TrainingBaseViewModel() {
     private val postStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
 
     init {
+        val user = parseUserInfo()
+        val company = parseCompanyInfo()
         // 初始化默认值
         _form.update {
             it.copy(
                 checktime = DateUtil.timestamp2Date(System.currentTimeMillis()),
-                name = "默认检查人",
-                company = "默认检查单位"
+                name = user?.nickname?.takeIf { name -> name.isNotBlank() }
+                    ?: user?.username.orEmpty(),
+                company = company?.name?.takeIf { name -> name.isNotBlank() }
+                    ?: company?.nickname.orEmpty()
             )
+        }
+    }
+
+    private fun parseUserInfo(): UserInfoDetail? {
+        return SPUtils.get("userInfo").takeIf { it.isNotBlank() }?.let {
+            runCatching { Gson().fromJson(it, UserInfoDetail::class.java) }.getOrNull()
+        }
+    }
+
+    private fun parseCompanyInfo(): CategoryDetail? {
+        return SPUtils.get("companyInfo").takeIf { it.isNotBlank() }?.let {
+            runCatching { Gson().fromJson(it, CategoryDetail::class.java) }.getOrNull()
         }
     }
 
@@ -135,15 +155,23 @@ class CarCheckViewModel: TrainingBaseViewModel() {
     // 设置签名状态和图片
     fun setDriverSigned(signed: Boolean, signImage: String = "") {
         _driverSigned.value = signed
-        if (signImage.isNotBlank()) {
-            _form.update { it.copy(checksign_img = signImage) }
+        _form.update { form ->
+            when {
+                !signed -> form.copy(checksign_img = "")
+                signImage.isNotBlank() -> form.copy(checksign_img = signImage)
+                else -> form
+            }
         }
     }
 
     fun setCheckerSigned(signed: Boolean, signImage: String = "") {
         _checkerSigned.value = signed
-        if (signImage.isNotBlank()) {
-            _form.update { it.copy(dirversign_img = signImage) }
+        _form.update { form ->
+            when {
+                !signed -> form.copy(dirversign_img = "")
+                signImage.isNotBlank() -> form.copy(dirversign_img = signImage)
+                else -> form
+            }
         }
     }
 

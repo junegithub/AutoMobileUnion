@@ -1699,7 +1699,7 @@ data class TravelPostRequest(
     val real_load: String,
     val goods_name: String,
     val gotime: String,
-    val gettime: Int,
+    val gettime: String,
     val start_address: String,
     val end_address: String,
     val mileage: String,
@@ -1711,6 +1711,7 @@ data class TravelPostRequest(
     val stoptime: String,
     val eresult: Int,
     val dsingimg: String,
+    val ysingimg: String,
     val staus: String,
     val updatetime: String
 )
@@ -1891,7 +1892,7 @@ data class BeforeEducationCertificateData(
 )
 
 data class CarCheckData(
-    val rows: CarCheckDetail
+    val rows: CarCheckDetail? = null
 )
 
 data class CarCheckDetail(
@@ -1929,10 +1930,10 @@ data class CarCheckDetail(
 )
 
 data class DangerData(
-    val total: Int,
-    val rows: List<DangerCheckHistoryItem>,
-    val allnum: Int,
-    val dslist: DangerDetail
+    val total: Int = 0,
+    val rows: List<DangerCheckHistoryItem>? = emptyList(),
+    val allnum: Int = 0,
+    val dslist: DangerDetail? = null
 )
 
 data class DangerDetail(
@@ -2329,15 +2330,18 @@ data class SectionItem(val name: String)
 
 // 公告列表项数据模型
 data class NoticeItem(
-    val id: String,
-    val title: String,
-    val content: String,
-    val status: Int, // 0=未读，1=已读
-    val file: String, // 图片地址（空字符串表示无图片）
-    val issign: String, // 0=不需要签字，1=需要签字
-    val signimg: String, // 签字图片地址
-    val type: Int    // 1/2/3 对应不同公告类型
-)
+    @SerializedName(value = "id", alternate = ["notice_id"])
+    val id: String = "",
+    val title: String = "",
+    val content: String = "",
+    val status: String = "1", // 0=未读，1=已读
+    val file: String = "", // 图片地址（空字符串表示无图片）
+    val issign: String = "0", // 0=不需要签字，1=需要签字
+    val signimg: String = "", // 签字图片地址
+    val type: Int = 1    // 1/2/3 对应不同公告类型
+) {
+    fun isUnread(): Boolean = status == "0"
+}
 
 // 分页请求参数（对应小程序的params）
 data class NoticeParams(
@@ -2347,9 +2351,11 @@ data class NoticeParams(
 )
 
 data class NoticeData(
-    val rows: List<NoticeItem>,
-    val total: Int // 总页数
-)
+    val rows: List<NoticeItem> = emptyList(),
+    val total: String = "0" // 总页数
+) {
+    fun totalPage(): Int = total.toIntOrNull() ?: 0
+}
 
 /**
  * 培训列表项数据模型

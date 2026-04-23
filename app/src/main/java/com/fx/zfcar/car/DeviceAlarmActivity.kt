@@ -14,9 +14,11 @@ import com.chad.library.adapter4.util.setOnDebouncedItemClick
 import com.fx.zfcar.R
 import com.fx.zfcar.car.adapter.AlarmAdapter
 import com.fx.zfcar.car.viewmodel.AlarmViewModel
+import com.fx.zfcar.car.viewmodel.UserViewModel
 import com.fx.zfcar.net.AlarmListData
 import com.fx.zfcar.net.BaseCarInfo
 import com.fx.zfcar.net.DictMapManager
+import com.fx.zfcar.net.DictItem
 import com.fx.zfcar.net.VehicleInfo
 import com.fx.zfcar.pages.CalendarDialog
 import com.fx.zfcar.pages.EventData
@@ -39,7 +41,9 @@ class DeviceAlarmActivity : AppCompatActivity() {
     private lateinit var alarmAdapter: AlarmAdapter
     private val alarmList = mutableListOf<VehicleInfo>()
     private val alarmViewModel by viewModels<AlarmViewModel>()
+    private val userViewModel by viewModels<UserViewModel>()
     private val alarmListStateFlow = MutableStateFlow<ApiState<AlarmListData>>(ApiState.Idle)
+    private val alarmTypeStateFlow = MutableStateFlow<ApiState<DictItem>>(ApiState.Idle)
     private var pageNum: Int = 1
     private val pageSize = 50
     private var warningType = "all"
@@ -60,6 +64,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
         initData()
         initView()
         updateDateRange()
+        userViewModel.getAlarmWarningTypes(alarmTypeStateFlow)
         loadData()
         initListener()
     }
@@ -86,7 +91,10 @@ class DeviceAlarmActivity : AppCompatActivity() {
                     )
                 )
             )
-            startActivity(Intent(this@DeviceAlarmActivity, MainActivity::class.java))
+            startActivity(
+                Intent(this@DeviceAlarmActivity, MainActivity::class.java)
+                    .putExtra(MainActivity.EXTRA_SELECTED_TAB, MainActivity.TAB_CAR)
+            )
             finish()
         }
         layoutManager = LinearLayoutManager(this@DeviceAlarmActivity)
@@ -107,6 +115,14 @@ class DeviceAlarmActivity : AppCompatActivity() {
         binding.spinnerAlarmType.adapter = spinnerAdapter
 
         lifecycleScope.launch {
+            alarmTypeStateFlow.collect { state ->
+                if (state is ApiState.Success) {
+                    alarmAdapter.submitList(alarmList.toList())
+                }
+            }
+        }
+
+        lifecycleScope.launch {
             alarmListStateFlow.collect { state ->
                 when (state) {
                     is ApiState.Loading -> {
@@ -120,7 +136,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
                         }
                         alarmList.addAll(data.list)
                         reachedEnd = alarmList.size >= currentTotal || data.list.size < pageSize
-                        updateListWithSpinnerSelection(binding.spinnerAlarmType.selectedItemPosition)
+                        alarmAdapter.submitList(alarmList.toList())
                         loadFromMore = false
                     }
                     is ApiState.Error -> {
@@ -181,6 +197,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
                     currentTotal = 0
                     reachedEnd = false
                     alarmList.clear()
+                    alarmAdapter.submitList(emptyList())
                     loadData()
                 }
             })
@@ -196,25 +213,28 @@ class DeviceAlarmActivity : AppCompatActivity() {
                     position: Int,
                     id: Long
                 ) {
-                    updateListWithSpinnerSelection(position)
+                    val selectedWarningType = warningTypeForPosition(position)
+                    if (selectedWarningType == warningType) return
+                    warningType = selectedWarningType
+                    pageNum = 1
+                    currentTotal = 0
+                    reachedEnd = false
+                    loadFromMore = false
+                    alarmList.clear()
+                    alarmAdapter.submitList(emptyList())
+                    loadData()
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
     }
 
-    private fun updateListWithSpinnerSelection(position: Int) {
-        // 可根据选择的报警类型过滤列表
-        if (position == 0) {
-            alarmAdapter.submitList(alarmList)
-        } else if (position == 3) {
-            val filteredList = alarmList.filter { DictMapManager.getDictLabelByValue(it.type?.toInt().toString()) != alarmTypes[1]
-                    &&  DictMapManager.getDictLabelByValue(it.type?.toInt().toString()) != alarmTypes[2]}
-            alarmAdapter.submitList(filteredList)
-        } else {
-            val selectedType = alarmTypes.get(position)
-            val filteredList = alarmList.filter { DictMapManager.getDictLabelByValue(it.type?.toInt().toString()) == selectedType }
-            alarmAdapter.submitList(filteredList)
+    private fun warningTypeForPosition(position: Int): String {
+        return when (position) {
+            1 -> "overSpeed"
+            2 -> "tired"
+            3 -> "other"
+            else -> "all"
         }
     }
 }

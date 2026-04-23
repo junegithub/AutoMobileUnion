@@ -135,7 +135,7 @@
 
             <!-- 时间选择标签 -->
             <TextView
-                android:text="播放时长："
+                android:text="分享时间："
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_width="0dp"

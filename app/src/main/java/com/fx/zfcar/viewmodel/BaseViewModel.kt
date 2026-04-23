@@ -2,10 +2,13 @@ package com.fx.zfcar.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fx.zfcar.MyApp
 import com.fx.zfcar.net.DictItem
 import com.fx.zfcar.net.DictMapManager
 import com.fx.zfcar.net.IBaseResponse
+import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.NetworkErrorMapper
+import com.fx.zfcar.util.SPUtils
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -51,6 +54,9 @@ open class BaseViewModel : ViewModel() {
     ) {
         when {
             !response.isSuccessful -> {
+                if (response.code() == 401) {
+                    handleAuthExpired(response)
+                }
                 stateFlow?.value = ApiState.Error(
                     NetworkErrorMapper.fromHttp(response.code(), response.message())
                 )
@@ -64,10 +70,39 @@ open class BaseViewModel : ViewModel() {
                     DictMapManager.initDictMap(response.body()!!.rows as List<DictItem>)
                 }
             }
+            response.body()?.code == 401 -> {
+                handleAuthExpired(response)
+                stateFlow?.value = ApiState.Error("登录已失效，请重新登录")
+            }
             else -> {
                 val errorBody = response.errorBody()?.string()?.takeIf { it.isNotBlank() }
                 val errorMsg = response.body()?.msg ?: errorBody ?: "请求失败"
                 stateFlow?.value = ApiState.Error(errorMsg)
+            }
+        }
+    }
+
+    private fun <T, R : IBaseResponse<T>> handleAuthExpired(response: Response<R>) {
+        val isTrainingRequest = response.raw().request.url.host == "safe.ezbeidou.com"
+        if (isTrainingRequest) {
+            SPUtils.saveTrainingToken("")
+            SPUtils.save("trainLogin", "yes")
+            MyApp.isTrainingLogin = false
+            MyApp.trainingUserInfo = null
+        } else {
+            SPUtils.saveToken("")
+            MyApp.isLogin = false
+            MyApp.userInfo = null
+        }
+        MyApp.getCurrentActivity()?.let { activity ->
+            activity.runOnUiThread {
+                if (!activity.isFinishing && !activity.isDestroyed) {
+                    if (isTrainingRequest) {
+                        DialogUtils.showTrainingLoginPromptDialog(activity)
+                    } else {
+                        DialogUtils.showLoginPromptDialog(activity)
+                    }
+                }
             }
         }
     }

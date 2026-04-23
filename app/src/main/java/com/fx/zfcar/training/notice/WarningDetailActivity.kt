@@ -154,7 +154,7 @@ class WarningDetailActivity : AppCompatActivity() {
         }
 
         // 标记已读（未读且不需要签字）
-        if (notice.status == 0 && issign == "0") {
+        if (notice.isUnread() && issign == "0") {
             sendRead()
         }
     }

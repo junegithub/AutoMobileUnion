@@ -12,6 +12,7 @@ import com.fx.zfcar.net.DangerCheckHistoryItem
 import com.fx.zfcar.net.DangerData
 import com.fx.zfcar.net.DangerDetail
 import com.fx.zfcar.training.adapter.DangerCheckHistoryAdapter
+import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.SPUtils
@@ -56,6 +57,8 @@ class DangerCheckActivity : AppCompatActivity() {
 
         // 导航栏标题
         binding.tvTitle.text = "隐患排查"
+        binding.layoutIngCheck.visibility = View.GONE
+        binding.rvHistory.visibility = View.GONE
 
         // 初始化历史记录列表
         historyAdapter = DangerCheckHistoryAdapter { item ->
@@ -95,18 +98,21 @@ class DangerCheckActivity : AppCompatActivity() {
                         val data = state.data
                         state.data?.let {
                             // 处理进行中的排查项
-                            if (data.dslist.fbstaus == "1") {
-                                ingItem = data.dslist
+                            val runningItem = data.dslist
+                            if (runningItem?.fbstaus == "1") {
+                                ingItem = runningItem
                                 binding.layoutIngCheck.visibility = View.VISIBLE
                             } else {
                                 binding.layoutIngCheck.visibility = View.GONE
                             }
 
                             // 处理历史记录
-                            if (data.rows.isNotEmpty()) {
-                                historyAdapter.setData(data.rows)
+                            val historyRows = data.rows.orEmpty()
+                            if (historyRows.isNotEmpty()) {
+                                historyAdapter.setData(historyRows)
                                 binding.rvHistory.visibility = View.VISIBLE
                             } else {
+                                historyAdapter.setData(emptyList())
                                 binding.rvHistory.visibility = View.GONE
                             }
                         }
@@ -114,7 +120,9 @@ class DangerCheckActivity : AppCompatActivity() {
                     }
                     is ApiState.Error -> {
                         binding.loadingView.visibility = View.GONE
-                        // 可添加错误提示
+                        binding.layoutIngCheck.visibility = View.GONE
+                        binding.rvHistory.visibility = View.GONE
+                        showToast(state.msg)
                     }
                     is ApiState.Idle -> {}
                 }
