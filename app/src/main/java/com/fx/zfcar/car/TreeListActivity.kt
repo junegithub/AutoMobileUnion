@@ -209,8 +209,8 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
                             if (fromSearch) {
                                 updateTab(binding.tabLayout.selectedTabPosition)
                             }
-                        } else {
-                            // 无数据
+                        } else if (!fromSearch) {
+                            // 搜索态同时请求车牌号和机构树；机构树为空不再抢车牌号结果提示。
                             showToast("暂无数据")
                         }
                     }
@@ -371,6 +371,10 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     }
 
     private fun switchMapDetail(carId: String, carNum: String) {
+        if (carId.isBlank() || carId == "0") {
+            showToast("车辆信息异常")
+            return
+        }
         EventBus.getDefault().postSticky(
             EventData(
                 EventData.EVENT_CAR_DETAIL,

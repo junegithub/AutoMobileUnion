@@ -112,7 +112,9 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
         initView()
         collectStateFlows()
         getUserInfo()
-        loadData()
+        if (currentType != 0) {
+            loadData()
+        }
     }
 
     private fun initView() {
@@ -254,6 +256,10 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                             if (state.data.yzstatus != 1) {
                                 startActivity(Intent(this@TrainListActivity, UserCenterActivity::class.java))
                                 finish()
+                                return@collect
+                            }
+                            if (currentType == 0 && trainDataList?.isEmpty() == true) {
+                                loadData()
                             }
                         }
                     }
@@ -463,6 +469,10 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
         }
 
         when {
+            type == "daily" -> {
+                // ytcar-app 安卓端 orderisPay 成功即进入支付页；不依赖 money 是否为空。
+                gotoPayPage(itemId, itemName, payInfo, type)
+            }
             (data as? CheckSafeData)?.msg == "已过期" || payInfo.money.isNotEmpty() -> {
                 // 跳支付页面
                 gotoPayPage(itemId, itemName, payInfo, type)
@@ -569,6 +579,10 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
 
     override fun onExamClick(item: TrainListItem) {
         val data = (item as TrainListItem.TypeSafeItem).data
+        if (data.progress < 100) {
+            showToast("请先完成学习后再参加考试")
+            return
+        }
         // 跳考试页面
         val intent = Intent(this, ExamManagerActivity::class.java)
         intent.putExtra("id", data.training_exams_id)

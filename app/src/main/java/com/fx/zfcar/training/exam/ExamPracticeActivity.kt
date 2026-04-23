@@ -355,13 +355,13 @@ class ExamPracticeActivity : AppCompatActivity() {
             categoryList.clear()
 
             if (resObj.isNotEmpty()) {
-                resObj.forEach { value ->
+                resObj.forEach { (key, value) ->
                     categoryList.add(
                         CategoryModel(
                             category_name = value.category_name,
                             answer_count = value.answer_count,
                             question_count = value.question_count,
-                            question_category_id = 97,
+                            question_category_id = key.toIntOrNull() ?: 0,
                             user_exam_id = value.user_exam_id
                         )
                     )
@@ -397,24 +397,29 @@ class ExamPracticeActivity : AppCompatActivity() {
             answerCount = resInfo.answer_count
 
             // 处理分类列表
-            var key = 107
-            var resObj = resInfo.category_list.`107`
-            if (resObj == null) {
-                key = 106
-                resObj = resInfo.category_list.`106`
+            val categoryPair = when (roleId) {
+                "3" -> 107 to resInfo.category_list.`107`
+                "1" -> 106 to resInfo.category_list.`106`
+                else -> listOfNotNull(
+                    resInfo.category_list.`107`?.let { 107 to it },
+                    resInfo.category_list.`106`?.let { 106 to it }
+                ).firstOrNull()
             }
+            val key = categoryPair?.first
+            val resObj = categoryPair?.second
 
             categoryList.clear()
-
-            categoryList.add(
-                CategoryModel(
-                    category_name = resObj.category_name,
-                    answer_count = resObj.answer_count,
-                    question_count = resObj.question_count,
-                    question_category_id = key,
-                    user_exam_id = resObj.user_exam_id
+            if (key != null && resObj != null) {
+                categoryList.add(
+                    CategoryModel(
+                        category_name = resObj.category_name,
+                        answer_count = resObj.answer_count,
+                        question_count = resObj.question_count,
+                        question_category_id = key,
+                        user_exam_id = resObj.user_exam_id
+                    )
                 )
-            )
+            }
 
             // 更新标题（优化：使用String.format）
             binding.tvTitle.text = String.format("%s:%s", title, nickName)

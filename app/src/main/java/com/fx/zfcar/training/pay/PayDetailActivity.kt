@@ -74,6 +74,7 @@ class PayDetailActivity : AppCompatActivity() {
     private var money = 0f
     private var historyShow = true
     private var year_money = 0f
+    private var yearId = 0
     private var dailyYear = false
     private var usualpaytype = "0" // 0 个人 1 企业
     private var isuserpay = "0" // 0 允许立即支付 1 不允许
@@ -104,7 +105,7 @@ class PayDetailActivity : AppCompatActivity() {
         if (payName != null) {
             // 岗前培训来源
             name = payName
-            money = intent.getFloatExtra("payNum", 0f)
+            money = readMoneyExtra("payNum")
             historyShow = false
 
             // 岗前培训企业支付
@@ -129,7 +130,18 @@ class PayDetailActivity : AppCompatActivity() {
 
             dailyYear = intent.getStringExtra("type") == "daily"
             name = intent.getStringExtra("name") ?: ""
-            money = intent.getFloatExtra("money", 0f)
+            money = readMoneyExtra("money")
+        }
+    }
+
+    private fun readMoneyExtra(key: String): Float {
+        return when (val value = intent.extras?.get(key)) {
+            is Float -> value
+            is Double -> value.toFloat()
+            is Int -> value.toFloat()
+            is Long -> value.toFloat()
+            is String -> value.toFloatOrNull() ?: 0f
+            else -> 0f
         }
     }
 
@@ -384,7 +396,7 @@ class PayDetailActivity : AppCompatActivity() {
                 // 日常培训
                 val params = mapOf(
                     "money" to String.format("%.2f", money),
-                    "training_safetyplan_id" to id,
+                    "training_publicplan_id" to id,
                     "type" to "alipay",
                     "method" to "app"
                 )
@@ -397,6 +409,10 @@ class PayDetailActivity : AppCompatActivity() {
      * 年度支付方式选择
      */
     private fun yearAllPay(which: Int) {
+        if (yearId <= 0) {
+            showToast("暂无可支付的年度计划")
+            return
+        }
         if (which == 1) {
             currentPayMethod = "wechat"
             // 微信年度支付
@@ -405,7 +421,7 @@ class PayDetailActivity : AppCompatActivity() {
                     "code" to code,
                     "type" to "wechat",
                     "method" to "app",
-                    "year_id" to id.toInt()
+                    "year_id" to yearId
                 )
 
                 safetyTrainingViewModel.yearPay(params, _yearPayState)
@@ -416,7 +432,7 @@ class PayDetailActivity : AppCompatActivity() {
             val params = mapOf(
                 "type" to "alipay",
                 "method" to "app",
-                "year_id" to id.toInt()
+                "year_id" to yearId
             )
 
             safetyTrainingViewModel.yearPayAlipay(params, _yearPayAlipayState)
@@ -440,7 +456,8 @@ class PayDetailActivity : AppCompatActivity() {
 
                 // 更新数据
                 state.data?.let {
-                    year_money = state.data.year_money.toFloat()
+                    year_money = state.data.year_money.toFloatOrNull() ?: 0f
+                    yearId = state.data.year.id
                     isuserpay = state.data.category.isuserpay
                 }
 
@@ -604,7 +621,7 @@ class PayDetailActivity : AppCompatActivity() {
                 hideLoading()
                 showToast("企业支付成功")
                 val intent = Intent(this, TrainListActivity::class.java).apply {
-                    putExtra("type", "1")
+                    putExtra("type", 1)
                     putExtra("title", "岗前培训")
                 }
                 startActivity(intent)
@@ -634,11 +651,11 @@ class PayDetailActivity : AppCompatActivity() {
                     PayUtils.callWeChatPay(this, state.data) { isSuccess, msg ->
                         if (isSuccess) {
                             showToast("支付成功")
-                        val intent = Intent(this, TrainListActivity::class.java).apply {
-                            putExtra("type", "1")
-                            putExtra("title", "岗前培训")
-                        }
-                        startActivity(intent)
+                            val intent = Intent(this, TrainListActivity::class.java).apply {
+                                putExtra("type", 1)
+                                putExtra("title", "岗前培训")
+                            }
+                            startActivity(intent)
                             finish()
                         } else {
                             showToast(msg)
@@ -672,7 +689,7 @@ class PayDetailActivity : AppCompatActivity() {
                         if (isSuccess) {
                             showToast("支付成功")
                             val intent = Intent(this, TrainListActivity::class.java).apply {
-                                putExtra("type", "1")
+                                putExtra("type", 1)
                                 putExtra("title", "岗前培训")
                             }
                             startActivity(intent)

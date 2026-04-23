@@ -102,16 +102,17 @@
         app:layout_constraintEnd_toEndOf="@id/et_account"
         app:layout_constraintTop_toBottomOf="@id/btn_login"
         android:layout_marginTop="@dimen/dp_16"
-        android:gravity="top"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <!-- 纯复选框（无文本） -->
         <CheckBox
             android:id="@+id/cb_agreement"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:minWidth="0dp"
             android:minHeight="0dp"
+            android:layout_marginEnd="6dp"
             android:buttonTint="@color/black"/>
 
         <!-- 协议文本（独立TextView） -->

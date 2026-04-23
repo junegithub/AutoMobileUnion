@@ -75,8 +75,8 @@ object VehicleImageProvider {
             normalizedVehicleId.contains("货") -> "huoche"
             normalizedVehicleId.contains("特") -> "teshuche"
             normalizedVehicleId.contains("拖拉") -> "tuolaji"
+            normalizedVehicleId in setOf("10", "12", "13", "14", "K13", "K23", "K26", "K31") -> "jiaoche"
             normalizedVehicleId.startsWith("K") -> "keche"              // K系列均为客车
-            normalizedVehicleId == "14" -> "jiaoche"                    // 轿车
             Regex("^(10|11|12|13|15|16)$").matches(normalizedVehicleId) -> "keche"  // 客车
             Regex("2[0-3]").matches(normalizedVehicleId) -> "huoche"        // 货车 20-23
             Regex("3[0-9]|40").matches(normalizedVehicleId) -> "teshuche"   // 特殊车辆 30-40

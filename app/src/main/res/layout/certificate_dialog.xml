@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="295dp"
+    android:layout_width="340dp"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <!-- 证书主体 -->
     <FrameLayout
         android:id="@+id/content"
-        android:layout_width="295dp"
-        android:layout_height="500dp">
+        android:layout_width="340dp"
+        android:layout_height="560dp">
 
         <ImageView
             android:layout_width="match_parent"
@@ -99,13 +99,14 @@
                 android:textSize="14sp" />
 
             <FrameLayout
-                android:layout_width="wrap_content"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_12">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingEnd="70dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -130,17 +131,17 @@
                     android:id="@+id/seal1"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="80dp" />
+                    android:layout_gravity="end|center_vertical" />
             </FrameLayout>
 
             <FrameLayout
-                android:layout_width="wrap_content"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingEnd="70dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -165,8 +166,7 @@
                     android:id="@+id/seal2"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="80dp" />
+                    android:layout_gravity="end|center_vertical" />
             </FrameLayout>
         </LinearLayout>
         <!-- 证书标题 -->

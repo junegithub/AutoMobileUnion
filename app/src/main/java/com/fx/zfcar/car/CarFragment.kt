@@ -452,11 +452,16 @@ class CarFragment : Fragment(), AMapLocationListener {
                         showMapLoading("车辆详情加载中...")
                     }
                     is ApiState.Success -> {
-                        val addressData = uiState.data ?: return@collect
+                        hideMapLoading()
+                        val addressData = uiState.data
+                        if (addressData == null) {
+                            requestFromOtherPage = false
+                            context?.showToast("未查询到车辆详情")
+                            return@collect
+                        }
                         // 忽略过期请求的响应（快速切换车辆时可能乱序到达）
                         val respondedCarId = addressData.carinfo.id
                         if (lastRequestedCarId.isNotBlank() && respondedCarId.isNotBlank() && respondedCarId != lastRequestedCarId) return@collect
-                        hideMapLoading()
                         if (requestFromOtherPage) {
                             requestFromOtherPage = false
                             val carInfo = addressData.carinfo
@@ -483,6 +488,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                             currentCar = mapPositionItem
                             lastRequestedCarId = carInfo.id
                             showSingleMarker(addCarMarker(mapPositionItem))
+                            carInfoViewModel.addSearchHistory(SearchHistoryRequest(carInfo.carnum), addSearchStateFlow)
                         }
                         refreshRealAddressCarDetails(addressData)
                     }
