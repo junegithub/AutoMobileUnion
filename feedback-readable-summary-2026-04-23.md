@@ -4,7 +4,7 @@
 
 原始表格：`/Users/june/Downloads/易车联APP反馈收集表/易车联APP反馈收集表.xlsx`
 
-代码提交：已推送基线 `480d61a fix: align feedback issue fixes`；本地最新提交 `f308a71 fix: align remaining feedback issues`。
+代码提交：已推送远端 `origin/main` 最新提交 `40bccbe fix: refine video playback lifecycle`；本地当前 HEAD 一致。
 
 ## 口径说明
 
@@ -82,7 +82,7 @@
   已对齐：地图首页和轨迹回放方向规则统一为 `direction - 90`。
 
 - `#6` 实时视频、视频回放，视频加载失败
-  已对齐部分：实时视频/视频回放/H5 历史回放的 WebView 注入对象名已统一为 `AndroidInterface`，并补齐混合内容、文件访问、媒体自动播放等基础设置；实时视频页销毁时已修正为移除正确的 JS 接口名，视频回放和历史回放页也补了 WebView 销毁清理。视频回放仍需真实设备通道、录像文件和流地址验证。
+  已对齐部分：实时视频/视频回放/H5 历史回放的 WebView 注入对象名已统一为 `AndroidInterface`，并补齐混合内容、文件访问、媒体自动播放等基础设置；三条视频链路都已补齐 WebView 销毁清理（移除 JS 接口、停止加载、跳空白页后销毁）。视频回放仍需真实设备通道、录像文件和流地址验证。
 
 - `#7` 历史车辆查询，一直在加载
   已对齐：历史车辆接口失败或返回空详情时会关闭加载并提示，不再停留在“车辆详情加载中”；历史/常搜入口成功打开车辆详情后补写搜索历史，对齐 `ytcar-app` 的 `getHistory/addHistory` 逻辑。
@@ -212,7 +212,6 @@
 
 ## 验证记录
 
-- `./gradlew :app:compileDebugKotlin`：2026-04-24 再次通过（含 `#45/#53/#56/#57` 对齐修正）。
-- `./gradlew :app:installDebug`：已安装到 `Mi 10 Pro - 13`。
-- 已推送远端基线：`origin/main`，提交 `480d61a`。
-- 本地最新提交：`f308a71`，是否已推远端需以当前 `git push` 结果为准。
+- `./gradlew :app:compileDebugKotlin`：2026-04-24 多次通过，已覆盖登录态、轨迹回放、岗前考试入口、证书版式、视频 WebView 生命周期等本轮修正。
+- 远端分支：`origin/main`
+- 最新提交：`40bccbe fix: refine video playback lifecycle`

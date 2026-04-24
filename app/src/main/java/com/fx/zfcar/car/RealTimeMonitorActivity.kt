@@ -565,6 +565,8 @@ class RealTimeMonitorActivity : AppCompatActivity() {
         // 销毁WebView
         webViews.forEach {
             it.removeJavascriptInterface("AndroidInterface")
+            it.stopLoading()
+            it.loadUrl("about:blank")
             it.destroy()
         }
         webViews.clear()
