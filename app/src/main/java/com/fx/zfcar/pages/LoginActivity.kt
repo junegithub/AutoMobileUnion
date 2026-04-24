@@ -86,18 +86,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun restoreNormalLoginStateFromCache() {
-        if (trainingLogin || MyApp.userInfo != null || SPUtils.getToken().isEmpty()) {
+        if (trainingLogin || SPUtils.getToken().isEmpty()) {
             return
         }
-        val cachedCarInfo = SPUtils.get(KEY_CAR_USER_INFO)
-        if (cachedCarInfo.isNotEmpty()) {
-            runCatching {
-                Gson().fromJson(cachedCarInfo, com.fx.zfcar.net.CarUserInfo::class.java)?.info
-            }.getOrNull()?.let {
-                MyApp.isLogin = true
-                MyApp.userInfo = it
-            }
-        }
+        MyApp.syncNormalLoginStateFromStorage()
     }
 
     private fun refreshNormalUserInfoIfNeeded() {

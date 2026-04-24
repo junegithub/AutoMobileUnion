@@ -379,11 +379,18 @@ class FaceCheckActivity : AppCompatActivity() {
                                     val itemStr = SPUtils.get("item")
                                     if (itemStr.isNotEmpty()) {
                                         val item = JSONObject(itemStr)
+                                        val examId = item.optString("training_exams_id").toIntOrNull() ?: 0
+                                        val planId = item.optString("id").toIntOrNull() ?: 0
+                                        if (examId <= 0 || planId <= 0) {
+                                            showToast("考试信息异常")
+                                            finish()
+                                            return@collectLatest
+                                        }
                                         val intent = Intent(this@FaceCheckActivity, ExamManagerActivity::class.java)
-                                        intent.putExtra("id", item.getString("training_exams_id"))
+                                        intent.putExtra("id", examId)
                                         intent.putExtra("name", item.getString("name"))
                                         intent.putExtra("type", "daily")
-                                        intent.putExtra("training_safetyplan_id", item.getString("id"))
+                                        intent.putExtra("training_safetyplan_id", planId)
                                         startActivity(intent)
                                     }
                                 } else {
@@ -419,11 +426,18 @@ class FaceCheckActivity : AppCompatActivity() {
                             val itemStr = SPUtils.get("item")
                             if (itemStr.isNotEmpty()) {
                                 val item = JSONObject(itemStr)
+                                val examId = item.optString("training_exams_id").toIntOrNull() ?: 0
+                                val planId = item.optString("id").toIntOrNull() ?: 0
+                                if (examId <= 0 || planId <= 0) {
+                                    showToast("考试信息异常")
+                                    finish()
+                                    return@collectLatest
+                                }
                                 val intent = Intent(this@FaceCheckActivity, ExamManagerActivity::class.java)
-                                intent.putExtra("id", item.getString("training_exams_id"))
+                                intent.putExtra("id", examId)
                                 intent.putExtra("name", item.getString("name"))
                                 intent.putExtra("type", "subject")
-                                intent.putExtra("training_safetyplan_id", item.getString("id"))
+                                intent.putExtra("training_safetyplan_id", planId)
                                 startActivity(intent)
                             }
                         } else {
@@ -464,15 +478,22 @@ class FaceCheckActivity : AppCompatActivity() {
                             startActivity(intent)
                         } else {
                             val beforeExamsId = SPUtils.get("beforeExamsId")
-                            if (beforeExamsId.isNotEmpty() && beforeExamsId > "0") {
+                            val beforeExamIdValue = beforeExamsId.toIntOrNull() ?: 0
+                            if (beforeExamIdValue > 0) {
                                 val itemStr = SPUtils.get("item")
                                 if (itemStr.isNotEmpty()) {
                                     val item = JSONObject(itemStr)
+                                    val planId = item.optString("id").toIntOrNull() ?: 0
+                                    if (planId <= 0) {
+                                        showToast("考试信息异常")
+                                        finish()
+                                        return@collectLatest
+                                    }
                                     val intent = Intent(this@FaceCheckActivity, ExamManagerActivity::class.java)
-                                    intent.putExtra("id", beforeExamsId)
+                                    intent.putExtra("id", beforeExamIdValue)
                                     intent.putExtra("name", item.getString("name"))
                                     intent.putExtra("type", "before")
-                                    intent.putExtra("training_safetyplan_id", item.getString("id"))
+                                    intent.putExtra("training_safetyplan_id", planId)
                                     startActivity(intent)
                                 }
                             } else {

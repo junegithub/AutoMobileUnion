@@ -131,13 +131,34 @@ class SignatureActivity : AppCompatActivity() {
                             val answerList: List<String> = Gson().fromJson(
                                 answer, object : TypeToken<List<String>>() {}.type
                             )
-                            examViewModel.submitExam(
-                                SubmitExamRequest(
+                            val submitRequest = when (type) {
+                                "before" -> SubmitExamRequest(
+                                    answer = answerList,
+                                    exams_id = examsId,
+                                    training_before_id = trainingSafetyPlanId,
+                                    imgurl = signImgUrl
+                                )
+                                "subject" -> SubmitExamRequest(
+                                    answer = answerList,
+                                    exams_id = examsId,
+                                    subject_id = trainingSafetyPlanId,
+                                    imgurl = signImgUrl
+                                )
+                                "daily" -> SubmitExamRequest(
                                     answer = answerList,
                                     exams_id = examsId,
                                     training_publicplan_id = trainingSafetyPlanId,
                                     imgurl = signImgUrl
-                                ),
+                                )
+                                else -> SubmitExamRequest(
+                                    answer = answerList,
+                                    exams_id = examsId,
+                                    training_safetyplan_id = trainingSafetyPlanId,
+                                    imgurl = signImgUrl
+                                )
+                            }
+                            examViewModel.submitExam(
+                                submitRequest,
                                 submitExamStateFlow
                             )
                         } else {

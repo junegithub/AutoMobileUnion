@@ -81,6 +81,7 @@ class TrackPlayActivity : AppCompatActivity() {
     private var currentPlaySpeed = PlaySpeed.NORMAL
     private var animationInterval = PlaySpeed.NORMAL.intervalMs
     private var playing = false
+    private var shouldResumeAfterSeek = false
     private var panelExpand = true
     private var carId = ""
     private var dlcartype = ""
@@ -232,16 +233,16 @@ class TrackPlayActivity : AppCompatActivity() {
         // 设置进度条拖动事件
         binding.progressBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser && trackData!!.postlist.isNotEmpty()) {
+                val currentTrack = trackData
+                if (fromUser && currentTrack != null && currentTrack.postlist.isNotEmpty()) {
                     // 计算对应的轨迹点索引
-                    val newIndex = (progress / 100f * (trackData!!.postlist.size - 1)).toInt()
+                    val newIndex = (progress / 100f * (currentTrack.postlist.size - 1)).toInt()
                     if (newIndex != currentPointIndex) {
                         currentPointIndex = newIndex
 
                         // 更新UI显示
-                        val currentPoint = trackData!!.postlist[currentPointIndex]
-                        binding.tvLocationTime.text = currentPoint.gpstime
-                        binding.tvSpeed.text = currentPoint.speed
+                        val currentPoint = currentTrack.postlist[currentPointIndex]
+                        updatePositionInfo(currentPoint)
 
                         // 移动地图中心点到当前位置
                         updatePlaybackMarker(currentPoint)
@@ -258,6 +259,7 @@ class TrackPlayActivity : AppCompatActivity() {
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                shouldResumeAfterSeek = playing
                 pauseAnimation()
             }
 
@@ -266,10 +268,11 @@ class TrackPlayActivity : AppCompatActivity() {
                 if (currentTrack != null && currentTrack.postlist.isNotEmpty()) {
                     if (binding.progressBar.progress >= 100) {
                         stopAnimationAtEnd()
-                    } else {
+                    } else if (shouldResumeAfterSeek) {
                         startAnimation()
                     }
                 }
+                shouldResumeAfterSeek = false
             }
         })
 
@@ -551,12 +554,17 @@ class TrackPlayActivity : AppCompatActivity() {
 
         val currentTrack = trackData
         if (currentTrack != null && currentTrack.postlist.isNotEmpty()) {
-            startAnimation()
+            if (playing) {
+                startAnimation()
+            } else {
+                setPlayingState(false)
+            }
         }
     }
 
     private fun resetPlaybackStateForNewTrack() {
         pauseAnimation()
+        shouldResumeAfterSeek = false
         currentPointIndex = 0
         binding.progressBar.progress = 0
     }
@@ -569,6 +577,11 @@ class TrackPlayActivity : AppCompatActivity() {
         if (currentTrack == null || currentTrack.postlist.isEmpty()) {
             setPlayingState(false)
             return
+        }
+        if (currentPointIndex == 0 && binding.progressBar.progress == 0) {
+            val firstPoint = currentTrack.postlist.first()
+            updatePositionInfo(firstPoint)
+            updatePlaybackMarker(firstPoint)
         }
         // 停止之前的动画
         pauseAnimation()

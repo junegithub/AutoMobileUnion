@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="3dp"
-            android:maxLines="2"
+            android:maxLines="3"
             android:text="编号: XXXXXXXX"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:lineSpacingExtra="3dp"
-            android:maxLines="2"
+            android:maxLines="3"
             android:text="从业资格证号: 3469555555555"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
@@ -108,8 +108,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:lineSpacingExtra="4dp"
-            android:maxLines="3"
-            android:paddingEnd="96dp"
+            android:maxLines="4"
+            android:paddingEnd="108dp"
             android:text="道路旅客运输驾驶员继续教育机构(签章)"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
@@ -138,7 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:lineSpacingExtra="4dp"
-            android:maxLines="3"
+            android:maxLines="4"
             android:text="注：此合格证明为驾驶员到道路旅客运输管理机构办理诚信考核签章手续的凭证"
             android:textColor="@android:color/black"
             android:textSize="16sp" />

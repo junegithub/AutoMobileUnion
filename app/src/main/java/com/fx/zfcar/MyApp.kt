@@ -26,7 +26,7 @@ class MyApp : Application() {
         MapsInitializer.updatePrivacyShow(this, true, true)
         MapsInitializer.updatePrivacyAgree(this, true)
         DialogX.init(this)
-        restoreNormalLoginState()
+        syncNormalLoginStateFromStorage()
         TbAdSdkManager.warmUp(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: android.app.Activity, savedInstanceState: Bundle?) {
@@ -48,26 +48,6 @@ class MyApp : Application() {
                 }
             }
         })
-    }
-
-    private fun restoreNormalLoginState() {
-        val token = SPUtils.getToken()
-        if (token.isBlank()) {
-            isLogin = false
-            userInfo = null
-            return
-        }
-
-        isLogin = true
-        val cachedCarInfo = SPUtils.get(KEY_CAR_USER_INFO)
-        if (cachedCarInfo.isBlank()) {
-            userInfo = null
-            return
-        }
-
-        userInfo = runCatching {
-            Gson().fromJson(cachedCarInfo, CarUserInfo::class.java)?.info
-        }.getOrNull()
     }
 
     // 3. 公共静态方法，全局获取MyApp实例
@@ -99,6 +79,26 @@ class MyApp : Application() {
         var trainingUserInfo: UserLoginData? = null
 
         private var currentActivityRef: WeakReference<android.app.Activity>? = null
+
+        fun syncNormalLoginStateFromStorage(): Boolean {
+            val token = SPUtils.getToken()
+            if (token.isBlank()) {
+                isLogin = false
+                userInfo = null
+                return false
+            }
+
+            isLogin = true
+            val cachedCarInfo = SPUtils.get(KEY_CAR_USER_INFO)
+            userInfo = if (cachedCarInfo.isBlank()) {
+                null
+            } else {
+                runCatching {
+                    Gson().fromJson(cachedCarInfo, CarUserInfo::class.java)?.info
+                }.getOrNull()
+            }
+            return true
+        }
 
         fun getCurrentActivity(): android.app.Activity? {
             return currentActivityRef?.get()

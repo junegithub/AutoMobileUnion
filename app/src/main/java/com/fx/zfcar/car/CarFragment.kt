@@ -189,7 +189,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         currentCar = car
         val id = car.id
         if (id.isBlank()) return
-        if (MyApp.isLogin != true || id == VIRTUAL_CAR_ID) {
+        if (!hasNormalLogin() || id == VIRTUAL_CAR_ID) {
             showVirtualCarDetails(marker)
             return
         }
@@ -631,23 +631,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     }
 
     private fun restoreLoginStateFromCache() {
-        val token = SPUtils.getToken()
-        if (token.isNotEmpty()) {
-            MyApp.isLogin = true
-            if (MyApp.userInfo == null) {
-                val cachedCarInfo = SPUtils.get(KEY_CAR_USER_INFO)
-                if (cachedCarInfo.isNotEmpty()) {
-                    runCatching {
-                        Gson().fromJson(cachedCarInfo, com.fx.zfcar.net.CarUserInfo::class.java)?.info
-                    }.getOrNull()?.let { cachedUser ->
-                        MyApp.userInfo = cachedUser
-                    }
-                }
-            }
-        } else {
-            MyApp.isLogin = false
-            MyApp.userInfo = null
-        }
+        MyApp.syncNormalLoginStateFromStorage()
     }
 
     private fun resetCarPageState() {
@@ -679,7 +663,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     }
 
     private fun syncCarPageState(forceReload: Boolean = false) {
-        val isLoggedIn = MyApp.isLogin == true
+        val isLoggedIn = hasNormalLogin()
         updateViewLoginState()
         if (!isLoggedIn) {
             showVirtualCarState()
@@ -697,7 +681,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     }
 
     private fun updateViewLoginState() {
-        if (MyApp.isLogin == true) {
+        if (hasNormalLogin()) {
             binding.tvUnlogin.setImageResource(R.drawable.user_avatar)
             binding.alarm.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_alarm, 0, 0)
         } else {
@@ -711,7 +695,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     }
 
     private inline fun requireLogin(action: () -> Unit) {
-        if (MyApp.isLogin == true) {
+        if (hasNormalLogin()) {
             action()
         } else {
             DialogUtils.showLoginPromptDialog(requireContext())
@@ -719,7 +703,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     }
 
     private fun updateLabelHistoryWithFallback() {
-        if (MyApp.isLogin != true) {
+        if (!hasNormalLogin()) {
             binding.plateRecycler.visibility = View.VISIBLE
             labelAdapter.updateData(listOf(SearchResult("", "carnum", VIRTUAL_CAR_NUM, 0)))
             return
@@ -733,6 +717,11 @@ class CarFragment : Fragment(), AMapLocationListener {
         val fallback = cars.take(5).map { SearchResult("", "", it.carnum, 0) }
         binding.plateRecycler.visibility = View.VISIBLE
         labelAdapter.updateData(fallback)
+    }
+
+    private fun hasNormalLogin(): Boolean {
+        restoreLoginStateFromCache()
+        return MyApp.isLogin == true
     }
 
     /**
@@ -1102,8 +1091,7 @@ class CarFragment : Fragment(), AMapLocationListener {
     override fun onResume() {
         super.onResume()
         binding.mapView.onResume()
-        restoreLoginStateFromCache()
-        val loginChanged = lastLoginState != (MyApp.isLogin == true)
+        val loginChanged = lastLoginState != hasNormalLogin()
         syncCarPageState(forceReload = loginChanged)
         refreshHandler.removeCallbacks(refreshRunnable)
         refreshHandler.postDelayed(refreshRunnable, REFRESH_INTERVAL_MS)

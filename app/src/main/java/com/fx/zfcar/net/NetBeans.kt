@@ -1166,7 +1166,10 @@ data class UploadFileData(
 data class SubmitExamRequest(
     val answer: List<String>,
     val exams_id: String,
-    val training_publicplan_id: String,
+    val training_publicplan_id: String? = null,
+    val training_before_id: String? = null,
+    val subject_id: String? = null,
+    val training_safetyplan_id: String? = null,
     val imgurl: String
 )
 

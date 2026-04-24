@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sp_16"
             android:layout_marginBottom="@dimen/dp_16"
-            android:gravity="center_vertical">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/rechoose_time_range"
@@ -133,32 +133,40 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <!-- 时间选择标签 -->
-            <TextView
-                android:text="分享时间："
-                android:layout_weight="1"
-                android:gravity="end"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content" />
-            <RadioGroup
-                android:id="@+id/track_duration_group"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_12"
+                android:gravity="end|center_vertical"
                 android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/tv_5min"
-                    style="@style/TrackDurationRBStyle"
-                    android:text="5分钟"
-                    android:checked="true"/> <!-- 默认选中 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/dp_8"
+                    android:text="分享时间："
+                    android:textColor="#333333"
+                    android:textSize="14sp" />
 
-                <!-- 今天 -->
-                <RadioButton
-                    android:id="@+id/tv_15min"
-                    style="@style/TrackDurationRBStyle"
-                    android:layout_marginStart="@dimen/dp_4"
-                    android:text="15分钟"/>
-            </RadioGroup>
+                <RadioGroup
+                    android:id="@+id/track_duration_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/tv_5min"
+                        style="@style/TrackDurationRBStyle"
+                        android:text="5分钟"
+                        android:checked="true"/>
+
+                    <RadioButton
+                        android:id="@+id/tv_15min"
+                        style="@style/TrackDurationRBStyle"
+                        android:layout_marginStart="@dimen/dp_4"
+                        android:text="15分钟"/>
+                </RadioGroup>
+            </LinearLayout>
         </LinearLayout>
         <!-- 1. 车牌号 -->
         <TextView
