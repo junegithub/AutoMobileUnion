@@ -12,6 +12,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -44,8 +45,6 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         const val KEY_CAR_VIDEO = "key_car_video"
         const val KEY_CAR_ONLINE = "key_car_online"
     }
-
-    private val REQUEST_CODE_CAR_SEARCH = 2001
 
     // ViewBinding核心对象
     private lateinit var binding: ActivityVideoPlaybackBinding
@@ -85,6 +84,34 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
 
     private val carInfoViewModel by viewModels<CarInfoViewModel>()
     private val videoInfoStateFlow = MutableStateFlow<ApiState<VideoInfoData>>(ApiState.Idle)
+    private val carSearchLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val data = result.data ?: return@registerForActivityResult
+        if (result.resultCode != RESULT_OK) {
+            return@registerForActivityResult
+        }
+
+        val selectedCarNum = data.getStringExtra("carNum").orEmpty()
+        val selectedCarId = data.getStringExtra("carId").orEmpty()
+        if (selectedCarNum.isEmpty() || selectedCarId.isEmpty()) {
+            return@registerForActivityResult
+        }
+
+        carNum = selectedCarNum
+        carId = selectedCarId
+        binding.tvCarNum.text = carNum
+
+        channelIndex = 0
+        streamIndex = 0
+        storageIndex = 0
+        mediaIndex = 0
+        binding.tvStream.text = streamArr[0]
+        binding.tvStorage.text = storageArr[0]
+        binding.tvMedia.text = mediaArr[0]
+        pendingVideoList.clear()
+        pendingResponseCount = 0
+        videoListOpened = false
+        getVideoInfo(carId)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -372,7 +399,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
     private fun goSearch() {
         val intent = Intent(this, CarSearchActivity::class.java)
         intent.putExtra("from", "videoPlayback")
-        startActivityForResult(intent, REQUEST_CODE_CAR_SEARCH)
+        carSearchLauncher.launch(intent)
     }
 
     /**
@@ -598,29 +625,12 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(intent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != REQUEST_CODE_CAR_SEARCH || resultCode != RESULT_OK) return
-
-        val selectedCarNum = data?.getStringExtra("carNum").orEmpty()
-        val selectedCarId = data?.getStringExtra("carId").orEmpty()
-        if (selectedCarNum.isEmpty() || selectedCarId.isEmpty()) return
-
-        carNum = selectedCarNum
-        carId = selectedCarId
-        binding.tvCarNum.text = carNum
-
-        channelIndex = 0
-        streamIndex = 0
-        storageIndex = 0
-        mediaIndex = 0
-        binding.tvStream.text = streamArr[0]
-        binding.tvStorage.text = storageArr[0]
-        binding.tvMedia.text = mediaArr[0]
-        pendingVideoList.clear()
-        pendingResponseCount = 0
-        videoListOpened = false
-        getVideoInfo(carId)
+    override fun onDestroy() {
+        binding.webView.removeJavascriptInterface("AndroidInterface")
+        binding.webView.stopLoading()
+        binding.webView.loadUrl("about:blank")
+        binding.webView.destroy()
+        super.onDestroy()
     }
 
     // 数据模型

@@ -165,6 +165,14 @@ class VideoListActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        binding.webView.removeJavascriptInterface("AndroidInterface")
+        binding.webView.stopLoading()
+        binding.webView.loadUrl("about:blank")
+        binding.webView.destroy()
+        super.onDestroy()
+    }
+
     data class HistoryVideoAction(
         val action: String = ""
     )
