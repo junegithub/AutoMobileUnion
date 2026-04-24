@@ -109,22 +109,26 @@
                     android:paddingEnd="70dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_platform"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="培训平台: 易智车联"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tv_platform"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="2dp"
+                    android:maxLines="2"
+                    android:text="培训平台: 易智车联"
+                    android:textColor="@android:color/black"
+                    android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/tv_certificate_id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="2"
                         android:text="证书编号: 202602NU32CO27U209"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <com.fx.zfcar.training.widget.SealView
@@ -148,18 +152,22 @@
                         android:id="@+id/tv_bind_company"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="2"
                         android:text="所属企业: test1"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/tv_training_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="2"
                         android:text="培训日期: 2026年02月"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <com.fx.zfcar.training.widget.SealView
@@ -178,7 +186,7 @@
             android:layout_marginTop="@dimen/dp_48"
             android:gravity="center"
             android:lineSpacingExtra="2dp"
-            android:maxLines="2"
+            android:maxLines="3"
             android:text="企业名"
             android:textColor="@android:color/black"
             android:textSize="18sp"

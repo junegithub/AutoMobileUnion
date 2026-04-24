@@ -34,6 +34,17 @@
                 android:text="开始学习"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tvExam"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_btn_green"
+                android:gravity="center"
+                android:text="开始考试"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"/>
         </LinearLayout>
 
         <TextView

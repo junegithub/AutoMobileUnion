@@ -21,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import android.os.Build
+import android.webkit.WebSettings
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -217,6 +219,12 @@ class RealTimeMonitorActivity : AppCompatActivity() {
                 )
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
+                settings.allowFileAccess = true
+                settings.allowContentAccess = true
+                settings.mediaPlaybackRequiresUserGesture = false
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                }
                 addJavascriptInterface(WebAppInterface(i), "AndroidInterface")
                 webViewClient = object : WebViewClient() {
                     override fun onReceivedError(
@@ -556,7 +564,7 @@ class RealTimeMonitorActivity : AppCompatActivity() {
 
         // 销毁WebView
         webViews.forEach {
-            it.removeJavascriptInterface("AndroidInterface${webViews.indexOf(it) + 1}")
+            it.removeJavascriptInterface("AndroidInterface")
             it.destroy()
         }
         webViews.clear()

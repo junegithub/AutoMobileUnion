@@ -407,6 +407,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         labelAdapter = LabelAdapter()
         binding.plateRecycler.adapter = labelAdapter
         binding.plateRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        restoreLoginStateFromCache()
         updateViewLoginState()
 
         // 5. 观察UI状态变化，刷新UI（lifecycleScope自动绑定Activity生命周期）
@@ -606,6 +607,10 @@ class CarFragment : Fragment(), AMapLocationListener {
                     }
                 }
             }
+        }
+
+        if (lastLoginState == null) {
+            syncCarPageState(forceReload = true)
         }
     }
 

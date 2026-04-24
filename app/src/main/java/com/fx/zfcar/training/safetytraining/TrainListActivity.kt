@@ -578,13 +578,22 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
     }
 
     override fun onExamClick(item: TrainListItem) {
-        val data = (item as TrainListItem.TypeSafeItem).data
-        // 跳考试页面
         val intent = Intent(this, ExamManagerActivity::class.java)
-        intent.putExtra("id", data.training_exams_id)
-        intent.putExtra("name", data.name)
-        intent.putExtra("type", if (currentType == 0) "daily" else "train")
-        intent.putExtra("training_safetyplan_id", data.id)
+        when (item) {
+            is TrainListItem.TypeSafeItem -> {
+                intent.putExtra("id", item.data.training_exams_id)
+                intent.putExtra("name", item.data.name)
+                intent.putExtra("type", if (currentType == 0) "daily" else "train")
+                intent.putExtra("training_safetyplan_id", item.data.id)
+            }
+            is TrainListItem.TypePreJobItem -> {
+                intent.putExtra("id", item.data.training_exams_id)
+                intent.putExtra("name", item.data.name)
+                intent.putExtra("type", "before")
+                intent.putExtra("training_safetyplan_id", item.data.id)
+            }
+            else -> return
+        }
         startActivity(intent)
     }
 

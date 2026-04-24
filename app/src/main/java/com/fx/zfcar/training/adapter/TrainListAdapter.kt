@@ -114,7 +114,7 @@ class TrainListAdapter() : BaseQuickAdapter<TrainListItem, RecyclerView.ViewHold
         fun bind(item: TrainListItem) {
             val data = (item as TrainListItem.TypePreJobItem).data
             binding.tvName.text = data.name
-            binding.tvProgress.text = "学习进度：${data.progress}%"
+            binding.tvProgress.text = "学习进度：${data.progress.toInt()}%"
 
             // 学习按钮文本
             binding.tvStudy.text = when {
@@ -123,10 +123,29 @@ class TrainListAdapter() : BaseQuickAdapter<TrainListItem, RecyclerView.ViewHold
                 else -> "继续学习"
             }
 
-            // 点击事件：直接跳人脸识别
+            if (data.training_exams_id != 0) {
+                binding.tvExam.visibility = View.VISIBLE
+                binding.tvExam.text = when (data.joinexams) {
+                    0 -> "开始考试"
+                    1 -> "考试已通过"
+                    2 -> "考试未通过"
+                    else -> ""
+                }
+                binding.tvExam.setBackgroundResource(
+                    if (data.joinexams == 2) R.drawable.bg_tag_red else R.drawable.bg_btn_green
+                )
+            } else {
+                binding.tvExam.visibility = View.GONE
+            }
+
+            // 点击事件
             PressEffectUtils.setCommonPressEffect(binding.tvStudy)
             binding.tvStudy.setOnClickListener {
                 onItemClickListener?.onStudyClick(item, "before")
+            }
+            PressEffectUtils.setCommonPressEffect(binding.tvExam)
+            binding.tvExam.setOnClickListener {
+                onItemClickListener?.onExamClick(item)
             }
         }
     }

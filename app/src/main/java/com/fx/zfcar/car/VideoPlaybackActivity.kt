@@ -9,6 +9,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -30,6 +31,7 @@ import com.kongzue.dialogx.dialogs.BottomMenu
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import com.google.gson.Gson
+import android.os.Build
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.getValue
@@ -204,6 +206,12 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
     private fun initWebView() {
         binding.webView.settings.javaScriptEnabled = true
         binding.webView.settings.domStorageEnabled = true
+        binding.webView.settings.allowFileAccess = true
+        binding.webView.settings.allowContentAccess = true
+        binding.webView.settings.mediaPlaybackRequiresUserGesture = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            binding.webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        }
         binding.webView.addJavascriptInterface(WebAppInterface(), "AndroidInterface")
         binding.webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: android.webkit.WebView?, url: String?) {

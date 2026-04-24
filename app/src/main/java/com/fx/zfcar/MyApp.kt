@@ -5,11 +5,14 @@ import android.content.Context
 import android.os.Bundle
 import com.amap.api.maps.MapsInitializer
 import com.fx.zfcar.net.CarUser
+import com.fx.zfcar.net.CarUserInfo
 import com.fx.zfcar.net.RetrofitClient
 import com.fx.zfcar.net.UserLoginData
 import com.fx.zfcar.ad.TbAdSdkManager
+import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.util.WindowInsetHelper
 import com.kongzue.dialogx.DialogX
+import com.google.gson.Gson
 import java.lang.ref.WeakReference
 
 class MyApp : Application() {
@@ -23,6 +26,7 @@ class MyApp : Application() {
         MapsInitializer.updatePrivacyShow(this, true, true)
         MapsInitializer.updatePrivacyAgree(this, true)
         DialogX.init(this)
+        restoreNormalLoginState()
         TbAdSdkManager.warmUp(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: android.app.Activity, savedInstanceState: Bundle?) {
@@ -46,8 +50,29 @@ class MyApp : Application() {
         })
     }
 
+    private fun restoreNormalLoginState() {
+        val token = SPUtils.getToken()
+        if (token.isBlank()) {
+            isLogin = false
+            userInfo = null
+            return
+        }
+
+        isLogin = true
+        val cachedCarInfo = SPUtils.get(KEY_CAR_USER_INFO)
+        if (cachedCarInfo.isBlank()) {
+            userInfo = null
+            return
+        }
+
+        userInfo = runCatching {
+            Gson().fromJson(cachedCarInfo, CarUserInfo::class.java)?.info
+        }.getOrNull()
+    }
+
     // 3. 公共静态方法，全局获取MyApp实例
     companion object {
+        private const val KEY_CAR_USER_INFO = "carUserInfo"
         @Volatile
         private var mInstance: MyApp? = null
         /**

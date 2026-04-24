@@ -81,7 +81,6 @@ class TrackPlayActivity : AppCompatActivity() {
     private var currentPlaySpeed = PlaySpeed.NORMAL
     private var animationInterval = PlaySpeed.NORMAL.intervalMs
     private var playing = false
-    private var wasPlayingBeforeSeek = false
     private var panelExpand = true
     private var carId = ""
     private var dlcartype = ""
@@ -259,20 +258,18 @@ class TrackPlayActivity : AppCompatActivity() {
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                wasPlayingBeforeSeek = playing
                 pauseAnimation()
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 val currentTrack = trackData
-                if (wasPlayingBeforeSeek && currentTrack != null && currentTrack.postlist.isNotEmpty()) {
+                if (currentTrack != null && currentTrack.postlist.isNotEmpty()) {
                     if (binding.progressBar.progress >= 100) {
-                        resetAnimation()
+                        stopAnimationAtEnd()
                     } else {
                         startAnimation()
                     }
                 }
-                wasPlayingBeforeSeek = false
             }
         })
 
@@ -562,7 +559,6 @@ class TrackPlayActivity : AppCompatActivity() {
         pauseAnimation()
         currentPointIndex = 0
         binding.progressBar.progress = 0
-        wasPlayingBeforeSeek = false
     }
 
     /**
@@ -610,7 +606,7 @@ class TrackPlayActivity : AppCompatActivity() {
                         currentPointIndex++
                     } else {
                         // 动画结束
-                        resetAnimation()
+                        stopAnimationAtEnd()
                     }
                 }
             }
@@ -629,12 +625,10 @@ class TrackPlayActivity : AppCompatActivity() {
     /**
      * 重置轨迹动画
      */
-    private fun resetAnimation() {
+    private fun stopAnimationAtEnd() {
         pauseAnimation()
-        currentPointIndex = 0
-
-        // 重置进度条
         binding.progressBar.progress = 0
+        currentPointIndex = 0
 
         // 重置轨迹线颜色
         val currentTrack = trackData ?: return
@@ -646,16 +640,16 @@ class TrackPlayActivity : AppCompatActivity() {
         polyline.points = latLngList
         polyline.color = colorOf(R.color.blue)
 
-        // 重置当前时间和速度显示
+        // 对齐 ytcar-app：播放完成后小车停在终点，但进度归零
         if (currentTrack.postlist.isNotEmpty()) {
-            val firstPoint = currentTrack.postlist[0]
-            updatePositionInfo(firstPoint)
-            addOrUpdatePlaybackMarker(firstPoint)
+            val lastPoint = currentTrack.postlist.last()
+            updatePositionInfo(lastPoint)
+            addOrUpdatePlaybackMarker(lastPoint)
 
-            // 移动地图中心点到起点
+            // 地图中心保持在终点
             aMap.moveCamera(
                 CameraUpdateFactory.newLatLng(
-                    LatLng(firstPoint.lat, firstPoint.lng)
+                    LatLng(lastPoint.lat, lastPoint.lng)
                 )
             )
         }
@@ -665,36 +659,8 @@ class TrackPlayActivity : AppCompatActivity() {
      * 高亮显示当前轨迹段
      */
     private fun highlightCurrentTrackSegment() {
-        val currentTrack = trackData ?: return
-        if (currentPointIndex <= 0 || currentPointIndex >= currentTrack.postlist.size) {
-            return
-        }
-
-        val latLngList = ArrayList<LatLng>()
-        for (i in 0 until currentTrack.postlist.size) {
-            val point = currentTrack.postlist[i]
-            latLngList.add(LatLng(point.lat, point.lng))
-        }
-
-        // 更新轨迹线
-        polyline.points = latLngList
-
-        // 创建分段颜色列表
-        val colorList = ArrayList<Int>()
-        for (i in 0 until currentTrack.postlist.size - 1) {
-            if (i < currentPointIndex - 1) {
-                // 已走过的轨迹段
-                colorList.add(colorOf(R.color.blue))
-            } else {
-                // 未走过的轨迹段
-                colorList.add(colorOf(R.color.blue_light))
-            }
-        }
-
-        // 设置轨迹线分段颜色
-        polyline.setCustomTextureList(null) // 清除自定义纹理
-//        polyline.colorValues = colorList
-        polyline.color = colorOf(R.color.blue_light)
+        // ytcar-app 轨迹回放不会在每一帧重绘整条路线；
+        // Android 之前这里每次 tick 都重设 polyline，会放大卡顿。
     }
 
     override fun onResume() {

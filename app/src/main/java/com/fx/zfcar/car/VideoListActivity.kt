@@ -8,8 +8,10 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import android.util.Log
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -69,6 +71,12 @@ class VideoListActivity : AppCompatActivity() {
     private fun initWebView() {
         binding.webView.settings.javaScriptEnabled = true
         binding.webView.settings.domStorageEnabled = true
+        binding.webView.settings.allowFileAccess = true
+        binding.webView.settings.allowContentAccess = true
+        binding.webView.settings.mediaPlaybackRequiresUserGesture = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            binding.webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        }
         binding.webView.addJavascriptInterface(WebAppInterface(), "AndroidInterface")
         binding.webView.webViewClient = object : WebViewClient() {
             override fun onReceivedError(
