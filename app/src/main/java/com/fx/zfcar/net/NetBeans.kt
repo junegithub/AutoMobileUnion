@@ -1304,12 +1304,7 @@ data class TwoListData(
     val question_count: Int,
     val user_exam_id: Int,
     val answer_count: Int,
-    val category_list: CategoryList
-)
-
-data class CategoryList(
-    val `107`: QuestionCategoryDetail? = null,
-    val `106`: QuestionCategoryDetail? = null
+    val category_list: Map<String, QuestionCategoryDetail> = emptyMap()
 )
 
 data class TwoOrderPayData(

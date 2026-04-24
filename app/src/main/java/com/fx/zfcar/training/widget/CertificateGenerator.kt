@@ -100,9 +100,10 @@ class CertificateGenerator(private val context: Context) {
         val today = Calendar.getInstance(Locale.CHINA)
         binding.currentDate.text = String.format(
             Locale.CHINA,
-            "%d年%d月",
+            "%d年%d月%d日",
             today.get(Calendar.YEAR),
-            today.get(Calendar.MONTH) + 1
+            today.get(Calendar.MONTH) + 1,
+            today.get(Calendar.DAY_OF_MONTH)
         )
 
         // 备注

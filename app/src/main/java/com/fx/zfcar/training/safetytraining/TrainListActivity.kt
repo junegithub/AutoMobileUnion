@@ -579,10 +579,6 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
 
     override fun onExamClick(item: TrainListItem) {
         val data = (item as TrainListItem.TypeSafeItem).data
-        if (data.progress < 100) {
-            showToast("请先完成学习后再参加考试")
-            return
-        }
         // 跳考试页面
         val intent = Intent(this, ExamManagerActivity::class.java)
         intent.putExtra("id", data.training_exams_id)

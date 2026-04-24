@@ -249,6 +249,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         PressEffectUtils.setCommonPressEffect(binding.rootCarDetail.rootMore.tvTakePhoto)
 
         binding.tvUnlogin.setOnClickListener {
+            restoreLoginStateFromCache()
             startActivity(Intent(requireContext(), LoginActivity::class.java))
         }
         binding.alarm.setOnClickListener {
@@ -854,7 +855,7 @@ class CarFragment : Fragment(), AMapLocationListener {
         // 车牌号
         val dlcartype = realTimeCarInfo?.dlcartype ?: ""
         val status = realTimeCarInfo?.status?.toIntOrNull() ?: 4
-        val imageSource = VehicleImageProvider.getVehicleImageResId(dlcartype, status)
+        val imageSource = VehicleImageProvider.getDetailVehicleImageResId(dlcartype, status)
         binding.rootCarDetail.ivCarIcon.setImageResource(imageSource)
         binding.rootCarDetail.tvCarNum.text = realTimeCarInfo?.carnum ?: ""
         binding.rootCarDetail.tvLocateTime.text = "定位时间：${realTimeCarInfo?.gpsloctime_text}"

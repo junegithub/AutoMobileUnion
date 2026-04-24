@@ -60,7 +60,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private var pageNum: Int = 1
     private val pageSize = 20
     private var loadFromMore: Boolean = false
-    private var currentTotal: Int = 0
+    private var totalPages: Int = 0
     private val currentItems = mutableListOf<ReportItem>()
     private var reachedEnd: Boolean = false
     private lateinit var layoutManager: LinearLayoutManager
@@ -637,7 +637,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private fun resetPagingAndLoad() {
         pageNum = 1
         loadFromMore = false
-        currentTotal = 0
+        totalPages = 0
         reachedEnd = false
         currentItems.clear()
         binding.tvCarNumStop.visibility = View.GONE
@@ -647,16 +647,13 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun handlePagedSuccess(total: Int, newItems: List<ReportItem>, emptyTip: String) {
-        currentTotal = total
+        totalPages = total
         if (!loadFromMore) {
             currentItems.clear()
         }
-        if (loadFromMore && newItems.isEmpty()) {
-            currentTotal = currentItems.size
-        }
         currentItems.addAll(newItems)
-        reachedEnd = if (currentTotal > 0) {
-            currentItems.size >= currentTotal
+        reachedEnd = if (totalPages > 0) {
+            pageNum >= totalPages
         } else {
             newItems.isEmpty()
         }

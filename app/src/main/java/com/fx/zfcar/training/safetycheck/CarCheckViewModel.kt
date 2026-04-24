@@ -50,8 +50,8 @@ class CarCheckViewModel: TrainingBaseViewModel() {
                 checktime = DateUtil.timestamp2Date(System.currentTimeMillis()),
                 name = user?.nickname?.takeIf { name -> name.isNotBlank() }
                     ?: user?.username.orEmpty(),
-                company = company?.name?.takeIf { name -> name.isNotBlank() }
-                    ?: company?.nickname.orEmpty()
+                company = company?.nickname?.takeIf { name -> name.isNotBlank() }
+                    ?: company?.name.orEmpty()
             )
         }
     }

@@ -396,27 +396,15 @@ class ExamPracticeActivity : AppCompatActivity() {
             allTestNum = resInfo.question_count
             answerCount = resInfo.answer_count
 
-            // 处理分类列表
-            val categoryPair = when (roleId) {
-                "3" -> 107 to resInfo.category_list.`107`
-                "1" -> 106 to resInfo.category_list.`106`
-                else -> listOfNotNull(
-                    resInfo.category_list.`107`?.let { 107 to it },
-                    resInfo.category_list.`106`?.let { 106 to it }
-                ).firstOrNull()
-            }
-            val key = categoryPair?.first
-            val resObj = categoryPair?.second
-
             categoryList.clear()
-            if (key != null && resObj != null) {
+            resInfo.category_list.forEach { (key, value) ->
                 categoryList.add(
                     CategoryModel(
-                        category_name = resObj.category_name,
-                        answer_count = resObj.answer_count,
-                        question_count = resObj.question_count,
-                        question_category_id = key,
-                        user_exam_id = resObj.user_exam_id
+                        category_name = value.category_name,
+                        answer_count = value.answer_count,
+                        question_count = value.question_count,
+                        question_category_id = key.toIntOrNull() ?: 0,
+                        user_exam_id = value.user_exam_id
                     )
                 )
             }

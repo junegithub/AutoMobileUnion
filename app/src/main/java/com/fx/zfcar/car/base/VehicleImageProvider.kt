@@ -43,7 +43,17 @@ object VehicleImageProvider {
      * @return 对应的图片资源ID
      */
     fun getVehicleImageResId(vehicleId: String, status: Int): Int {
-        val vehicleType = getVehicleType(vehicleId)
+        val vehicleType = getGeneralVehicleType(vehicleId)
+        val statusKey = statusMap.getOrDefault(status, "weidingwei")
+
+        return getResIdByName(vehicleType, statusKey)
+    }
+
+    /**
+     * 详情卡片顶部车辆图标按 ytcar-app pages/map/mapHome.nvue 的规则单独处理。
+     */
+    fun getDetailVehicleImageResId(vehicleId: String, status: Int): Int {
+        val vehicleType = getDetailVehicleType(vehicleId)
         val statusKey = statusMap.getOrDefault(status, "weidingwei")
 
         return getResIdByName(vehicleType, statusKey)
@@ -62,7 +72,30 @@ object VehicleImageProvider {
      * @param vehicleId 车辆ID
      * @return 车辆类型
      */
-    private fun getVehicleType(vehicleId: String): String {
+    private fun getGeneralVehicleType(vehicleId: String): String {
+        val normalizedVehicleId = vehicleId.trim()
+        return when {
+            normalizedVehicleId.contains("客") -> "keche"
+            normalizedVehicleId.contains("轿") ||
+                normalizedVehicleId.contains("小型") ||
+                normalizedVehicleId.contains("小客") ||
+                normalizedVehicleId.contains("小车") ||
+                normalizedVehicleId.contains("微型") ||
+                normalizedVehicleId.contains("乘用") -> "jiaoche"
+            normalizedVehicleId.contains("货") -> "huoche"
+            normalizedVehicleId.contains("特") -> "teshuche"
+            normalizedVehicleId.contains("拖拉") -> "tuolaji"
+            normalizedVehicleId.startsWith("K") -> "keche"              // K系列均为客车
+            normalizedVehicleId == "14" -> "jiaoche"                    // 小型轿车
+            Regex("^(10|11|12|13|15|16)$").matches(normalizedVehicleId) -> "keche"  // 客车
+            Regex("2[0-3]").matches(normalizedVehicleId) -> "huoche"        // 货车 20-23
+            Regex("3[0-9]|40").matches(normalizedVehicleId) -> "teshuche"   // 特殊车辆 30-40
+            Regex("^(5\\d|60|61|62|63|64)$").matches(normalizedVehicleId) -> "tuolaji" // 拖拉机
+            else -> "qitache"                                    // 其他车辆
+        }
+    }
+
+    private fun getDetailVehicleType(vehicleId: String): String {
         val normalizedVehicleId = vehicleId.trim()
         return when {
             normalizedVehicleId.contains("客") -> "keche"
@@ -76,12 +109,7 @@ object VehicleImageProvider {
             normalizedVehicleId.contains("特") -> "teshuche"
             normalizedVehicleId.contains("拖拉") -> "tuolaji"
             normalizedVehicleId in setOf("10", "12", "13", "14", "K13", "K23", "K26", "K31") -> "jiaoche"
-            normalizedVehicleId.startsWith("K") -> "keche"              // K系列均为客车
-            Regex("^(10|11|12|13|15|16)$").matches(normalizedVehicleId) -> "keche"  // 客车
-            Regex("2[0-3]").matches(normalizedVehicleId) -> "huoche"        // 货车 20-23
-            Regex("3[0-9]|40").matches(normalizedVehicleId) -> "teshuche"   // 特殊车辆 30-40
-            Regex("^(5\\d|60|61|62|63|64)$").matches(normalizedVehicleId) -> "tuolaji" // 拖拉机
-            else -> "qitache"                                    // 其他车辆
+            else -> getGeneralVehicleType(normalizedVehicleId)
         }
     }
 

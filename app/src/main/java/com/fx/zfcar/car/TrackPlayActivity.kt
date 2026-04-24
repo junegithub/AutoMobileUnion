@@ -81,6 +81,7 @@ class TrackPlayActivity : AppCompatActivity() {
     private var currentPlaySpeed = PlaySpeed.NORMAL
     private var animationInterval = PlaySpeed.NORMAL.intervalMs
     private var playing = false
+    private var wasPlayingBeforeSeek = false
     private var panelExpand = true
     private var carId = ""
     private var dlcartype = ""
@@ -258,12 +259,20 @@ class TrackPlayActivity : AppCompatActivity() {
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                // 暂停动画
+                wasPlayingBeforeSeek = playing
                 pauseAnimation()
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                // 不需要额外操作
+                val currentTrack = trackData
+                if (wasPlayingBeforeSeek && currentTrack != null && currentTrack.postlist.isNotEmpty()) {
+                    if (binding.progressBar.progress >= 100) {
+                        resetAnimation()
+                    } else {
+                        startAnimation()
+                    }
+                }
+                wasPlayingBeforeSeek = false
             }
         })
 
@@ -303,11 +312,11 @@ class TrackPlayActivity : AppCompatActivity() {
                     is ApiState.Success -> {
                         uiState.data?.let {
                             trackData = uiState.data
+                            resetPlaybackStateForNewTrack()
                             updateTrackInfoUI(uiState.data)
                             drawTrack(uiState.data)
                             moveMapToFirstPoint(uiState.data)
                             startAnimation()
-                            setPlayingState(true)
                         }
                         ProgressDialogUtils.dismiss()
                     }
@@ -543,10 +552,17 @@ class TrackPlayActivity : AppCompatActivity() {
             }
         }
 
-        // 如果正在播放，重新启动动画以应用新速度
-        if (animationTimer != null) {
+        val currentTrack = trackData
+        if (currentTrack != null && currentTrack.postlist.isNotEmpty()) {
             startAnimation()
         }
+    }
+
+    private fun resetPlaybackStateForNewTrack() {
+        pauseAnimation()
+        currentPointIndex = 0
+        binding.progressBar.progress = 0
+        wasPlayingBeforeSeek = false
     }
 
     /**

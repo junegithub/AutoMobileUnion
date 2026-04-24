@@ -108,6 +108,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updatePageWithLoginState() {
+        val hasNormalToken = !trainingLogin && SPUtils.getToken().isNotEmpty()
+        val currentUser = MyApp.userInfo
         binding.tvLoginTitle.text = if (trainingLogin) {
             getString(R.string.training_login_title)
         } else {
@@ -125,9 +127,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
         if (!trainingLogin) {
-            if (MyApp.userInfo != null) {
-                binding.tvUsername.text = MyApp.userInfo?.username
-                binding.tvNickname.text = MyApp.userInfo?.nickname
+            if (hasNormalToken) {
+                binding.tvUsername.text = currentUser?.username ?: "当前账号"
+                binding.tvNickname.text = currentUser?.nickname ?: "正在加载账号信息"
                 binding.userGroup.visibility = View.VISIBLE
                 binding.loginGroup.visibility = View.GONE
             } else {

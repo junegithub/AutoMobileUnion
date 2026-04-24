@@ -172,11 +172,13 @@
         <!-- 证书标题 -->
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/dp_48"
             android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:maxLines="2"
             android:text="企业名"
             android:textColor="@android:color/black"
             android:textSize="18sp"

@@ -28,6 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:maxLines="3"
             android:paddingVertical="5dp"
             android:text="山东省道路旅客运输继续教育证明"
             android:textColor="@android:color/black"
@@ -96,15 +98,17 @@
             android:layout_height="100dp"
             android:layout_marginTop="15dp">
 
-            <TextView
-                android:id="@+id/seal_category"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingEnd="96dp"
-                android:text="道路旅客运输驾驶员继续教育机构(签章)"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
+        <TextView
+            android:id="@+id/seal_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:lineSpacingExtra="4dp"
+            android:maxLines="2"
+            android:paddingEnd="96dp"
+            android:text="道路旅客运输驾驶员继续教育机构(签章)"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
 
             <!-- 印章 -->
             <com.fx.zfcar.training.widget.SealView
