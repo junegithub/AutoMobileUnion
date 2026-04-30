@@ -34,8 +34,8 @@ class SplashAdActivity : AppCompatActivity() {
         binding = ActivitySplashAdBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (!TbAdConfig.isConfigured(this)) {
-            Log.d(TAG, "TB splash skipped: appId/codeId not configured")
+        if (!TbAdConfig.isAvailable(this)) {
+            Log.d(TAG, "TB splash skipped: configured=${TbAdConfig.isConfigured(this)}, runtimeSupported=${TbAdConfig.isRuntimeSupported()}")
             routeNext()
             return
         }

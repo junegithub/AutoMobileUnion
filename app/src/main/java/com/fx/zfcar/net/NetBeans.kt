@@ -1671,10 +1671,10 @@ data class QuestionCategoryList(
 
 data class QuestionCategoryDetail(
     val question_count: Int,
-    val category_name: String,
+    val category_name: String?,
     val answer_count: Int,
     val user_exam_id: Int,
-    val money: Int
+    val money: Int?
 )
 
 data class QuestionOrderPayData(

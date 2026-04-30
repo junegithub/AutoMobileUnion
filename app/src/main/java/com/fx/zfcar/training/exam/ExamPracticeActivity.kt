@@ -358,7 +358,7 @@ class ExamPracticeActivity : AppCompatActivity() {
                 resObj.forEach { (key, value) ->
                     categoryList.add(
                         CategoryModel(
-                            category_name = value.category_name,
+                            category_name = value.category_name?.takeIf { it.isNotBlank() } ?: "未命名分类",
                             answer_count = value.answer_count,
                             question_count = value.question_count,
                             question_category_id = key.toIntOrNull() ?: 0,
@@ -400,7 +400,7 @@ class ExamPracticeActivity : AppCompatActivity() {
             resInfo.category_list.forEach { (key, value) ->
                 categoryList.add(
                     CategoryModel(
-                        category_name = value.category_name,
+                        category_name = value.category_name?.takeIf { it.isNotBlank() } ?: "未命名分类",
                         answer_count = value.answer_count,
                         question_count = value.question_count,
                         question_category_id = key.toIntOrNull() ?: 0,

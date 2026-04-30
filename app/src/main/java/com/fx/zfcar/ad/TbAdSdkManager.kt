@@ -23,7 +23,8 @@ object TbAdSdkManager {
     }
 
     fun ensureInit(application: Application, callback: (Boolean) -> Unit) {
-        if (!TbAdConfig.isConfigured(application)) {
+        if (!TbAdConfig.isAvailable(application)) {
+            Log.d(TAG, "TB SDK init skipped: configured=${TbAdConfig.isConfigured(application)}, runtimeSupported=${TbAdConfig.isRuntimeSupported()}")
             callback(false)
             return
         }
