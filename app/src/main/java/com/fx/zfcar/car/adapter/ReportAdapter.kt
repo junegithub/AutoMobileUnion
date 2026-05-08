@@ -182,7 +182,8 @@ class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, Recycle
     class DiffCallback : DiffUtil.ItemCallback<ReportItem>() {
         override fun areItemsTheSame(oldItem: ReportItem, newItem: ReportItem): Boolean {
             return when {
-                oldItem is ReportItem.MileageItem && newItem is ReportItem.MileageItem -> oldItem.data.carId == newItem.data.carId
+                oldItem is ReportItem.MileageItem && newItem is ReportItem.MileageItem ->
+                    oldItem.data.carId == newItem.data.carId && oldItem.data.ts == newItem.data.ts
                 oldItem is ReportItem.WarningItem && newItem is ReportItem.WarningItem -> oldItem.data.warningType == newItem.data.warningType
                 oldItem is ReportItem.ActiveWarningItem && newItem is ReportItem.ActiveWarningItem -> oldItem.data.warningType == newItem.data.warningType
                 oldItem is ReportItem.PhotoItem && newItem is ReportItem.PhotoItem -> oldItem.data.carId == newItem.data.carId && oldItem.data.ts == newItem.data.ts
@@ -191,9 +192,11 @@ class ReportAdapter(val type: ReportType) : BaseQuickAdapter<ReportItem, Recycle
                     oldItem.data.carId == newItem.data.carId &&
                         oldItem.data.startTime == newItem.data.startTime &&
                         oldItem.data.endTime == newItem.data.endTime
-                oldItem is ReportItem.OilAddItem && newItem is ReportItem.OilAddItem -> oldItem.data.carId == newItem.data.carId
+                oldItem is ReportItem.OilAddItem && newItem is ReportItem.OilAddItem ->
+                    oldItem.data.carId == newItem.data.carId && oldItem.data.ts == newItem.data.ts
                 oldItem is ReportItem.OilDayItem && newItem is ReportItem.OilDayItem -> oldItem.data.carId == newItem.data.carId
-                oldItem is ReportItem.LeakItem && newItem is ReportItem.LeakItem -> oldItem.data.carId == newItem.data.carId
+                oldItem is ReportItem.LeakItem && newItem is ReportItem.LeakItem ->
+                    oldItem.data.carId == newItem.data.carId && oldItem.data.ts == newItem.data.ts
                 oldItem is ReportItem.OfflineItem && newItem is ReportItem.OfflineItem -> oldItem.data.carId == newItem.data.carId
                 else -> false
             }

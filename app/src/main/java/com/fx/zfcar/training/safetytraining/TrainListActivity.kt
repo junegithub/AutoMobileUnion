@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fx.zfcar.databinding.ActivityTrainListBinding
 import com.fx.zfcar.net.BeforeSubjectListData
 import com.fx.zfcar.net.CheckSafeData
+import com.fx.zfcar.net.DailySafetyOrderData
 import com.fx.zfcar.net.MeetingItem
 import com.fx.zfcar.net.MeetingListData
 import com.fx.zfcar.net.OldSafetyListData
 import com.fx.zfcar.net.OrderIsPayData
 import com.fx.zfcar.net.PayInfo
 import com.fx.zfcar.net.PostSignImgData
-import com.fx.zfcar.net.QuestionOrderPayData
 import com.fx.zfcar.net.SafetyListData
 import com.fx.zfcar.net.SubjectItem
 import com.fx.zfcar.net.SubjectListData
@@ -55,7 +55,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
     private val subjectListState = MutableStateFlow<ApiState<SubjectListData>>(ApiState.Idle)
     private val otherUserInfoState = MutableStateFlow<ApiState<TrainingOtherInfo>>(ApiState.Idle)
     private val checkSafeState = MutableStateFlow<ApiState<CheckSafeData>>(ApiState.Idle)
-    private val orderIsPayState = MutableStateFlow<ApiState<QuestionOrderPayData>>(ApiState.Idle)
+    private val orderIsPayState = MutableStateFlow<ApiState<DailySafetyOrderData>>(ApiState.Idle)
     private val subjectPayState = MutableStateFlow<ApiState<SubjectOrderData>>(ApiState.Idle)
     private val postSignImgState = MutableStateFlow<ApiState<PostSignImgData>>(ApiState.Idle)
 
@@ -451,6 +451,10 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                 money = data.money,
                 usualpaytype = data.usualpaytype
             )
+            is DailySafetyOrderData -> PayInfo(
+                money = data.money,
+                usualpaytype = data.usualpaytype
+            )
             is SubjectPayData -> PayInfo(
                 money = data.money,
                 usualpaytype = data.usualpaytype
@@ -630,7 +634,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                     checkSafeState)
             }
             "daily" -> {
-                trainingViewModel.orderIsPay((item as TrainListItem.TypeSafeItem).data.id.toString(), orderIsPayState)
+                trainingViewModel.dailySafetyOrderPay((item as TrainListItem.TypeSafeItem).data.id.toString(), orderIsPayState)
             }
             "subject" -> {
                 trainingViewModel.subjectPay((item as TrainListItem.TypeContinueItem).data.id.toString(), subjectPayState)

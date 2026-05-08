@@ -44,6 +44,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         const val KEY_CAR_NUM = "key_car_num"
         const val KEY_CAR_VIDEO = "key_car_video"
         const val KEY_CAR_ONLINE = "key_car_online"
+        private const val VIDEO_QUERY_TIMEOUT_MS = 12_000L
     }
 
     // ViewBinding核心对象
@@ -72,6 +73,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
     private val pendingVideoList = mutableListOf<VideoRecordItem>()
     private var pendingResponseCount = 0
     private var videoListOpened = false
+    private var queryAttempt = 0
 
     // 选项数组
     private val channelArr = mutableListOf("所有通道", "通道1", "通道2", "通道3", "通道4", "通道5", "通道6", "通道7", "通道8")
@@ -414,22 +416,38 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
             Toast.makeText(this, "设备不在线", Toast.LENGTH_LONG).show()
             return
         }
+        if (wayNums.isEmpty()) {
+            showToast("暂无可用视频通道")
+            return
+        }
+
+        val startTimeStamp = parseTimeStamp(startTime)
+        val endTimeStamp = parseTimeStamp(endTime)
+        if (startTimeStamp <= 0 || endTimeStamp <= 0 || endTimeStamp <= startTimeStamp) {
+            showToast("请选择正确时间范围")
+            return
+        }
+
+        val simNum = normalizedSimForSdk()
+        if (simNum <= 0) {
+            showToast("设备视频参数异常")
+            return
+        }
 
         Toast.makeText(this, "正在加载", Toast.LENGTH_SHORT).show()
         pendingVideoList.clear()
         pendingResponseCount = 0
         videoListOpened = false
-        evalJs()
+        queryAttempt += 1
+        val currentAttempt = queryAttempt
+        evalJs(startTimeStamp, endTimeStamp, simNum)
+        scheduleQueryTimeout(currentAttempt)
     }
 
     /**
      * 执行JS调用
      */
-    private fun evalJs() {
-        val startTimeStamp = sdf.parse(startTime)?.time?.div(1000) ?: 0
-        val endTimeStamp = sdf.parse(endTime)?.time?.div(1000) ?: 0
-        val simNum = "0$sim".toLongOrNull() ?: 0
-
+    private fun evalJs(startTimeStamp: Long, endTimeStamp: Long, simNum: Long) {
         try {
             if (channelIndex == 0) {
                 // 所有通道
@@ -459,6 +477,32 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
             Log.e("VideoPlayback", "JS调用失败: ${e.message}", e)
             Toast.makeText(this, "视频加载失败", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun scheduleQueryTimeout(attempt: Int) {
+        binding.root.postDelayed({
+            if (attempt != queryAttempt || videoListOpened) {
+                return@postDelayed
+            }
+            val expectedCount = if (channelIndex == 0) wayNums.size else 1
+            if (pendingResponseCount < expectedCount) {
+                videoListOpened = true
+                showToast("视频加载失败，请稍后重试")
+            } else {
+                maybeOpenVideoList()
+            }
+        }, VIDEO_QUERY_TIMEOUT_MS)
+    }
+
+    private fun parseTimeStamp(time: String): Long {
+        return runCatching { sdf.parse(time)?.time?.div(1000) ?: 0L }.getOrDefault(0L)
+    }
+
+    private fun normalizedSimForSdk(): Long {
+        val rawSim = sim.trim()
+        if (rawSim.isBlank()) return 0L
+        val sdkSim = if (rawSim.startsWith("0")) rawSim else "0$rawSim"
+        return sdkSim.toLongOrNull() ?: 0L
     }
 
     /**
@@ -604,6 +648,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         if (videoListOpened) return
         val expectedCount = if (channelIndex == 0) wayNums.size else 1
         if (expectedCount <= 0) {
+            videoListOpened = true
             showToast("暂无可用视频通道")
             return
         }
@@ -612,6 +657,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         if (pendingVideoList.isEmpty()) {
+            videoListOpened = true
             showToast("暂无内容")
             return
         }

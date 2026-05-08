@@ -141,12 +141,15 @@ class MeetingDetailActivity : AppCompatActivity() {
                         is ApiState.Success -> {
                             if (state.data != null) {
                                 showToast("提交成功")
+                                applyUploadedPreview(uploadSignType)
                                 loadMeetingDetail()
                             } else {
+                                pendingPreviewPath = null
                                 showToast("提交失败")
                             }
                         }
                         is ApiState.Error -> {
+                            pendingPreviewPath = null
                             showToast("提交失败：${state.msg}")
                         }
                         else -> {}
@@ -163,8 +166,7 @@ class MeetingDetailActivity : AppCompatActivity() {
                         }
                         is ApiState.Success -> {
                             if(state.data != null) {
-                                val imageUrl = ApiConfig.BASE_URL_TRAINING + state.data.url
-                                applyUploadedPreview(uploadSignType)
+                                val imageUrl = buildTrainingFileUrl(state.data.url)
                                 submitSignInfo(imageUrl, uploadSignType)
                             } else {
                                 pendingPreviewPath = null
@@ -373,8 +375,7 @@ class MeetingDetailActivity : AppCompatActivity() {
     private fun takePhoto() {
         PermissionX.init(this)
             .permissions(
-                android.Manifest.permission.CAMERA,
-                android.Manifest.permission.READ_MEDIA_IMAGES
+                android.Manifest.permission.CAMERA
             )
             .request { allGranted, _, _ ->
                 if (allGranted) {
@@ -386,9 +387,11 @@ class MeetingDetailActivity : AppCompatActivity() {
                                 if (result.isNotEmpty()) {
                                     val media = result[0]
                                     val photoPath = getImagePath(media)
-                                    photoPath?.let {
-                                        pendingPreviewPath = it
-                                        uploadImage(File(it), "1")
+                                    if (photoPath.isNullOrBlank()) {
+                                        showToast("拍照失败，未获取到图片")
+                                    } else {
+                                        pendingPreviewPath = photoPath
+                                        uploadImage(File(photoPath), "1")
                                     }
                                 }
                             }
@@ -398,7 +401,7 @@ class MeetingDetailActivity : AppCompatActivity() {
                             }
                         })
                 } else {
-                    showToast("需要相机和存储权限才能拍照")
+                    showToast("需要相机权限才能拍照")
                 }
             }
     }
@@ -431,9 +434,6 @@ class MeetingDetailActivity : AppCompatActivity() {
 
     }
 
-    /**
-     * 提交签名/拍照信息
-     */
     private fun submitSignInfo(imageUrl: String, type: String) {
         val request = SingPostRequest(
             signfile = imageUrl,
@@ -441,7 +441,15 @@ class MeetingDetailActivity : AppCompatActivity() {
             type = type
         )
 
-        trainingViewModel.singPost(request, signPostFlow)
+        trainingViewModel.meetingSingPost(request, signPostFlow)
+    }
+
+    private fun buildTrainingFileUrl(path: String): String {
+        return if (path.startsWith("http://") || path.startsWith("https://")) {
+            path
+        } else {
+            ApiConfig.BASE_URL_TRAINING.trimEnd('/') + "/" + path.trimStart('/')
+        }
     }
 
     /**

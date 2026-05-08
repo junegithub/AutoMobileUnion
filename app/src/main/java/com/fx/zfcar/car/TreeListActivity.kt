@@ -372,7 +372,12 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
 
     private fun switchMapDetail(carId: String, carNum: String) {
         if (carId.isBlank() || carId == "0") {
-            showToast("车辆信息异常")
+            if (carNum.isBlank()) {
+                showToast("车辆信息异常")
+                return
+            }
+            EventBus.getDefault().postSticky(EventData(EventData.EVENT_LABEL_DETAIL, carNum))
+            navigateToCarMap()
             return
         }
         EventBus.getDefault().postSticky(
@@ -384,6 +389,10 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
                 )
             )
         )
+        navigateToCarMap()
+    }
+
+    private fun navigateToCarMap() {
         startActivity(
             Intent(this@TreeListActivity, MainActivity::class.java)
                 .putExtra(MainActivity.EXTRA_SELECTED_TAB, MainActivity.TAB_CAR)

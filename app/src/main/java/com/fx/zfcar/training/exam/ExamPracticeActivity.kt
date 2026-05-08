@@ -60,7 +60,7 @@ class ExamPracticeActivity : AppCompatActivity() {
     private var activeId: String = ""
     private var userType: String = ""
     private var from: String? = null
-    private var payId = 0
+    private var payId = ""
     private var payNum = 0
     private var payShow: Boolean = false
     private var loadingShow: Boolean = false
@@ -265,7 +265,7 @@ class ExamPracticeActivity : AppCompatActivity() {
 
                         is ApiState.Success -> {
                             state.data?.let { payData ->
-                                payId = state.data.question_category.id
+                                payId = state.data.question_category.id.toString()
                                 payNum = payData.money
 
                                 // 更新支付金额文本
@@ -291,7 +291,7 @@ class ExamPracticeActivity : AppCompatActivity() {
 
                         is ApiState.Success -> {
                             state.data?.let { payData ->
-                                payId = state.data.question_category.id
+                                payId = state.data.question_category.id.toString()
                                 payNum = payData.money
 
                                 // 更新支付金额文本
@@ -361,8 +361,8 @@ class ExamPracticeActivity : AppCompatActivity() {
                             category_name = value.category_name?.takeIf { it.isNotBlank() } ?: "未命名分类",
                             answer_count = value.answer_count,
                             question_count = value.question_count,
-                            question_category_id = key.toIntOrNull() ?: 0,
-                            user_exam_id = value.user_exam_id
+                            question_category_id = key,
+                            user_exam_id = value.user_exam_id.toString()
                         )
                     )
                 }
@@ -403,8 +403,8 @@ class ExamPracticeActivity : AppCompatActivity() {
                         category_name = value.category_name?.takeIf { it.isNotBlank() } ?: "未命名分类",
                         answer_count = value.answer_count,
                         question_count = value.question_count,
-                        question_category_id = key.toIntOrNull() ?: 0,
-                        user_exam_id = value.user_exam_id
+                        question_category_id = key,
+                        user_exam_id = value.user_exam_id.toString()
                     )
                 )
             }
@@ -461,9 +461,9 @@ class ExamPracticeActivity : AppCompatActivity() {
      */
     private fun ifPay(data: CategoryModel) {
         if (from == "twoList") {
-            examViewModel.twoOrderPay(mapOf("question_category_id" to data.question_category_id.toString()), twoOrderIsPayState)
+            examViewModel.twoOrderPay(mapOf("question_category_id" to data.question_category_id), twoOrderIsPayState)
         } else {
-            trainingViewModel.orderIsPay(data.question_category_id.toString(), orderIsPayState)
+            trainingViewModel.orderIsPay(data.question_category_id, orderIsPayState)
         }
     }
 
@@ -474,7 +474,7 @@ class ExamPracticeActivity : AppCompatActivity() {
         val params = mapOf(
             "type" to "wechat",
             "method" to "app",
-            "question_category_id" to payId.toString()
+            "question_category_id" to payId
         )
 
         if (from == "twoList") {
@@ -676,8 +676,8 @@ data class CategoryModel(
     val category_name: String,
     val answer_count: Int,
     val question_count: Int,
-    val question_category_id: Int,
-    val user_exam_id: Int
+    val question_category_id: String,
+    val user_exam_id: String
 )
 // 扩展函数：转换为微信支付SDK的PayReq对象
 fun WxPayParams.toPayReq(): PayReq {

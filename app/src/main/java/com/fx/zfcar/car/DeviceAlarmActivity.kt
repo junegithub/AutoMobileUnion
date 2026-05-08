@@ -54,6 +54,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
     private var currentTotal: Int = 0
     private var reachedEnd: Boolean = false
     private lateinit var layoutManager: LinearLayoutManager
+    private var dateRangeSelected: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,9 +71,10 @@ class DeviceAlarmActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        val dateStrStandard = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        startDate = "$dateStrStandard"
-        endDate = "$dateStrStandard"
+        val today = LocalDate.now()
+        startDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        endDate = today.plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        dateRangeSelected = false
         alarmTypes = resources.getStringArray(R.array.alarm_types)
     }
 
@@ -170,11 +172,33 @@ class DeviceAlarmActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
-        alarmViewModel.getAlarmDetailsList("$startDate 00:00:00", "$endDate 23:59:59", pageNum, pageSize, warningType, alarmListStateFlow)
+        val requestStart = if (dateRangeSelected) "$startDate 00:00:00" else "$startDate"
+        val requestEnd = if (dateRangeSelected) "$endDate 23:59:59" else "$endDate 23:59:59"
+        alarmViewModel.getAlarmDetailsList(requestStart, requestEnd, pageNum, pageSize, warningType, alarmListStateFlow)
     }
 
     private fun updateDateRange() {
-        binding.tvDateRange.text = "$startDate 至 $endDate"
+        binding.tvDateRange.text = if (dateRangeSelected) "$startDate 至 $endDate" else getString(R.string.date_range)
+        binding.ivClearDate.visibility = if (dateRangeSelected) View.VISIBLE else View.GONE
+    }
+
+    private fun resetDateRangeFilter() {
+        val today = LocalDate.now()
+        startDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        endDate = today.plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        dateRangeSelected = false
+        updateDateRange()
+        resetAndLoad()
+    }
+
+    private fun resetAndLoad() {
+        pageNum = 1
+        currentTotal = 0
+        reachedEnd = false
+        loadFromMore = false
+        alarmList.clear()
+        alarmAdapter.submitList(emptyList())
+        loadData()
     }
 
     private fun initListener() {
@@ -192,16 +216,16 @@ class DeviceAlarmActivity : AppCompatActivity() {
                 override fun onSelected(start: String, end: String) {
                     startDate = DateUtil.timestamp2Date(start.toLong())
                     endDate = DateUtil.timestamp2Date(end.toLong())
+                    dateRangeSelected = true
                     updateDateRange()
-                    pageNum = 1
-                    currentTotal = 0
-                    reachedEnd = false
-                    alarmList.clear()
-                    alarmAdapter.submitList(emptyList())
-                    loadData()
+                    resetAndLoad()
                 }
             })
             calendarDlg.show(supportFragmentManager, "DATE_PICKER")
+        }
+
+        binding.ivClearDate.setOnClickListener {
+            resetDateRangeFilter()
         }
 
         // Spinner选择事件（可选扩展）
@@ -216,13 +240,7 @@ class DeviceAlarmActivity : AppCompatActivity() {
                     val selectedWarningType = warningTypeForPosition(position)
                     if (selectedWarningType == warningType) return
                     warningType = selectedWarningType
-                    pageNum = 1
-                    currentTotal = 0
-                    reachedEnd = false
-                    loadFromMore = false
-                    alarmList.clear()
-                    alarmAdapter.submitList(emptyList())
-                    loadData()
+                    resetAndLoad()
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}

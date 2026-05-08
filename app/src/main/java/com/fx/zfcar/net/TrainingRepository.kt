@@ -101,6 +101,8 @@ class TrainingRepository(private val apiService: TrainingApiService) {
 
     suspend fun singPost(request: SingPostRequest) = apiService.singPost(request)
 
+    suspend fun meetingSingPost(request: SingPostRequest) = apiService.meetingSingPost(request)
+
     suspend fun getTwoList(params: Map<String, String>) = apiService.getTwoList(params)
 
     suspend fun twoOrderPay(params: Map<String, String>) = apiService.twoOrderPay(params)

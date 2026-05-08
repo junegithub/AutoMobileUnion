@@ -48,9 +48,10 @@ object TreeDataMapper {
      * @param level 节点层级（根节点=0，子节点+1）
      */
     fun mapToTreeItem(treeNode: TreeNode, level: Int): TreeItem {
+        val isLeaf = treeNode.isLeafNode()
 
         return TreeItem(
-            id = treeNode.id.ifBlank { treeNode.realId },
+            id = if (isLeaf && treeNode.realId.isNotBlank()) treeNode.realId else treeNode.id.ifBlank { treeNode.realId },
             name = treeNode.name,
             countText = treeNode.getCountText(),
             iconRes = getCarIconResId(treeNode.carStatus, treeNode.valid),
@@ -58,8 +59,8 @@ object TreeDataMapper {
             isExpanded = false,
             isLoading = false,
             // 叶子节点判断：leaf=true 或 children为空 → 无更多子节点
-            hasMoreChildren = !treeNode.isLeafNode(),
-            isLeaf = treeNode.isLeafNode(),
+            hasMoreChildren = !isLeaf,
+            isLeaf = isLeaf,
             parentId = treeNode.pid,
             ancestors = treeNode.ancestors,
             // 子节点先不处理，按需加载（或直接映射，根据接口返回策略）

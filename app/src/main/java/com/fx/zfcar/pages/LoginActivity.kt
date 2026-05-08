@@ -127,15 +127,18 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 binding.userGroup.visibility = View.GONE
                 binding.loginGroup.visibility = View.VISIBLE
+                binding.btnExperience.visibility = View.VISIBLE
             }
         } else {
             binding.userGroup.visibility = View.GONE
             binding.loginGroup.visibility = View.VISIBLE
+            binding.btnExperience.visibility = View.GONE
         }
     }
 
     private fun initListener() {
         PressEffectUtils.setCommonPressEffect(binding.btnLogin)
+        PressEffectUtils.setCommonPressEffect(binding.btnExperience)
         PressEffectUtils.setCommonPressEffect(binding.contact)
         PressEffectUtils.setCommonPressEffect(binding.btnLogout)
         PressEffectUtils.setCommonPressEffect(binding.back)
@@ -153,6 +156,9 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 showToast(getString(R.string.toast_empty_account))
             }
+        }
+        binding.btnExperience.setOnClickListener {
+            enterExperienceMode()
         }
         binding.contact.setOnClickListener {
             openDial(targetPhone)
@@ -282,7 +288,18 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun returnToMainTab() {
-        startActivity(Intent(this, MainActivity::class.java))
+        val targetTab = if (trainingLogin) MainActivity.TAB_TRAINING else MainActivity.TAB_CAR
+        startActivity(Intent(this, MainActivity::class.java).putExtra(MainActivity.EXTRA_SELECTED_TAB, targetTab))
+        finish()
+    }
+
+    private fun enterExperienceMode() {
+        MyApp.isLogin = false
+        MyApp.userInfo = null
+        SPUtils.saveToken("")
+        SPUtils.remove(KEY_CAR_USER_INFO)
+        EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
+        startActivity(Intent(this, MainActivity::class.java).putExtra(MainActivity.EXTRA_SELECTED_TAB, MainActivity.TAB_CAR))
         finish()
     }
 
@@ -309,6 +326,7 @@ class LoginActivity : AppCompatActivity() {
         MyApp.isLogin = false
         MyApp.userInfo = null
         SPUtils.saveToken("")
+        SPUtils.remove(KEY_CAR_USER_INFO)
         EventBus.getDefault().post(EventData(EventData.EVENT_LOGIN, null))
         finish()
     }

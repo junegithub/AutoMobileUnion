@@ -320,8 +320,8 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                                 return@let
                             }
                         }
-                        // 检查承诺书签署状态 (34/37 地区且未签责任书时跳过)
-                        if (!signOne && (areacode == "34" || areacode == "37")) {
+                        // 山东、安徽地区不要求驾驶员承诺书；入口隐藏后自动检查也必须跳过。
+                        if (areacode == "34" || areacode == "37") {
                             return@collect
                         }
 
@@ -329,9 +329,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                     }
 
                     is ApiState.Error -> {
-                        context?.showToast(uiState.msg)
                         loginStatus = false
-                        DialogUtils.showTrainingLoginPromptDialog(requireActivity())
                     }
                     is ApiState.Idle -> {
                     }

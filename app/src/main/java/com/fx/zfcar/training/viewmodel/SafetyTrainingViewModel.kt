@@ -243,6 +243,13 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
         )
     }
 
+    fun meetingSingPost(request: SingPostRequest, stateFlow: MutableStateFlow<ApiState<String>>) {
+        launchRequest(
+            block = { vehicleRepository.meetingSingPost(request) },
+            stateFlow
+        )
+    }
+
     // 其他安全培训相关方法...（按相同逻辑迁移）
     fun getCoursewareList(page: String, trainingPublicPlanId: String,
                           stateFlow: MutableStateFlow<ApiState<CoursewareListData>>) {

@@ -324,7 +324,7 @@ class FaceCheckActivity : AppCompatActivity() {
                         }
                         is ApiState.Success -> {
                             // 上传成功，调用人脸识别接口
-                            val imageUrl = ApiConfig.BASE_URL_TRAINING + state.data!!.url
+                            val imageUrl = buildTrainingFileUrl(state.data!!.url)
                             checkFace(imageUrl)
                         }
                         is ApiState.Error -> {
@@ -577,7 +577,7 @@ class FaceCheckActivity : AppCompatActivity() {
 
         when (params["type"]) {
             "meeting" -> {
-                viewModel.singPost(
+                viewModel.meetingSingPost(
                     SingPostRequest(imageUrl, params["id"].toString(), "1"),
                     _faceCheckState
                 )
@@ -617,6 +617,14 @@ class FaceCheckActivity : AppCompatActivity() {
                     safeAddCheckState
                 )
             }
+        }
+    }
+
+    private fun buildTrainingFileUrl(path: String): String {
+        return if (path.startsWith("http://") || path.startsWith("https://")) {
+            path
+        } else {
+            ApiConfig.BASE_URL_TRAINING.trimEnd('/') + "/" + path.trimStart('/')
         }
     }
 

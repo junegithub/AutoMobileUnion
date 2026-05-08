@@ -687,18 +687,6 @@ class DriveLogStageActivity : AppCompatActivity() {
         } else {
             // 单个item选中状态变化
             viewModel.toggleCheck(position, isSelected)
-
-            // 显示选中数量提示
-            val selectedCount = when (viewModel.currentCheckType.value) {
-                "before" -> beforeItemsAdapter.getSelectedCount()
-                "driving" -> drivingItemsAdapter.getSelectedCount()
-                "end" -> endItemsAdapter.getSelectedCount()
-                else -> 0
-            }
-
-            if (selectedCount > 0) {
-                showToast("已选中 $selectedCount 项")
-            }
         }
     }
 

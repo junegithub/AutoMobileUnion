@@ -8,6 +8,7 @@ public class EventData {
     public static final int EVENT_WXPAY_SUCCESS = 4;
     public static final int EVENT_WXPAY_FAIL = 5;
     public static final int EVENT_WXPAY_CANCEL = 6;
+    public static final int EVENT_CAR_HOME = 7;
 
     public int eventType;
     public Object data;

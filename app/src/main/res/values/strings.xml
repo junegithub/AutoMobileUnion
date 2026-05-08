@@ -52,6 +52,8 @@
     <string name="device_alarm">设备报警</string>
     <string name="all_alarm">全部报警</string>
     <string name="date_range">开始日期至结束日期</string>
+    <string name="clear_date">清空日期</string>
+    <string name="experience_account">体验账号</string>
     <string name="speed_warning">超速预警</string>
     <string name="select_date">选择日期</string>
     <string name="confirm">确定</string>

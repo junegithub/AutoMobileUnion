@@ -13,6 +13,7 @@ import com.fx.zfcar.car.CarFragment
 import com.fx.zfcar.training.TrainingFragment
 import com.fx.zfcar.R
 import com.fx.zfcar.databinding.ActivityMainBinding
+import org.greenrobot.eventbus.EventBus
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var lastBackPressedAt = 0L
     private var exitDialog: AlertDialog? = null
+    private var syncingBottomNav = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,20 +51,32 @@ class MainActivity : AppCompatActivity() {
         // 2. 底部Tab选中监听，联动ViewPager2
         binding.bottomNav.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_car -> binding.viewPager.currentItem = 0 // 查车Tab
+                R.id.nav_car -> {
+                    binding.viewPager.currentItem = TAB_CAR
+                    if (!syncingBottomNav) {
+                        returnCarTabHome()
+                    }
+                }
                 R.id.nav_training -> binding.viewPager.currentItem = 1 // 培训Tab
             }
             true // 表示选中成功
+        }
+        binding.bottomNav.setOnItemReselectedListener { menuItem ->
+            if (menuItem.itemId == R.id.nav_car) {
+                returnCarTabHome()
+            }
         }
 
         // 3. ViewPager2页面切换，联动底部Tab（可选，防止手动滑动后Tab不匹配）
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
+                syncingBottomNav = true
                 when (position) {
                     0 -> binding.bottomNav.selectedItemId = R.id.nav_car
                     1 -> binding.bottomNav.selectedItemId = R.id.nav_training
                 }
+                syncingBottomNav = false
             }
         })
         selectTabFromIntent(intent)
@@ -88,6 +102,10 @@ class MainActivity : AppCompatActivity() {
             TAB_TRAINING -> binding.viewPager.currentItem = TAB_TRAINING
             else -> binding.viewPager.currentItem = TAB_CAR
         }
+    }
+
+    private fun returnCarTabHome() {
+        EventBus.getDefault().post(EventData(EventData.EVENT_CAR_HOME, null))
     }
 
     private fun handleExitBackPress() {

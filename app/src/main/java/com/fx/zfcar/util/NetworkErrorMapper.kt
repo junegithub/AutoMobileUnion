@@ -21,6 +21,7 @@ object NetworkErrorMapper {
 
     fun fromHttp(code: Int, message: String?): String {
         return when (code) {
+            401 -> "登录状态已过期，请重新登录"
             408 -> "请求超时，请稍后重试"
             502, 503, 504 -> "服务暂时不可用，请稍后重试"
             in 500..599 -> "服务器异常，请稍后重试"

@@ -32,6 +32,7 @@ import com.amap.api.maps.model.MarkerOptions
 import com.amap.api.maps.model.MyLocationStyle
 import com.fx.zfcar.MyApp
 import com.fx.zfcar.car.adapter.LabelAdapter
+import com.fx.zfcar.car.base.MapCameraPolicy
 import com.fx.zfcar.car.base.MarkerViewUtil
 import com.fx.zfcar.car.base.VehicleImageProvider
 import com.fx.zfcar.car.status.DeviceStatusActivity
@@ -493,6 +494,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                             carInfoViewModel.addSearchHistory(SearchHistoryRequest(carInfo.carnum), addSearchStateFlow)
                         }
                         refreshRealAddressCarDetails(addressData)
+                        showExpiredVehicleTip(addressData.carinfo)
                     }
                     is ApiState.Error -> {
                         hideMapLoading()
@@ -865,6 +867,20 @@ class CarFragment : Fragment(), AMapLocationListener {
         binding.rootCarDetail.rootCarLocation.executePendingBindings()
     }
 
+    private fun showExpiredVehicleTip(carInfo: RealTimeCarInfo?) {
+        if (carInfo?.expired != true) return
+        val orgName = carInfo.categoryname.ifBlank { carInfo.contacts }
+        val msg = buildString {
+            append(carInfo.carnum)
+            append("已过期")
+            if (orgName.isNotBlank()) {
+                append("\n")
+                append(orgName)
+            }
+        }
+        context?.showToast(msg)
+    }
+
     private fun refreshCarDetails(carInfo: CarInfo?) {
         phone = carInfo?.phone
         isVideoCar = carInfo?.isVideoCar == true
@@ -953,7 +969,7 @@ class CarFragment : Fragment(), AMapLocationListener {
             aMap.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(onlyCar.latitude, onlyCar.longitude),
-                    15f
+                    MapCameraPolicy.selectedMarkerZoom(aMap.cameraPosition.zoom)
                 )
             )
             return
@@ -1003,7 +1019,10 @@ class CarFragment : Fragment(), AMapLocationListener {
         }
 
         // 2. 移动地图到目标 Marker（缩放级别 15 可根据需求调整）
-        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(marker.position, 15f)
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+            marker.position,
+            MapCameraPolicy.selectedMarkerZoom(aMap.cameraPosition.zoom)
+        )
         aMap.animateCamera(cameraUpdate, object : AMap.CancelableCallback {
             override fun onFinish() {
                 isAnimating = false
@@ -1166,6 +1185,30 @@ class CarFragment : Fragment(), AMapLocationListener {
                     )
                 }
             }
+            EventData.EVENT_CAR_HOME -> {
+                EventBus.getDefault().removeStickyEvent(event)
+                returnToCarHome()
+            }
         }
+    }
+
+    private fun returnToCarHome() {
+        if (!hasNormalLogin()) {
+            showVirtualCarState()
+            return
+        }
+        requestFromOtherPage = false
+        currentCar = null
+        currentRealTimeAddress = null
+        lastRequestedCarId = ""
+        binding.rootCarDetail.root.visibility = View.GONE
+        binding.rootCarDetail.rootMore.root.visibility = View.GONE
+        binding.rootCarDetail.rootCarLocation.root.visibility = View.VISIBLE
+        if (markerList.isEmpty()) {
+            addCarMarkers()
+        } else {
+            showAllMarkers()
+        }
+        zoomToAllCars()
     }
 }

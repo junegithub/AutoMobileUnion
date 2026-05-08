@@ -131,14 +131,14 @@ interface TrainingApiService {
         @QueryMap params: Map<String, Any>
     ): Response<TrainingBaseResponse<String>>
 
-    @POST("api/dailysafety/creatOrder")
+    @GET("api/dailysafety/creatOrder")
     suspend fun creatPayOrder(
-        @Body params: Map<String, Any>
+        @QueryMap params: Map<String, Any>
     ): Response<TrainingBaseResponse<PayOrderData>>
 
-    @POST("api/dailysafety/creatOrder")
+    @GET("api/dailysafety/creatOrder")
     suspend fun creatPayOrderAlipay(
-        @Body params: Map<String, Any>
+        @QueryMap params: Map<String, Any>
     ): Response<TrainingBaseResponse<String>>
 
     @GET("api/training/orderlist")
@@ -178,6 +178,9 @@ interface TrainingApiService {
 
     @POST("api/user/singpost")
     suspend fun singPost(@Body request: SingPostRequest): Response<TrainingBaseResponse<String>>
+
+    @POST("api/training/singpost")
+    suspend fun meetingSingPost(@Body request: SingPostRequest): Response<TrainingBaseResponse<String>>
 
     @GET("api/question/twoList")
     suspend fun getTwoList(@QueryMap params: Map<String, String>): Response<TrainingBaseResponse<TwoListData>>

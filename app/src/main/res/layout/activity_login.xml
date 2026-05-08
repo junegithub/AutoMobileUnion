@@ -31,7 +31,7 @@
         android:id="@+id/login_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="tv_login_title, tv_login_subtitle, et_account, et_pwd, btn_login, agreement_layout"/>
+        app:constraint_referenced_ids="tv_login_title, tv_login_subtitle, et_account, et_pwd, btn_login, btn_experience, agreement_layout"/>
 
     <TextView
         android:id="@+id/tv_login_title"
@@ -93,6 +93,18 @@
         android:textSize="@dimen/sp_16"
         app:layout_constraintTop_toBottomOf="@id/et_pwd"/>
 
+    <Button
+        android:id="@+id/btn_experience"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:layout_marginHorizontal="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_12"
+        android:background="@drawable/bg_btn_outline"
+        android:text="@string/experience_account"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintTop_toBottomOf="@id/btn_login"/>
+
     <!-- 水平布局：复选框 + 协议文本 -->
     <LinearLayout
         android:id="@+id/agreement_layout"
@@ -100,7 +112,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/et_account"
         app:layout_constraintEnd_toEndOf="@id/et_account"
-        app:layout_constraintTop_toBottomOf="@id/btn_login"
+        app:layout_constraintTop_toBottomOf="@id/btn_experience"
         android:layout_marginTop="@dimen/dp_16"
         android:gravity="center_vertical"
         android:orientation="horizontal">
