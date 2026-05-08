@@ -28,6 +28,7 @@ import com.fx.zfcar.training.drivelog.CarSearchActivity
 import com.fx.zfcar.training.jobs.GlideEngine
 import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.util.PressEffectUtils
+import com.fx.zfcar.util.TrainingFileUrlPolicy
 import com.fx.zfcar.viewmodel.ApiState
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -431,7 +432,7 @@ class CarCheckStageActivity : AppCompatActivity() {
                         val field = pendingImageField
                         val uploadedUrl = state.data?.url
                         if (field != null && !uploadedUrl.isNullOrBlank()) {
-                            viewModel.addImage(field, ApiConfig.BASE_URL_TRAINING + uploadedUrl)
+                            viewModel.addImage(field, TrainingFileUrlPolicy.build(ApiConfig.BASE_URL_TRAINING, uploadedUrl))
                         } else {
                             Toast.makeText(this@CarCheckStageActivity, "图片上传失败", Toast.LENGTH_SHORT).show()
                         }
@@ -458,7 +459,7 @@ class CarCheckStageActivity : AppCompatActivity() {
                         val field = pendingSignatureField
                         val uploadedUrl = state.data?.url
                         if (field != null && !uploadedUrl.isNullOrBlank()) {
-                            val fullUrl = ApiConfig.BASE_URL_TRAINING + uploadedUrl
+                            val fullUrl = TrainingFileUrlPolicy.build(ApiConfig.BASE_URL_TRAINING, uploadedUrl)
                             when (field) {
                                 "checksign_img" -> viewModel.setDriverSigned(true, fullUrl)
                                 "dirversign_img" -> viewModel.setCheckerSigned(true, fullUrl)
@@ -952,7 +953,10 @@ class CarCheckStageActivity : AppCompatActivity() {
 
         when (requestCode) {
             REQUEST_CODE_CAR_SEARCH -> {
-                val carNum = data?.getStringExtra("carNum") ?: ""
+                val carNum = CarCheckSelectionPolicy.resolveCarNum(
+                    data?.getStringExtra("carNum"),
+                    data?.getStringExtra("carnum")
+                )
                 viewModel.updateFormField { it.carnum = carNum }
             }
         }

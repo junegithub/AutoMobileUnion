@@ -95,3 +95,4 @@ Android 目录：`/Users/source/AutoMobileUnion`
 - 已处理 `#37` Android 列表展示风险：报表追加页的 diff key 增加时间戳，避免同车多条报表互相覆盖。
 - 已处理 `#11/#19` Android 接口偏离：会议签名/拍照提交改用 `api/training/singpost`，拍照上传成功后等服务端提交成功再刷新会议详情。
 - 已处理 `#33` Android 接口偏离：日常培训支付检查改用 `api/dailysafety/orderisPay`，日常下单改为 GET QueryMap，保留服务端返回的金额和 `usualpaytype`。
+- 已处理 `#28/#29` Android 偏离：安全检查选车回填兼容 `carNum/carnum`，图片和签名上传 URL 统一归一化后写入表单。
