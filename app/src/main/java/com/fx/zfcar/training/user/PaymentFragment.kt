@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.fx.zfcar.net.PayOrderData
 import com.fx.zfcar.net.UserInfoData
 import com.fx.zfcar.training.pay.PayOrderActivity
+import com.fx.zfcar.training.pay.YearPayRequestPolicy
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.PayUtils
 import com.fx.zfcar.util.PressEffectUtils
@@ -169,21 +170,10 @@ class PaymentFragment : BaseUserFragment() {
 
     private fun yearAllPay(which: Int) {
         if (which == 1) {
-            PayUtils.getWeChatLoginCode(requireActivity()) { code ->
-                val params = mapOf(
-                    "code" to code,
-                    "type" to "wechat",
-                    "method" to "app",
-                    "year_id" to yearId
-                )
-                trainingViewModel.yearPay(params, yearPayStateFlow)
-            }
+            val params = YearPayRequestPolicy.buildWechatAppParams(yearId)
+            trainingViewModel.yearPay(params, yearPayStateFlow)
         } else if (which == 0) {
-            val params = mapOf(
-                "type" to "alipay",
-                "method" to "app",
-                "year_id" to yearId
-            )
+            val params = YearPayRequestPolicy.buildAlipayAppParams(yearId)
             trainingViewModel.yearPayAlipay(params, yearPayAlipayStateFlow)
         }
     }

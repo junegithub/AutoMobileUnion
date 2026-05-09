@@ -415,26 +415,11 @@ class PayDetailActivity : AppCompatActivity() {
         }
         if (which == 1) {
             currentPayMethod = "wechat"
-            // 微信年度支付
-            PayUtils.getWeChatLoginCode(this) { code ->
-                val params = mapOf(
-                    "code" to code,
-                    "type" to "wechat",
-                    "method" to "app",
-                    "year_id" to yearId
-                )
-
-                safetyTrainingViewModel.yearPay(params, _yearPayState)
-            }
+            val params = YearPayRequestPolicy.buildWechatAppParams(yearId)
+            safetyTrainingViewModel.yearPay(params, _yearPayState)
         } else if (which == 0) {
             currentPayMethod = "alipay"
-            // 支付宝年度支付
-            val params = mapOf(
-                "type" to "alipay",
-                "method" to "app",
-                "year_id" to yearId
-            )
-
+            val params = YearPayRequestPolicy.buildAlipayAppParams(yearId)
             safetyTrainingViewModel.yearPayAlipay(params, _yearPayAlipayState)
         }
     }
