@@ -28,6 +28,7 @@ import com.fx.zfcar.util.DialogUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ProgressDialogUtils
 import com.fx.zfcar.util.SPUtils
+import com.fx.zfcar.util.TrainingFileUrlPolicy
 import com.fx.zfcar.viewmodel.ApiState
 import com.kongzue.dialogx.dialogs.BottomMenu
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -261,7 +262,10 @@ class DriveLogStageActivity : AppCompatActivity() {
                     is ApiState.Success -> {
                         ProgressDialogUtils.dismiss()
 
-                        val signImgUrl = "${ApiConfig.BASE_URL_TRAINING}${uiState.data?.url ?: ""}"
+                        val signImgUrl = TrainingFileUrlPolicy.build(
+                            ApiConfig.BASE_URL_TRAINING,
+                            uiState.data?.url.orEmpty()
+                        )
                         handleUploadResponse(signImgUrl)
                     }
 

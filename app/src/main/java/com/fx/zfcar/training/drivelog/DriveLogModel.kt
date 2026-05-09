@@ -317,28 +317,9 @@ class DriveLogModel {
 
         when (stage.value) {
             1 -> {
-                // 步骤1验证
-                when {
-                    currentForm.driver_name.isBlank() -> {
-                        showToast.value = "请输入驾驶员姓名"
-                        return false
-                    }
-                    currentForm.car_id <= 0 -> {
-                        showToast.value = "请选择车辆"
-                        return false
-                    }
-                    currentForm.carnum.isBlank() -> {
-                        showToast.value = "请输入车牌号"
-                        return false
-                    }
-                    !isLicenseNo(currentForm.carnum) -> {
-                        showToast.value = "请输入正确的车牌号"
-                        return false
-                    }
-                    currentForm.type.isBlank() -> {
-                        showToast.value = "请选择货物类型"
-                        return false
-                    }
+                validateStageOne(currentForm)?.let {
+                    showToast.value = it
+                    return false
                 }
             }
             2 -> {
@@ -385,6 +366,16 @@ class DriveLogModel {
         }
 
         return true
+    }
+
+    fun validateStageOne(form: DriveCheckConstants.LocalFormData): String? {
+        return when {
+            form.driver_name.isBlank() -> "请输入驾驶员姓名"
+            form.carnum.isBlank() -> "请输入车牌号"
+            !isLicenseNo(form.carnum) -> "请输入正确的车牌号"
+            form.type.isBlank() -> "请选择货物类型"
+            else -> null
+        }
     }
 
     /**
