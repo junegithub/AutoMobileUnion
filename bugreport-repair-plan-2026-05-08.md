@@ -96,6 +96,7 @@
 - 安全会议签名/拍照：会议签名和拍照提交改走 `api/training/singpost`，对齐 `ytcar-app/pages/train/meeting/index.vue` 和 `faceCheck/index.nvue`；上传 URL 做完整地址归一化，拍照权限只请求相机权限。
 - 日常培训支付：日常培训支付检查改走 `api/dailysafety/orderisPay`，支付下单接口改为 GET QueryMap，对齐 `ytcar-app`；修复金额和 `usualpaytype` 丢失导致支付/企业付分支异常。
 - 安全检查车牌/图片：安全检查选车回填兼容 `carNum/carnum` 两种返回键；普通图片和签名上传返回路径统一做完整 URL 归一化，避免完整 URL 或前导斜杠导致拼接异常。
+- 隐患排查照片/签名：隐患排查 12 图上传和通用签名页统一复用完整 URL 归一化策略，避免上传接口返回完整 URL 或前导斜杠时拼接异常；隐患排查“去签名”按钮文字改为蓝色。
 
 ### 阶段 1：P0/P1 崩溃、登录态、地图主链路
 

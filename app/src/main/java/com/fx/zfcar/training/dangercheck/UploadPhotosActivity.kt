@@ -16,6 +16,7 @@ import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.util.FileUploadUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.SPUtils
+import com.fx.zfcar.util.TrainingFileUrlPolicy
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -121,7 +122,7 @@ class UploadPhotosActivity : AppCompatActivity() {
                             showToast("上传失败")
                             return@collect
                         }
-                        val fullUrl = ApiConfig.BASE_URL_TRAINING + relativeUrl
+                        val fullUrl = TrainingFileUrlPolicy.build(ApiConfig.BASE_URL_TRAINING, relativeUrl)
                         photoSlots.find { it.key == slotKey }?.url = fullUrl
                         adapter.notifyDataSetChanged()
                         updateSummary()

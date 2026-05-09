@@ -20,6 +20,7 @@ import com.fx.zfcar.util.BitmapUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ProgressDialogUtils
 import com.fx.zfcar.util.SPUtils
+import com.fx.zfcar.util.TrainingFileUrlPolicy
 import com.fx.zfcar.viewmodel.ApiState
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -124,7 +125,10 @@ class SignatureActivity : AppCompatActivity() {
                     is ApiState.Success -> {
                         ProgressDialogUtils.dismiss()
 
-                        val signImgUrl = "${ApiConfig.BASE_URL_TRAINING}${uiState.data?.url ?: ""}"
+                        val signImgUrl = TrainingFileUrlPolicy.build(
+                            ApiConfig.BASE_URL_TRAINING,
+                            uiState.data?.url.orEmpty()
+                        )
 
                         if (answer.isNotEmpty()) {
                             // 考试流：提交答卷

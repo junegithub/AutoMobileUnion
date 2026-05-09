@@ -1220,7 +1220,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_btn_outline_dash"
                     android:text="去签名"
-                    android:textColor="#666666"
+                    android:textColor="#107BFF"
                     android:textSize="16sp" />
 
                 <!-- 重签按钮 -->
@@ -1290,7 +1290,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_btn_outline_dash"
                     android:text="去签名"
-                    android:textColor="#666666"
+                    android:textColor="#107BFF"
                     android:textSize="16sp" />
 
                 <!-- 重签按钮 -->
