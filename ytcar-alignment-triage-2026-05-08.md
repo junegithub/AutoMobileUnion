@@ -101,3 +101,4 @@ Android 目录：`/Users/source/AutoMobileUnion`
 - 已处理 `#22` Android 偏离：年度 APP 支付参数统一为 `year_id/type/method`，个人中心和支付详情页共用策略，微信年度支付不再额外请求并提交登录 `code`。
 - 已处理 `#27` Android UI 偏离：行车日志输入框聚焦后主动滚动到键盘上方安全位置，避免底部固定按钮和软键盘遮挡当前输入项；仍建议真机回归多屏幕尺寸。
 - 已处理 `#4` 实时视频 Android 偏离：实时视频 WebView 回调按 `action` 字段解析最终播放地址，避免 JSON 消息直接传给播放器；回放列表播放地址解析同步复用该策略。
+- 已处理 `#10` Android 解析边界：`userotherinfo` 用户扩展信息兼容空字符串时间/数字字段，避免 qyh 等账号进入安全培训首页时因 Gson 类型转换失败报错。
