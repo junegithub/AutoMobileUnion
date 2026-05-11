@@ -97,5 +97,6 @@ Android 目录：`/Users/source/AutoMobileUnion`
 - 已处理 `#33` Android 接口偏离：日常培训支付检查改用 `api/dailysafety/orderisPay`，日常下单改为 GET QueryMap，保留服务端返回的金额和 `usualpaytype`。
 - 已处理 `#28/#29` Android 偏离：安全检查选车回填兼容 `carNum/carnum`，图片和签名上传 URL 统一归一化后写入表单。
 - 已处理 `#31` Android 偏离：隐患排查 12 图上传、通用签名上传 URL 统一归一化；“去签名”按钮文字颜色调整为蓝色。
-- 已处理 `#26` 部分 Android 偏离：行车日志签名上传 URL 统一归一化，首步表单校验不再强依赖 `car_id`；`#27` 键盘遮挡仍需真机输入场景复测。
+- 已处理 `#26` 部分 Android 偏离：行车日志签名上传 URL 统一归一化，首步表单校验不再强依赖 `car_id`。
 - 已处理 `#22` Android 偏离：年度 APP 支付参数统一为 `year_id/type/method`，个人中心和支付详情页共用策略，微信年度支付不再额外请求并提交登录 `code`。
+- 已处理 `#27` Android UI 偏离：行车日志输入框聚焦后主动滚动到键盘上方安全位置，避免底部固定按钮和软键盘遮挡当前输入项；仍建议真机回归多屏幕尺寸。

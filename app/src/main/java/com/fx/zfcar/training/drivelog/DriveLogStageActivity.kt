@@ -3,6 +3,7 @@ package com.fx.zfcar.training.drivelog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.ViewParent
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -104,6 +105,8 @@ class DriveLogStageActivity : AppCompatActivity() {
 
         // 设置点击事件
         setClickListeners()
+
+        setupKeyboardAwareScrolling()
     }
 
     /**
@@ -517,6 +520,54 @@ class DriveLogStageActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupKeyboardAwareScrolling() {
+        val inputViews = listOf(
+            binding.etCarnum,
+            rowDriverNameBinding.etContent,
+            rowCopilotNameBinding.etContent,
+            rowNormalCopilotBinding.etContent,
+            rowWeatherBinding.etContent,
+            rowTemperatureBinding.etContent,
+            rowLoadBinding.etContent,
+            rowRealLoadBinding.etContent,
+            rowGoodsNameBinding.etContent,
+            rowStartAddressBinding.etContent,
+            rowEndAddressBinding.etContent,
+            rowMileageBinding.etContent,
+            rowStopResultBinding.etContent,
+            rowStopAddressBinding.etContent
+        )
+
+        inputViews.forEach { input ->
+            input.setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus) {
+                    binding.scrollContent.postDelayed({
+                        scrollFocusedInputIntoView(view)
+                    }, KEYBOARD_SCROLL_DELAY_MS)
+                }
+            }
+        }
+    }
+
+    private fun scrollFocusedInputIntoView(focusedView: View) {
+        val topInContent = calculateTopInScrollContent(focusedView)
+        val targetY = DriveLogKeyboardScrollPolicy.targetScrollY(
+            focusedTopInContent = topInContent,
+            topOffsetPx = resources.getDimensionPixelSize(R.dimen.dp_96)
+        )
+        binding.scrollContent.smoothScrollTo(0, targetY)
+    }
+
+    private fun calculateTopInScrollContent(view: View): Int {
+        var top = view.top
+        var parent: ViewParent? = view.parent
+        while (parent is View && parent != binding.scrollContent) {
+            top += parent.top
+            parent = parent.parent
+        }
+        return top
+    }
+
     /**
      * 为日期选择行设置点击事件
      */
@@ -809,5 +860,9 @@ class DriveLogStageActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    companion object {
+        private const val KEYBOARD_SCROLL_DELAY_MS = 250L
     }
 }
