@@ -468,43 +468,7 @@ class FaceCheckActivity : AppCompatActivity() {
                     is ApiState.Loading -> {}
                     is ApiState.Success -> {
                         showToast(getString(R.string.hint_verify_success))
-                        if (params["faceType"] == "end" && SPUtils.get("needBeforeSign") == "1") {
-                            SPUtils.save("beforeName", params["name"])
-                            SPUtils.save("beforeId", params["safetyPlanId"])
-
-                            val intent = Intent(this@FaceCheckActivity, SignatureActivity::class.java)
-                            intent.putExtra("from", "/pages/train/trainList/before")
-                            intent.putExtra("fill", "beforeSign")
-                            startActivity(intent)
-                        } else {
-                            val beforeExamsId = SPUtils.get("beforeExamsId")
-                            val beforeExamIdValue = beforeExamsId.toIntOrNull() ?: 0
-                            if (beforeExamIdValue > 0) {
-                                val itemStr = SPUtils.get("item")
-                                if (itemStr.isNotEmpty()) {
-                                    val item = JSONObject(itemStr)
-                                    val planId = item.optString("id").toIntOrNull() ?: 0
-                                    if (planId <= 0) {
-                                        showToast("考试信息异常")
-                                        finish()
-                                        return@collectLatest
-                                    }
-                                    val intent = Intent(this@FaceCheckActivity, ExamManagerActivity::class.java)
-                                    intent.putExtra("id", beforeExamIdValue)
-                                    intent.putExtra("name", item.getString("name"))
-                                    intent.putExtra("type", "before")
-                                    intent.putExtra("training_safetyplan_id", planId)
-                                    startActivity(intent)
-                                }
-                            } else {
-                                val intent = Intent(this@FaceCheckActivity, TrainCourseListActivity::class.java)
-                                intent.putExtra("safetyPlanId", params["safetyPlanId"])
-                                intent.putExtra("name", params["name"])
-                                intent.putExtra("number", params["number"])
-                                intent.putExtra("type", "before")
-                                startActivity(intent)
-                            }
-                        }
+                        handleBeforeFaceSuccess()
                         finish()
                     }
                     is ApiState.Error -> {
@@ -564,6 +528,45 @@ class FaceCheckActivity : AppCompatActivity() {
                         startCameraPreview()
                     }
                 }
+            }
+        }
+    }
+
+    private fun handleBeforeFaceSuccess() {
+        val item = SPUtils.get("item").takeIf { it.isNotEmpty() }?.let { JSONObject(it) }
+        val planId = item?.optString("id").orEmpty().ifEmpty { params["safetyPlanId"].orEmpty() }
+        val action = BeforeTrainingFlowPolicy.afterFace(
+            faceType = params["faceType"].orEmpty(),
+            needSign = SPUtils.get("needBeforeSign"),
+            examId = SPUtils.get("beforeExamsId"),
+            planId = planId
+        )
+
+        when (action) {
+            BeforeFaceAction.Sign -> {
+                SPUtils.save("beforeName", params["name"])
+                SPUtils.save("beforeId", planId)
+
+                val intent = Intent(this@FaceCheckActivity, SignatureActivity::class.java)
+                intent.putExtra("from", "/pages/train/trainList/before")
+                intent.putExtra("fill", "beforeSign")
+                startActivity(intent)
+            }
+            is BeforeFaceAction.Exam -> {
+                val intent = Intent(this@FaceCheckActivity, ExamManagerActivity::class.java)
+                intent.putExtra("id", action.examId)
+                intent.putExtra("name", item?.optString("name").orEmpty().ifEmpty { params["name"] })
+                intent.putExtra("type", "before")
+                intent.putExtra("training_safetyplan_id", action.planId)
+                startActivity(intent)
+            }
+            BeforeFaceAction.CourseList -> {
+                val intent = Intent(this@FaceCheckActivity, TrainCourseListActivity::class.java)
+                intent.putExtra("safetyPlanId", params["safetyPlanId"])
+                intent.putExtra("name", params["name"])
+                intent.putExtra("number", params["number"])
+                intent.putExtra("type", "before")
+                startActivity(intent)
             }
         }
     }

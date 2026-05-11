@@ -667,6 +667,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                 itemId = data.id.toString()
                 itemName = data.name
                 itemJson = Gson().toJson(data)
+                SPUtils.save("beforeExamsId", "")
             }
             else -> return
         }

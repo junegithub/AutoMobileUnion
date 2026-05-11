@@ -18,6 +18,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.bumptech.glide.Glide
 import com.fx.zfcar.R
 import com.fx.zfcar.databinding.ActivityCourseDetailBinding
+import com.fx.zfcar.net.BeforeSubjectStudyData
 import com.fx.zfcar.net.CoursewareItem
 import com.fx.zfcar.net.CoursewareViewData
 import com.fx.zfcar.net.EvaluateClassRequest
@@ -85,6 +86,9 @@ class CourseDetailActivity : AppCompatActivity() {
 
     private val _studyTimeFlow = MutableStateFlow<ApiState<FaceData>>(ApiState.Idle)
     val studyTimeFlow: StateFlow<ApiState<FaceData>> = _studyTimeFlow.asStateFlow()
+
+    private val _beforeStudyTimeFlow = MutableStateFlow<ApiState<BeforeSubjectStudyData>>(ApiState.Idle)
+    val beforeStudyTimeFlow: StateFlow<ApiState<BeforeSubjectStudyData>> = _beforeStudyTimeFlow.asStateFlow()
 
     private val _evaluateFlow = MutableStateFlow<ApiState<Any>>(ApiState.Idle)
     val evaluateFlow: StateFlow<ApiState<Any>> = _evaluateFlow.asStateFlow()
@@ -478,6 +482,19 @@ class CourseDetailActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                beforeStudyTimeFlow.collectLatest { state ->
+                    when (state) {
+                        is ApiState.Idle -> {}
+                        is ApiState.Loading -> {}
+                        is ApiState.Success -> handleBeforeStudyTimeSuccess(state.data)
+                        is ApiState.Error -> showToast(state.msg)
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 evaluateFlow.collectLatest { state ->
                     when (state) {
                         is ApiState.Idle -> {}
@@ -589,6 +606,32 @@ class CourseDetailActivity : AppCompatActivity() {
         }
     }
 
+    private fun handleBeforeStudyTimeSuccess(data: BeforeSubjectStudyData?) {
+        if (data == null) return
+
+        when (val action = BeforeTrainingFlowPolicy.afterStudy(data)) {
+            is BeforeStudyAction.NextCourse -> {
+                showToast("即将为您跳转下一课")
+                handler.postDelayed({
+                    val intent = Intent(this, CourseDetailActivity::class.java).apply {
+                        putExtra("safetyPlanId", safetyPlanId)
+                        putExtra("subjectId", action.subjectId.toString())
+                        putExtra("type", courseType)
+                        putExtra("number", number)
+                        putExtra("trainName", trainName)
+                    }
+                    startActivity(intent)
+                    finish()
+                }, 1000)
+            }
+            is BeforeStudyAction.EndFace -> {
+                SPUtils.save("beforeExamsId", action.examId.toString())
+                navigateToFaceCheck(longtime, isEnd = true)
+            }
+            BeforeStudyAction.Stay -> {}
+        }
+    }
+
     private fun submitEvaluate() {
         evaluateInput = binding.etEvaluateContent.text.toString().trim()
         if (evaluateInput.isEmpty()) {
@@ -616,10 +659,21 @@ class CourseDetailActivity : AppCompatActivity() {
             params["pageScoll"] = pageScoll.toString()
         }
 
-        trainingViewModel.safetyAdd(
-            params = params,
-            stateFlow = _studyTimeFlow
-        )
+        if (courseType == "before") {
+            trainingViewModel.beforeSubjectStudy(
+                subjectId = subjectId,
+                trainingSafetyPlanId = safetyPlanId,
+                longtime = longtime.toString(),
+                number = number,
+                pageScoll = params["pageScoll"],
+                stateFlow = _beforeStudyTimeFlow
+            )
+        } else {
+            trainingViewModel.safetyAdd(
+                params = params,
+                stateFlow = _studyTimeFlow
+            )
+        }
     }
 
     // 播放器管理

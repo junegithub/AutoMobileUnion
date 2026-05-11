@@ -3,6 +3,7 @@ package com.fx.zfcar.training.viewmodel
 import com.fx.zfcar.net.AuthRequest
 import com.fx.zfcar.net.BeforeEducationCertificateData
 import com.fx.zfcar.net.BeforeExamInfoData
+import com.fx.zfcar.net.BeforeSubjectStudyData
 import com.fx.zfcar.net.CarNumSearchData
 import com.fx.zfcar.net.CompanyListData
 import com.fx.zfcar.net.CoursewareListData
@@ -392,6 +393,28 @@ class SafetyTrainingViewModel : TrainingBaseViewModel() {
     ) {
         launchRequest(
             block = { vehicleRepository.safetyAdd(params) },
+            stateFlow = stateFlow
+        )
+    }
+
+    fun beforeSubjectStudy(
+        subjectId: String,
+        trainingSafetyPlanId: String,
+        longtime: String,
+        number: String,
+        pageScoll: String?,
+        stateFlow: MutableStateFlow<ApiState<BeforeSubjectStudyData>>
+    ) {
+        launchRequest(
+            block = {
+                vehicleRepository.beforeSubjectStudy(
+                    subjectId,
+                    trainingSafetyPlanId,
+                    longtime,
+                    number,
+                    pageScoll
+                )
+            },
             stateFlow = stateFlow
         )
     }

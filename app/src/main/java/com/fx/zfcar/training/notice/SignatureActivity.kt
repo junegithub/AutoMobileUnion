@@ -13,9 +13,13 @@ import com.fx.zfcar.databinding.ActivitySignatureBinding
 import com.fx.zfcar.net.ApiConfig
 import com.fx.zfcar.net.SubmitExamRequest
 import com.fx.zfcar.net.UploadFileData
+import com.fx.zfcar.training.safetytraining.BeforeFaceAction
+import com.fx.zfcar.training.safetytraining.BeforeTrainingFlowPolicy
+import com.fx.zfcar.training.safetytraining.ExamManagerActivity
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.ExamViewModel
 import com.fx.zfcar.training.viewmodel.NoticeViewModel
+import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.util.BitmapUtils
 import com.fx.zfcar.util.PressEffectUtils
 import com.fx.zfcar.util.ProgressDialogUtils
@@ -37,8 +41,10 @@ class SignatureActivity : AppCompatActivity() {
 
     private val noticeViewModel by viewModels<NoticeViewModel>()
     private val examViewModel by viewModels<ExamViewModel>()
+    private val trainingViewModel by viewModels<SafetyTrainingViewModel>()
     private var uploadStateFlow = MutableStateFlow<ApiState<UploadFileData>>(ApiState.Idle)
     private var submitExamStateFlow = MutableStateFlow<ApiState<String>>(ApiState.Idle)
+    private var beforeSignStateFlow = MutableStateFlow<ApiState<Boolean>>(ApiState.Idle)
 
     // 接收的参数
     private var from: String = ""
@@ -168,7 +174,11 @@ class SignatureActivity : AppCompatActivity() {
                         } else {
                             // 责任书等签字流：保存 URL 并返回
                             SPUtils.save(fill, signImgUrl)
-                            finish()
+                            if (fill == "beforeSign") {
+                                submitBeforeSign(signImgUrl)
+                            } else {
+                                finish()
+                            }
                         }
                     }
 
@@ -200,6 +210,53 @@ class SignatureActivity : AppCompatActivity() {
                     is ApiState.Idle -> {}
                 }
             }
+        }
+
+        lifecycleScope.launch {
+            beforeSignStateFlow.collect { uiState ->
+                when (uiState) {
+                    is ApiState.Loading -> {
+                        ProgressDialogUtils.show(this@SignatureActivity, "提交中...")
+                    }
+                    is ApiState.Success -> {
+                        ProgressDialogUtils.dismiss()
+                        openBeforeExamAfterSign()
+                        finish()
+                    }
+                    is ApiState.Error -> {
+                        ProgressDialogUtils.dismiss()
+                        showToast("提交失败：${uiState.msg}")
+                    }
+                    is ApiState.Idle -> {}
+                }
+            }
+        }
+    }
+
+    private fun submitBeforeSign(signImgUrl: String) {
+        val beforeId = SPUtils.get("id").ifEmpty { SPUtils.get("beforeId") }
+        if (beforeId.isEmpty()) {
+            showToast("岗前培训信息异常")
+            finish()
+            return
+        }
+
+        trainingViewModel.postBeforeSign(beforeId, signImgUrl, beforeSignStateFlow)
+    }
+
+    private fun openBeforeExamAfterSign() {
+        val beforeId = SPUtils.get("id").ifEmpty { SPUtils.get("beforeId") }
+        when (val action = BeforeTrainingFlowPolicy.afterSign(SPUtils.get("beforeExamsId"), beforeId)) {
+            is BeforeFaceAction.Exam -> {
+                val intent = Intent(this, ExamManagerActivity::class.java)
+                intent.putExtra("id", action.examId)
+                intent.putExtra("name", SPUtils.get("beforeName"))
+                intent.putExtra("type", "before")
+                intent.putExtra("training_safetyplan_id", action.planId)
+                startActivity(intent)
+            }
+            BeforeFaceAction.CourseList,
+            BeforeFaceAction.Sign -> {}
         }
     }
 
