@@ -21,7 +21,7 @@ data class TravelLogItem(
     val real_load: String = "",
     val goods_name: String = "",
     val gotime: String = "",
-    val gettime: Int = 0,
+    val gettime: String = "",
     val start_address: String = "",
     val end_address: String = "",
     val mileage: String = "",
