@@ -162,7 +162,8 @@ class ExamPracticeActivity : AppCompatActivity() {
 
         if (from == "twoList") {
             // 两类人员
-            getQuestionList(mapOf("user_category_id" to "1"))
+            activeId = "1"
+            getQuestionList(mapOf("user_category_id" to activeId))
         } else {
             // 底部真题
             getQuestionList(emptyMap())
@@ -330,16 +331,7 @@ class ExamPracticeActivity : AppCompatActivity() {
             nickName = resInfo.nickname
             role.clear()
 
-            // 普通角色
-            val roleArr = listOf("驾驶员", "安全员", "押运员", "安全负责人")
-            val resRole = resInfo.stype.split(",")
-
-            resRole.forEach { item ->
-                val index = item.toIntOrNull() ?: 0
-                if (index < roleArr.size) {
-                    role.add(RoleModel(roleArr[index], item))
-                }
-            }
+            role.addAll(ExamRolePolicy.parseNormalRoles(resInfo.stype))
 
             if (title.isEmpty() && role.isNotEmpty()) {
                 title = role[0].text

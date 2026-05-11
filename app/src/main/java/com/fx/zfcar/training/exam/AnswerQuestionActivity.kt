@@ -323,12 +323,28 @@ class AnswerQuestionActivity : AppCompatActivity() {
      */
     private fun initData() {
         binding.vMask.visibility = View.VISIBLE
+        val params = parseAnswerParams() ?: return
 
         if (from == "twoList") {
-            viewModel.updateTwoQuestion(UpdateTwoQuestionRequest(from, user_category_id.toInt(), question_category_id.toInt(), question_id),
-                updateTwoQuestionStateFlow)
+            viewModel.updateTwoQuestion(
+                UpdateTwoQuestionRequest(
+                    params.from,
+                    params.userCategoryId,
+                    params.questionCategoryId,
+                    params.questionId
+                ),
+                updateTwoQuestionStateFlow
+            )
         } else {
-            viewModel.updateQuestion(UpdateTwoQuestionRequest(from, user_category_id.toInt(), question_category_id.toInt(), question_id), updateQuestionStateFlow)
+            viewModel.updateQuestion(
+                UpdateTwoQuestionRequest(
+                    params.from,
+                    params.userCategoryId,
+                    params.questionCategoryId,
+                    params.questionId
+                ),
+                updateQuestionStateFlow
+            )
         }
     }
 
@@ -343,7 +359,32 @@ class AnswerQuestionActivity : AppCompatActivity() {
      * 开始答题（两类人员）
      */
     private fun postStartTwoAnswer() {
-        viewModel.startTwoAnswer(StartTwoAnswerRequest(from, user_category_id.toInt(), question_category_id.toInt(), question_id), startTwoAnswerStateFlow)
+        val params = parseAnswerParams() ?: return
+
+        viewModel.startTwoAnswer(
+            StartTwoAnswerRequest(
+                params.from,
+                params.userCategoryId,
+                params.questionCategoryId,
+                params.questionId
+            ),
+            startTwoAnswerStateFlow
+        )
+    }
+
+    private fun parseAnswerParams(): ExamAnswerParams? {
+        val params = ExamAnswerParamsPolicy.parse(
+            from,
+            user_category_id,
+            question_category_id,
+            question_id
+        )
+        if (params == null) {
+            showToast("考试参数异常，请重新进入")
+            goBack()
+        }
+
+        return params
     }
 
     /**
