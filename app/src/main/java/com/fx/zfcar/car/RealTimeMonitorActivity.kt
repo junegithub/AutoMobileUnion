@@ -443,8 +443,10 @@ class RealTimeMonitorActivity : AppCompatActivity() {
     /**
      * 接收WebView消息并播放视频（Media3 版本）
      */
-    private fun handleWebMessage(channel: Int, videoUrl: String) {
+    private fun handleWebMessage(channel: Int, data: String) {
+        val videoUrl = VideoWebMessagePolicy.extractActionUrl(data)
         if (videoUrl.isBlank()) {
+            Log.w("RealTimeMonitor", "empty video url from web message: $data")
             return
         }
         if (!loadedChannels.add(channel)) {

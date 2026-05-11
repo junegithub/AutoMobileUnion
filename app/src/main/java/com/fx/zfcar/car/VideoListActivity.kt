@@ -146,9 +146,7 @@ class VideoListActivity : AppCompatActivity() {
         fun getMessage(data: String) {
             runOnUiThread {
                 binding.progressBar.visibility = View.GONE
-                val videoUrl = runCatching {
-                    gson.fromJson(data, HistoryVideoAction::class.java)?.action
-                }.getOrNull().orEmpty()
+                val videoUrl = VideoWebMessagePolicy.extractActionUrl(data)
 
                 if (videoUrl.isEmpty()) {
                     showToast("回放地址获取失败")
@@ -173,7 +171,4 @@ class VideoListActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    data class HistoryVideoAction(
-        val action: String = ""
-    )
 }
