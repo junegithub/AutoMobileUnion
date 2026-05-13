@@ -11,6 +11,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.fx.zfcar.R
+import com.fx.zfcar.analytics.UmengTracker
 import com.fx.zfcar.databinding.ActivityAgreementConsentBinding
 import com.fx.zfcar.util.SPUtils
 
@@ -28,6 +29,7 @@ class AgreementConsentActivity : AppCompatActivity() {
         binding.btnAgree.setOnClickListener {
             binding.cbAgreement.isChecked = true
             SPUtils.savePolicyAccepted(true)
+            UmengTracker.init(applicationContext)
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }

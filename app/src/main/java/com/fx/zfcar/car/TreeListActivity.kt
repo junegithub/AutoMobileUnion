@@ -15,6 +15,7 @@ import com.chad.library.adapter4.QuickAdapterHelper
 import com.chad.library.adapter4.loadState.LoadState
 import com.chad.library.adapter4.loadState.trailing.TrailingLoadStateAdapter
 import com.chad.library.adapter4.util.setOnDebouncedItemClick
+import com.fx.zfcar.analytics.UmengTracker
 import com.fx.zfcar.car.adapter.CarNumAdapter
 import com.fx.zfcar.car.adapter.DynamicTreeAdapter
 import com.fx.zfcar.car.adapter.DynamicTreeItemClickListener
@@ -122,6 +123,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
             showToast("请输入内容搜索")
             return
         }
+        UmengTracker.searchClick(this, searchPortalName())
         fromSearch = true
         adapter.setSearch(fromSearch)
         resetSearchListState()
@@ -271,6 +273,14 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
                 when (state) {
                     is ApiState.Success -> {
                         state.data?.let {
+                            if (pageNum == 1) {
+                                UmengTracker.searchSuccess(
+                                    this@TreeListActivity,
+                                    binding.etSearch.text.toString().trim(),
+                                    searchPortalName(),
+                                    it.list.isNotEmpty()
+                                )
+                            }
                             currentTotal = it.count.all
                             filterList.clear()
                             if (it.list.isNotEmpty()) {
@@ -382,6 +392,14 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
             3 -> "stop"
             4 -> "expired"
             else -> "all"
+        }
+    }
+
+    private fun searchPortalName(): String {
+        return if (searchType == SEARCH_TYPE_VIDEO_LIST) {
+            "视频车辆搜索"
+        } else {
+            "地图车辆搜索"
         }
     }
 

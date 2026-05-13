@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.fx.zfcar.R
 import com.fx.zfcar.MyApp
+import com.fx.zfcar.analytics.UmengTracker
 import com.fx.zfcar.car.viewmodel.UserViewModel
 import com.fx.zfcar.net.CarUserInfo
 import com.fx.zfcar.net.DictItem
@@ -186,6 +187,11 @@ class LoginActivity : AppCompatActivity() {
                         val statistics = uiState.data
                         // 保存Token
                         SPUtils.saveToken(statistics?.userinfo?.token)
+                        UmengTracker.loginSuccess(
+                            this@LoginActivity,
+                            "车辆登录",
+                            statistics?.userid?.toString()
+                        )
                         MyApp.isLogin = true
                         getUserInfo()
                         isLYBH()
@@ -196,6 +202,7 @@ class LoginActivity : AppCompatActivity() {
 
                     is ApiState.Error -> {
                         ProgressDialogUtils.dismiss()
+                        UmengTracker.loginFailed(this@LoginActivity, uiState.msg)
                         showToast("登录失败：${uiState.msg}")
                     }
                     is ApiState.Idle -> {
@@ -273,11 +280,17 @@ class LoginActivity : AppCompatActivity() {
                         SPUtils.saveTrainingLoginUser(Gson().toJson(uiState.data))
                         MyApp.isTrainingLogin = true
                         MyApp.trainingUserInfo = uiState.data
+                        UmengTracker.loginSuccess(
+                            this@LoginActivity,
+                            "培训登录",
+                            uiState.data?.userid ?: uiState.data?.userinfo?.id?.toString()
+                        )
                         returnToMainTab()
                     }
 
                     is ApiState.Error -> {
                         ProgressDialogUtils.dismiss()
+                        UmengTracker.loginFailed(this@LoginActivity, uiState.msg)
                         showToast("登录失败：${uiState.msg}")
                     }
                     is ApiState.Idle -> {

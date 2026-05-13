@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.fx.zfcar.analytics.UmengTracker
 import com.fx.zfcar.databinding.ActivityPayDetailBinding
 import com.fx.zfcar.net.CompanyPayData
 import com.fx.zfcar.net.PayOrderData
@@ -475,6 +476,7 @@ class PayDetailActivity : AppCompatActivity() {
                     PayUtils.callWeChatPay(this, state.data) { isSuccess, msg ->
                         if (isSuccess) {
                             showToast("支付成功")
+                            trackPaySuccess("微信支付")
                             onBackPressed()
                         } else {
                             showToast(msg)
@@ -507,6 +509,7 @@ class PayDetailActivity : AppCompatActivity() {
                     PayUtils.callAlipay(this, orderInfo) { isSuccess, msg ->
                         if (isSuccess) {
                             showToast("支付宝支付成功")
+                            trackPaySuccess("支付宝支付")
                             onBackPressed()
                         } else {
                             showToast(msg)
@@ -545,6 +548,7 @@ class PayDetailActivity : AppCompatActivity() {
                     PayUtils.callWeChatPay(this, payData) { isSuccess, msg ->
                         if (isSuccess) {
                             showToast("年度支付成功")
+                            trackPaySuccess("微信年度支付")
                             finish()
                         } else {
                             showToast(msg)
@@ -574,6 +578,7 @@ class PayDetailActivity : AppCompatActivity() {
                     PayUtils.callAlipay(this, orderInfo) { isSuccess, msg ->
                         if (isSuccess) {
                             showToast("年度支付成功")
+                            trackPaySuccess("支付宝年度支付")
                             finish()
                         } else {
                             showToast(msg)
@@ -605,6 +610,7 @@ class PayDetailActivity : AppCompatActivity() {
             is ApiState.Success -> {
                 hideLoading()
                 showToast("企业支付成功")
+                trackPaySuccess("岗前培训企业支付")
                 val intent = Intent(this, TrainListActivity::class.java).apply {
                     putExtra("type", 1)
                     putExtra("title", "岗前培训")
@@ -636,6 +642,7 @@ class PayDetailActivity : AppCompatActivity() {
                     PayUtils.callWeChatPay(this, state.data) { isSuccess, msg ->
                         if (isSuccess) {
                             showToast("支付成功")
+                            trackPaySuccess("微信支付")
                             val intent = Intent(this, TrainListActivity::class.java).apply {
                                 putExtra("type", 1)
                                 putExtra("title", "岗前培训")
@@ -673,6 +680,7 @@ class PayDetailActivity : AppCompatActivity() {
                     PayUtils.callAlipay(this, orderInfo) { isSuccess, msg ->
                         if (isSuccess) {
                             showToast("支付成功")
+                            trackPaySuccess("支付宝支付")
                             val intent = Intent(this, TrainListActivity::class.java).apply {
                                 putExtra("type", 1)
                                 putExtra("title", "岗前培训")
@@ -714,6 +722,7 @@ class PayDetailActivity : AppCompatActivity() {
                 state.data?.let {
                     showToast("企业支付成功：${state.data.msg}")
                 }
+                trackPaySuccess("企业支付")
                 val intent = Intent(this, FaceCheckActivity::class.java).apply {
                     putExtra("safetyPlanId", id)
                     putExtra("name", name)
@@ -789,6 +798,15 @@ class PayDetailActivity : AppCompatActivity() {
         } else {
             "年度支付"
         }
+    }
+
+    private fun trackPaySuccess(discountType: String) {
+        val amount = when {
+            discountType.contains("年度") && year_money > 0f -> year_money
+            money > 0f -> money
+            else -> 0f
+        }
+        UmengTracker.paySuccess(this, amount, discountType)
     }
 
     /**

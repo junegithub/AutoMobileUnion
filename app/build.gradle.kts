@@ -24,6 +24,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders["WX_APPID"] = "wx2e369872d915263d"
+        manifestPlaceholders["UMENG_APPKEY"] = "6a03e2b29a7f376488dcf890"
+        manifestPlaceholders["UMENG_CHANNEL"] = "default"
     }
 
     signingConfigs {
@@ -120,6 +122,9 @@ dependencies {
     implementation("com.tencent.mm.opensdk:wechat-sdk-android:6.8.0")
     // 支付宝SDK
     api("com.alipay.sdk:alipaysdk-android:+@aar")
+    // 友盟统计SDK
+    implementation("com.umeng.umsdk:common:9.9.1")
+    implementation("com.umeng.umsdk:asms:1.8.7.2")
 
     implementation("com.github.loper7:DateTimePicker:0.6.3") {
         // 排除冲突的旧版依赖

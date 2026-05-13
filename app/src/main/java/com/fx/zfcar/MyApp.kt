@@ -9,6 +9,7 @@ import com.fx.zfcar.net.CarUserInfo
 import com.fx.zfcar.net.RetrofitClient
 import com.fx.zfcar.net.UserLoginData
 import com.fx.zfcar.ad.TbAdSdkManager
+import com.fx.zfcar.analytics.UmengTracker
 import com.fx.zfcar.util.SPUtils
 import com.fx.zfcar.util.WindowInsetHelper
 import com.kongzue.dialogx.DialogX
@@ -27,6 +28,9 @@ class MyApp : Application() {
         MapsInitializer.updatePrivacyAgree(this, true)
         DialogX.init(this)
         syncNormalLoginStateFromStorage()
+        if (SPUtils.isPolicyAccepted()) {
+            UmengTracker.init(this)
+        }
         TbAdSdkManager.warmUp(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: android.app.Activity, savedInstanceState: Bundle?) {
@@ -38,8 +42,11 @@ class MyApp : Application() {
             override fun onActivityStarted(activity: android.app.Activity) = Unit
             override fun onActivityResumed(activity: android.app.Activity) {
                 currentActivityRef = WeakReference(activity)
+                UmengTracker.onActivityResumed(activity)
             }
-            override fun onActivityPaused(activity: android.app.Activity) = Unit
+            override fun onActivityPaused(activity: android.app.Activity) {
+                UmengTracker.onActivityPaused(activity)
+            }
             override fun onActivityStopped(activity: android.app.Activity) = Unit
             override fun onActivitySaveInstanceState(activity: android.app.Activity, outState: Bundle) = Unit
             override fun onActivityDestroyed(activity: android.app.Activity) {
