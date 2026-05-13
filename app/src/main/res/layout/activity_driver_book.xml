@@ -64,10 +64,10 @@
     <ImageView
         android:id="@+id/ivSignImage"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="160dp"
         android:background="#FFFFFF"
         android:padding="8dp"
-        android:scaleType="fitCenter"
+        android:scaleType="fitXY"
         android:visibility="gone"/>
 
     <!-- 签名画布（未签署时显示） -->

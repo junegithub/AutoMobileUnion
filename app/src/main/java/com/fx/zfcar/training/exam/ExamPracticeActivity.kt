@@ -126,6 +126,7 @@ class ExamPracticeActivity : AppCompatActivity() {
         PressEffectUtils.setCommonPressEffect(binding.btnCancelPay)
         PressEffectUtils.setCommonPressEffect(binding.flPayDialog)
         PressEffectUtils.setCommonPressEffect(binding.llPayContent)
+        PressEffectUtils.setCommonPressEffect(binding.llNoContent)
 
         binding.llRoleSwitch.setOnClickListener {
             changeRole()
@@ -150,6 +151,10 @@ class ExamPracticeActivity : AppCompatActivity() {
         binding.llPayContent.setOnClickListener {
             // 消费点击事件
         }
+
+        binding.llNoContent.setOnClickListener {
+            init()
+        }
     }
 
     /**
@@ -162,7 +167,7 @@ class ExamPracticeActivity : AppCompatActivity() {
 
         if (from == "twoList") {
             // 两类人员
-            activeId = "1"
+            activeId = "3"
             getQuestionList(mapOf("user_category_id" to activeId))
         } else {
             // 底部真题
@@ -178,6 +183,7 @@ class ExamPracticeActivity : AppCompatActivity() {
                     when (state) {
                         is ApiState.Error -> {
                             showToast(state.msg)
+                            binding.tvNoContent.text = "加载失败，点击重试"
                             loadingShow = true
                             updateUI()
                         }
@@ -197,6 +203,7 @@ class ExamPracticeActivity : AppCompatActivity() {
                     when (state) {
                         is ApiState.Error -> {
                             showToast(state.msg)
+                            binding.tvNoContent.text = "加载失败，点击重试"
                             loadingShow = true
                             updateUI()
                         }
@@ -269,11 +276,18 @@ class ExamPracticeActivity : AppCompatActivity() {
                                 payId = state.data.question_category.id.toString()
                                 payNum = payData.money
 
+                                if (payNum <= 0) {
+                                    goQuestion(categoryModel)
+                                    return@collect
+                                }
+
                                 // 更新支付金额文本
                                 binding.tvPayAmount.text = String.format("您当前余额0元，需付费%s元/类", payNum)
 
                                 // 显示付费弹窗
                                 showPayDialog()
+                            } ?: run {
+                                showToast("题目支付状态异常，请重试")
                             }
                         }
 
@@ -295,11 +309,18 @@ class ExamPracticeActivity : AppCompatActivity() {
                                 payId = state.data.question_category.id.toString()
                                 payNum = payData.money
 
+                                if (payNum <= 0) {
+                                    goQuestion(categoryModel)
+                                    return@collect
+                                }
+
                                 // 更新支付金额文本
                                 binding.tvPayAmount.text = String.format("您当前余额0元，需付费%s元/类", payNum)
 
                                 // 显示付费弹窗
                                 showPayDialog()
+                            } ?: run {
+                                showToast("题目支付状态异常，请重试")
                             }
                         }
 
@@ -359,6 +380,7 @@ class ExamPracticeActivity : AppCompatActivity() {
                     )
                 }
             }
+            binding.tvNoContent.text = "暂无题目"
 
             // 更新标题（优化：使用String.format）
             binding.tvTitle.text = String.format("%s:%s", title, nickName)
@@ -400,6 +422,7 @@ class ExamPracticeActivity : AppCompatActivity() {
                     )
                 )
             }
+            binding.tvNoContent.text = "暂无题目"
 
             // 更新标题（优化：使用String.format）
             binding.tvTitle.text = String.format("%s:%s", title, nickName)
@@ -481,11 +504,16 @@ class ExamPracticeActivity : AppCompatActivity() {
      */
     private fun goQuestion(data: CategoryModel?) {
         hidePayDialog()
+        if (data == null || data.question_category_id.isBlank()) {
+            showToast("题目分类异常，请重新选择")
+            init()
+            return
+        }
 
         try {
             val intent = Intent(this, AnswerQuestionActivity::class.java).apply {
-                putExtra("question_category_id", data?.question_category_id)
-                putExtra("user_exam_id", data?.user_exam_id)
+                putExtra("question_category_id", data.question_category_id)
+                putExtra("user_exam_id", data.user_exam_id)
                 putExtra("user_category_id", roleId)
                 putExtra("from", from)
             }

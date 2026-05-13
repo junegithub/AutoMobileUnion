@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.fx.zfcar.databinding.ActivityUploadPhotosBinding
 import com.fx.zfcar.net.ApiConfig
 import com.fx.zfcar.net.UploadFileData
+import com.fx.zfcar.training.jobs.GlideEngine
 import com.fx.zfcar.training.user.showToast
 import com.fx.zfcar.training.viewmodel.NoticeViewModel
 import com.fx.zfcar.util.FileUploadUtils
@@ -176,6 +177,7 @@ class UploadPhotosActivity : AppCompatActivity() {
             .openGallery(SelectMimeType.ofImage())
             .isDisplayCamera(true)
             .setMaxSelectNum(1)
+            .setImageEngine(GlideEngine.createGlideEngine())
             .forResult(object : OnResultCallbackListener<LocalMedia> {
                 override fun onResult(result: ArrayList<LocalMedia>) {
                     val media = result.firstOrNull() ?: return

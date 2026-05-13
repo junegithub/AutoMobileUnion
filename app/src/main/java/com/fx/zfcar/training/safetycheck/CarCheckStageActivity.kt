@@ -433,15 +433,17 @@ class CarCheckStageActivity : AppCompatActivity() {
                         val uploadedUrl = state.data?.url
                         if (field != null && !uploadedUrl.isNullOrBlank()) {
                             viewModel.addImage(field, TrainingFileUrlPolicy.build(ApiConfig.BASE_URL_TRAINING, uploadedUrl))
+                            Toast.makeText(this@CarCheckStageActivity, "图片上传成功", Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(this@CarCheckStageActivity, "图片上传失败", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@CarCheckStageActivity, "图片上传失败：未返回文件地址", Toast.LENGTH_SHORT).show()
                         }
                         pendingImageField = null
                         uploadFlow.value = ApiState.Idle
                     }
                     is ApiState.Error -> {
+                        val field = pendingImageField
                         pendingImageField = null
-                        Toast.makeText(this@CarCheckStageActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@CarCheckStageActivity, "${uploadLabel(field)}上传失败：${state.msg}", Toast.LENGTH_SHORT).show()
                         uploadFlow.value = ApiState.Idle
                     }
                 }
@@ -478,14 +480,15 @@ class CarCheckStageActivity : AppCompatActivity() {
                         } else {
                             resetSignatureUploadState()
                             hideSubmitLoading()
-                            Toast.makeText(this@CarCheckStageActivity, "签名上传失败", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@CarCheckStageActivity, "签名上传失败：未返回文件地址", Toast.LENGTH_SHORT).show()
                         }
                         signatureUploadFlow.value = ApiState.Idle
                     }
                     is ApiState.Error -> {
+                        val field = pendingSignatureField
                         resetSignatureUploadState()
                         hideSubmitLoading()
-                        Toast.makeText(this@CarCheckStageActivity, state.msg, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@CarCheckStageActivity, "${signatureLabel(field)}上传失败：${state.msg}", Toast.LENGTH_SHORT).show()
                         signatureUploadFlow.value = ApiState.Idle
                     }
                 }
@@ -589,9 +592,9 @@ class CarCheckStageActivity : AppCompatActivity() {
      */
     private fun updateFormUI(form: CarCheckForm) {
         // 步骤1数据
-        stage1Binding.etCarnum.setText(form.carnum)
-        stage1Binding.etCompany.setText(form.company)
-        stage1Binding.etName.setText(form.name)
+        stage1Binding.etCarnum.setTextIfChanged(form.carnum)
+        stage1Binding.etCompany.setTextIfChanged(form.company)
+        stage1Binding.etName.setTextIfChanged(form.name)
         stage1Binding.tvChecktime.text = form.checktime.ifBlank { "请选择检查日期" }
 
         // 步骤2状态和图片
@@ -899,6 +902,30 @@ class CarCheckStageActivity : AppCompatActivity() {
         submitAfterSignatureUpload = false
     }
 
+    private fun uploadLabel(field: String?): String {
+        return when (field) {
+            "carCerti" -> "车辆证件图片"
+            "peopleCerti" -> "人员证件图片"
+            "insureCerti" -> "保险图片"
+            "carCheck" -> "车辆检查图片"
+            "urgentCheck" -> "应急检查图片"
+            "signCheck" -> "标志检查图片"
+            "canBody" -> "罐体图片"
+            "cutoff" -> "切断阀图片"
+            "static" -> "静电带图片"
+            "waybill" -> "运单图片"
+            else -> "图片"
+        }
+    }
+
+    private fun signatureLabel(field: String?): String {
+        return when (field) {
+            "checksign_img" -> "检查人签名"
+            "dirversign_img" -> "负责人签名"
+            else -> "签名"
+        }
+    }
+
     private fun submitCarCheckForm() {
         showSubmitLoading()
 
@@ -944,6 +971,12 @@ class CarCheckStageActivity : AppCompatActivity() {
                 action(s.toString().trim())
             }
         })
+    }
+
+    private fun android.widget.EditText.setTextIfChanged(value: String) {
+        if (text?.toString() != value) {
+            setText(value)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

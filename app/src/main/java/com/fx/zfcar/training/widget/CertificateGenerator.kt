@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
@@ -67,6 +68,7 @@ class CertificateGenerator(private val context: Context) {
         applyAdaptiveTextSize(binding.tvTrainingDate, binding.tvTrainingDate.text.toString(), 13f, 12f, 11f)
 
         val checkinDlg = AlertDialog.Builder(context).setView(binding.root).show()
+        setDialogWidth(checkinDlg)
 
         PressEffectUtils.setCommonPressEffect(binding.tvDownload)
         binding.tvDownload.setOnClickListener {
@@ -125,6 +127,7 @@ class CertificateGenerator(private val context: Context) {
         applyAdaptiveTextSize(binding.noteCategory, binding.noteCategory.text.toString(), 16f, 15f, 14f)
 
         val checkinDlg = AlertDialog.Builder(context).setView(binding.root).show()
+        setDialogWidth(checkinDlg)
 
         PressEffectUtils.setCommonPressEffect(binding.tvDownloadTransport)
         binding.tvDownloadTransport.setOnClickListener {
@@ -180,5 +183,10 @@ class CertificateGenerator(private val context: Context) {
             else -> normalSp
         }
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, targetSize)
+    }
+
+    private fun setDialogWidth(dialog: AlertDialog) {
+        val width = (context.resources.displayMetrics.widthPixels * 0.94f).toInt()
+        dialog.window?.setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
     }
 }

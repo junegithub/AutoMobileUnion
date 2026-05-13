@@ -81,6 +81,7 @@ class TrackPlayActivity : AppCompatActivity() {
     private var currentPlaySpeed = PlaySpeed.NORMAL
     private var animationInterval = PlaySpeed.NORMAL.intervalMs
     private var playing = false
+    private var playbackEnded = false
     private var shouldResumeAfterSeek = false
     private var panelExpand = true
     private var carId = ""
@@ -564,6 +565,7 @@ class TrackPlayActivity : AppCompatActivity() {
 
     private fun resetPlaybackStateForNewTrack() {
         pauseAnimation()
+        playbackEnded = false
         shouldResumeAfterSeek = false
         currentPointIndex = 0
         binding.progressBar.progress = 0
@@ -577,6 +579,11 @@ class TrackPlayActivity : AppCompatActivity() {
         if (currentTrack == null || currentTrack.postlist.isEmpty()) {
             setPlayingState(false)
             return
+        }
+        if (playbackEnded || currentPointIndex >= currentTrack.postlist.size || binding.progressBar.progress >= 100) {
+            playbackEnded = false
+            currentPointIndex = 0
+            binding.progressBar.progress = 0
         }
         if (currentPointIndex == 0 && binding.progressBar.progress == 0) {
             val firstPoint = currentTrack.postlist.first()
@@ -640,8 +647,7 @@ class TrackPlayActivity : AppCompatActivity() {
      */
     private fun stopAnimationAtEnd() {
         pauseAnimation()
-        binding.progressBar.progress = 0
-        currentPointIndex = 0
+        playbackEnded = true
 
         // 重置轨迹线颜色
         val currentTrack = trackData ?: return
@@ -658,6 +664,8 @@ class TrackPlayActivity : AppCompatActivity() {
             val lastPoint = currentTrack.postlist.last()
             updatePositionInfo(lastPoint)
             addOrUpdatePlaybackMarker(lastPoint)
+            currentPointIndex = currentTrack.postlist.size
+            binding.progressBar.progress = 100
 
             // 地图中心保持在终点
             aMap.moveCamera(

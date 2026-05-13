@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/dp_40"
+    android:padding="@dimen/dp_16"
     android:background="@color/white">
 
     <!-- 顶部导航栏 -->
@@ -78,7 +78,8 @@
         <EditText
             android:id="@+id/et_name"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:minHeight="44dp"
             style="@style/InputStyle"
             android:enabled="false"
             android:hint=""
@@ -97,7 +98,8 @@
         <EditText
             android:id="@+id/et_money"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:minHeight="44dp"
             style="@style/InputStyle"
             android:enabled="false"
             android:hint=""
@@ -114,8 +116,9 @@
             <!-- 立即支付按钮 -->
             <Button
                 android:id="@+id/btn_pay_now"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 style="@style/PayButtonStyle"
                 android:text="立即支付"
                 android:visibility="gone"/>
@@ -123,8 +126,9 @@
             <!-- 年度支付按钮 -->
             <Button
                 android:id="@+id/btn_year_pay"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 style="@style/PayButtonStyle"
                 android:text="年度支付"
                 android:visibility="gone"/>

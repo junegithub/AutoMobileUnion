@@ -57,6 +57,8 @@ class TrainingFragment : Fragment(), View.OnClickListener {
     private var mType = 0
     private var mTitle = ""
     private var driverBookPromptShown = false
+    private var waitingDriverBookResult = false
+    private var waitingPromiseResult = false
     private var trainingHomeInitialized = false
     private var lastTrainingToken = ""
 
@@ -92,7 +94,14 @@ class TrainingFragment : Fragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        checkLoginStatus()
+        if (waitingDriverBookResult || waitingPromiseResult) {
+            waitingDriverBookResult = false
+            waitingPromiseResult = false
+            driverBookPromptShown = false
+            checkLoginStatus(forceRefresh = true)
+        } else {
+            checkLoginStatus()
+        }
     }
 
     override fun onDestroyView() {
@@ -285,43 +294,29 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                     is ApiState.Success -> {
                         // 已登录
                         loginStatus = true
-                        var signOne = false
-                        val nowYear = DateUtil.getCurrentYear().toString()
 
-                        uiState.data?.let {
-                            val data = uiState.data
-                            areacode = data.areacode.take(2)
-
-                            // 控制承诺书显示/隐藏
-                            if (areacode != "34" && areacode != "37") {
-                                binding.layoutYiqingSign.visibility = View.VISIBLE
-                            } else {
-                                binding.layoutYiqingSign.visibility = View.GONE
-                            }
-
-                            // 3=继续教育 或 涡阳县(341621) 不需要每年签
-                            if (data.group_id == 3 || data.areacode == "341621") {
-                                return@let
-                            }
-
-                            // 检查签署年份
-                            if (data.signtype == "1") {
-                                val signYear = DateUtil.timestamp2Date(data.signtime).take(4).toIntOrNull()
-                                if (signYear != null && signYear < DateUtil.getCurrentYear()) {
-                                    // 需要重新签署
-                                    openDriverBookOnce()
-                                    return@let
-                                } else {
-                                    signOne = true
-                                }
-                            } else {
-                                // 未签署
-                                openDriverBookOnce()
-                                return@let
-                            }
+                        val data = uiState.data
+                        if (data == null) {
+                            openDriverBookOnce()
+                            return@collect
                         }
+
+                        val areaPrefix = data.areacode.take(2)
+                        areacode = areaPrefix
+
+                        // 控制承诺书显示/隐藏：山东、安徽不显示，其他地区显示驾驶员承诺书。
+                        val shouldCheckPromise = areaPrefix != "34" && areaPrefix != "37"
+                        binding.layoutYiqingSign.visibility = if (shouldCheckPromise) View.VISIBLE else View.GONE
+
+                        // 3=继续教育 或 涡阳县(341621) 不需要每年签责任书。
+                        val skipDriverBook = data.group_id == 3 || data.areacode == "341621"
+                        if (!skipDriverBook && needsYearlySign(data.signtype, data.signtime)) {
+                            openDriverBookOnce()
+                            return@collect
+                        }
+
                         // 山东、安徽地区不要求驾驶员承诺书；入口隐藏后自动检查也必须跳过。
-                        if (areacode == "34" || areacode == "37") {
+                        if (!shouldCheckPromise) {
                             return@collect
                         }
 
@@ -346,14 +341,14 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                     is ApiState.Success -> {
                         uiState.data?.let {
                             if (uiState.data.epidemictype == "1") {
-                                val signTime = uiState.data.epidemictime.take(4).toInt()
-                                if (signTime < DateUtil.getCurrentYear()) {
+                                val signTime = uiState.data.epidemictime.take(4).toIntOrNull()
+                                if (signTime == null || signTime < DateUtil.getCurrentYear()) {
                                     // 需要重新签署
-                                    startActivity(Intent(requireContext(), YiqingSignActivity::class.java))
+                                    openPromiseSign()
                                 }
                             } else {
                                 // 未签署
-                                startActivity(Intent(requireContext(), YiqingSignActivity::class.java))
+                                openPromiseSign()
                             }
                         }
                     }
@@ -420,6 +415,8 @@ class TrainingFragment : Fragment(), View.OnClickListener {
             trainingHomeInitialized = false
             lastTrainingToken = ""
             driverBookPromptShown = false
+            waitingDriverBookResult = false
+            waitingPromiseResult = false
             SPUtils.save("trainLogin", "")
         } else {
             // 检查 Token
@@ -450,6 +447,8 @@ class TrainingFragment : Fragment(), View.OnClickListener {
                 trainingHomeInitialized = false
                 lastTrainingToken = ""
                 driverBookPromptShown = false
+                waitingDriverBookResult = false
+                waitingPromiseResult = false
             }
         }
     }
@@ -536,6 +535,7 @@ class TrainingFragment : Fragment(), View.OnClickListener {
     private fun openDriverBookOnce() {
         if (driverBookPromptShown) return
         driverBookPromptShown = true
+        waitingDriverBookResult = true
         startActivity(Intent(requireContext(), DriverBookActivity::class.java))
     }
 
@@ -544,6 +544,17 @@ class TrainingFragment : Fragment(), View.OnClickListener {
         val intent = Intent(requireContext(), YiqingSignActivity::class.java)
         intent.putExtra("name", name)
         startActivity(intent)
+    }
+
+    private fun openPromiseSign() {
+        waitingPromiseResult = true
+        yiqing()
+    }
+
+    private fun needsYearlySign(signType: String, signTime: Long): Boolean {
+        if (signType != "1") return true
+        val signYear = DateUtil.timestamp2Date(signTime).take(4).toIntOrNull()
+        return signYear == null || signYear < DateUtil.getCurrentYear()
     }
 
     // 招聘求职

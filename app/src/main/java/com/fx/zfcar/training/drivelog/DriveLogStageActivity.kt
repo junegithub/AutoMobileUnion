@@ -2,6 +2,7 @@ package com.fx.zfcar.training.drivelog
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import android.view.View
 import android.view.ViewParent
 import android.widget.*
@@ -87,6 +88,7 @@ class DriveLogStageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDriveLogStageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         // 初始化通用表单行标签
         initFormLabels()
@@ -603,6 +605,7 @@ class DriveLogStageActivity : AppCompatActivity() {
         form.stopresult = rowStopResultBinding.etContent.text.toString().trim()
         form.stopaddress = rowStopAddressBinding.etContent.text.toString().trim()
         form.carnum = binding.etCarnum.text.toString().trim()
+        form.updatetime = DateUtil.timestamp2String(System.currentTimeMillis())
 
         viewModel.localForm.value = form
 
@@ -828,6 +831,7 @@ class DriveLogStageActivity : AppCompatActivity() {
 
             // 自动跳转到副驾驶签名步骤
             viewModel.stage.value = 6
+            viewModel.stageStep.value = 90
         }
 
         viewModel.localForm.value = form
@@ -840,7 +844,9 @@ class DriveLogStageActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1001 && resultCode == RESULT_OK) {
             val carNum = data?.getStringExtra("carNum")
-            val carId = data?.getIntExtra("carId", 0) ?: 0
+            val carId = data?.getStringExtra("carId")?.toIntOrNull()
+                ?: data?.getIntExtra("carId", 0)
+                ?: 0
             carNum?.let { selectedCarNum ->
                 binding.etCarnum.setText(selectedCarNum)
                 val form = viewModel.localForm.value ?: return@let

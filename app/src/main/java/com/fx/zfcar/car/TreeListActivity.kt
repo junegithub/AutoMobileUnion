@@ -61,6 +61,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     private var carNumList = mutableListOf<SearchCarItem>()
     private var selectedFilterType: String = "all"
     private var currentTotal: Int = 0
+    private var suppressInitialFilterEvent = true
 
     private var pageNum: Int = 1
     private val pageSize = 20
@@ -109,6 +110,9 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
         // 初始化根节点
         if (!fromSearch) {
             loadRootTreeData()
+        } else {
+            binding.etSearch.requestFocus()
+            updateSearchModeUi()
         }
     }
 
@@ -121,6 +125,7 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
         fromSearch = true
         adapter.setSearch(fromSearch)
         resetSearchListState()
+        updateSearchModeUi()
         loadSearchData(showTree = true)
         loadRootTreeData()
     }
@@ -129,7 +134,16 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
         if (!fromSearch) {
             binding.tabLayout.visibility = View.GONE
             binding.spinnerFilter.visibility = View.GONE
+        } else {
+            updateSearchModeUi()
         }
+    }
+
+    private fun updateSearchModeUi() {
+        binding.tabLayout.visibility = View.VISIBLE
+        binding.rvTreeList.visibility = View.GONE
+        binding.rvCarnumList.visibility = View.VISIBLE
+        binding.spinnerFilter.visibility = if (binding.tabLayout.selectedTabPosition == 0) View.VISIBLE else View.GONE
     }
 
     /**
@@ -179,6 +193,10 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
         // Spinner选择监听
         binding.spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (suppressInitialFilterEvent) {
+                    suppressInitialFilterEvent = false
+                    return
+                }
                 val nextFilterType = filterTypeByPosition(position)
                 if (selectedFilterType == nextFilterType && carNumList.isNotEmpty()) {
                     return
@@ -311,8 +329,15 @@ class TreeListActivity : AppCompatActivity(), DynamicTreeItemClickListener, Coro
     }
 
     private fun loadSearchData(showTree: Boolean = false) {
+        val keyword = binding.etSearch.text.toString().trim()
+        if (keyword.isEmpty()) {
+            resetFilterLabels()
+            filterSpinnerAdapter.notifyDataSetChanged()
+            updateLoadMoreState()
+            return
+        }
         searchViewModel.searchCarByType(
-            binding.etSearch.text.toString(),
+            keyword,
             if (searchType == SEARCH_TYPE_VIDEO_LIST) false else null,
             selectedFilterType,
             pageSize.toString(),

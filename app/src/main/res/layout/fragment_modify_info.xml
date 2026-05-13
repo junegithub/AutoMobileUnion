@@ -36,6 +36,8 @@
             android:textColor="#333333"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
+            android:imeOptions="actionDone"
+            android:inputType="textPersonName"
             android:maxLines="1"/>
 
         <!-- 确定按钮 -->

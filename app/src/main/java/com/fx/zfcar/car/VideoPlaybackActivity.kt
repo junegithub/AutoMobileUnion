@@ -440,15 +440,16 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
         videoListOpened = false
         queryAttempt += 1
         val currentAttempt = queryAttempt
-        evalJs(startTimeStamp, endTimeStamp, simNum)
-        scheduleQueryTimeout(currentAttempt)
+        if (evalJs(startTimeStamp, endTimeStamp, simNum)) {
+            scheduleQueryTimeout(currentAttempt)
+        }
     }
 
     /**
      * 执行JS调用
      */
-    private fun evalJs(startTimeStamp: Long, endTimeStamp: Long, simNum: Long) {
-        try {
+    private fun evalJs(startTimeStamp: Long, endTimeStamp: Long, simNum: Long): Boolean {
+        return try {
             if (channelIndex == 0) {
                 // 所有通道
                 wayNums.forEach { wayNum ->
@@ -464,7 +465,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
                 val selectedChannelCode = wayNums.getOrNull(channelIndex - 1)?.wayNumCode?.toIntOrNull()
                 if (selectedChannelCode == null) {
                     showToast("通道信息异常")
-                    return
+                    return false
                 }
                 val jsCode = String.format(
                     "Connectt(%d,%d,%d,%d,0,%d,%d,%d,'www.ezbeidou.com',17001,0);",
@@ -473,9 +474,12 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
                 )
                 binding.webView.evaluateJavascript(jsCode, null)
             }
+            true
         } catch (e: Exception) {
             Log.e("VideoPlayback", "JS调用失败: ${e.message}", e)
             Toast.makeText(this, "视频加载失败", Toast.LENGTH_SHORT).show()
+            videoListOpened = true
+            false
         }
     }
 
@@ -487,6 +491,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
             val expectedCount = if (channelIndex == 0) wayNums.size else 1
             if (pendingResponseCount < expectedCount) {
                 videoListOpened = true
+                pendingVideoList.clear()
                 showToast("视频加载失败，请稍后重试")
             } else {
                 maybeOpenVideoList()
@@ -520,6 +525,7 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
                             sim = it.sim
                             version = if (it.version == 2019) 1 else 0
                             wayNums = it.waynums
+                            channelIndex = 0
 
                             // 更新通道列表
                             updateChannelList()
@@ -527,6 +533,8 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                     is ApiState.Error -> {
+                        wayNums = emptyList()
+                        updateChannelList()
                         showToast("获取视频信息失败")
                     }
                     is ApiState.Idle -> {
@@ -542,6 +550,11 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
             showToast("车辆信息缺失")
             return
         }
+        pendingVideoList.clear()
+        pendingResponseCount = 0
+        videoListOpened = true
+        wayNums = emptyList()
+        updateChannelList()
         carInfoViewModel.getVideoInfo(carId, videoInfoStateFlow)
     }
 
@@ -555,6 +568,8 @@ class VideoPlaybackActivity : AppCompatActivity(), View.OnClickListener {
             channelArr.add("通道${index + 1}")
         }
         binding.tvChannel.text = channelArr.firstOrNull() ?: "所有通道"
+        binding.btnQuery.isEnabled = videoCar && online && wayNums.isNotEmpty()
+        binding.btnQuery.alpha = if (binding.btnQuery.isEnabled) 1f else 0.5f
     }
 
     /**

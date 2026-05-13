@@ -440,6 +440,8 @@ class CarFragment : Fragment(), AMapLocationListener {
 
                     is ApiState.Error -> {
                         hideMapLoading()
+                        requestFromOtherPage = false
+                        restoreMapPresentation()
                         context?.showToast(uiState.msg)
                     }
                     is ApiState.Idle -> {
@@ -465,6 +467,7 @@ class CarFragment : Fragment(), AMapLocationListener {
                         // 忽略过期请求的响应（快速切换车辆时可能乱序到达）
                         val respondedCarId = addressData.carinfo.id
                         if (lastRequestedCarId.isNotBlank() && respondedCarId.isNotBlank() && respondedCarId != lastRequestedCarId) return@collect
+                        val shouldFetchCarInfoAfterAddress = requestFromOtherPage && lastRequestedCarId.isBlank()
                         if (requestFromOtherPage) {
                             requestFromOtherPage = false
                             val carInfo = addressData.carinfo
@@ -494,6 +497,9 @@ class CarFragment : Fragment(), AMapLocationListener {
                             carInfoViewModel.addSearchHistory(SearchHistoryRequest(carInfo.carnum), addSearchStateFlow)
                         }
                         refreshRealAddressCarDetails(addressData)
+                        if (shouldFetchCarInfoAfterAddress) {
+                            requestCarInfoIfNeeded(addressData.carinfo.id)
+                        }
                         showExpiredVehicleTip(addressData.carinfo)
                     }
                     is ApiState.Error -> {
@@ -1210,5 +1216,10 @@ class CarFragment : Fragment(), AMapLocationListener {
             showAllMarkers()
         }
         zoomToAllCars()
+    }
+
+    private fun requestCarInfoIfNeeded(carId: String) {
+        if (carId.isBlank() || carId == VIRTUAL_CAR_ID) return
+        carInfoViewModel.getCarInfo(carId, carInfoStateFlow)
     }
 }

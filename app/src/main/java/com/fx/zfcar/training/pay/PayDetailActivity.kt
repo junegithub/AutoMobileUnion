@@ -155,8 +155,7 @@ class PayDetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         // 设置名称和金额
-        binding.etName.setText(name)
-        binding.etMoney.setText(String.format("%.2f", money))
+        updatePayInfoView()
 
         // 显示/隐藏支付记录
         binding.tvPayHistory.visibility = if (historyShow) View.VISIBLE else View.GONE
@@ -447,6 +446,7 @@ class PayDetailActivity : AppCompatActivity() {
                 }
 
                 // 更新UI和按钮状态
+                updatePayInfoView()
                 updatePayButtons()
             }
             is ApiState.Error -> {
@@ -773,6 +773,22 @@ class PayDetailActivity : AppCompatActivity() {
      */
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updatePayInfoView() {
+        binding.etName.setText(name.ifBlank { "安全培训" })
+        binding.etMoney.setText(
+            if (money > 0f) {
+                String.format("%.2f", money)
+            } else {
+                "待确认"
+            }
+        )
+        binding.btnYearPay.text = if (year_money > 0f) {
+            String.format("年度支付 %.2f元", year_money)
+        } else {
+            "年度支付"
+        }
     }
 
     /**

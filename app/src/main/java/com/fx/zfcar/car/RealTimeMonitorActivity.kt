@@ -98,7 +98,9 @@ class RealTimeMonitorActivity : AppCompatActivity() {
         wayNums.clear()
         videoAdapter.updateData(emptyList())
         releasePlayers()
-        getVideoInfo()
+        if (canLoadVideoInfo()) {
+            getVideoInfo()
+        }
     }
 
 
@@ -117,7 +119,9 @@ class RealTimeMonitorActivity : AppCompatActivity() {
         initPtzDialog()
         observeVideoInfo()
         // 获取视频信息
-        getVideoInfo()
+        if (canLoadVideoInfo()) {
+            getVideoInfo()
+        }
     }
 
     /**
@@ -132,13 +136,6 @@ class RealTimeMonitorActivity : AppCompatActivity() {
         online = intent.getBooleanExtra(KEY_CAR_ONLINE, false)
 
         binding.tvCarNum.text = carNum
-
-        // 状态检查
-        if (!videoCar) {
-            Toast.makeText(this, "设备未安装摄像头", Toast.LENGTH_LONG).show()
-        } else if (!online) {
-            Toast.makeText(this, "设备不在线", Toast.LENGTH_LONG).show()
-        }
     }
 
     /**
@@ -364,6 +361,9 @@ class RealTimeMonitorActivity : AppCompatActivity() {
                         }
                     }
                     is ApiState.Error -> {
+                        wayNums.clear()
+                        videoAdapter.updateData(emptyList())
+                        releasePlayers()
                         showToast("获取视频信息失败")
                     }
                     is ApiState.Idle -> {
@@ -379,7 +379,22 @@ class RealTimeMonitorActivity : AppCompatActivity() {
             showToast("车辆信息异常")
             return
         }
+        if (!canLoadVideoInfo()) {
+            return
+        }
         carInfoViewModel.getVideoInfo(carId, videoInfoStateFlow)
+    }
+
+    private fun canLoadVideoInfo(): Boolean {
+        if (!videoCar) {
+            Toast.makeText(this, "设备未安装摄像头", Toast.LENGTH_LONG).show()
+            return false
+        }
+        if (!online) {
+            Toast.makeText(this, "设备不在线", Toast.LENGTH_LONG).show()
+            return false
+        }
+        return true
     }
 
     /**
@@ -430,6 +445,7 @@ class RealTimeMonitorActivity : AppCompatActivity() {
         val newSim = sim.toLongOrNull() ?: 0
         if (newSim <= 0L) {
             showToast("设备视频参数异常")
+            currentLoadAttempt += 1
             return
         }
         wayNums.forEachIndexed { index, wayNum ->

@@ -615,6 +615,9 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         binding.progressBar.visibility = View.GONE
         if (apiState is ApiState.Success || apiState is ApiState.Error) {
             if (loadFromMore) {
+                if (apiState is ApiState.Error && pageNum > 1) {
+                    pageNum--
+                }
                 loadFromMore = false
             }
         }
@@ -647,7 +650,11 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun handlePagedSuccess(total: Int, newItems: List<ReportItem>, emptyTip: String) {
-        totalPages = total
+        totalPages = if (total > 0) {
+            ((total + pageSize - 1) / pageSize).coerceAtLeast(1)
+        } else {
+            0
+        }
         if (!loadFromMore) {
             currentItems.clear()
         }

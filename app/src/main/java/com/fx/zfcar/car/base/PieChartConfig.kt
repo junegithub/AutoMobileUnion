@@ -32,7 +32,7 @@ object PieChartConfig {
         pieChart.isDrawHoleEnabled = false // 禁用空心，实现实心圆
         pieChart.setDrawEntryLabels(false)
         //设置图表偏移量
-        pieChart.setExtraOffsets(5f, 5f, 5f, 5f)
+        pieChart.setExtraOffsets(0f, 0f, 0f, 0f)
         pieChart.animateXY(1000, 1000);
 
         // 2. 禁用旋转/拖拽（但保留点击）
@@ -45,7 +45,7 @@ object PieChartConfig {
         pieChart.description = description
         pieChart.setDrawCenterText(false)
 
-        // 4. 百分比配置（外侧显示+引线）
+        // 4. 百分比配置：页面使用自定义图例展示占比，饼图本体不绘制外侧数值，避免标签重叠。
         pieChart.setUsePercentValues(true)
         pieChart.setDrawEntryLabels(false)
 
@@ -96,23 +96,10 @@ object PieChartConfig {
         dataSet.valueTextColor = Color.BLACK
         dataSet.valueFormatter = percentFormatter // 百分比格式
 
-        // 2. 引线样式（匹配截图）
-        //当valuePosition在外部时，表示行前半部分的长度(即折线靠近圆的那端长度)
-        dataSet.valueLinePart1Length = 0.8f // 引线第一段长度
-        /**当valuePosition位于外部时，表示行后半部分的长度*(即折线靠近百分比那端的长度) */
-        dataSet.valueLinePart2Length = 0.1f // 引线第二段长度
-        dataSet.valueLineWidth = 1f         // 引线宽度
-        dataSet.valueLineColor = ContextCompat.getColor(pieChart.context, R.color.text_gray) // 引线灰色
-        //设置Y值的位置在圆外
-        dataSet.yValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE // 数值外侧
-        dataSet.xValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
-//        dataSet.valueLineVariableLength = true
-        dataSet.valueLinePart1OffsetPercentage = 100f // 引线起点在饼图边缘
-
-        // 3. 点击选中偏移（轻微高亮）
+        // 2. 点击选中偏移（轻微高亮）
         dataSet.selectionShift = 5f
 
-        // 4. 绑定数据
+        // 3. 绑定数据
         val pieData = PieData(dataSet)
         pieChart.data = pieData
 

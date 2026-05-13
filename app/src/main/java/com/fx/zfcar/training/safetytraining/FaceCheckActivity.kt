@@ -489,6 +489,7 @@ class FaceCheckActivity : AppCompatActivity() {
                     is ApiState.Loading -> {}
                     is ApiState.Success -> {
                         showToast(getString(R.string.hint_verify_success))
+                        goCourseList(params["type"].orEmpty().ifEmpty { "newFace" })
                         finish()
                     }
                     is ApiState.Error -> {
@@ -561,14 +562,18 @@ class FaceCheckActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             BeforeFaceAction.CourseList -> {
-                val intent = Intent(this@FaceCheckActivity, TrainCourseListActivity::class.java)
-                intent.putExtra("safetyPlanId", params["safetyPlanId"])
-                intent.putExtra("name", params["name"])
-                intent.putExtra("number", params["number"])
-                intent.putExtra("type", "before")
-                startActivity(intent)
+                goCourseList("before")
             }
         }
+    }
+
+    private fun goCourseList(type: String) {
+        val intent = Intent(this@FaceCheckActivity, TrainCourseListActivity::class.java)
+        intent.putExtra("safetyPlanId", params["safetyPlanId"])
+        intent.putExtra("name", params["name"])
+        intent.putExtra("number", params["number"])
+        intent.putExtra("type", type)
+        startActivity(intent)
     }
 
     /**

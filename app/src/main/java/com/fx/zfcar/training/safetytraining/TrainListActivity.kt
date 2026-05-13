@@ -254,6 +254,7 @@ class TrainListActivity : AppCompatActivity(), TrainListAdapter.OnItemClickListe
                             category_id = state.data.category_id
                             // 检查认证状态
                             if (state.data.yzstatus != "1") {
+                                showToast("请先完善并提交认证信息")
                                 startActivity(Intent(this@TrainListActivity, UserCenterActivity::class.java))
                                 finish()
                                 return@collect

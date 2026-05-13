@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="340dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/dp_12"
     android:orientation="vertical">
 
     <!-- 证书主体 -->
     <FrameLayout
         android:id="@+id/content"
-        android:layout_width="340dp"
+        android:layout_width="match_parent"
         android:layout_height="560dp">
 
         <ImageView
@@ -21,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/dp_48"
+            android:paddingHorizontal="28dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -107,7 +109,7 @@
                 android:textSize="14sp" />
 
             <FrameLayout
-                android:layout_width="260dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_12">
 
@@ -147,7 +149,7 @@
             </FrameLayout>
 
             <FrameLayout
-                android:layout_width="260dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <LinearLayout

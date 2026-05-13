@@ -24,30 +24,28 @@ class SignaturePad @JvmOverloads constructor(
 
     // 绘制路径和画布
     private val path = Path()
-    private val bitmap: Bitmap
-    private val canvas: Canvas
+    private var bitmap: Bitmap? = null
+    private var signatureCanvas: Canvas? = null
     private var hasSign = false // 标记是否有签名内容
 
     // 触摸坐标
     private var lastX = 0f
     private var lastY = 0f
 
-    init {
-        // 初始化画布（适配屏幕尺寸）
-        val displayMetrics = resources.displayMetrics
-        val width = displayMetrics.widthPixels
-        val height = displayMetrics.heightPixels - dp2px(120) // 减去导航栏和按钮栏高度
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        canvas = Canvas(bitmap)
-        canvas.drawColor(Color.WHITE) // 白色背景
-    }
+    override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
+        super.onSizeChanged(width, height, oldWidth, oldHeight)
+        if (width <= 0 || height <= 0) return
 
-    /**
-     * dp转px
-     */
-    private fun dp2px(dp: Int): Int {
-        val density = resources.displayMetrics.density
-        return (dp * density + 0.5f).toInt()
+        val oldBitmap = bitmap
+        val newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val newCanvas = Canvas(newBitmap)
+        newCanvas.drawColor(Color.WHITE)
+        oldBitmap?.let {
+            newCanvas.drawBitmap(it, null, Rect(0, 0, width, height), null)
+            it.recycle()
+        }
+        bitmap = newBitmap
+        signatureCanvas = newCanvas
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -73,7 +71,7 @@ class SignaturePad @JvmOverloads constructor(
                 }
             }
             MotionEvent.ACTION_UP -> {
-                canvas.drawPath(path, paint)
+                signatureCanvas?.drawPath(path, paint)
                 path.reset()
             }
         }
@@ -83,7 +81,7 @@ class SignaturePad @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawBitmap(bitmap, 0f, 0f, null)
+        bitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
         canvas.drawPath(path, paint)
     }
 
@@ -91,7 +89,7 @@ class SignaturePad @JvmOverloads constructor(
      * 清除签名
      */
     fun clearSignature() {
-        canvas.drawColor(Color.WHITE)
+        signatureCanvas?.drawColor(Color.WHITE)
         path.reset()
         hasSign = false
         invalidate()
@@ -101,9 +99,10 @@ class SignaturePad @JvmOverloads constructor(
      * 获取签名Bitmap
      */
     fun getSignatureBitmap(): Bitmap {
-        canvas.drawPath(path, paint) // 绘制最后一笔
+        signatureCanvas?.drawPath(path, paint) // 绘制最后一笔
         path.reset()
-        return bitmap.copy(Bitmap.Config.ARGB_8888, false)
+        return bitmap?.copy(Bitmap.Config.ARGB_8888, false)
+            ?: Bitmap.createBitmap(width.coerceAtLeast(1), height.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
     }
 
     /**

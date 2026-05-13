@@ -165,19 +165,19 @@ class DriveLogModel {
                 val newItems = beforeItems.value?.map {
                     it.copy(active = isAllSelected)
                 } ?: emptyList()
-                beforeItems.postValue(newItems as MutableList<DriveCheckConstants.CheckItem>?)
+                beforeItems.postValue(newItems.toMutableList())
             }
             "driving" -> {
                 val newItems = drivingCheckItemsArr.value?.map {
                     it.copy(active = isAllSelected)
                 } ?: emptyList()
-                drivingCheckItemsArr.postValue(newItems as MutableList<DriveCheckConstants.CheckItem>?)
+                drivingCheckItemsArr.postValue(newItems.toMutableList())
             }
             "end" -> {
                 val newItems = checkEndItems.value?.map {
                     it.copy(active = isAllSelected)
                 } ?: emptyList()
-                checkEndItems.postValue(newItems as MutableList<DriveCheckConstants.CheckItem>?)
+                checkEndItems.postValue(newItems.toMutableList())
             }
         }
 
@@ -372,7 +372,7 @@ class DriveLogModel {
         return when {
             form.driver_name.isBlank() -> "请输入驾驶员姓名"
             form.carnum.isBlank() -> "请输入车牌号"
-            !isLicenseNo(form.carnum) -> "请输入正确的车牌号"
+            !isLicenseNo(form.carnum) -> "请输入正确的车牌号或通过搜索选择车辆"
             form.type.isBlank() -> "请选择货物类型"
             else -> null
         }

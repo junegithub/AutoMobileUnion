@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -249,24 +250,16 @@ class CarCheckViewModel: TrainingBaseViewModel() {
             return
         }
 
-        viewModelScope.launch {
-            postStateFlow.drop(1)
-                .collect { state ->
-                    when (state) {
-                        is ApiState.Success -> {
-                            state.data?.let {
-                                onSuccess()
-                            }
-                        }
-                        is ApiState.Error -> {
-                            onError(state.msg)
-                        }
-                        else -> {}
-                    }
-                }
-        }
-
         val postRequest = currentForm.toPostRequest()
+        postStateFlow.value = ApiState.Idle
+        viewModelScope.launch {
+            when (val state = postStateFlow.drop(1).first { it is ApiState.Success || it is ApiState.Error }) {
+                is ApiState.Success -> onSuccess()
+                is ApiState.Error -> onError("检查表单提交失败：${state.msg}")
+                else -> Unit
+            }
+            postStateFlow.value = ApiState.Idle
+        }
         carCheckPost(postRequest, postStateFlow)
     }
 

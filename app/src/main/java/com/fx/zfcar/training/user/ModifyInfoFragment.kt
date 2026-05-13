@@ -14,6 +14,7 @@ import com.fx.zfcar.R
 import com.fx.zfcar.databinding.FragmentModifyInfoBinding
 import com.fx.zfcar.training.viewmodel.SafetyTrainingViewModel
 import com.fx.zfcar.viewmodel.ApiState
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -61,10 +62,12 @@ class ModifyInfoFragment : BaseUserFragment() {
                         ProgressDialogUtils.dismiss()
                         val current = MyApp.trainingUserInfo
                         if (current != null) {
-                            MyApp.trainingUserInfo = current.copy(
+                            val updated = current.copy(
                                 userinfo = current.userinfo.copy(nickname = binding.etNickname.text.toString().trim()),
                                 otherinfo = current.otherinfo.copy(nickname = binding.etNickname.text.toString().trim())
                             )
+                            MyApp.trainingUserInfo = updated
+                            com.fx.zfcar.util.SPUtils.saveTrainingLoginUser(Gson().toJson(updated))
                         }
                         context?.showToast("修改成功")
                         activity?.onBackPressed()
